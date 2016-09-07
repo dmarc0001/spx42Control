@@ -1,0 +1,74 @@
+#!/bin/bash
+#
+# Buildzähler und Datum in die Definitions Headerdatei setzen
+
+#
+# Einstellungen
+#
+SOURCEDIR=$1
+BUILDCONFNAME=currBuildDef.hpp
+#SCRIPTLOCATION=$(dirname "$(readlink -e "$0")")  #(windows kann kein readlink)
+SCRIPTLOCATION=$(dirname "$0")
+BUILDCONFIG="$SCRIPTLOCATION/$BUILDCONFNAME"
+BUILDCONFDEST="$SOURCEDIR/$BUILDCONFNAME"
+BUILDNUMFILE="$SCRIPTLOCATION/currBuildNum"
+#
+# checke, ob Pfad mit angegeben wurde
+#
+if [ -z $SOURCEDIR ] ; then
+  echo "FEHLER! SORCE Verzeichnis nicht angegeben!"
+  exit
+fi
+#
+# berechne Datum und Buildnummer
+#
+CURRDATE=`date +"%F %T"`
+BUILD=`cat $BUILDNUMFILE`
+BUILDNUM=`echo "$BUILD + 1" | bc -q`
+BUILDNUM=`printf "%08d" $BUILDNUM`
+#
+# schreibe Buildnummer in Datei zurück
+#
+echo "$BUILDNUM" > $BUILDNUMFILE
+#
+# DEBUGGING
+#
+echo -e "\n"
+echo "SCRIPTLOCATION: $SCRIPTLOCATION"
+echo "DESTINATIONDIR: $BUILDCONFDEST"
+echo "BUILDNUMFILE:   $BUILDNUMFILE"
+echo "current date:   $CURRDATE"
+echo "build:          $BUILD"
+echo "next build:     $BUILDNUM"
+#
+# neue Buildconfig Datei zusammenbauen
+#
+echo "#ifndef CURRBUILDDEF_HPP"               > $BUILDCONFIG
+echo "#define CURRBUILDDEF_HPP"              >> $BUILDCONFIG
+echo -e "\n"                                 >> $BUILDCONFIG
+echo "//"                                    >> $BUILDCONFIG
+echo "// automatic generated file"           >> $BUILDCONFIG
+echo "//"                                    >> $BUILDCONFIG
+echo "#define SPX_BUILDTIME \"$CURRDATE\""   >> $BUILDCONFIG
+echo "#define SPX_BUILDCOUNT \"$BUILDNUM\""  >> $BUILDCONFIG 
+echo -e "\n"                                 >> $BUILDCONFIG
+echo "#endif"                                >> $BUILDCONFIG
+echo -e "\n"                                 >> $BUILDCONFIG
+#
+# wenn source != quelle datei kopieren
+#
+if [ "$SOURCEDIR" != "$SCRIPTLOCATION" ] ; then
+  if [ -f "$BUILDCONFIG" ] ; then 
+    echo "copy new build definition file..."
+    cp -f $BUILDCONFIG $BUILDCONFDEST
+  else
+    echo "file not exist!"
+    echo -e "\n"
+    exit -1
+  fi
+else
+  echo "source dir and destination dir equal! cancel!"
+  exit -1
+fi
+echo -e "\n"
+

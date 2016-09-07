@@ -1,0 +1,6 @@
+Debug/
+Release/
+Profile/
+
+build/
+*.qm
