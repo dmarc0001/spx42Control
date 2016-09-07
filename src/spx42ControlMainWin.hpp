@@ -1,6 +1,8 @@
 ﻿#ifndef SPX42CONTROLMAINWIN_HPP
 #define SPX42CONTROLMAINWIN_HPP
 
+#include <memory>
+
 #include <QMainWindow>
 #include <QFontDatabase>
 #include <QMessageBox>
@@ -42,8 +44,9 @@ namespace spx42
       ApplicationStat currentStatus;                            //! welchen Status hat die App?
       int watchdogTimer;                                        //! Zeitspanne zum Timeout
       AppConfigClass cf;                                        //! Konfiguration aus Datei
-      QTabWidget *myTab;                                        //! Zeiger auf das TabWidget
       ApplicationTab currentTab;                                //! welcher Tab ist aktiv?
+      std::shared_ptr<GasFragment> gasForm;                         //! ein smartpointer...
+      std::shared_ptr<ConnectFragment> connForm;                    //! ein smartpointer...
 
     public:
       explicit SPX42ControlMainWin(QWidget *parent = 0);
@@ -63,6 +66,7 @@ namespace spx42
       void tabCurrentChanged( int idx );                        //! TAB Index gewechselt
   };
 
+
   class UpdatesEnabledHelper
   {
       QWidget* m_parentWidget;
@@ -70,6 +74,7 @@ namespace spx42
       UpdatesEnabledHelper(QWidget* parentWidget) : m_parentWidget(parentWidget) { parentWidget->setUpdatesEnabled(false); }
       ~UpdatesEnabledHelper() { m_parentWidget->setUpdatesEnabled(true); }
   };
+
 } // namespace spx42
 
 #endif // SPX42CONTROLMAINWIN_HPP

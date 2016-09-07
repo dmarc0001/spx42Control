@@ -43,8 +43,8 @@ SOURCES                                += \
                                           src/config/ProjectConst.cpp \
                                           src/logging/Logger.cpp \
                                           src/utils/aboutDialog.cpp \
-                                          src/guiFragments/connectForm.cpp \
-                                          src/guiFragments/gasForm.cpp
+                                          src/guiFragments/connectFragment.cpp \
+                                            src/guiFragments/gasFragment.cpp
 
 HEADERS                                += \
                                           src/spx42ControlMainWin.hpp \
@@ -59,8 +59,8 @@ HEADERS                                += \
 FORMS                                  += \
                                           src/ui/spx42controlmainwin.ui \
                                           src/ui/aboutdialog.ui \
-                                          src/ui/connectForm.ui \
-                                          src/ui/gasForm.ui
+                                          src/ui/gasFragment.ui \
+    src/ui/connectFragment.ui
 
 RESOURCES                              = \
                                           src/res/spx42ControlRes.qrc

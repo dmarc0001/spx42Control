@@ -46,6 +46,9 @@
        <height>23</height>
       </size>
      </property>
+     <property name="statusTip">
+      <string>select SPX42 device...</string>
+     </property>
     </widget>
    </item>
    <item row="4" column="1">
@@ -87,12 +90,16 @@
        <height>58</height>
       </size>
      </property>
+     <property name="statusTip">
+      <string>connect selected device...</string>
+     </property>
      <property name="text">
       <string>connect device</string>
      </property>
      <property name="icon">
       <iconset resource="../res/spx42ControlRes.qrc">
-       <normaloff>:/icons/ic_bluetooth_black_24dp_1x.png</normaloff>:/icons/ic_bluetooth_black_24dp_1x.png</iconset>
+       <normaloff>:/icons/ic_bluetooth_black_24dp_1x.png</normaloff>
+       <activeoff>:/icons/ic_bluetooth_black_24dp_1x_blue.png</activeoff>:/icons/ic_bluetooth_black_24dp_1x.png</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -119,12 +126,21 @@
        <height>58</height>
       </size>
      </property>
+     <property name="font">
+      <font>
+       <kerning>false</kerning>
+      </font>
+     </property>
+     <property name="statusTip">
+      <string>Edit device propertys...</string>
+     </property>
      <property name="text">
       <string/>
      </property>
      <property name="icon">
       <iconset resource="../res/spx42ControlRes.qrc">
-       <normaloff>:/icons/ic_edit_2x.png</normaloff>:/icons/ic_edit_2x.png</iconset>
+       <normaloff>:/icons/ic_edit.png</normaloff>
+       <activeoff>:/icons/ic_edit_blue.png</activeoff>:/icons/ic_edit.png</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -148,12 +164,16 @@
        <height>58</height>
       </size>
      </property>
+     <property name="statusTip">
+      <string>Discover bluetooth SPX42 devices...</string>
+     </property>
      <property name="text">
       <string>discover devices</string>
      </property>
      <property name="icon">
       <iconset resource="../res/spx42ControlRes.qrc">
-       <normaloff>:/icons/ic_bluetooth_searching.png</normaloff>:/icons/ic_bluetooth_searching.png</iconset>
+       <normaloff>:/icons/ic_bluetooth_searching.png</normaloff>
+       <activeoff>:/icons/ic_bluetooth_searching_blue.png</activeoff>:/icons/ic_bluetooth_searching.png</iconset>
      </property>
      <property name="iconSize">
       <size>

@@ -50,18 +50,19 @@ namespace spx42
       #endif
     }
     //
-    // Actions mit den richtigen Slots verbinden
-    //
-    connectActions();
-    //
     // setze Action Stati
     //
     setActionStati();
     //
     // TAB initialisieren
     //
-    myTab = ui->areaTabWidget;
     createApplicationTabs();
+    //
+    // Actions mit den richtigen Slots verbinden
+    //
+    ui->areaTabWidget->setCurrentIndex(0);
+    tabCurrentChanged( 0 );
+    connectActions();
   }
 
   SPX42ControlMainWin::~SPX42ControlMainWin()
@@ -165,21 +166,19 @@ namespace spx42
 
   void SPX42ControlMainWin::createApplicationTabs( void )
   {
-    QWidget *wg;
-
-    myTab->clear();
+    ui->areaTabWidget->clear();
     //
     // der Connect Tab Platzhalter
     //
-    wg = new QWidget();
-    wg->setObjectName(tr("Connect Tab"));
-    myTab->addTab(wg, QString(tr("Connect")));
+    QWidget *wg1 = new QWidget();
+    wg1->setObjectName(tr("Connect Tab"));
+    ui->areaTabWidget->addTab(wg1, QString(tr("Connect")));
     //
     // der Gaslisten-Platzhalter
     //
-    wg = new QWidget();
-    wg->setObjectName(tr("Gas Tab"));
-    myTab->addTab(wg, QString(tr("Gases")));
+    QWidget *wg2 = new QWidget();
+    wg2->setObjectName(tr("Gas Tab"));
+    ui->areaTabWidget->addTab(wg2, QString(tr("Gases")));
   }
 
   ApplicationTab SPX42ControlMainWin::getApplicationTab( void )
@@ -202,14 +201,14 @@ namespace spx42
 
   void SPX42ControlMainWin::tabCurrentChanged( int idx )
   {
-    QWidget *wg;
     //
     // Alle Childs entfernen
     //
+
     lg->debug("SPX42ControlMainWin::tabCurrentChanged -> delete all widget children");
-    for( int i = 0; i < myTab->count(); i++ )
+    for( int i = 0; i < ui->areaTabWidget->count(); i++ )
     {
-      QWidget *parentWidget = myTab->widget( i );
+      QWidget *parentWidget = ui->areaTabWidget->widget( i );
       UpdatesEnabledHelper helper(parentWidget);
       qDeleteAll(parentWidget->findChildren<QWidget*>("", Qt::FindDirectChildrenOnly));
       delete parentWidget->layout();
@@ -223,18 +222,17 @@ namespace spx42
       //default:
       case static_cast<int>(ApplicationTab::CONNECT_TAB):
         lg->debug("SPX42ControlMainWin::setApplicationTab -> CONNECT TAB...");
-        wg = new ConnectForm( myTab->widget(idx), lg);
-        wg->setObjectName(tr("Connect Tab"));
+        connForm = std::shared_ptr<ConnectFragment>(new ConnectFragment( ui->areaTabWidget->widget(idx), lg));
+        connForm->setObjectName(tr("Connect Tab"));
+        gasForm = Q_NULLPTR;
         currentTab = ApplicationTab::CONNECT_TAB;
         break;
 
       case static_cast<int>(ApplicationTab::GAS_TAB):
         lg->debug("SPX42ControlMainWin::setApplicationTab -> GAS TAB...");
-        /*
-        wg = new GasForm(myTab, lg);
-        wg->setObjectName(tr("Gas Tab"));
-        myTab->addTab(wg, QString(tr("Gas")));
-        */
+        gasForm = std::shared_ptr<GasFragment>(new GasFragment( ui->areaTabWidget->widget(idx), lg));
+        gasForm->setObjectName(tr("Gas Tab"));
+        connForm = Q_NULLPTR;
         currentTab = ApplicationTab::GAS_TAB;
         break;
     }

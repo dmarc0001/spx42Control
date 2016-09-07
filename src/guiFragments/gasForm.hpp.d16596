@@ -11,7 +11,7 @@ namespace Ui {
 
 namespace spx42
 {
-  class GasFragment : public QWidget
+  class GasFragment# : public QWidget
   {
     private:
       Q_OBJECT
@@ -22,8 +22,8 @@ namespace spx42
       static int count;
 
     public:
-      explicit GasFragment(QWidget *parent, Logger *logger);
-      ~GasFragment();
+      explicit GasFragment#(QWidget *parent, Logger *logger);
+      ~GasFragment#();
 
   };
 }
