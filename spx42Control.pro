@@ -44,7 +44,7 @@ SOURCES                                += \
                                           src/logging/Logger.cpp \
                                           src/utils/aboutDialog.cpp \
                                           src/guiFragments/connectFragment.cpp \
-                                            src/guiFragments/gasFragment.cpp
+                                          src/guiFragments/gasFragment.cpp
 
 HEADERS                                += \
                                           src/spx42ControlMainWin.hpp \
@@ -53,14 +53,14 @@ HEADERS                                += \
                                           src/logging/Logger.hpp \
                                           src/config/currBuildDef.hpp \
                                           src/utils/aboutDialog.hpp \
-                                          src/guiFragments/connectForm.hpp \
-                                          src/guiFragments/gasForm.hpp
+                                          src/guiFragments/connectFragment.hpp \
+                                          src/guiFragments/gasFragment.hpp
 
 FORMS                                  += \
                                           src/ui/spx42controlmainwin.ui \
                                           src/ui/aboutdialog.ui \
                                           src/ui/gasFragment.ui \
-    src/ui/connectFragment.ui
+                                          src/ui/connectFragment.ui
 
 RESOURCES                              = \
                                           src/res/spx42ControlRes.qrc
