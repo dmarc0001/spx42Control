@@ -1,6 +1,6 @@
 Debug/
 Release/
 Profile/
-
 build/
 *.qm
+*.pro.user
