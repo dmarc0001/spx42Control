@@ -3,10 +3,11 @@
 
 namespace spx42
 {
-  ConnectFragment::ConnectFragment(QWidget *parent, Logger *logger) :
+  ConnectFragment::ConnectFragment(QWidget *parent, Logger *logger, SPX42Config *spxCfg ) :
     QWidget(parent),
     ui(new Ui::ConnectForm),
-    lg(logger)
+    lg(logger),
+    spxConfig(spxCfg)
   {
     lg->debug( "ConnectForm::ConnectForm...");
     ui->setupUi(this);

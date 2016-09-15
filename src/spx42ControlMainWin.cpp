@@ -259,7 +259,7 @@ namespace spx42
       //default:
       case static_cast<int>(ApplicationTab::CONNECT_TAB):
         lg->debug("SPX42ControlMainWin::setApplicationTab -> CONNECT TAB...");
-        currObj = new ConnectFragment( Q_NULLPTR, lg);
+        currObj = new ConnectFragment( Q_NULLPTR, lg, &spx42Config);
         currObj->setObjectName(tr("Connect Tab"));
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at(static_cast<int>(ApplicationTab::CONNECT_TAB)) );
         currentTab = ApplicationTab::CONNECT_TAB;
@@ -268,7 +268,7 @@ namespace spx42
       case static_cast<int>(ApplicationTab::GAS_TAB):
         lg->debug("SPX42ControlMainWin::setApplicationTab -> GAS TAB...");
         //gasForm = std::shared_ptr<GasFragment>(new GasFragment( ui->areaTabWidget->widget(idx), lg));
-        currObj = new GasFragment( Q_NULLPTR, lg);
+        currObj = new GasFragment( Q_NULLPTR, lg, &spx42Config);
         currObj->setObjectName(tr("Gas Tab"));
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at(static_cast<int>(ApplicationTab::GAS_TAB)) );
         currentTab = ApplicationTab::GAS_TAB;

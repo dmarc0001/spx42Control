@@ -7,9 +7,7 @@ namespace spx42
     o2Spin( o2SpinBox ),
     heSpin( heSpinBox ),
     n2Line( n2LineEdit ),
-    gasName( gasNameLabel ),
-    currO2(21),
-    currHe(0)
+    gasName( gasNameLabel )
   {
     if( o2Spin != Q_NULLPTR )
     {
@@ -17,23 +15,18 @@ namespace spx42
       {
         o2Spin->setValue(21);
       }
-      currO2 = o2Spin->value();
-    }
-    if( heSpin != Q_NULLPTR )
-    {
-      currHe = heSpin->value();
     }
     if( n2LineEdit != Q_NULLPTR )
     {
-      n2LineEdit->setText( QString("%1").arg( (100 - currO2 - currHe), 2, 10, QChar('0')  ));
+      n2LineEdit->setText( QString("%1").arg( (100 - o2Spin->value() - heSpin->value() ), 2, 10, QChar('0')  ));
     }
   }
 
-  GasFragment::GasFragment(QWidget *parent, Logger *logger) :
+  GasFragment::GasFragment(QWidget *parent, Logger *logger, SPX42Config *spxCfg) :
     QWidget(parent),
     ui(new Ui::GasForm),
     lg(logger),
-    licType(LicenseType::LIC_FULLTMX) //TODO: auf NITROX setzen
+    spxConfig( spxCfg )
   {
     lg->debug( "GasForm::GasForm...");
     ui->setupUi(this);
@@ -70,26 +63,26 @@ namespace spx42
     // Alle Spinboxen mit Lambdafunktionen zum eintragen der Werte
     // und dann ausführen der change-Funktion
     //
-    connect( gRef[0]->heSpin, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, [=] (int i){ gRef[0]->currHe = i; spinGasValueChanged( 0 ); } );
-    connect( gRef[1]->heSpin, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, [=] (int i){ gRef[1]->currHe = i; spinGasValueChanged( 1 ); } );
-    connect( gRef[2]->heSpin, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, [=] (int i){ gRef[2]->currHe = i; spinGasValueChanged( 2 ); } );
-    connect( gRef[3]->heSpin, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, [=] (int i){ gRef[3]->currHe = i; spinGasValueChanged( 3 ); } );
-    connect( gRef[4]->heSpin, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, [=] (int i){ gRef[4]->currHe = i; spinGasValueChanged( 4 ); } );
-    connect( gRef[5]->heSpin, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, [=] (int i){ gRef[5]->currHe = i; spinGasValueChanged( 5 ); } );
-    connect( gRef[6]->heSpin, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, [=] (int i){ gRef[6]->currHe = i; spinGasValueChanged( 6 ); } );
-    connect( gRef[7]->heSpin, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, [=] (int i){ gRef[7]->currHe = i; spinGasValueChanged( 7 ); } );
+    connect( gRef[0]->heSpin, QSpinboxIntValueChanged, this, [=] (int i){ spinHeValueChanged( 0, i ); } );
+    connect( gRef[1]->heSpin, QSpinboxIntValueChanged, this, [=] (int i){ spinHeValueChanged( 1, i ); } );
+    connect( gRef[2]->heSpin, QSpinboxIntValueChanged, this, [=] (int i){ spinHeValueChanged( 2, i ); } );
+    connect( gRef[3]->heSpin, QSpinboxIntValueChanged, this, [=] (int i){ spinHeValueChanged( 3, i ); } );
+    connect( gRef[4]->heSpin, QSpinboxIntValueChanged, this, [=] (int i){ spinHeValueChanged( 4, i ); } );
+    connect( gRef[5]->heSpin, QSpinboxIntValueChanged, this, [=] (int i){ spinHeValueChanged( 5, i ); } );
+    connect( gRef[6]->heSpin, QSpinboxIntValueChanged, this, [=] (int i){ spinHeValueChanged( 6, i ); } );
+    connect( gRef[7]->heSpin, QSpinboxIntValueChanged, this, [=] (int i){ spinHeValueChanged( 7, i ); } );
     //
-    connect( gRef[0]->o2Spin, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, [=] (int i){ gRef[0]->currO2 = i; spinGasValueChanged( 0 ); } );
-    connect( gRef[1]->o2Spin, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, [=] (int i){ gRef[1]->currO2 = i; spinGasValueChanged( 1 ); } );
-    connect( gRef[2]->o2Spin, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, [=] (int i){ gRef[2]->currO2 = i; spinGasValueChanged( 2 ); } );
-    connect( gRef[3]->o2Spin, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, [=] (int i){ gRef[3]->currO2 = i; spinGasValueChanged( 3 ); } );
-    connect( gRef[4]->o2Spin, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, [=] (int i){ gRef[4]->currO2 = i; spinGasValueChanged( 4 ); } );
-    connect( gRef[5]->o2Spin, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, [=] (int i){ gRef[5]->currO2 = i; spinGasValueChanged( 5 ); } );
-    connect( gRef[6]->o2Spin, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, [=] (int i){ gRef[6]->currO2 = i; spinGasValueChanged( 6 ); } );
-    connect( gRef[7]->o2Spin, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, [=] (int i){ gRef[7]->currO2 = i; spinGasValueChanged( 7 ); } );
+    connect( gRef[0]->o2Spin, QSpinboxIntValueChanged, this, [=] (int i){ spinO2ValueChanged( 0, i ); } );
+    connect( gRef[1]->o2Spin, QSpinboxIntValueChanged, this, [=] (int i){ spinO2ValueChanged( 1, i ); } );
+    connect( gRef[2]->o2Spin, QSpinboxIntValueChanged, this, [=] (int i){ spinO2ValueChanged( 2, i ); } );
+    connect( gRef[3]->o2Spin, QSpinboxIntValueChanged, this, [=] (int i){ spinO2ValueChanged( 3, i ); } );
+    connect( gRef[4]->o2Spin, QSpinboxIntValueChanged, this, [=] (int i){ spinO2ValueChanged( 4, i ); } );
+    connect( gRef[5]->o2Spin, QSpinboxIntValueChanged, this, [=] (int i){ spinO2ValueChanged( 5, i ); } );
+    connect( gRef[6]->o2Spin, QSpinboxIntValueChanged, this, [=] (int i){ spinO2ValueChanged( 6, i ); } );
+    connect( gRef[7]->o2Spin, QSpinboxIntValueChanged, this, [=] (int i){ spinO2ValueChanged( 7, i ); } );
   }
 
-  void GasFragment::spinGasValueChanged( int index )
+  void GasFragment::spinO2ValueChanged( int index, int o2Val )
   {
     volatile static int whereIgnored = -1;
     if( whereIgnored == index )
@@ -99,46 +92,45 @@ namespace spx42
       //
       return;
     }
-    lg->debug( QString("GasFragment::spinGasValueChanged -> gas nr <%1> was changed...").arg(index, 2, 10, QChar('0')));
-
+    lg->debug( QString("GasFragment::spinO2ValueChanged -> gas nr <%1> was changed...").arg(index, 2, 10, QChar('0')));
+    //
+    // Gas setzen, Plausibilität prüfen, ggf korrigieren
+    //
     GasFragmentGuiRef *currRef = gRef[index];
-    int n2;
+    SPX42Gas& currGas = spxConfig->getGasAt(index);
+    currGas.setO2(o2Val, spxConfig->getLicType());
+    whereIgnored = index; // igfnorieren weitere Aufrufe für diesen index, GUI verändern
+    currRef->o2Spin->setValue(currGas.getO2());
+    currRef->heSpin->setValue(currGas.getHe());
+    whereIgnored = -1;
+    currRef->n2Line->setText( QString("%1").arg( currGas.getN2(), 2, 10, QChar('0')  ));
+    currRef->gasName->setText(currGas.getGasName());
+    // TODO: Gas noch färben, je nach O2-Level
+  }
 
-    switch( static_cast<qint8>(licType) )
+  void GasFragment::spinHeValueChanged( int index, int heVal )
+  {
+    volatile static int whereIgnored = -1;
+    if( whereIgnored == index )
     {
-      case static_cast<qint8>(LicenseType::LIC_NITROX ):
-        if( currRef->currHe != 0 )
-        {
-          whereIgnored = index; // igfnorieren weitere Aufrufe für diesen index, GUI verändern
-          currRef->currHe = 0;
-          currRef->heSpin->setValue(0);
-          whereIgnored = -1;
-        }
-        // weiter bei normoxic
-      case static_cast<qint8>(LicenseType::LIC_NORMOXIX ):
-        if( currRef->currO2 > 21 )
-        {
-          whereIgnored = index; // igfnorieren weitere Aufrufe für diesen index, GUI verändern
-          currRef->currO2 = 21;
-          currRef->o2Spin->setValue(currRef->currO2);
-          whereIgnored = -1;
-        }
-        // weiter bei höheren Lizenzen
-      case static_cast<qint8>(LicenseType::LIC_FULLTMX ):
-      case static_cast<qint8>(LicenseType::LIC_MIL ):
-        // Priorität hat O2, helium runter, wenn es nicht passt
-        n2 = (100 - currRef->currO2 - currRef->currHe);
-        if( n2 < 0 )
-        {
-          whereIgnored = index; // igfnorieren weitere Aufrufe für diesen index, GUI verändern
-          currRef->currHe = 100 - currRef->currO2;
-          currRef->heSpin->setValue( currRef->currHe );
-          whereIgnored = -1;
-          n2 = (100 - currRef->currO2 - currRef->currHe);
-        }
+      //
+      // hier soll ich das ignorieren!
+      //
+      return;
     }
-    currRef->n2Line->setText( QString("%1").arg( (100 - currRef->currO2 - currRef->currHe), 2, 10, QChar('0')  ));
-    // TODO: Namen für das Gas anzeigen
+    lg->debug( QString("GasFragment::spinHeValueChanged -> gas nr <%1> was changed...").arg(index, 2, 10, QChar('0')));
+    //
+    // Gas setzen, Plausibilität prüfen, ggf korrigieren
+    //
+    GasFragmentGuiRef *currRef = gRef[index];
+    SPX42Gas& currGas = spxConfig->getGasAt(index);
+    currGas.setHe(heVal, spxConfig->getLicType());
+    whereIgnored = index; // igfnorieren weitere Aufrufe für diesen index, GUI verändern
+    currRef->o2Spin->setValue(currGas.getO2());
+    currRef->heSpin->setValue(currGas.getHe());
+    whereIgnored = -1;
+    currRef->n2Line->setText( QString("%1").arg( currGas.getN2(), 2, 10, QChar('0')  ));
+    currRef->gasName->setText(currGas.getGasName());
     // TODO: Gas noch färben, je nach O2-Level
   }
 

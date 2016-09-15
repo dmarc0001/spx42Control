@@ -2,11 +2,9 @@
 
 namespace spx42
 {
-  SPX42Config::SPX42Config() :
-    licType( LicenseType::LIC_NITROX),
-    isValid( false )
+  SPX42Config::SPX42Config()
   {
-
+    reset();
   }
 
   LicenseType SPX42Config::getLicType() const
@@ -28,6 +26,8 @@ namespace spx42
 
   void SPX42Config::reset(void)
   {
+    isValid = false;
+    licType = LicenseType::LIC_NITROX;
     for( int i=0; i<8; i++)
     {
       gasList[0].reset();

@@ -19,6 +19,7 @@
 #include "utils/aboutDialog.hpp"
 #include "guiFragments/connectFragment.hpp"
 #include "guiFragments/gasFragment.hpp"
+#include "utils/SPX42Config.hpp"
 
 namespace Ui
 {
@@ -47,6 +48,7 @@ namespace spx42
       AppConfigClass cf;                                        //! Konfiguration aus Datei
       ApplicationTab currentTab;                                //! welcher Tab ist aktiv?
       QStringList tabTitle;                                     //! Tab Titel (nicht statisch, das Objekt gibts eh nur einmal)
+      SPX42Config spx42Config;                                  //! Konfiguration des verbundenen SPX42
 
     public:
       explicit SPX42ControlMainWin(QWidget *parent = 0);
