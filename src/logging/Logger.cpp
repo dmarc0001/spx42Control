@@ -1,5 +1,4 @@
-﻿
-#include "Logger.hpp"
+﻿#include "Logger.hpp"
 #include <QDateTime>
 #include <QFileInfo>
 
@@ -31,10 +30,10 @@ namespace spx42
     shutdown();
   }
 
-   /**
-   * @brief Logger::startLogging begine Logging, öffne Logfile
-   * @return
-   */
+  /**
+  * @brief Logger::startLogging begine Logging, öffne Logfile
+  * @return
+  */
   int Logger::startLogging(LgThreshold th)
   {
     threshold = th;
@@ -150,11 +149,11 @@ namespace spx42
    */
   void Logger::debug( const QString& msg )
   {
-      qDebug().noquote().nospace() << msg;
-      if( textStream != nullptr && threshold >= LG_DEBUG )
-      {
-        *textStream << getDateString() << DEBUG << msg << endl;
-      }
+    qDebug().noquote().nospace() << msg;
+    if( textStream != nullptr && threshold >= LG_DEBUG )
+    {
+      *textStream << getDateString() << DEBUG << msg << endl;
+    }
   }
 
   void Logger::debug( const char *msg )
@@ -181,29 +180,29 @@ namespace spx42
    */
   void Logger::crit( const QString& msg )
   {
-      qCritical().noquote().nospace() << msg;
-      if( textStream != nullptr && threshold >= LG_DEBUG )
-      {
-        *textStream << getDateString() << CRIT << msg << endl;
-      }
+    qCritical().noquote().nospace() << msg;
+    if( textStream != nullptr && threshold >= LG_DEBUG )
+    {
+      *textStream << getDateString() << CRIT << msg << endl;
+    }
   }
 
   void Logger::crit( const char *msg )
   {
-      qCritical().noquote().nospace() << msg;
-      if( textStream != nullptr && threshold >= LG_DEBUG )
-      {
-        *textStream << getDateString() << CRIT << msg << endl;
-      }
+    qCritical().noquote().nospace() << msg;
+    if( textStream != nullptr && threshold >= LG_DEBUG )
+    {
+      *textStream << getDateString() << CRIT << msg << endl;
+    }
   }
 
   void Logger::crit( const std::string& msg )
   {
-      qCritical().noquote().nospace() << msg.c_str();
-      if( textStream != nullptr && threshold >= LG_DEBUG )
-      {
-        *textStream << getDateString() << CRIT << msg.c_str() << endl;
-      }
+    qCritical().noquote().nospace() << msg.c_str();
+    if( textStream != nullptr && threshold >= LG_DEBUG )
+    {
+      *textStream << getDateString() << CRIT << msg.c_str() << endl;
+    }
   }
 
   void Logger::shutdown()

@@ -3,5 +3,4 @@ Release/
 Profile/
 build/
 *.qm
-*pro.user*
-
+*.pro.user

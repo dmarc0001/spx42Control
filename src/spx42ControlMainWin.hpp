@@ -69,7 +69,6 @@ namespace spx42
       void quitActionSlot( bool checked );                      //! ENDE wurde gefordert
       void tabCurrentChanged( int idx );                        //! TAB Index gewechselt
   };
-
 } // namespace spx42
 
 #endif // SPX42CONTROLMAINWIN_HPP

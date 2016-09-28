@@ -427,7 +427,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="QCheckBox" name="gas01bailpoutCheckBox">
+          <widget class="QCheckBox" name="gas01bailoutCheckBox">
            <property name="text">
             <string>Bailout</string>
            </property>
@@ -750,7 +750,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="QCheckBox" name="gas02bailpoutCheckBox">
+          <widget class="QCheckBox" name="gas02bailoutCheckBox">
            <property name="text">
             <string>Bailout</string>
            </property>
@@ -1073,7 +1073,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="QCheckBox" name="gas03bailpoutCheckBox">
+          <widget class="QCheckBox" name="gas03bailoutCheckBox">
            <property name="text">
             <string>Bailout</string>
            </property>
@@ -1396,7 +1396,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="QCheckBox" name="gas04bailpoutCheckBox">
+          <widget class="QCheckBox" name="gas04bailoutCheckBox">
            <property name="text">
             <string>Bailout</string>
            </property>
@@ -1719,7 +1719,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="QCheckBox" name="gas05bailpoutCheckBox">
+          <widget class="QCheckBox" name="gas05bailoutCheckBox">
            <property name="text">
             <string>Bailout</string>
            </property>
@@ -2042,7 +2042,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="QCheckBox" name="gas06bailpoutCheckBox">
+          <widget class="QCheckBox" name="gas06bailoutCheckBox">
            <property name="text">
             <string>Bailout</string>
            </property>
@@ -2365,7 +2365,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="QCheckBox" name="gas07bailpoutCheckBox">
+          <widget class="QCheckBox" name="gas07bailoutCheckBox">
            <property name="text">
             <string>Bailout</string>
            </property>
@@ -2688,7 +2688,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="QCheckBox" name="gas08bailpoutCheckBox">
+          <widget class="QCheckBox" name="gas08bailoutCheckBox">
            <property name="text">
             <string>Bailout</string>
            </property>

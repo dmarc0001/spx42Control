@@ -6,7 +6,8 @@
 #include "../logging/Logger.hpp"
 #include "../utils/SPX42Config.hpp"
 
-namespace Ui {
+namespace Ui
+{
   class ConnectForm;
 }
 

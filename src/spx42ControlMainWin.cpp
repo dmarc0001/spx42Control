@@ -43,11 +43,11 @@ namespace spx42
     }
     else
     {
-      #ifdef UNIX
+#ifdef UNIX
       setFont(QFont("Hack Regular", 11));
-      #else
+#else
       setFont(QFont("Hack Regular", 12));
-      #endif
+#endif
     }
     fillTabTitleArray();
     //
@@ -161,9 +161,9 @@ namespace spx42
   {
     try
     {
-    connect( ui->actionAbout, &QAction::triggered, this, &SPX42ControlMainWin::aboutActionSlot );
-    connect( ui->actionQUIT, &QAction::triggered, this, &SPX42ControlMainWin::quitActionSlot );
-    connect( ui->areaTabWidget, &QTabWidget::currentChanged, this, &SPX42ControlMainWin::tabCurrentChanged );
+      connect( ui->actionAbout, &QAction::triggered, this, &SPX42ControlMainWin::aboutActionSlot );
+      connect( ui->actionQUIT, &QAction::triggered, this, &SPX42ControlMainWin::quitActionSlot );
+      connect( ui->areaTabWidget, &QTabWidget::currentChanged, this, &SPX42ControlMainWin::tabCurrentChanged );
     }
     catch(std::exception ex )
     {
@@ -242,7 +242,10 @@ namespace spx42
     static bool ignore = false;
     QWidget *currObj;
 
-    if( ignore ) return;
+    if( ignore )
+    {
+      return;
+    }
     ignore = true;
     //
     // Neuen Inhalt des Tabs aufbauen

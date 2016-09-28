@@ -12,7 +12,7 @@ namespace spx42
     return licType;
   }
 
-  void SPX42Config::setLicType(const LicenseType &value)
+  void SPX42Config::setLicType(const LicenseType& value)
   {
     licType = value;
   }
@@ -20,7 +20,9 @@ namespace spx42
   SPX42Gas& SPX42Config::getGasAt( int num )
   {
     if( num < 0 || num > 7 )
+    {
       return( gasList[0] );
+    }
     return( gasList[num]);
   }
 

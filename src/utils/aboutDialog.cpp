@@ -8,7 +8,10 @@ namespace spx42
     lg( logger ),
     cf( conf )
   {
-    if( lg != Q_NULLPTR ) lg->debug("AboutDialog::AboutDialog...");
+    if( lg != Q_NULLPTR )
+    {
+      lg->debug("AboutDialog::AboutDialog...");
+    }
     //
     // Hilfebutton ausblenden
     //
@@ -19,7 +22,10 @@ namespace spx42
     ui->setupUi(this);
     // fixe Größe
     setFixedSize(this->width(),this->height());
-    if( lg != Q_NULLPTR ) lg->debug("AboutDialog::AboutDialog -> create and set LOGO...");
+    if( lg != Q_NULLPTR )
+    {
+      lg->debug("AboutDialog::AboutDialog -> create and set LOGO...");
+    }
     QImage image(":/images/logo_header450.png");
     ui->logoLabel->setPixmap(QPixmap::fromImage(image));
     ui->buildNumberLabel->setText(cf->getBuildDate());

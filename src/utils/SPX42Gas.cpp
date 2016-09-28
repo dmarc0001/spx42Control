@@ -32,7 +32,10 @@ namespace spx42
 
   int SPX42Gas::setO2(int value, LicenseType licType)
   {
-    if( value > 100 ) value = 100;
+    if( value > 100 )
+    {
+      value = 100;
+    }
     O2 = value;
     //
     switch( static_cast<qint8>(licType) )
@@ -41,12 +44,12 @@ namespace spx42
         He = 0;                                                                // Bei der Lizenz ist HE immer 0
       // weiter bei normoxic, dabei auch O2 auf Zulässigkeit testen
       case static_cast<qint8>(LicenseType::LIC_NORMOXIX ):
-        if( O2 < 21 )                                                       // Hier darf O2 nicht kleiner als 21%
+        if( O2 < 21 )                                                          // Hier darf O2 nicht kleiner als 21%
         {
           O2 = 21;
         }
         He = 100 - O2;
-        // weiter bei höheren Lizenzen, da darf O2 kleiner 21 und He darf auch
+      // weiter bei höheren Lizenzen, da darf O2 kleiner 21 und He darf auch
       case static_cast<qint8>(LicenseType::LIC_FULLTMX ):
       case static_cast<qint8>(LicenseType::LIC_MIL ):
         // Priorität hat O2, helium runter, wenn es nicht passt
@@ -66,7 +69,10 @@ namespace spx42
 
   int SPX42Gas::setHe(int value, LicenseType licType)
   {
-    if( value > 99 ) value = 100;
+    if( value > 99 )
+    {
+      value = 100;
+    }
     He = value;
     //
     switch( static_cast<qint8>(licType) )
@@ -83,7 +89,7 @@ namespace spx42
         {
           He = 78;
         }
-        // weiter bei höheren Lizenzen, da darf O2 kleiner 21 und He darf auch
+      // weiter bei höheren Lizenzen, da darf O2 kleiner 21 und He darf auch
       case static_cast<qint8>(LicenseType::LIC_FULLTMX ):
       case static_cast<qint8>(LicenseType::LIC_MIL ):
         // Priorität hat O2, helium runter, wenn es nicht passt
@@ -168,5 +174,4 @@ namespace spx42
     dType = DiluentType::DIL_NONE;
     isBaulout = false;
   }
-
 }

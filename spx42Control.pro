@@ -35,7 +35,6 @@ build_pass:CONFIG(debug, debug|release) {
 }
 unix:DEFINES                += UNIX
 
-
 SOURCES                                += \
                                           src/spx42ControlMainWin.cpp \
                                           src/controlMain.cpp \

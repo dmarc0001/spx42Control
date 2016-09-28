@@ -42,4 +42,4 @@ namespace spx42
       void reset(void );                              //! Alles auf Voreinstellung
   };
 }
-#endif // SPX42GAS_HPP
+#endif //   SPX42GAS_HPP
