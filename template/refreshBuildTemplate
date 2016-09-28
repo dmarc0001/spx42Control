@@ -6,7 +6,7 @@
 # Einstellungen
 #
 SOURCEDIR=$1
-BUILDCONFNAME=currBuildDef.hpp
+BUILDCONFNAME=CurrBuildDef.hpp
 #SCRIPTLOCATION=$(dirname "$(readlink -e "$0")")  #(windows kann kein readlink)
 SCRIPTLOCATION=$(dirname "$0")
 BUILDCONFIG="$SCRIPTLOCATION/$BUILDCONFNAME"
@@ -61,6 +61,7 @@ if [ "$SOURCEDIR" != "$SCRIPTLOCATION" ] ; then
   if [ -f "$BUILDCONFIG" ] ; then 
     echo "copy new build definition file..."
     cp -f $BUILDCONFIG $BUILDCONFDEST
+    rm -f $BUILDCONFIG  
   else
     echo "file not exist!"
     echo -e "\n"

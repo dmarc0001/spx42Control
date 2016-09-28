@@ -1,13 +1,12 @@
-﻿#include "connectFragment.hpp"
-#include "ui_connectFragment.h"
+﻿#include "ConnectFragment.hpp"
+#include "ui_ConnectFragment.h"
 
 namespace spx42
 {
   ConnectFragment::ConnectFragment(QWidget *parent, Logger *logger, SPX42Config *spxCfg ) :
     QWidget(parent),
-    ui(new Ui::ConnectForm),
-    lg(logger),
-    spxConfig(spxCfg)
+    IFragmentInterface(logger, spxCfg),
+    ui(new Ui::ConnectForm)
   {
     lg->debug( "ConnectForm::ConnectForm...");
     ui->setupUi(this);

@@ -32,45 +32,49 @@ UI_DIR                                 = ui
 build_pass:CONFIG(debug, debug|release) {
   unix: TARGET = $$join(TARGET,,,_debug)
   else: TARGET = $$join(TARGET,,,_D)
+  DEBUG=DEBUG
 }
-unix:DEFINES                += UNIX
+unix:DEFINES                           += UNIX
+DEFINES                                += $$DEBUG
 
 SOURCES                                += \
-                                          src/spx42ControlMainWin.cpp \
-                                          src/controlMain.cpp \
-                                          src/config/AppConfigClass.cpp \
-                                          src/config/ProjectConst.cpp \
+                                          src/Spx42ControlMainWin.cpp \
+                                          src/ControlMain.cpp \
+                                          src/Config/AppConfigClass.cpp \
+                                          src/Config/ProjectConst.cpp \
                                           src/logging/Logger.cpp \
-                                          src/utils/aboutDialog.cpp \
-                                          src/guiFragments/connectFragment.cpp \
-                                          src/guiFragments/gasFragment.cpp \
+                                          src/utils/AboutDialog.cpp \
+                                          src/guiFragments/ConnectFragment.cpp \
+                                          src/guiFragments/GasFragment.cpp \
                                           src/utils/SPX42Config.cpp \
-                                          src/utils/SPX42Gas.cpp
+                                          src/utils/SPX42Gas.cpp \
+                                          src/guiFragments/IFragmentInterface.cpp
 
 HEADERS                                += \
-                                          src/spx42ControlMainWin.hpp \
+                                          src/Spx42ControlMainWin.hpp \
                                           src/config/AppConfigClass.hpp \
                                           src/config/ProjectConst.hpp \
                                           src/logging/Logger.hpp \
-                                          src/config/currBuildDef.hpp \
-                                          src/utils/aboutDialog.hpp \
-                                          src/guiFragments/connectFragment.hpp \
-                                          src/guiFragments/gasFragment.hpp \
+                                          src/config/CurrBuildDef.hpp \
+                                          src/utils/AboutDialog.hpp \
+                                          src/guiFragments/ConnectFragment.hpp \
+                                          src/guiFragments/GasFragment.hpp \
                                           src/utils/SPX42Config.hpp \
                                           src/utils/SPX42Gas.hpp \
-                                          src/utils/SPX42Defs.hpp
+                                          src/utils/SPX42Defs.hpp \
+                                          src/guiFragments/IFragmentInterface.hpp
 
 FORMS                                  += \
-                                          src/ui/spx42controlmainwin.ui \
-                                          src/ui/aboutdialog.ui \
-                                          src/ui/gasFragment.ui \
-                                          src/ui/connectFragment.ui
+                                          src/ui/Spx42ControlMainWin.ui \
+                                          src/ui/AboutDialog.ui \
+                                          src/ui/GasFragment.ui \
+                                          src/ui/ConnectFragment.ui
 
 RESOURCES                              = \
-                                          src/res/spx42ControlRes.qrc
+                                          src/res/Spx42ControlRes.qrc
 
 TRANSLATIONS                           = \
-                                          src/translations/spx42Control_de_DE.ts
+                                          src/translations/Spx42Control_de_DE.ts
 
 
 ###############################################################################

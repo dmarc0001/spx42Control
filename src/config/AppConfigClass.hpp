@@ -5,7 +5,7 @@
 #include <QSettings>
 #include <QVector>
 
-#include "currBuildDef.hpp"
+#include "CurrBuildDef.hpp"
 
 namespace spx42
 {

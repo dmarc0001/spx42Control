@@ -5,6 +5,7 @@
 
 #include "../logging/Logger.hpp"
 #include "../utils/SPX42Config.hpp"
+#include "IFragmentInterface.hpp"
 
 namespace Ui
 {
@@ -13,13 +14,11 @@ namespace Ui
 
 namespace spx42
 {
-  class ConnectFragment : public QWidget
+  class ConnectFragment : public QWidget, IFragmentInterface
   {
     private:
       Q_OBJECT
       Ui::ConnectForm *ui;                                      //! Zeiger auf die GUI Objekte
-      Logger *lg;                                               //! Zeiger auf das Log-Objekt
-      SPX42Config *spxConfig;                                   //! Zeiger auf das SPX42 Config Objekt
 
     public:
       explicit ConnectFragment(QWidget *parent, Logger *logger , SPX42Config *spxCfg); //! Konstruktor

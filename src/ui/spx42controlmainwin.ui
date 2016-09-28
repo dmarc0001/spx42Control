@@ -60,7 +60,7 @@
        <enum>QTabWidget::West</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -106,8 +106,24 @@
     </property>
     <addaction name="actionSettings"/>
    </widget>
+   <widget class="QMenu" name="menuDEBUGGING">
+    <property name="title">
+     <string>DEBUGGING</string>
+    </property>
+    <widget class="QMenu" name="menuLizences">
+     <property name="title">
+      <string>Lizences</string>
+     </property>
+     <addaction name="actionNitrox"/>
+     <addaction name="actionNormoxic_TMX"/>
+     <addaction name="actionFull_TMX"/>
+     <addaction name="actionMilitary"/>
+    </widget>
+    <addaction name="menuLizences"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
+   <addaction name="menuDEBUGGING"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -130,7 +146,7 @@
   <widget class="QStatusBar" name="mainStatusBar"/>
   <action name="actionQUIT">
    <property name="icon">
-    <iconset resource="../res/spx42ControlRes.qrc">
+    <iconset resource="../res/Spx42ControlRes.qrc">
      <normaloff>:/icons/ic_power_settings_new.png</normaloff>
      <activeoff>:/icons/ic_power_settings_new_blue.png</activeoff>:/icons/ic_power_settings_new.png</iconset>
    </property>
@@ -149,7 +165,7 @@
   </action>
   <action name="actionAbout">
    <property name="icon">
-    <iconset resource="../res/spx42ControlRes.qrc">
+    <iconset resource="../res/Spx42ControlRes.qrc">
      <normaloff>:/icons/ic_help_outline.png</normaloff>
      <activeoff>:/icons/ic_help_outline_blue.png</activeoff>:/icons/ic_help_outline.png</iconset>
    </property>
@@ -159,10 +175,13 @@
    <property name="statusTip">
     <string>About this application...</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::AboutRole</enum>
+   </property>
   </action>
   <action name="actionOpenDB">
    <property name="icon">
-    <iconset resource="../res/spx42ControlRes.qrc">
+    <iconset resource="../res/Spx42ControlRes.qrc">
      <normaloff>:/icons/ic_folder_open.png</normaloff>
      <activeoff>:/icons/ic_folder_open_blue.png</activeoff>:/icons/ic_folder_open.png</iconset>
    </property>
@@ -181,7 +200,7 @@
   </action>
   <action name="actionActionPrint">
    <property name="icon">
-    <iconset resource="../res/spx42ControlRes.qrc">
+    <iconset resource="../res/Spx42ControlRes.qrc">
      <normaloff>:/icons/ic_print.png</normaloff>
      <activeoff>:/icons/ic_folder_open_blue.png</activeoff>:/icons/ic_print.png</iconset>
    </property>
@@ -200,7 +219,7 @@
   </action>
   <action name="actionSettings">
    <property name="icon">
-    <iconset resource="../res/spx42ControlRes.qrc">
+    <iconset resource="../res/Spx42ControlRes.qrc">
      <normaloff>:/icons/ic_settings.png</normaloff>
      <activeoff>:/icons/ic_settings_blue.png</activeoff>:/icons/ic_settings.png</iconset>
    </property>
@@ -219,7 +238,7 @@
   </action>
   <action name="actionConnectBluetooth">
    <property name="icon">
-    <iconset resource="../res/spx42ControlRes.qrc">
+    <iconset resource="../res/Spx42ControlRes.qrc">
      <normaloff>:/icons/ic_bluetooth_black_24dp_1x.png</normaloff>
      <activeoff>:/icons/ic_bluetooth_black_24dp_1x_blue.png</activeoff>:/icons/ic_bluetooth_black_24dp_1x.png</iconset>
    </property>
@@ -233,10 +252,45 @@
     <string>Bluetooth switch and status...</string>
    </property>
   </action>
+  <action name="actionNitrox">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Nitrox</string>
+   </property>
+  </action>
+  <action name="actionNormoxic_TMX">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Normoxic TMX</string>
+   </property>
+  </action>
+  <action name="actionFull_TMX">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Full TMX</string>
+   </property>
+  </action>
+  <action name="actionMilitary">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Military</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="../res/spx42ControlRes.qrc"/>
+  <include location="../res/Spx42ControlRes.qrc"/>
  </resources>
  <connections/>
 </ui>
