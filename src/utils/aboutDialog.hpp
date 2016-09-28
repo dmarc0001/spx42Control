@@ -24,4 +24,5 @@ namespace spx42
 
   };
 }
+
 #endif // ABOUTDIALOG_HPP

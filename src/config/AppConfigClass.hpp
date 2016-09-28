@@ -32,11 +32,11 @@ namespace spx42
       AppConfigClass( void );                                   //! Konstruktor
       virtual ~AppConfigClass();                                //! Destruktor
       bool loadSettings(void );                                 //! lade Einstellungen aus default Konfigdatei
-      bool loadSettings( QString &configFile );                 //! lade Einstellungen aus benannter Konfigdatei
+      bool loadSettings( QString& configFile );                 //! lade Einstellungen aus benannter Konfigdatei
       bool saveSettings(void );                                 //! sichere Einstellungen
       QString getConfigFile(void) const;                        //! Name der Konfigdatei ausgeben
       QString getLogfileName(void) const;                       //! Name der Logdatei ausgeben
-      void setLogfileName(const QString &value);                //! Name der Logdatei setzten
+      void setLogfileName(const QString& value);                //! Name der Logdatei setzten
       int getWatchdogTime(void);                                //! Wert des Watchdog holen
       void setLogThreshold( qint8 th );                         //! setzte Loggingstufe in Config
       qint8 getLogTreshold(void);                               //! hole Loggingstufe aus config
@@ -45,14 +45,13 @@ namespace spx42
 
     private:
       // Logeinstellungen
-      bool loadLogSettings(QSettings &settings);
-      void makeDefaultLogSettings( QSettings &settings );
-      bool saveLogSettings(QSettings &settings);
+      bool loadLogSettings(QSettings& settings);
+      void makeDefaultLogSettings( QSettings& settings );
+      bool saveLogSettings(QSettings& settings);
       // allg. Programmeinstellungen
-      bool loadAppSettings( QSettings &settings);
-      void makeAppDefaultSettings( QSettings &settings );
-      bool saveAppSettings(QSettings &settings);
+      bool loadAppSettings( QSettings& settings);
+      void makeAppDefaultSettings( QSettings& settings );
+      bool saveAppSettings(QSettings& settings);
   };
 }
 #endif // LOGGERCLASS_HPP
-

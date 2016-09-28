@@ -4,7 +4,6 @@
 
 #include "AppConfigClass.hpp"
 
-
 namespace spx42
 {
   const QString AppConfigClass::constBuildDate = SPX_BUILDTIME;
@@ -66,7 +65,7 @@ namespace spx42
    * @param cFile
    * @return
    */
-  bool AppConfigClass::loadSettings( QString &cFile)
+  bool AppConfigClass::loadSettings( QString& cFile)
   {
     qDebug().noquote() << "AppConfigClass::loadSettings(" << cFile << ")";
     configFile = cFile;
@@ -128,7 +127,7 @@ namespace spx42
    * @brief AppConfigClass::setLogfileName Setze den Dateinamen des LOGFILES
    * @param value
    */
-  void AppConfigClass::setLogfileName(const QString &value)
+  void AppConfigClass::setLogfileName(const QString& value)
   {
     logfileName = value;
   }
@@ -138,7 +137,7 @@ namespace spx42
    * @param settings
    * @return
    */
-  bool AppConfigClass::loadLogSettings(QSettings &settings)
+  bool AppConfigClass::loadLogSettings(QSettings& settings)
   {
     bool retval = true;
     qDebug().noquote() << "AppConfigClass::loadLogSettings()";
@@ -170,7 +169,7 @@ namespace spx42
    * @brief AppConfigClass::makeDefaultLogSettings Erzeuge VORGABE Einstellungen für LOGGING
    * @param settings
    */
-  void AppConfigClass::makeDefaultLogSettings( QSettings &settings )
+  void AppConfigClass::makeDefaultLogSettings( QSettings& settings )
   {
     qDebug().noquote() << "AppConfigClass::makeDefaultLogSettings()";
     //
@@ -193,7 +192,7 @@ namespace spx42
    * @param settings
    * @return
    */
-  bool AppConfigClass::saveLogSettings(QSettings &settings)
+  bool AppConfigClass::saveLogSettings(QSettings& settings)
   {
     qDebug().noquote().nospace() << "AppConfigClass::saveLogSettings() DATEI: <" + configFile + ">";
     //
@@ -230,7 +229,7 @@ namespace spx42
     return( logThreshold );
   }
 
-  bool AppConfigClass::loadAppSettings( QSettings &settings)
+  bool AppConfigClass::loadAppSettings( QSettings& settings)
   {
     bool retval = true;
     qDebug().noquote() << "AppConfigClass::loadAppSettings()";
@@ -268,7 +267,7 @@ namespace spx42
     return( retval );
   }
 
-  void AppConfigClass::makeAppDefaultSettings( QSettings &settings )
+  void AppConfigClass::makeAppDefaultSettings( QSettings& settings )
   {
     qDebug().noquote() << "AppConfigClass::makeAppDefaultSettings()";
     //
@@ -288,7 +287,7 @@ namespace spx42
     settings.endGroup();
   }
 
-  bool AppConfigClass::saveAppSettings(QSettings &settings)
+  bool AppConfigClass::saveAppSettings(QSettings& settings)
   {
     //
     // Öffne die Gruppe Logeinstellungen

@@ -1,11 +1,4 @@
-﻿/*
- * logger.hpp
- *
- *  Created on: 30.05.2016
- *      Author: dmarc
- */
-
-#ifndef SRC_LOGGING_LOGGER_HPP_
+﻿#ifndef SRC_LOGGING_LOGGER_HPP_
 #define SRC_LOGGING_LOGGER_HPP_
 #include <QtGlobal>
 #include <QString>

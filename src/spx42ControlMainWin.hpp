@@ -1,6 +1,8 @@
 ﻿#ifndef SPX42CONTROLMAINWIN_HPP
 #define SPX42CONTROLMAINWIN_HPP
 
+#include <memory>
+
 #include <QMainWindow>
 #include <QFontDatabase>
 #include <QMessageBox>
@@ -9,13 +11,15 @@
 #include <QTimer>
 #include <QTabWidget>
 #include <QCloseEvent>
+#include <QStringList>
 
 #include "config/ProjectConst.hpp"
 #include "logging/Logger.hpp"
 #include "config/AppConfigClass.hpp"
 #include "utils/aboutDialog.hpp"
-#include "guiFragments/connectForm.hpp"
-#include "guiFragments/gasForm.hpp"
+#include "guiFragments/connectFragment.hpp"
+#include "guiFragments/gasFragment.hpp"
+#include "utils/SPX42Config.hpp"
 
 namespace Ui
 {
@@ -28,7 +32,7 @@ namespace Ui
 namespace spx42
 {
   //! Welcher Tab ist aktiv
-  enum class ApplicationTab : int { CONNECT_TAB, GAS_TAB };
+  enum class ApplicationTab : int { CONNECT_TAB, GAS_TAB, COUNT_OF_TABS };
   //! Welcher Status ist aktiv
   enum class ApplicationStat : int { STAT_OFFLINE, STAT_ONLINE, STAT_ERROR };
 
@@ -42,8 +46,9 @@ namespace spx42
       ApplicationStat currentStatus;                            //! welchen Status hat die App?
       int watchdogTimer;                                        //! Zeitspanne zum Timeout
       AppConfigClass cf;                                        //! Konfiguration aus Datei
-      QTabWidget *myTab;                                        //! Zeiger auf das TabWidget
       ApplicationTab currentTab;                                //! welcher Tab ist aktiv?
+      QStringList tabTitle;                                     //! Tab Titel (nicht statisch, das Objekt gibts eh nur einmal)
+      SPX42Config spx42Config;                                  //! Konfiguration des verbundenen SPX42
 
     public:
       explicit SPX42ControlMainWin(QWidget *parent = 0);
@@ -52,23 +57,17 @@ namespace spx42
 
     private:
       bool createLogger( AppConfigClass *cf );                  //! Erzeuge den Logger
+      void fillTabTitleArray( void );                           //! Fülle das Titelarray lokalisiert
       bool setActionStati( void );                              //! setze Actions entsprchend des Status
       bool connectActions( void );                              //! Verbinde Actions mit Slots
       void createApplicationTabs( void );                       //! Erzeuge die (noch leeren) Tabs
+      void clearApplicationTabs( void );                        //! Leere die eventuell vorhandenen Tab-Objekte
       ApplicationTab getApplicationTab( void );                 //! Welcher Tab war noch aktiv?
 
     private slots:
       void aboutActionSlot( bool checked );                     //! ABOUT wurde gefordert
       void quitActionSlot( bool checked );                      //! ENDE wurde gefordert
       void tabCurrentChanged( int idx );                        //! TAB Index gewechselt
-  };
-
-  class UpdatesEnabledHelper
-  {
-      QWidget* m_parentWidget;
-  public:
-      UpdatesEnabledHelper(QWidget* parentWidget) : m_parentWidget(parentWidget) { parentWidget->setUpdatesEnabled(false); }
-      ~UpdatesEnabledHelper() { m_parentWidget->setUpdatesEnabled(true); }
   };
 } // namespace spx42
 

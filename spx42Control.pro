@@ -35,7 +35,6 @@ build_pass:CONFIG(debug, debug|release) {
 }
 unix:DEFINES                += UNIX
 
-
 SOURCES                                += \
                                           src/spx42ControlMainWin.cpp \
                                           src/controlMain.cpp \
@@ -43,8 +42,10 @@ SOURCES                                += \
                                           src/config/ProjectConst.cpp \
                                           src/logging/Logger.cpp \
                                           src/utils/aboutDialog.cpp \
-                                          src/guiFragments/connectForm.cpp \
-                                          src/guiFragments/gasForm.cpp
+                                          src/guiFragments/connectFragment.cpp \
+                                          src/guiFragments/gasFragment.cpp \
+                                          src/utils/SPX42Config.cpp \
+                                          src/utils/SPX42Gas.cpp
 
 HEADERS                                += \
                                           src/spx42ControlMainWin.hpp \
@@ -53,14 +54,17 @@ HEADERS                                += \
                                           src/logging/Logger.hpp \
                                           src/config/currBuildDef.hpp \
                                           src/utils/aboutDialog.hpp \
-                                          src/guiFragments/connectForm.hpp \
-                                          src/guiFragments/gasForm.hpp
+                                          src/guiFragments/connectFragment.hpp \
+                                          src/guiFragments/gasFragment.hpp \
+                                          src/utils/SPX42Config.hpp \
+                                          src/utils/SPX42Gas.hpp \
+                                          src/utils/SPX42Defs.hpp
 
 FORMS                                  += \
                                           src/ui/spx42controlmainwin.ui \
                                           src/ui/aboutdialog.ui \
-                                          src/ui/connectForm.ui \
-                                          src/ui/gasForm.ui
+                                          src/ui/gasFragment.ui \
+                                          src/ui/connectFragment.ui
 
 RESOURCES                              = \
                                           src/res/spx42ControlRes.qrc

@@ -43,16 +43,13 @@ namespace spx42
     }
     else
     {
-      #ifdef UNIX
+#ifdef UNIX
       setFont(QFont("Hack Regular", 11));
-      #else
+#else
       setFont(QFont("Hack Regular", 12));
-      #endif
+#endif
     }
-    //
-    // Actions mit den richtigen Slots verbinden
-    //
-    connectActions();
+    fillTabTitleArray();
     //
     // setze Action Stati
     //
@@ -60,8 +57,13 @@ namespace spx42
     //
     // TAB initialisieren
     //
-    myTab = ui->areaTabWidget;
     createApplicationTabs();
+    //
+    // Actions mit den richtigen Slots verbinden
+    //
+    ui->areaTabWidget->setCurrentIndex(0);
+    tabCurrentChanged( 0 );
+    connectActions();
   }
 
   SPX42ControlMainWin::~SPX42ControlMainWin()
@@ -118,6 +120,14 @@ namespace spx42
     return (false);
   }
 
+  void SPX42ControlMainWin::fillTabTitleArray( void )
+  {
+    tabTitle.clear();
+    tabTitle << tr("Connection");   // CONNECT_TAB
+    tabTitle << tr("Gas Lists");    // GAS_TAB
+  }
+
+
   bool SPX42ControlMainWin::setActionStati( void )
   {
     switch( currentStatus )
@@ -151,9 +161,9 @@ namespace spx42
   {
     try
     {
-    connect( ui->actionAbout, &QAction::triggered, this, &SPX42ControlMainWin::aboutActionSlot );
-    connect( ui->actionQUIT, &QAction::triggered, this, &SPX42ControlMainWin::quitActionSlot );
-    connect( ui->areaTabWidget, &QTabWidget::currentChanged, this, &SPX42ControlMainWin::tabCurrentChanged );
+      connect( ui->actionAbout, &QAction::triggered, this, &SPX42ControlMainWin::aboutActionSlot );
+      connect( ui->actionQUIT, &QAction::triggered, this, &SPX42ControlMainWin::quitActionSlot );
+      connect( ui->areaTabWidget, &QTabWidget::currentChanged, this, &SPX42ControlMainWin::tabCurrentChanged );
     }
     catch(std::exception ex )
     {
@@ -165,21 +175,48 @@ namespace spx42
 
   void SPX42ControlMainWin::createApplicationTabs( void )
   {
-    QWidget *wg;
-
-    myTab->clear();
+    //
+    // lasse die TAB-Inhalte verschwinden
+    //
+    while (ui->areaTabWidget->count() )
+    {
+      QWidget *canDel = ui->areaTabWidget->widget(0);
+      ui->areaTabWidget->removeTab(0);
+      delete canDel;
+    }
     //
     // der Connect Tab Platzhalter
     //
-    wg = new QWidget();
-    wg->setObjectName(tr("Connect Tab"));
-    myTab->addTab(wg, QString(tr("Connect")));
+    QWidget *wg1 = new QWidget();
+    wg1->setObjectName("DUMMY");
+    ui->areaTabWidget->addTab(wg1, tabTitle.at(0));
     //
     // der Gaslisten-Platzhalter
     //
-    wg = new QWidget();
-    wg->setObjectName(tr("Gas Tab"));
-    myTab->addTab(wg, QString(tr("Gases")));
+    QWidget *wg2 = new QWidget();
+    wg2->setObjectName("DUMMY");
+    ui->areaTabWidget->addTab(wg2, tabTitle.at(1));
+    // FIXME wieder löschen
+    clearApplicationTabs();
+  }
+
+  void SPX42ControlMainWin::clearApplicationTabs( void )
+  {
+    for( int i = 0; i < ui->areaTabWidget->count(); i++ )
+    {
+      QWidget *currObj = ui->areaTabWidget->widget( i );
+      if( ! QString(currObj->metaObject()->className()).startsWith( "QWidget" ) )
+      {
+        lg->debug( QString("SPX42ControlMainWin::clearApplicationTabs -> <%1> should delete").arg(currObj->objectName()) );
+        QString title = ui->areaTabWidget->tabText( i ).append("-D");
+        ui->areaTabWidget->removeTab(i);
+        delete currObj;
+        currObj = new QWidget();
+        currObj->setObjectName("DUMMY");
+        ui->areaTabWidget->insertTab( i, currObj, title );
+        //ui->areaTabWidget->insertTab( i, currObj, "deleted" );
+      }
+    }
   }
 
   ApplicationTab SPX42ControlMainWin::getApplicationTab( void )
@@ -202,42 +239,45 @@ namespace spx42
 
   void SPX42ControlMainWin::tabCurrentChanged( int idx )
   {
-    QWidget *wg;
-    //
-    // Alle Childs entfernen
-    //
-    lg->debug("SPX42ControlMainWin::tabCurrentChanged -> delete all widget children");
-    for( int i = 0; i < myTab->count(); i++ )
+    static bool ignore = false;
+    QWidget *currObj;
+
+    if( ignore )
     {
-      QWidget *parentWidget = myTab->widget( i );
-      UpdatesEnabledHelper helper(parentWidget);
-      qDeleteAll(parentWidget->findChildren<QWidget*>("", Qt::FindDirectChildrenOnly));
-      delete parentWidget->layout();
+      return;
     }
+    ignore = true;
     //
     // Neuen Inhalt des Tabs aufbauen
     //
     lg->debug(QString("SPX42ControlMainWin::tabCurrentChanged -> new index <%1>").arg(idx, 2, 10, QChar('0')));
+    clearApplicationTabs();
+
+    QWidget *oldTab = ui->areaTabWidget->widget(idx);
+    ui->areaTabWidget->removeTab(idx);
+    delete oldTab;
+
     switch( idx )
     {
       //default:
       case static_cast<int>(ApplicationTab::CONNECT_TAB):
         lg->debug("SPX42ControlMainWin::setApplicationTab -> CONNECT TAB...");
-        wg = new ConnectForm( myTab->widget(idx), lg);
-        wg->setObjectName(tr("Connect Tab"));
+        currObj = new ConnectFragment( Q_NULLPTR, lg, &spx42Config);
+        currObj->setObjectName(tr("Connect Tab"));
+        ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at(static_cast<int>(ApplicationTab::CONNECT_TAB)) );
         currentTab = ApplicationTab::CONNECT_TAB;
         break;
 
       case static_cast<int>(ApplicationTab::GAS_TAB):
         lg->debug("SPX42ControlMainWin::setApplicationTab -> GAS TAB...");
-        /*
-        wg = new GasForm(myTab, lg);
-        wg->setObjectName(tr("Gas Tab"));
-        myTab->addTab(wg, QString(tr("Gas")));
-        */
+        //gasForm = std::shared_ptr<GasFragment>(new GasFragment( ui->areaTabWidget->widget(idx), lg));
+        currObj = new GasFragment( Q_NULLPTR, lg, &spx42Config);
+        currObj->setObjectName(tr("Gas Tab"));
+        ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at(static_cast<int>(ApplicationTab::GAS_TAB)) );
         currentTab = ApplicationTab::GAS_TAB;
         break;
     }
-
+    ui->areaTabWidget->setCurrentIndex(idx);
+    ignore = false;
   }
 }
