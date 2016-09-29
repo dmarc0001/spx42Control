@@ -1,5 +1,5 @@
-﻿#include "spx42ControlMainWin.hpp"
-#include "ui_spx42controlmainwin.h"
+﻿#include "Spx42ControlMainWin.hpp"
+#include "ui_Spx42controlmainwin.h"
 
 namespace spx42
 {
@@ -43,12 +43,21 @@ namespace spx42
     }
     else
     {
-#ifdef UNIX
+    #ifdef UNIX
       setFont(QFont("Hack Regular", 11));
-#else
+    #else
       setFont(QFont("Hack Regular", 12));
-#endif
+    #endif
     }
+    //
+    // das folgende wird nur kompiliert, wenn DEBUG NICHT konfiguriert ist
+    //
+    #ifndef DEBUG
+    ui->menuDEBUGGING->clear();
+    ui->menuDEBUGGING->setParent(Q_NULLPTR);
+    delete ( ui->menuDEBUGGING );
+    #endif
+    //
     fillTabTitleArray();
     //
     // setze Action Stati
@@ -164,6 +173,12 @@ namespace spx42
       connect( ui->actionAbout, &QAction::triggered, this, &SPX42ControlMainWin::aboutActionSlot );
       connect( ui->actionQUIT, &QAction::triggered, this, &SPX42ControlMainWin::quitActionSlot );
       connect( ui->areaTabWidget, &QTabWidget::currentChanged, this, &SPX42ControlMainWin::tabCurrentChanged );
+  #ifdef DEBUG
+      connect( ui->actionNitrox, &QAction::triggered, this, [=] (bool tr) { if( tr ) licenseChanged( LicenseType::LIC_NITROX ); } );
+      connect( ui->actionNormoxic_TMX, &QAction::triggered, this, [=] (bool tr) { if( tr ) licenseChanged( LicenseType::LIC_NORMOXIX ); } );
+      connect( ui->actionFull_TMX, &QAction::triggered, this, [=] (bool tr) { if( tr ) licenseChanged( LicenseType::LIC_FULLTMX ); } );
+      connect( ui->actionMilitary, &QAction::triggered, this, [=] (bool tr) { if( tr ) licenseChanged( LicenseType::LIC_MIL ); } );
+  #endif
     }
     catch(std::exception ex )
     {
@@ -279,5 +294,40 @@ namespace spx42
     }
     ui->areaTabWidget->setCurrentIndex(idx);
     ignore = false;
+  }
+
+  void SPX42ControlMainWin::licenseChanged(LicenseType lic)
+  {
+    lg->debug( QString("SPX42ControlMainWin::licenseChanged -> set: %1").arg(static_cast<int>(lic)) );
+    spx42Config.setLicType( lic );
+    //
+    // das folgende wird nur kompiliert, wenn DEBUG konfiguriert ist
+    //
+    #ifdef DEBUG
+    switch( static_cast<int>(lic) )
+    {
+      case static_cast<int>(LicenseType::LIC_NITROX):
+        ui->actionNormoxic_TMX->setChecked(false);
+        ui->actionFull_TMX->setChecked(false);
+        ui->actionMilitary->setChecked(false);
+        break;
+      case static_cast<int>(LicenseType::LIC_NORMOXIX):
+        ui->actionNitrox->setChecked(false);
+        ui->actionFull_TMX->setChecked(false);
+        ui->actionMilitary->setChecked(false);
+        break;
+      case static_cast<int>(LicenseType::LIC_FULLTMX):
+        ui->actionNitrox->setChecked(false);
+        ui->actionNormoxic_TMX->setChecked(false);
+        ui->actionMilitary->setChecked(false);
+        break;
+      case static_cast<int>(LicenseType::LIC_MIL):
+        ui->actionNitrox->setChecked(false);
+        ui->actionNormoxic_TMX->setChecked(false);
+        ui->actionFull_TMX->setChecked(false);
+        break;
+    }
+
+    #endif
   }
 }

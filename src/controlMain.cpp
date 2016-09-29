@@ -5,7 +5,7 @@
 #include <QDebug>
 #include <QDir>
 
-#include "spx42ControlMainWin.hpp"
+#include "Spx42ControlMainWin.hpp"
 
 int main(int argc, char *argv[])
 {

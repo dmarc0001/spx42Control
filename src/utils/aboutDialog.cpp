@@ -1,4 +1,4 @@
-﻿#include "aboutDialog.hpp"
+﻿#include "AboutDialog.hpp"
 
 namespace spx42
 {

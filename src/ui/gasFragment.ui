@@ -82,7 +82,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="gaslistHeaderLabel">
         <property name="font">
          <font>
           <pointsize>14</pointsize>
@@ -91,7 +91,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Gaslist SPX42 Serial [0x2cf3a56712]</string>
+         <string>Gaslist SPX42 Serial [0x2cf3a56712] Lic: NITROX</string>
         </property>
        </widget>
       </item>

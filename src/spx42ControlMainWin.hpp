@@ -16,9 +16,9 @@
 #include "config/ProjectConst.hpp"
 #include "logging/Logger.hpp"
 #include "config/AppConfigClass.hpp"
-#include "utils/aboutDialog.hpp"
-#include "guiFragments/connectFragment.hpp"
-#include "guiFragments/gasFragment.hpp"
+#include "utils/AboutDialog.hpp"
+#include "guiFragments/ConnectFragment.hpp"
+#include "guiFragments/GasFragment.hpp"
 #include "utils/SPX42Config.hpp"
 
 namespace Ui
@@ -68,6 +68,7 @@ namespace spx42
       void aboutActionSlot( bool checked );                     //! ABOUT wurde gefordert
       void quitActionSlot( bool checked );                      //! ENDE wurde gefordert
       void tabCurrentChanged( int idx );                        //! TAB Index gewechselt
+      void licenseChanged( LicenseType lic );                   //! Lizenztyp getriggert
   };
 } // namespace spx42
 

@@ -1,5 +1,5 @@
-﻿#include "gasFragment.hpp"
-#include "ui_gasFragment.h"
+﻿#include "GasFragment.hpp"
+#include "ui_GasFragment.h"
 
 namespace spx42
 {
@@ -35,9 +35,8 @@ namespace spx42
 
   GasFragment::GasFragment(QWidget *parent, Logger *logger, SPX42Config *spxCfg) :
     QWidget(parent),
+    IFragmentInterface(logger, spxCfg),
     ui(new Ui::GasForm),
-    lg(logger),
-    spxConfig( spxCfg ),
     areSlotsConnected( false )
   {
     lg->debug( "GasForm::GasForm...");
@@ -145,6 +144,10 @@ namespace spx42
     {
       disconnectSlots();
     }
+    ui->gaslistHeaderLabel->setText( QString(tr("Gaslist SPX42 Serial [%1] Lic: %2")
+                                             .arg(spxConfig->getSerialNumber())
+                                             .arg(spxConfig->getLicName()))
+                                     );
     for( int i = 0; i < 8; i++ )
     {
       SPX42Gas& currGas = spxConfig->getGasAt(i);
@@ -174,6 +177,7 @@ namespace spx42
       connect( gRef[i]->dil2CheckBox, &QCheckBox::stateChanged, this,  [=] (int state) { gasUseTypChange( i, DiluentType::DIL_02, state ); });
       connect( gRef[i]->baCheckBox, &QCheckBox::stateChanged, this,  [=] (int state) { baCheckChange( i, state ); });
     }
+    connect( spxConfig, &SPX42Config::licenseChanged, this, &GasFragment::licChangedSlot );
   }
 
   void GasFragment::disconnectSlots( void )
@@ -186,6 +190,7 @@ namespace spx42
       connect( gRef[i]->heSpin, 0, 0, 0 );
       connect( gRef[i]->o2Spin, 0, 0, 0 );
     }
+    connect( spxConfig, 0, 0, 0 );
   }
 
   void GasFragment::spinO2ValueChanged( int index, int o2Val )
@@ -238,6 +243,31 @@ namespace spx42
     currRef->n2Line->setText( QString("%1").arg( currGas.getN2(), 2, 10, QChar('0')  ));
     currRef->gasName->setText(currGas.getGasName());
     // TODO: Gas noch färben, je nach O2-Level
+  }
+
+  void GasFragment::checkGases( void )
+  {
+    for( int i=0; i<8; i++ )
+    {
+      SPX42Gas& currGas = spxConfig->getGasAt( i );
+      GasFragmentGuiRef *currRef = gRef[ i ];
+      int currHe = currGas.getHe();
+      int currO2 = currGas.getO2();
+      //
+      int current = currGas.setHe( currGas.getHe(), spxConfig->getLicType());
+      if( currHe != current)
+      {
+        // GUI setzten
+        currRef->heSpin->setValue( current );
+      }
+
+      current = currGas.setO2( currGas.getO2(), spxConfig->getLicType());
+      if( currO2 != current )
+      {
+        // GUI setzten
+        currRef->o2Spin->setValue( current );
+      }
+    }
   }
 
   void GasFragment::gasUseTypChange(int index, DiluentType which, int state )
@@ -303,5 +333,16 @@ namespace spx42
     {
       spxConfig->getGasAt(index).setBailout(false);
     }
+  }
+
+  void GasFragment::licChangedSlot( LicenseType lic )
+  {
+    lg->debug( QString("GasFragment::licChangedSlot -> set: %1").arg(static_cast<int>(lic)) );
+    ui->gaslistHeaderLabel->setText( QString(tr("Gaslist SPX42 Serial [%1] Lic: %2")
+                                             .arg(spxConfig->getSerialNumber())
+                                             .arg(spxConfig->getLicName()))
+                                     );
+    checkGases();
+    // TODO: GUI überarbeiten!
   }
 }

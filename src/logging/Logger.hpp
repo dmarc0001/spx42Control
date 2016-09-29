@@ -23,10 +23,10 @@ namespace spx42
       QDateTime dateTime;                                       //! das lokale Datum/Zeit objekt
       const AppConfigClass *configClass;                        //! Zeiger auf die Konfiguration
       static const QString dateTimeFormat;                      //! Format der Zeitausgabe
-      static const QString DEBUG;                               //! String für Debuglevel
-      static const QString INFO;                                //! String für Infolevel
-      static const QString WARN;                                //! String für Warnlevel
-      static const QString CRIT;                                //! String für Kritischen level
+      static const QString DEBUG_STR;                           //! String für Debuglevel
+      static const QString INFO_STR;                            //! String für Infolevel
+      static const QString WARN_STR;                            //! String für Warnlevel
+      static const QString CRIT_STR;                            //! String für Kritischen level
 
     public:
       Logger( const AppConfigClass *_config );                  //! Konstruktor mit Zeiger auf das Konfig-Objekt

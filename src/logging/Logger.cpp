@@ -6,10 +6,10 @@
 namespace spx42
 {
   const QString Logger::dateTimeFormat = "[yyyy-MM-dd hh:mm:ss.z] ";
-  const QString Logger::DEBUG = "DEBUG ";
-  const QString Logger::INFO  = "INFO  ";
-  const QString Logger::WARN  = "WARN  ";
-  const QString Logger::CRIT  = "CRIT  ";
+  const QString Logger::DEBUG_STR = "DEBUG ";
+  const QString Logger::INFO_STR  = "INFO  ";
+  const QString Logger::WARN_STR  = "WARN  ";
+  const QString Logger::CRIT_STR  = "CRIT  ";
 
   /**
    * @brief Logger::Logger Konstruktor mit Konfigurationsdatei Übergabe
@@ -91,7 +91,7 @@ namespace spx42
     qWarning().noquote().nospace() << msg;
     if( textStream != nullptr && threshold >= LG_WARN )
     {
-      *textStream << getDateString() << WARN << msg << endl;
+      *textStream << getDateString() << WARN_STR << msg << endl;
     }
   }
 
@@ -100,7 +100,7 @@ namespace spx42
     qWarning().noquote().nospace() << msg;
     if( textStream != nullptr && threshold >= LG_WARN )
     {
-      *textStream << getDateString() << WARN << msg << endl;
+      *textStream << getDateString() << WARN_STR << msg << endl;
     }
   }
 
@@ -109,7 +109,7 @@ namespace spx42
     qWarning().noquote().nospace() << msg.c_str();
     if( textStream != nullptr && threshold >= LG_WARN )
     {
-      *textStream << getDateString() << WARN << msg.c_str() << endl;
+      *textStream << getDateString() << WARN_STR << msg.c_str() << endl;
     }
   }
 
@@ -122,7 +122,7 @@ namespace spx42
     qInfo().noquote().nospace() << msg;
     if( textStream != nullptr && threshold >= LG_INFO )
     {
-      *textStream << getDateString() << INFO << msg << endl;
+      *textStream << getDateString() << INFO_STR << msg << endl;
     }
   }
 
@@ -131,7 +131,7 @@ namespace spx42
     qInfo().noquote().nospace() << msg;
     if( textStream != nullptr && threshold >= LG_INFO )
     {
-      *textStream << getDateString() << INFO << msg << endl;
+      *textStream << getDateString() << INFO_STR << msg << endl;
     }
   }
   void Logger::info( const std::string& msg )
@@ -139,7 +139,7 @@ namespace spx42
     qInfo().noquote().nospace() << msg.c_str();
     if( textStream != nullptr && threshold >= LG_INFO )
     {
-      *textStream << getDateString() << INFO << msg.c_str() << endl;
+      *textStream << getDateString() << INFO_STR << msg.c_str() << endl;
     }
   }
 
@@ -152,7 +152,7 @@ namespace spx42
     qDebug().noquote().nospace() << msg;
     if( textStream != nullptr && threshold >= LG_DEBUG )
     {
-      *textStream << getDateString() << DEBUG << msg << endl;
+      *textStream << getDateString() << DEBUG_STR << msg << endl;
     }
   }
 
@@ -161,7 +161,7 @@ namespace spx42
     qDebug().noquote().nospace() << msg;
     if( textStream != nullptr && threshold >= LG_DEBUG )
     {
-      *textStream << getDateString() << DEBUG << msg << endl;
+      *textStream << getDateString() << DEBUG_STR << msg << endl;
     }
   }
 
@@ -170,7 +170,7 @@ namespace spx42
     qDebug().noquote().nospace() << msg.c_str();
     if( textStream != nullptr && threshold >= LG_DEBUG )
     {
-      *textStream << getDateString() << DEBUG << msg.c_str() << endl;
+      *textStream << getDateString() << DEBUG_STR << msg.c_str() << endl;
     }
   }
 
@@ -183,7 +183,7 @@ namespace spx42
     qCritical().noquote().nospace() << msg;
     if( textStream != nullptr && threshold >= LG_DEBUG )
     {
-      *textStream << getDateString() << CRIT << msg << endl;
+      *textStream << getDateString() << CRIT_STR << msg << endl;
     }
   }
 
@@ -192,7 +192,7 @@ namespace spx42
     qCritical().noquote().nospace() << msg;
     if( textStream != nullptr && threshold >= LG_DEBUG )
     {
-      *textStream << getDateString() << CRIT << msg << endl;
+      *textStream << getDateString() << CRIT_STR << msg << endl;
     }
   }
 
@@ -201,7 +201,7 @@ namespace spx42
     qCritical().noquote().nospace() << msg.c_str();
     if( textStream != nullptr && threshold >= LG_DEBUG )
     {
-      *textStream << getDateString() << CRIT << msg.c_str() << endl;
+      *textStream << getDateString() << CRIT_STR << msg.c_str() << endl;
     }
   }
 

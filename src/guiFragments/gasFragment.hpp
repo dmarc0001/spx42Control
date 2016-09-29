@@ -12,6 +12,7 @@
 #include "../logging/Logger.hpp"
 #include "../utils/SPX42Config.hpp"
 #include "../utils/SPX42Defs.hpp"
+#include "IFragmentInterface.hpp"
 
 namespace Ui
 {
@@ -43,13 +44,11 @@ namespace spx42
       ~GasFragmentGuiRef();
   };
 
-  class GasFragment : public QWidget
+  class GasFragment : public QWidget, IFragmentInterface
   {
     private:
       Q_OBJECT
       Ui::GasForm *ui;                                          //! Zeiger auf GUI-Objekte
-      Logger *lg;                                               //! Zeiger auf Loggerobjekt
-      SPX42Config *spxConfig;                                   //! Zeiger auf das SPX42 Config Objekt
       bool areSlotsConnected;                                   //! Ich merke mir, ob die Slots verbunden sind
       GasFragmentGuiRef *gRef[8];                               //! Referenzen für acht GUI-Objekte
 
@@ -62,12 +61,14 @@ namespace spx42
       void initGuiWithConfig( void );                           //! Initialisiere die GUI mit Werten aus der Config
       void connectSlots( void );                                //! verbinde Slots mit Signalen
       void disconnectSlots( void );                             //! trenne Slots von Signalen
+      void checkGases( void );                                  //! Alle Gase nach Lizenzwechsel testen
 
     private slots:
       void spinO2ValueChanged(int index, int o2Val );           //! O2 Wert eines Gases hat sich verändert
       void spinHeValueChanged(int index, int heVal );           //! HE Wert eines Gases hat sich verändert
       void gasUseTypChange(int index, DiluentType which, int state ); //! wenn sich das Diluent ändert
       void baCheckChange( int index, int state );               //! wenn sich das Bailout ändert
+      void licChangedSlot( LicenseType lic );                   //! Wenn sich die Lizenz ändert
   };
 
 }
