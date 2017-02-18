@@ -18,6 +18,7 @@
 #include "config/AppConfigClass.hpp"
 #include "utils/AboutDialog.hpp"
 #include "guiFragments/ConnectFragment.hpp"
+#include "guiFragments/DeviceConfigFragment.hpp"
 #include "guiFragments/GasFragment.hpp"
 #include "utils/SPX42Config.hpp"
 
@@ -32,7 +33,7 @@ namespace Ui
 namespace spx42
 {
   //! Welcher Tab ist aktiv
-  enum class ApplicationTab : int { CONNECT_TAB, GAS_TAB, COUNT_OF_TABS };
+  enum class ApplicationTab : int { CONNECT_TAB, CONFIG_TAB, GAS_TAB, COUNT_OF_TABS };
   //! Welcher Status ist aktiv
   enum class ApplicationStat : int { STAT_OFFLINE, STAT_ONLINE, STAT_ERROR };
 
@@ -40,15 +41,15 @@ namespace spx42
   {
     private:
       Q_OBJECT
-      Ui::SPX42ControlMainWin *ui;
-      Logger *lg;                                               //! Loggerobjekt für Logs
-      QTimer *watchdog;                                         //! Wachhund für Timeouts
+      std::unique_ptr<Ui::SPX42ControlMainWin> ui;
+      std::shared_ptr<Logger> lg;                               //! Loggerobjekt für Logs
+      const std::unique_ptr<QTimer> watchdog;                   //! Wachhund für Timeouts
+      const std::shared_ptr<SPX42Config> spx42Config;           //! Konfiguration des verbundenen SPX42
       ApplicationStat currentStatus;                            //! welchen Status hat die App?
       int watchdogTimer;                                        //! Zeitspanne zum Timeout
       AppConfigClass cf;                                        //! Konfiguration aus Datei
       ApplicationTab currentTab;                                //! welcher Tab ist aktiv?
       QStringList tabTitle;                                     //! Tab Titel (nicht statisch, das Objekt gibts eh nur einmal)
-      SPX42Config spx42Config;                                  //! Konfiguration des verbundenen SPX42
 
     public:
       explicit SPX42ControlMainWin(QWidget *parent = 0);
@@ -56,19 +57,20 @@ namespace spx42
       void closeEvent(QCloseEvent *event);                      //! Das Beenden-Ereignis
 
     private:
-      bool createLogger( AppConfigClass *cf );                  //! Erzeuge den Logger
+      bool createLogger();                                      //! Erzeuge den Logger
       void fillTabTitleArray( void );                           //! Fülle das Titelarray lokalisiert
       bool setActionStati( void );                              //! setze Actions entsprchend des Status
       bool connectActions( void );                              //! Verbinde Actions mit Slots
       void createApplicationTabs( void );                       //! Erzeuge die (noch leeren) Tabs
       void clearApplicationTabs( void );                        //! Leere die eventuell vorhandenen Tab-Objekte
+      void simulateLicenseChanged( LicenseType lType );         //! Simuliere lizenzwechsel
       ApplicationTab getApplicationTab( void );                 //! Welcher Tab war noch aktiv?
 
     private slots:
       void aboutActionSlot( bool checked );                     //! ABOUT wurde gefordert
       void quitActionSlot( bool checked );                      //! ENDE wurde gefordert
-      void tabCurrentChanged( int idx );                        //! TAB Index gewechselt
-      void licenseChanged( LicenseType lic );                   //! Lizenztyp getriggert
+      void tabCurrentChangedSlot( int idx );                    //! TAB Index gewechselt
+      void licenseChangedSlot( SPX42License& lic );             //! Lizenztyp getriggert
   };
 } // namespace spx42
 

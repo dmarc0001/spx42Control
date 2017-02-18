@@ -3,7 +3,7 @@
 
 namespace spx42
 {
-  ConnectFragment::ConnectFragment(QWidget *parent, Logger *logger, SPX42Config *spxCfg ) :
+  ConnectFragment::ConnectFragment(QWidget *parent, std::shared_ptr<Logger> logger , std::shared_ptr<SPX42Config> spxCfg) :
     QWidget(parent),
     IFragmentInterface(logger, spxCfg),
     ui(new Ui::ConnectForm)
@@ -27,7 +27,7 @@ namespace spx42
   ConnectFragment::~ConnectFragment()
   {
     lg->debug( "ConnectForm::~ConnectForm...");
-    delete ui;
+    //delete ui;
   }
 
   void ConnectFragment::connectButtonSlot(void)

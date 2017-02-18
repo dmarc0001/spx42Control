@@ -2,9 +2,9 @@
 
 namespace spx42
 {
-  AboutDialog::AboutDialog(QWidget *parent, AppConfigClass *conf, Logger *logger) :
+  AboutDialog::AboutDialog( QWidget *parent, AppConfigClass& conf, std::shared_ptr<Logger> logger ) :
     QDialog(parent),
-    ui( new Ui::AboutDialog ),
+    ui( new Ui::AboutDialog() ),
     lg( logger ),
     cf( conf )
   {
@@ -28,8 +28,8 @@ namespace spx42
     }
     QImage image(":/images/logo_header450.png");
     ui->logoLabel->setPixmap(QPixmap::fromImage(image));
-    ui->buildNumberLabel->setText(cf->getBuildDate());
-    ui->buildDateLabel->setText(cf->getBuildNumStr());
+    ui->buildNumberLabel->setText(cf.getBuildDate());
+    ui->buildDateLabel->setText(cf.getBuildNumStr());
     QPalette pal= ui->logoLabel->palette();
     pal.setColor(QPalette::WindowText,Qt::darkRed);
     pal.setColor(QPalette::Text,Qt::darkRed);

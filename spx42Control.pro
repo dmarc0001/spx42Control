@@ -40,15 +40,17 @@ DEFINES                                += $$DEBUG
 SOURCES                                += \
                                           src/Spx42ControlMainWin.cpp \
                                           src/ControlMain.cpp \
-                                          src/Config/AppConfigClass.cpp \
-                                          src/Config/ProjectConst.cpp \
+                                          src/config/AppConfigClass.cpp \
+                                          src/config/ProjectConst.cpp \
                                           src/logging/Logger.cpp \
                                           src/utils/AboutDialog.cpp \
                                           src/guiFragments/ConnectFragment.cpp \
                                           src/guiFragments/GasFragment.cpp \
                                           src/utils/SPX42Config.cpp \
                                           src/utils/SPX42Gas.cpp \
-                                          src/guiFragments/IFragmentInterface.cpp
+                                          src/guiFragments/IFragmentInterface.cpp \
+                                          src/guiFragments/DeviceConfigFragment.cpp \
+                                          src/config/SPX42Defs.cpp
 
 HEADERS                                += \
                                           src/Spx42ControlMainWin.hpp \
@@ -61,14 +63,16 @@ HEADERS                                += \
                                           src/guiFragments/GasFragment.hpp \
                                           src/utils/SPX42Config.hpp \
                                           src/utils/SPX42Gas.hpp \
-                                          src/utils/SPX42Defs.hpp \
-                                          src/guiFragments/IFragmentInterface.hpp
+                                          src/config/SPX42Defs.hpp \
+                                          src/guiFragments/IFragmentInterface.hpp \
+                                          src/guiFragments/DeviceConfigFragment.hpp
 
 FORMS                                  += \
                                           src/ui/Spx42ControlMainWin.ui \
                                           src/ui/AboutDialog.ui \
                                           src/ui/GasFragment.ui \
-                                          src/ui/ConnectFragment.ui
+                                          src/ui/ConnectFragment.ui \
+                                          src/ui/DeviceConfig.ui
 
 RESOURCES                              = \
                                           src/res/Spx42ControlRes.qrc

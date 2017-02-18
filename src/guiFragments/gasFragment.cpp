@@ -33,13 +33,18 @@ namespace spx42
     }
   }
 
-  GasFragment::GasFragment(QWidget *parent, Logger *logger, SPX42Config *spxCfg) :
+  GasFragmentGuiRef::~GasFragmentGuiRef()
+  {
+
+  }
+
+  GasFragment::GasFragment(QWidget *parent, std::shared_ptr<Logger> logger , std::shared_ptr<SPX42Config> spxCfg) :
     QWidget(parent),
     IFragmentInterface(logger, spxCfg),
     ui(new Ui::GasForm),
     areSlotsConnected( false )
   {
-    lg->debug( "GasForm::GasForm...");
+    lg->debug( "GasFragment::GasFragment...");
     ui->setupUi(this);
     fillReferences();
     initGuiWithConfig();
@@ -48,8 +53,8 @@ namespace spx42
 
   GasFragment::~GasFragment()
   {
-    lg->debug( "GasForm::~GasForm...");
-    delete ui;
+    lg->debug( "GasFragment::~GasFragment...");
+    //delete ui;
   }
 
   void GasFragment::fillReferences( void )
@@ -58,77 +63,93 @@ namespace spx42
     // Referenzen auf die GUI-Objekte in Arrays ablegen,
     // damit ich indiziert zugreifen kann
     //
-    gRef[0] = new GasFragmentGuiRef(
-      ui->gas01O2spinBox,
-      ui->gas01HESpinBox,
-      ui->gas01N2LineEdit,
-      ui->gas01NameLabel,
-      ui->gas01dil01CheckBox,
-      ui->gas01dil02CheckBox,
-      ui->gas01bailoutCheckBox
+    gRef[0] = std::unique_ptr<GasFragmentGuiRef>(
+      new GasFragmentGuiRef(
+        ui->gas01O2spinBox,
+        ui->gas01HESpinBox,
+        ui->gas01N2LineEdit,
+        ui->gas01NameLabel,
+        ui->gas01dil01CheckBox,
+        ui->gas01dil02CheckBox,
+        ui->gas01bailoutCheckBox
+      )
     );
-    gRef[1] = new GasFragmentGuiRef(
-      ui->gas02O2spinBox,
-      ui->gas02HESpinBox,
-      ui->gas02N2LineEdit,
-      ui->gas02NameLabel,
-      ui->gas02dil01CheckBox,
-      ui->gas02dil02CheckBox,
-      ui->gas02bailoutCheckBox
+    gRef[1] = std::unique_ptr<GasFragmentGuiRef>(
+      new GasFragmentGuiRef(
+        ui->gas02O2spinBox,
+        ui->gas02HESpinBox,
+        ui->gas02N2LineEdit,
+        ui->gas02NameLabel,
+        ui->gas02dil01CheckBox,
+        ui->gas02dil02CheckBox,
+        ui->gas02bailoutCheckBox
+      )
     );
-    gRef[2] = new GasFragmentGuiRef(
-      ui->gas03O2spinBox,
-      ui->gas03HESpinBox,
-      ui->gas03N2LineEdit,
-      ui->gas03NameLabel,
-      ui->gas03dil01CheckBox,
-      ui->gas03dil02CheckBox,
-      ui->gas03bailoutCheckBox
+    gRef[2] = std::unique_ptr<GasFragmentGuiRef>(
+      new GasFragmentGuiRef(
+        ui->gas03O2spinBox,
+        ui->gas03HESpinBox,
+        ui->gas03N2LineEdit,
+        ui->gas03NameLabel,
+        ui->gas03dil01CheckBox,
+        ui->gas03dil02CheckBox,
+        ui->gas03bailoutCheckBox
+      )
     );
-    gRef[3] = new GasFragmentGuiRef(
-      ui->gas04O2spinBox,
-      ui->gas04HESpinBox,
-      ui->gas04N2LineEdit,
-      ui->gas04NameLabel,
-      ui->gas04dil01CheckBox,
-      ui->gas04dil02CheckBox,
-      ui->gas04bailoutCheckBox
+    gRef[3] = std::unique_ptr<GasFragmentGuiRef>(
+      new GasFragmentGuiRef(
+        ui->gas04O2spinBox,
+        ui->gas04HESpinBox,
+        ui->gas04N2LineEdit,
+        ui->gas04NameLabel,
+        ui->gas04dil01CheckBox,
+        ui->gas04dil02CheckBox,
+        ui->gas04bailoutCheckBox
+      )
     );
-    gRef[4] = new GasFragmentGuiRef(
-      ui->gas05O2spinBox,
-      ui->gas05HESpinBox,
-      ui->gas05N2LineEdit,
-      ui->gas05NameLabel,
-      ui->gas05dil01CheckBox,
-      ui->gas05dil02CheckBox,
-      ui->gas05bailoutCheckBox
+    gRef[4] = std::unique_ptr<GasFragmentGuiRef>(
+      new GasFragmentGuiRef(
+        ui->gas05O2spinBox,
+        ui->gas05HESpinBox,
+        ui->gas05N2LineEdit,
+        ui->gas05NameLabel,
+        ui->gas05dil01CheckBox,
+        ui->gas05dil02CheckBox,
+        ui->gas05bailoutCheckBox
+      )
     );
-    gRef[5] = new GasFragmentGuiRef(
-      ui->gas06O2spinBox,
-      ui->gas06HESpinBox,
-      ui->gas06N2LineEdit,
-      ui->gas06NameLabel,
-      ui->gas06dil01CheckBox,
-      ui->gas06dil02CheckBox,
-      ui->gas06bailoutCheckBox
+    gRef[5] = std::unique_ptr<GasFragmentGuiRef>(
+      new GasFragmentGuiRef(
+        ui->gas06O2spinBox,
+        ui->gas06HESpinBox,
+        ui->gas06N2LineEdit,
+        ui->gas06NameLabel,
+        ui->gas06dil01CheckBox,
+        ui->gas06dil02CheckBox,
+        ui->gas06bailoutCheckBox
+      )
     );
-    gRef[6] = new GasFragmentGuiRef(
-      ui->gas07O2spinBox,
-      ui->gas07HESpinBox,
-      ui->gas07N2LineEdit,
-      ui->gas07NameLabel,
-      ui->gas07dil01CheckBox,
-      ui->gas07dil02CheckBox,
-      ui->gas07bailoutCheckBox
+    gRef[6] = std::unique_ptr<GasFragmentGuiRef>(
+      new GasFragmentGuiRef(
+        ui->gas07O2spinBox,
+        ui->gas07HESpinBox,
+        ui->gas07N2LineEdit,
+        ui->gas07NameLabel,
+        ui->gas07dil01CheckBox,
+        ui->gas07dil02CheckBox,
+        ui->gas07bailoutCheckBox
+      )
     );
-    gRef[7] = new GasFragmentGuiRef(
-      ui->gas08O2spinBox,
-      ui->gas08HESpinBox,
-      ui->gas08N2LineEdit,
-      ui->gas08NameLabel,
-      ui->gas08dil01CheckBox,
-      ui->gas08dil02CheckBox,
-      ui->gas08bailoutCheckBox
+    gRef[7] = std::unique_ptr<GasFragmentGuiRef>(
+      new GasFragmentGuiRef(
+        ui->gas08O2spinBox,
+        ui->gas08HESpinBox,
+        ui->gas08N2LineEdit,
+        ui->gas08NameLabel,
+        ui->gas08dil01CheckBox,
+        ui->gas08dil02CheckBox,
+        ui->gas08bailoutCheckBox
+      )
     );
   }
 
@@ -144,17 +165,17 @@ namespace spx42
     {
       disconnectSlots();
     }
-    ui->gaslistHeaderLabel->setText( QString(tr("Gaslist SPX42 Serial [%1] Lic: %2")
+    ui->gaslistHeaderLabel->setText( QString(tr("GASLIST SPX42 SERIAL [%1] LIC: %2")
                                              .arg(spxConfig->getSerialNumber())
                                              .arg(spxConfig->getLicName()))
                                      );
     for( int i = 0; i < 8; i++ )
     {
       SPX42Gas& currGas = spxConfig->getGasAt(i);
-      gRef[i]->o2Spin->setValue(currGas.getO2());
-      gRef[i]->heSpin->setValue(currGas.getHe());
-      gRef[i]->n2Line->setText( QString("%1").arg( currGas.getN2(), 2, 10, QChar('0')  ));
-      gRef[i]->gasName->setText(currGas.getGasName());
+      gRef[i].get()->o2Spin->setValue(currGas.getO2());
+      gRef[i].get()->heSpin->setValue(currGas.getHe());
+      gRef[i].get()->n2Line->setText( QString("%1").arg( currGas.getN2(), 2, 10, QChar('0')  ));
+      gRef[i].get()->gasName->setText(currGas.getGasName());
     }
     if( wasSlotsConnected )
     {
@@ -171,13 +192,13 @@ namespace spx42
     //
     for( int i = 0; i < 8; i++ )
     {
-      connect( gRef[i]->heSpin, QSpinboxIntValueChanged, this, [=] (int val) { spinHeValueChanged( i, val ); } );
-      connect( gRef[i]->o2Spin, QSpinboxIntValueChanged, this, [=] (int val) { spinO2ValueChanged( i, val ); } );
-      connect( gRef[i]->dil1CheckBox, &QCheckBox::stateChanged, this,  [=] (int state) { gasUseTypChange( i, DiluentType::DIL_01, state ); });
-      connect( gRef[i]->dil2CheckBox, &QCheckBox::stateChanged, this,  [=] (int state) { gasUseTypChange( i, DiluentType::DIL_02, state ); });
-      connect( gRef[i]->baCheckBox, &QCheckBox::stateChanged, this,  [=] (int state) { baCheckChange( i, state ); });
+      connect( gRef[i].get()->heSpin, QSpinboxIntValueChanged, this, [=] (int val) { spinHeValueChangedSlot( i, val ); } );
+      connect( gRef[i].get()->o2Spin, QSpinboxIntValueChanged, this, [=] (int val) { spinO2ValueChangedSlot( i, val ); } );
+      connect( gRef[i].get()->dil1CheckBox, &QCheckBox::stateChanged, this,  [=] (int state) { gasUseTypChangeSlot( i, DiluentType::DIL_01, state ); });
+      connect( gRef[i].get()->dil2CheckBox, &QCheckBox::stateChanged, this,  [=] (int state) { gasUseTypChangeSlot( i, DiluentType::DIL_02, state ); });
+      connect( gRef[i].get()->baCheckBox, &QCheckBox::stateChanged, this,  [=] (int state) { baCheckChangeSlot( i, state ); });
     }
-    connect( spxConfig, &SPX42Config::licenseChanged, this, &GasFragment::licChangedSlot );
+    connect( spxConfig.get(), &SPX42Config::licenseChangedSig, this, &GasFragment::licChangedSlot );
   }
 
   void GasFragment::disconnectSlots( void )
@@ -187,13 +208,13 @@ namespace spx42
     //
     for( int i = 0; i < 8; i++ )
     {
-      connect( gRef[i]->heSpin, 0, 0, 0 );
-      connect( gRef[i]->o2Spin, 0, 0, 0 );
+      connect( gRef[i].get()->heSpin, 0, 0, 0 );
+      connect( gRef[i].get()->o2Spin, 0, 0, 0 );
     }
-    connect( spxConfig, 0, 0, 0 );
+    connect( spxConfig.get(), 0, 0, 0 );
   }
 
-  void GasFragment::spinO2ValueChanged( int index, int o2Val )
+  void GasFragment::spinO2ValueChangedSlot( int index, int o2Val )
   {
     volatile static int whereIgnored = -1;
     if( whereIgnored == index )
@@ -207,19 +228,18 @@ namespace spx42
     //
     // Gas setzen, Plausibilität prüfen, ggf korrigieren
     //
-    GasFragmentGuiRef *currRef = gRef[index];
     SPX42Gas& currGas = spxConfig->getGasAt(index);
-    currGas.setO2(o2Val, spxConfig->getLicType());
+    currGas.setO2(o2Val, spxConfig->getLicense().getLicType());
     whereIgnored = index; // igfnorieren weitere Aufrufe für diesen index, GUI verändern
-    currRef->o2Spin->setValue(currGas.getO2());
-    currRef->heSpin->setValue(currGas.getHe());
+    gRef[index].get()->o2Spin->setValue(currGas.getO2());
+    gRef[index].get()->heSpin->setValue(currGas.getHe());
     whereIgnored = -1;
-    currRef->n2Line->setText( QString("%1").arg( currGas.getN2(), 2, 10, QChar('0')  ));
-    currRef->gasName->setText(currGas.getGasName());
+    gRef[index].get()->n2Line->setText( QString("%1").arg( currGas.getN2(), 2, 10, QChar('0')  ));
+    gRef[index].get()->gasName->setText(currGas.getGasName());
     // TODO: Gas noch färben, je nach O2-Level
   }
 
-  void GasFragment::spinHeValueChanged( int index, int heVal )
+  void GasFragment::spinHeValueChangedSlot( int index, int heVal )
   {
     volatile static int whereIgnored = -1;
     if( whereIgnored == index )
@@ -233,15 +253,14 @@ namespace spx42
     //
     // Gas setzen, Plausibilität prüfen, ggf korrigieren
     //
-    GasFragmentGuiRef *currRef = gRef[index];
     SPX42Gas& currGas = spxConfig->getGasAt(index);
-    currGas.setHe(heVal, spxConfig->getLicType());
+    currGas.setHe(heVal, spxConfig->getLicense().getLicType() );
     whereIgnored = index; // igfnorieren weitere Aufrufe für diesen index, GUI verändern
-    currRef->o2Spin->setValue(currGas.getO2());
-    currRef->heSpin->setValue(currGas.getHe());
+    gRef[index].get()->o2Spin->setValue(currGas.getO2());
+    gRef[index].get()->heSpin->setValue(currGas.getHe());
     whereIgnored = -1;
-    currRef->n2Line->setText( QString("%1").arg( currGas.getN2(), 2, 10, QChar('0')  ));
-    currRef->gasName->setText(currGas.getGasName());
+    gRef[index].get()->n2Line->setText( QString("%1").arg( currGas.getN2(), 2, 10, QChar('0')  ));
+    gRef[index].get()->gasName->setText(currGas.getGasName());
     // TODO: Gas noch färben, je nach O2-Level
   }
 
@@ -250,27 +269,26 @@ namespace spx42
     for( int i=0; i<8; i++ )
     {
       SPX42Gas& currGas = spxConfig->getGasAt( i );
-      GasFragmentGuiRef *currRef = gRef[ i ];
       int currHe = currGas.getHe();
       int currO2 = currGas.getO2();
       //
-      int current = currGas.setHe( currGas.getHe(), spxConfig->getLicType());
+      int current = currGas.setHe( currGas.getHe(), spxConfig->getLicense().getLicType() );
       if( currHe != current)
       {
         // GUI setzten
-        currRef->heSpin->setValue( current );
+        gRef[ i ].get()->heSpin->setValue( current );
       }
 
-      current = currGas.setO2( currGas.getO2(), spxConfig->getLicType());
+      current = currGas.setO2( currGas.getO2(), spxConfig->getLicense().getLicType() );
       if( currO2 != current )
       {
         // GUI setzten
-        currRef->o2Spin->setValue( current );
+        gRef[ i ].get()->o2Spin->setValue( current );
       }
     }
   }
 
-  void GasFragment::gasUseTypChange(int index, DiluentType which, int state )
+  void GasFragment::gasUseTypChangeSlot(int index, DiluentType which, int state )
   {
     //
     // FIXME: Alle anderen Gase dürfen dann NICHT which sein!
@@ -288,7 +306,6 @@ namespace spx42
                .arg(index+1, 2, 10, QChar('0'))
                .arg(static_cast<int>(which), 2, 10, QChar('0'))
                .arg(state, 2, 10, QChar('0')));
-    GasFragmentGuiRef *currRef = gRef[index];
     SPX42Gas& currGas = spxConfig->getGasAt(index);
     //
     // ich nehme den Fall, dass ein DIL gesetzt wird
@@ -300,13 +317,13 @@ namespace spx42
       if( which == DiluentType::DIL_01 )
       {
         whereIgnored = index;
-        currRef->dil2CheckBox->setCheckState( Qt::Unchecked );
+        gRef[index].get()->dil2CheckBox->setCheckState( Qt::Unchecked );
         whereIgnored = -1;
       }
       if( which == DiluentType::DIL_02 )
       {
         whereIgnored = index;
-        currRef->dil1CheckBox->setCheckState( Qt::Unchecked );
+        gRef[index].get()->dil1CheckBox->setCheckState( Qt::Unchecked );
         whereIgnored = -1;
       }
       return;
@@ -317,12 +334,12 @@ namespace spx42
     //
     currGas.setDiluentType(DiluentType::DIL_NONE);
     whereIgnored = index;
-    currRef->dil2CheckBox->setCheckState( Qt::Unchecked );
-    currRef->dil2CheckBox->setCheckState( Qt::Unchecked );
+    gRef[index].get()->dil2CheckBox->setCheckState( Qt::Unchecked );
+    gRef[index].get()->dil2CheckBox->setCheckState( Qt::Unchecked );
     whereIgnored = -1;
   }
 
-  void GasFragment::baCheckChange( int index, int state )
+  void GasFragment::baCheckChangeSlot( int index, int state )
   {
     lg->debug( QString("GasFragment::baCheckChange -> gas nr <%1> was changed...").arg(index+1, 2, 10, QChar('0')));
     if( state == Qt::Checked )
@@ -335,9 +352,9 @@ namespace spx42
     }
   }
 
-  void GasFragment::licChangedSlot( LicenseType lic )
+  void GasFragment::licChangedSlot(SPX42License &lic )
   {
-    lg->debug( QString("GasFragment::licChangedSlot -> set: %1").arg(static_cast<int>(lic)) );
+    lg->debug( QString("GasFragment::licChangedSlot -> set: %1").arg(static_cast<int>(lic.getLicType() )) );
     ui->gaslistHeaderLabel->setText( QString(tr("Gaslist SPX42 Serial [%1] Lic: %2")
                                              .arg(spxConfig->getSerialNumber())
                                              .arg(spxConfig->getLicName()))

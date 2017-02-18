@@ -1,6 +1,8 @@
 ﻿#ifndef GASFORM_HPP
 #define GASFORM_HPP
 
+#include <memory>
+
 #include <QWidget>
 #include <QList>
 #include <QSpinBox>
@@ -11,7 +13,7 @@
 
 #include "../logging/Logger.hpp"
 #include "../utils/SPX42Config.hpp"
-#include "../utils/SPX42Defs.hpp"
+#include "../config/SPX42Defs.hpp"
 #include "IFragmentInterface.hpp"
 
 namespace Ui
@@ -21,7 +23,7 @@ namespace Ui
 
 namespace spx42
 {
-#define QSpinboxIntValueChanged  static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged)
+  #define QSpinboxIntValueChanged  static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged)
 
   class GasFragmentGuiRef
   {
@@ -48,12 +50,13 @@ namespace spx42
   {
     private:
       Q_OBJECT
-      Ui::GasForm *ui;                                          //! Zeiger auf GUI-Objekte
+      std::unique_ptr<Ui::GasForm> ui;                          //! Zeiger auf GUI-Objekte
       bool areSlotsConnected;                                   //! Ich merke mir, ob die Slots verbunden sind
-      GasFragmentGuiRef *gRef[8];                               //! Referenzen für acht GUI-Objekte
+      std::unique_ptr<GasFragmentGuiRef> gRef[8];               //! Referenzen für acht GUI-Objekte
+      //GasFragmentGuiRef *gRef[8];                               //! Referenzen für acht GUI-Objekte
 
     public:
-      explicit GasFragment(QWidget *parent, Logger *logger, SPX42Config *spxCfg);    //! Konstruktor
+      explicit GasFragment(QWidget *parent, std::shared_ptr<Logger> logger , std::shared_ptr<SPX42Config> spxCfg);    //! Konstruktor
       ~GasFragment();                                           //! der Zerstörer
 
     private:
@@ -64,11 +67,11 @@ namespace spx42
       void checkGases( void );                                  //! Alle Gase nach Lizenzwechsel testen
 
     private slots:
-      void spinO2ValueChanged(int index, int o2Val );           //! O2 Wert eines Gases hat sich verändert
-      void spinHeValueChanged(int index, int heVal );           //! HE Wert eines Gases hat sich verändert
-      void gasUseTypChange(int index, DiluentType which, int state ); //! wenn sich das Diluent ändert
-      void baCheckChange( int index, int state );               //! wenn sich das Bailout ändert
-      void licChangedSlot( LicenseType lic );                   //! Wenn sich die Lizenz ändert
+      void spinO2ValueChangedSlot(int index, int o2Val );       //! O2 Wert eines Gases hat sich verändert
+      void spinHeValueChangedSlot(int index, int heVal );       //! HE Wert eines Gases hat sich verändert
+      void gasUseTypChangeSlot(int index, DiluentType which, int state ); //! wenn sich das Diluent ändert
+      void baCheckChangeSlot( int index, int state );           //! wenn sich das Bailout ändert
+      void licChangedSlot( SPX42License& lic );                 //! Wenn sich die Lizenz ändert
   };
 
 }

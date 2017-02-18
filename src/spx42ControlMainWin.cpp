@@ -6,8 +6,8 @@ namespace spx42
   SPX42ControlMainWin::SPX42ControlMainWin(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::SPX42ControlMainWin),
-    lg(Q_NULLPTR),
     watchdog( new QTimer(this) ),
+    spx42Config(new SPX42Config() ),
     currentStatus( ApplicationStat::STAT_OFFLINE )
   {
     //
@@ -21,7 +21,7 @@ namespace spx42
     //
     // Programmlogger initialisieren
     //
-    if( !createLogger( &cf ) )
+    if( !createLogger() )
     {
       exit( -1 );
     }
@@ -71,7 +71,7 @@ namespace spx42
     // Actions mit den richtigen Slots verbinden
     //
     ui->areaTabWidget->setCurrentIndex(0);
-    tabCurrentChanged( 0 );
+    tabCurrentChangedSlot( 0 );
     connectActions();
   }
 
@@ -89,7 +89,7 @@ namespace spx42
       lg->crit("SPX42ControlMainWin::~SPX42ControlMainWin -> watchdog stopping failed");
     }
     lg->shutdown();
-    delete ui;
+    //delete ui;
   }
 
   void SPX42ControlMainWin::closeEvent(QCloseEvent *event)
@@ -112,13 +112,13 @@ namespace spx42
     QMainWindow::closeEvent(event);
   }
 
-  bool SPX42ControlMainWin::createLogger( AppConfigClass *cf )
+  bool SPX42ControlMainWin::createLogger()
   {
     // erzeuge einen Logger mit
-    lg = new Logger( cf );
+    lg = std::shared_ptr<Logger>(new Logger( std::shared_ptr<AppConfigClass>(&cf) ));
     if( lg )
     {
-      lg->startLogging(static_cast<LgThreshold>(cf->getLogTreshold()));
+      lg->startLogging(static_cast<LgThreshold>(cf.getLogTreshold()));
       return (true);
     }
     QMessageBox msgBox;
@@ -133,6 +133,7 @@ namespace spx42
   {
     tabTitle.clear();
     tabTitle << tr("Connection");   // CONNECT_TAB
+    tabTitle << tr("SPX42 Config"); // CONFIG_TAB
     tabTitle << tr("Gas Lists");    // GAS_TAB
   }
 
@@ -172,12 +173,13 @@ namespace spx42
     {
       connect( ui->actionAbout, &QAction::triggered, this, &SPX42ControlMainWin::aboutActionSlot );
       connect( ui->actionQUIT, &QAction::triggered, this, &SPX42ControlMainWin::quitActionSlot );
-      connect( ui->areaTabWidget, &QTabWidget::currentChanged, this, &SPX42ControlMainWin::tabCurrentChanged );
+      connect( ui->areaTabWidget, &QTabWidget::currentChanged, this, &SPX42ControlMainWin::tabCurrentChangedSlot );
+      connect( spx42Config.get(), &SPX42Config::licenseChangedSig, this, &SPX42ControlMainWin::licenseChangedSlot );
   #ifdef DEBUG
-      connect( ui->actionNitrox, &QAction::triggered, this, [=] (bool tr) { if( tr ) licenseChanged( LicenseType::LIC_NITROX ); } );
-      connect( ui->actionNormoxic_TMX, &QAction::triggered, this, [=] (bool tr) { if( tr ) licenseChanged( LicenseType::LIC_NORMOXIX ); } );
-      connect( ui->actionFull_TMX, &QAction::triggered, this, [=] (bool tr) { if( tr ) licenseChanged( LicenseType::LIC_FULLTMX ); } );
-      connect( ui->actionMilitary, &QAction::triggered, this, [=] (bool tr) { if( tr ) licenseChanged( LicenseType::LIC_MIL ); } );
+      connect( ui->actionNitrox, &QAction::triggered, this, [=] (bool tr) { if( tr ) simulateLicenseChanged( LicenseType::LIC_NITROX ); } );
+      connect( ui->actionNormoxic_TMX, &QAction::triggered, this, [=] (bool tr) { if( tr ) simulateLicenseChanged( LicenseType::LIC_NORMOXIX ); } );
+      connect( ui->actionFull_TMX, &QAction::triggered, this, [=] (bool tr) { if( tr ) simulateLicenseChanged( LicenseType::LIC_FULLTMX ); } );
+      connect( ui->actionMilitary, &QAction::triggered, this, [=] (bool tr) { if( tr ) simulateLicenseChanged( LicenseType::LIC_MIL ); } );
   #endif
     }
     catch(std::exception ex )
@@ -188,10 +190,19 @@ namespace spx42
     return( true );
   }
 
+  void SPX42ControlMainWin::simulateLicenseChanged( LicenseType lType )
+  {
+    //
+    // fürs debuggen simuliere einen wecvhsel der Lizenz
+    //
+    spx42Config->getLicense().setLicType( lType );
+    //licenseChanged( spx42Config->getLicense() );
+  }
+
   void SPX42ControlMainWin::createApplicationTabs( void )
   {
     //
-    // lasse die TAB-Inhalte verschwinden
+    // lasse die TABs und Inhalte verschwinden
     //
     while (ui->areaTabWidget->count() )
     {
@@ -201,22 +212,31 @@ namespace spx42
     }
     //
     // der Connect Tab Platzhalter
+    // ACHTUNG: tabTitle hat eine Grösse, bein einfügen tabTitle erweitern
     //
     QWidget *wg1 = new QWidget();
-    wg1->setObjectName("DUMMY");
+    wg1->setObjectName("DUMMY1");
     ui->areaTabWidget->addTab(wg1, tabTitle.at(0));
+    //
+    // der CONFIG-Platzhalter
+    //
+    QWidget *wg2 = new QWidget();
+    wg2->setObjectName("DUMMY2");
+    ui->areaTabWidget->addTab(wg2, tabTitle.at(1));
     //
     // der Gaslisten-Platzhalter
     //
-    QWidget *wg2 = new QWidget();
-    wg2->setObjectName("DUMMY");
-    ui->areaTabWidget->addTab(wg2, tabTitle.at(1));
-    // FIXME wieder löschen
+    QWidget *wg3 = new QWidget();
+    wg3->setObjectName("DUMMY3");
+    ui->areaTabWidget->addTab(wg3, tabTitle.at(2));
+    #ifdef DEBUG
     clearApplicationTabs();
+    #endif
   }
 
   void SPX42ControlMainWin::clearApplicationTabs( void )
   {
+    #ifdef DEBUG
     for( int i = 0; i < ui->areaTabWidget->count(); i++ )
     {
       QWidget *currObj = ui->areaTabWidget->widget( i );
@@ -232,6 +252,7 @@ namespace spx42
         //ui->areaTabWidget->insertTab( i, currObj, "deleted" );
       }
     }
+    #endif
   }
 
   ApplicationTab SPX42ControlMainWin::getApplicationTab( void )
@@ -242,7 +263,7 @@ namespace spx42
   void SPX42ControlMainWin::aboutActionSlot( bool checked )
   {
     lg->debug(QString("SPX42ControlMainWin::aboutActionSlot <%1>").arg(checked));
-    AboutDialog dlg(this, &cf, lg );
+    AboutDialog dlg( this, cf, lg );
     dlg.exec();
   }
 
@@ -252,7 +273,7 @@ namespace spx42
     close();
   }
 
-  void SPX42ControlMainWin::tabCurrentChanged( int idx )
+  void SPX42ControlMainWin::tabCurrentChangedSlot( int idx )
   {
     static bool ignore = false;
     QWidget *currObj;
@@ -277,16 +298,24 @@ namespace spx42
       //default:
       case static_cast<int>(ApplicationTab::CONNECT_TAB):
         lg->debug("SPX42ControlMainWin::setApplicationTab -> CONNECT TAB...");
-        currObj = new ConnectFragment( Q_NULLPTR, lg, &spx42Config);
+        currObj = new ConnectFragment( Q_NULLPTR, lg, spx42Config);
         currObj->setObjectName(tr("Connect Tab"));
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at(static_cast<int>(ApplicationTab::CONNECT_TAB)) );
         currentTab = ApplicationTab::CONNECT_TAB;
         break;
 
+      case static_cast<int>(ApplicationTab::CONFIG_TAB):
+        lg->debug("SPX42ControlMainWin::setApplicationTab -> CONFIG TAB...");
+        currObj = new DeviceConfigFragment( Q_NULLPTR, lg, spx42Config);
+        currObj->setObjectName(tr("Config Tab"));
+        ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at(static_cast<int>(ApplicationTab::CONFIG_TAB)) );
+        currentTab = ApplicationTab::CONFIG_TAB;
+        break;
+
       case static_cast<int>(ApplicationTab::GAS_TAB):
         lg->debug("SPX42ControlMainWin::setApplicationTab -> GAS TAB...");
         //gasForm = std::shared_ptr<GasFragment>(new GasFragment( ui->areaTabWidget->widget(idx), lg));
-        currObj = new GasFragment( Q_NULLPTR, lg, &spx42Config);
+        currObj = new GasFragment( Q_NULLPTR, lg, spx42Config);
         currObj->setObjectName(tr("Gas Tab"));
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at(static_cast<int>(ApplicationTab::GAS_TAB)) );
         currentTab = ApplicationTab::GAS_TAB;
@@ -296,15 +325,14 @@ namespace spx42
     ignore = false;
   }
 
-  void SPX42ControlMainWin::licenseChanged(LicenseType lic)
+  void SPX42ControlMainWin::licenseChangedSlot(SPX42License &lic)
   {
-    lg->debug( QString("SPX42ControlMainWin::licenseChanged -> set: %1").arg(static_cast<int>(lic)) );
-    spx42Config.setLicType( lic );
+    lg->debug( QString("SPX42ControlMainWin::licenseChanged -> set: %1").arg(static_cast<int>(lic.getLicType())) );
     //
     // das folgende wird nur kompiliert, wenn DEBUG konfiguriert ist
     //
     #ifdef DEBUG
-    switch( static_cast<int>(lic) )
+    switch( static_cast<int>(lic.getLicType()) )
     {
       case static_cast<int>(LicenseType::LIC_NITROX):
         ui->actionNormoxic_TMX->setChecked(false);

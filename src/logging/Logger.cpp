@@ -15,7 +15,7 @@ namespace spx42
    * @brief Logger::Logger Konstruktor mit Konfigurationsdatei Übergabe
    * @param lFile
    */
-  Logger::Logger( const AppConfigClass *_config = nullptr  )
+  Logger::Logger(const std::shared_ptr<AppConfigClass> _config = nullptr  )
     : threshold(LG_DEBUG),logFile( nullptr ), textStream( nullptr) , configClass(_config)
   {
   }
@@ -40,17 +40,17 @@ namespace spx42
     //
     // gibt es eine Einstellung?
     //
-    if( configClass != nullptr )
+    if( configClass )
     {
       if( configClass->getLogfileName().length() > 4 )
       {
         // Super, das Logfile ist benannt!
         qDebug().noquote().nospace() << "START LOGGING...";
-        logFile = new QFile( configClass->getLogfileName() );
+        logFile = std::unique_ptr<QFile>(new QFile( configClass->getLogfileName() ));
         logFile->open(QIODevice::WriteOnly | QIODevice::Append);
-        textStream = new QTextStream( logFile );
+        textStream = std::unique_ptr<QTextStream>(new QTextStream( logFile.get() ));
         *textStream << getDateString() << "START LOGGING" << endl;
-        if( logFile != nullptr && logFile->isOpen() && textStream != nullptr )
+        if( logFile && logFile->isOpen() && textStream )
         {
           qDebug().noquote().nospace() << "START LOGGING...OK";
           return( 1 );
@@ -89,7 +89,7 @@ namespace spx42
   void Logger::warn( const QString& msg )
   {
     qWarning().noquote().nospace() << msg;
-    if( textStream != nullptr && threshold >= LG_WARN )
+    if( textStream && threshold >= LG_WARN )
     {
       *textStream << getDateString() << WARN_STR << msg << endl;
     }
@@ -98,7 +98,7 @@ namespace spx42
   void Logger::warn( const char *msg )
   {
     qWarning().noquote().nospace() << msg;
-    if( textStream != nullptr && threshold >= LG_WARN )
+    if( textStream && threshold >= LG_WARN )
     {
       *textStream << getDateString() << WARN_STR << msg << endl;
     }
@@ -107,7 +107,7 @@ namespace spx42
   void Logger::warn( const std::string& msg )
   {
     qWarning().noquote().nospace() << msg.c_str();
-    if( textStream != nullptr && threshold >= LG_WARN )
+    if( textStream && threshold >= LG_WARN )
     {
       *textStream << getDateString() << WARN_STR << msg.c_str() << endl;
     }
@@ -120,7 +120,7 @@ namespace spx42
   void Logger::info( const QString& msg )
   {
     qInfo().noquote().nospace() << msg;
-    if( textStream != nullptr && threshold >= LG_INFO )
+    if( textStream && threshold >= LG_INFO )
     {
       *textStream << getDateString() << INFO_STR << msg << endl;
     }
@@ -129,7 +129,7 @@ namespace spx42
   void Logger::info( const char *msg )
   {
     qInfo().noquote().nospace() << msg;
-    if( textStream != nullptr && threshold >= LG_INFO )
+    if( textStream && threshold >= LG_INFO )
     {
       *textStream << getDateString() << INFO_STR << msg << endl;
     }
@@ -137,7 +137,7 @@ namespace spx42
   void Logger::info( const std::string& msg )
   {
     qInfo().noquote().nospace() << msg.c_str();
-    if( textStream != nullptr && threshold >= LG_INFO )
+    if( textStream && threshold >= LG_INFO )
     {
       *textStream << getDateString() << INFO_STR << msg.c_str() << endl;
     }
@@ -150,7 +150,7 @@ namespace spx42
   void Logger::debug( const QString& msg )
   {
     qDebug().noquote().nospace() << msg;
-    if( textStream != nullptr && threshold >= LG_DEBUG )
+    if( textStream && threshold >= LG_DEBUG )
     {
       *textStream << getDateString() << DEBUG_STR << msg << endl;
     }
@@ -159,7 +159,7 @@ namespace spx42
   void Logger::debug( const char *msg )
   {
     qDebug().noquote().nospace() << msg;
-    if( textStream != nullptr && threshold >= LG_DEBUG )
+    if( textStream && threshold >= LG_DEBUG )
     {
       *textStream << getDateString() << DEBUG_STR << msg << endl;
     }
@@ -168,7 +168,7 @@ namespace spx42
   void Logger::debug( const std::string& msg )
   {
     qDebug().noquote().nospace() << msg.c_str();
-    if( textStream != nullptr && threshold >= LG_DEBUG )
+    if( textStream && threshold >= LG_DEBUG )
     {
       *textStream << getDateString() << DEBUG_STR << msg.c_str() << endl;
     }
@@ -181,7 +181,7 @@ namespace spx42
   void Logger::crit( const QString& msg )
   {
     qCritical().noquote().nospace() << msg;
-    if( textStream != nullptr && threshold >= LG_DEBUG )
+    if( textStream && threshold >= LG_DEBUG )
     {
       *textStream << getDateString() << CRIT_STR << msg << endl;
     }
@@ -190,7 +190,7 @@ namespace spx42
   void Logger::crit( const char *msg )
   {
     qCritical().noquote().nospace() << msg;
-    if( textStream != nullptr && threshold >= LG_DEBUG )
+    if( textStream && threshold >= LG_DEBUG )
     {
       *textStream << getDateString() << CRIT_STR << msg << endl;
     }
@@ -199,7 +199,7 @@ namespace spx42
   void Logger::crit( const std::string& msg )
   {
     qCritical().noquote().nospace() << msg.c_str();
-    if( textStream != nullptr && threshold >= LG_DEBUG )
+    if( textStream && threshold >= LG_DEBUG )
     {
       *textStream << getDateString() << CRIT_STR << msg.c_str() << endl;
     }
@@ -210,15 +210,15 @@ namespace spx42
     if( textStream != nullptr )
     {
       textStream->flush();
-      delete(textStream);
-      textStream = nullptr;
+      //delete(textStream);
+      //textStream = nullptr;
     }
     if( logFile != nullptr )
     {
       logFile->flush();
       logFile->close();
-      delete( logFile );
-      logFile = nullptr;
+      //delete( logFile );
+      //logFile = nullptr;
     }
   }
 

@@ -1,6 +1,7 @@
 ﻿#ifndef CONNECTFORM_HPP
 #define CONNECTFORM_HPP
 
+#include <memory>
 #include <QWidget>
 
 #include "../logging/Logger.hpp"
@@ -18,10 +19,10 @@ namespace spx42
   {
     private:
       Q_OBJECT
-      Ui::ConnectForm *ui;                                      //! Zeiger auf die GUI Objekte
+      std::unique_ptr<Ui::ConnectForm> ui;                      //! Zeiger auf die GUI Objekte
 
     public:
-      explicit ConnectFragment(QWidget *parent, Logger *logger , SPX42Config *spxCfg); //! Konstruktor
+      explicit ConnectFragment(QWidget *parent, std::shared_ptr<Logger> logger , std::shared_ptr<SPX42Config> spxCfg); //! Konstruktor
       ~ConnectFragment();                                       //! Destruktor, muss GUI säubern
 
     private slots:

@@ -1,6 +1,8 @@
 ﻿#ifndef ABOUTDIALOG_HPP
 #define ABOUTDIALOG_HPP
 
+#include <memory>
+
 #include <QDialog>
 #include <QString>
 #include <QPalette>
@@ -15,12 +17,12 @@ namespace spx42
   {
     private:
       Q_OBJECT
-      Ui::AboutDialog *ui;
-      Logger *lg;
-      AppConfigClass *cf;
+      std::unique_ptr<Ui::AboutDialog> ui;
+      std::shared_ptr<Logger> lg;
+      AppConfigClass& cf;
 
     public:
-      explicit AboutDialog(QWidget *parent, AppConfigClass *conf, Logger *logger = Q_NULLPTR );
+      explicit AboutDialog( QWidget *parent, AppConfigClass& conf, std::shared_ptr<Logger> logger = Q_NULLPTR );
 
   };
 }

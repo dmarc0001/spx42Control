@@ -7,6 +7,7 @@
 #include <QDateTime>
 #include <QDebug>
 #include <string>
+#include <memory>
 
 #include "../config/AppConfigClass.hpp"
 
@@ -17,11 +18,11 @@ namespace spx42
   class Logger
   {
     private:
-      LgThreshold threshold;                                   //! Logstatus
-      QFile *logFile;                                           //! Zeiger auf das Logdateiobjekt
-      QTextStream *textStream;                                  //! Zeiger auf einen Textstrom
+      LgThreshold threshold;                                    //! Logstatus
+      std::unique_ptr<QFile> logFile;                           //! Zeiger auf das Logdateiobjekt
+      std::unique_ptr<QTextStream> textStream;                  //! Zeiger auf einen Textstrom
       QDateTime dateTime;                                       //! das lokale Datum/Zeit objekt
-      const AppConfigClass *configClass;                        //! Zeiger auf die Konfiguration
+      const std::shared_ptr<AppConfigClass> configClass;        //! Zeiger auf die Konfiguration
       static const QString dateTimeFormat;                      //! Format der Zeitausgabe
       static const QString DEBUG_STR;                           //! String für Debuglevel
       static const QString INFO_STR;                            //! String für Infolevel
@@ -29,7 +30,7 @@ namespace spx42
       static const QString CRIT_STR;                            //! String für Kritischen level
 
     public:
-      Logger( const AppConfigClass *_config );                  //! Konstruktor mit Zeiger auf das Konfig-Objekt
+      Logger( const std::shared_ptr<AppConfigClass> _config );  //! Konstruktor mit Zeiger auf das Konfig-Objekt
       virtual ~Logger();                                        //! Destruktor
       int startLogging(LgThreshold th = LG_DEBUG);              //! Loggen beginnen
       void setThreshold(LgThreshold th);                        //! Setzte Loggingstufe
