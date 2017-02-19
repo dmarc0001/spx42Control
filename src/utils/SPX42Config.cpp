@@ -80,6 +80,11 @@ namespace spx42
     decoDynamicGradient = true;
     displayBrightness = DisplayBrightness::BRIGHT_100;
     displayOrientation = DisplayOrientation::LANDSCAPE;
+    unitTemperature = DeviceTemperaturUnit::CELSIUS;
+    unitLength = DeviceLenghtUnit::METRIC;
+    unitWaterType = DeviceWaterType::FRESHWATER;
+    setpointAuto = DeviceSetpointAuto::AUTO_06;
+    setpointValue = DeviceSetpointValue::SETPOINT_10;
     emit licenseChangedSig( spxLicense );
   }
 
@@ -240,6 +245,91 @@ namespace spx42
       if( sendSignals )
       {
         emit displayOrientationChangedSig( displayOrientation );
+      }
+    }
+  }
+
+  DeviceTemperaturUnit SPX42Config::getUnitsTemperatur( void )
+  {
+    return( unitTemperature );
+  }
+
+  void SPX42Config::setUnitsTemperatur( DeviceTemperaturUnit tUnit )
+  {
+    if( unitTemperature != tUnit )
+    {
+      unitTemperature = tUnit;
+      if( sendSignals )
+      {
+        emit unitsTemperaturChangedSig( unitTemperature );
+      }
+    }
+  }
+
+  DeviceLenghtUnit SPX42Config::getUnitsLength( void )
+  {
+    return( unitLength );
+  }
+
+  void SPX42Config::setUnitsLength( DeviceLenghtUnit lUnit )
+  {
+    if( unitLength != lUnit )
+    {
+      unitLength = lUnit;
+      if( sendSignals )
+      {
+        emit unitsLengtChangedSig( unitLength );
+      }
+    }
+  }
+
+  DeviceWaterType SPX42Config::getUnitsWaterType( void )
+  {
+    return( unitWaterType );
+  }
+
+  void SPX42Config::setUnitsWaterType( DeviceWaterType wUnit )
+  {
+    if( unitWaterType != wUnit )
+    {
+      unitWaterType = wUnit;
+      if( sendSignals )
+      {
+        emit untisWaterTypeChangedSig( unitWaterType );
+      }
+    }
+  }
+
+  DeviceSetpointAuto SPX42Config::getSetpointAuto( void )
+  {
+    return( setpointAuto );
+  }
+
+  void SPX42Config::setSetpointAuto( DeviceSetpointAuto aSetpoint )
+  {
+    if( setpointAuto != aSetpoint )
+    {
+      setpointAuto = aSetpoint;
+      if( sendSignals )
+      {
+        emit setpointAutoChangeSig( setpointAuto );
+      }
+    }
+  }
+
+  DeviceSetpointValue SPX42Config::getSetpointValue( void )
+  {
+    return( setpointValue );
+  }
+
+  void SPX42Config::setSetpointValue( DeviceSetpointValue ppo2 )
+  {
+    if( setpointValue != ppo2 )
+    {
+      setpointValue = ppo2;
+      if( sendSignals )
+      {
+        emit setpointValueChangedSig( setpointValue );
       }
     }
   }

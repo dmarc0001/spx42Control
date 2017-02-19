@@ -84,6 +84,13 @@ namespace spx42
     // Displayeinstellungen
     connect( ui->displayBrightnessComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &DeviceConfigFragment::displayBrightnessChangedSlot);
     connect( ui->displayOrientationComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &DeviceConfigFragment::displayOrientationChangedSlot);
+    // Einheiteneinstellungen
+    connect( ui->unitsTemperaturComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &DeviceConfigFragment::unitsTemperatureChangedSlot);
+    connect( ui->unitsDeepComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &DeviceConfigFragment::unitsLengthChangedSlot);
+    connect( ui->unitsWaterTypeComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &DeviceConfigFragment::unitsWatertypeChangedSlot);
+    // Setpointeinstellungen
+    connect( ui->setpointAutoOnComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &DeviceConfigFragment::setpointAutoChangedSlot);
+    connect( ui->setpointSetpointComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &DeviceConfigFragment::setpointValueChangedSlot);
   }
 
   /**
@@ -94,6 +101,13 @@ namespace spx42
     //
     // Alle Slots trennen
     //
+    // SETPOINT
+    disconnect( ui->setpointSetpointComboBox, 0, 0, 0 );
+    disconnect( ui->setpointAutoOnComboBox, 0, 0, 0 );
+    // EINHEITEN
+    disconnect( ui->unitsWaterTypeComboBox, 0, 0, 0 );
+    disconnect( ui->unitsDeepComboBox, 0, 0, 0 );
+    disconnect( ui->unitsTemperaturComboBox, 0, 0, 0 );
     // DISPLAY
     disconnect( ui->displayOrientationComboBox, 0, 0, 0);
     disconnect( ui->displayBrightnessComboBox, 0, 0, 0);
@@ -298,17 +312,141 @@ namespace spx42
 
   void DeviceConfigFragment::displayOrientationChangedSlot( int index )
   {
-    QString orString;
-    //
-    if( index == 0 )
+    DisplayOrientation orientation = static_cast<DisplayOrientation>(index);
+    if( lg->getThreshold() == LgThreshold::LG_DEBUG )
     {
-      orString = "landscape";
+      QString orString;
+      //
+      if( orientation == DisplayOrientation::LANDSCAPE )
+      {
+        orString = "landscape";
+      }
+      else
+      {
+        orString = "landscape 180°";
+      }
+      lg->debug( QString("DeviceConfigFragment::displayOrientationChangedSlot: orientation to %1").arg(orString));
     }
-    else
-    {
-      orString = "landscape 180°";
-    }
-    lg->debug( QString("DeviceConfigFragment::displayOrientationChangedSlot: orientation to %1").arg(orString));
     spxConfig->setDisplayOrientation( static_cast<DisplayOrientation>(index));
+  }
+
+  void DeviceConfigFragment::unitsTemperatureChangedSlot( int index )
+  {
+    DeviceTemperaturUnit tUnit = static_cast<DeviceTemperaturUnit>(index);
+    if( lg->getThreshold() == LgThreshold::LG_DEBUG )
+    {
+      QString tmpString;
+      //
+      if( tUnit == DeviceTemperaturUnit::CELSIUS )
+      {
+        tmpString = "celsius";
+      }
+      else
+      {
+        tmpString = "fahrenheid";
+      }
+      lg->debug( QString("DeviceConfigFragment::unitsTemperatureChangedSlot: temperatur unit to %1").arg(tmpString));
+    }
+    spxConfig->setUnitsTemperatur( tUnit );
+  }
+
+  void DeviceConfigFragment::unitsLengthChangedSlot( int index )
+  {
+    DeviceLenghtUnit lUnit = static_cast<DeviceLenghtUnit>(index);
+    if( lg->getThreshold() == LgThreshold::LG_DEBUG )
+    {
+      QString lenString;
+      //
+      if( lUnit == DeviceLenghtUnit::METRIC )
+      {
+        lenString = "metric";
+      }
+      else
+      {
+        lenString = "imperial";
+      }
+      lg->debug( QString("DeviceConfigFragment::unitsLengthChangedSlot: lengt unit to %1").arg(lenString));
+    }
+    spxConfig->setUnitsLength( lUnit );
+  }
+
+  void DeviceConfigFragment::unitsWatertypeChangedSlot( int index )
+  {
+    DeviceWaterType wUnit = static_cast<DeviceWaterType>(index);
+    if( lg->getThreshold() == LgThreshold::LG_DEBUG )
+    {
+      QString typeString;
+      //
+      if( wUnit == DeviceWaterType::FRESHWATER )
+      {
+        typeString = "freshwater";
+      }
+      else
+      {
+        typeString = "saltwater";
+      }
+      lg->debug( QString("DeviceConfigFragment::unitsWatertypeChangedSlot: lengt unit to %1").arg(typeString));
+    }
+    spxConfig->setUnitsWaterType( wUnit );
+  }
+
+  void DeviceConfigFragment::setpointAutoChangedSlot( int index )
+  {
+    // TODO: imperiale Maße auch berücksichtigen
+    DeviceSetpointAuto autoSP = static_cast<DeviceSetpointAuto>(index);
+    if( lg->getThreshold() == LgThreshold::LG_DEBUG )
+    {
+      int autoDepth;
+      switch( index )
+      {
+        case static_cast<int>(DeviceSetpointAuto::AUTO_06):
+          autoDepth = 6;
+          break;
+        case static_cast<int>(DeviceSetpointAuto::AUTO_10):
+          autoDepth = 10;
+          break;
+        case static_cast<int>(DeviceSetpointAuto::AUTO_15):
+          autoDepth = 15;
+          break;
+        case static_cast<int>(DeviceSetpointAuto::AUTO_20):
+          autoDepth = 20;
+          break;
+        case static_cast<int>(DeviceSetpointAuto::AUTO_OFF):
+        default:
+          autoDepth = 0;
+      }
+      lg->debug( QString("DeviceConfigFragment::setpointAutoChangedSlot: auto setpoint to %1").arg(autoDepth));
+    }
+    spxConfig->setSetpointAuto( autoSP );
+  }
+
+  void DeviceConfigFragment::setpointValueChangedSlot( int index )
+  {
+    // TODO: imperiale Maße auch berücksichtigen
+    DeviceSetpointValue setpointValue = static_cast<DeviceSetpointValue>(index);
+    if( lg->getThreshold() == LgThreshold::LG_DEBUG )
+    {
+      int setpoint;
+      switch( index )
+      {
+        case static_cast<int>(DeviceSetpointValue::SETPOINT_10):
+          setpoint = 10;
+          break;
+        case static_cast<int>(DeviceSetpointValue::SETPOINT_11):
+          setpoint = 11;
+          break;
+        case static_cast<int>(DeviceSetpointValue::SETPOINT_12):
+          setpoint = 12;
+          break;
+        case static_cast<int>(DeviceSetpointValue::SETPOINT_13):
+          setpoint = 13;
+          break;
+        case static_cast<int>(DeviceSetpointValue::SETPOINT_14):
+        default:
+          setpoint = 14;
+      }
+      lg->debug( QString("DeviceConfigFragment::setpointValueChangedSlot: setpoint (ppo2) to %1").arg(setpoint));
+    }
+    spxConfig->setSetpointValue( setpointValue );
   }
 }

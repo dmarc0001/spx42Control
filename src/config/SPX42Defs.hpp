@@ -21,6 +21,12 @@ namespace spx42
                                          };
   enum class DisplayBrightness : qint8 { BRIGHT_20, BRIGHT_40, BRIGHT_60, BRIGHT_80, BRIGHT_100 };
   enum class DisplayOrientation : qint8 { LANDSCAPE, LANDSCAPE_180 };
+  enum class DeviceTemperaturUnit : qint8 { CELSIUS, FAHRENHEID };
+  enum class DeviceLenghtUnit : qint8 { METRIC, IMPERIAL };
+  enum class DeviceWaterType : qint8 { FRESHWATER, SALTWATER };
+  enum class DeviceSetpointAuto : qint8 { AUTO_06, AUTO_10, AUTO_15, AUTO_20, AUTO_OFF };
+  enum class DeviceSetpointValue : qint8 { SETPOINT_10, SETPOINT_11, SETPOINT_12, SETPOINT_13, SETPOINT_14 };
+
 
   // Declariere Typen für Gradienten
   using DecoGradient = std::pair<qint8,qint8>;

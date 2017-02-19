@@ -22,7 +22,7 @@ fi
 #
 # berechne Datum und Buildnummer
 #
-CURRDATE=`date +"%F %T"`
+CURRDATE=`date +"%d.%m.%Y %T"`
 BUILD=`cat $BUILDNUMFILE`
 BUILDNUM=`echo "$BUILD + 1" | bc -q`
 BUILDNUM=`printf "%08d" $BUILDNUM`

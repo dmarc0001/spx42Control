@@ -51,6 +51,13 @@ namespace spx42
       // DISPLAYEINSTELLUNGEN
       void displayBrightnessChangedSlot( int index );           //! wenn sich die Einstellung Helligkeit des Display verändert
       void displayOrientationChangedSlot( int index );          //! wenn sich die Orientierung verändert
+      // EINHEITENSYSTEM
+      void unitsTemperatureChangedSlot( int index );            //! wenn sich die Einstellung für die Einheit (Celsius/Fahrenheid) ändert
+      void unitsLengthChangedSlot( int index );                 //! wenn sich die Einstellung für die Einheit (Fuß/Meter) ändert
+      void unitsWatertypeChangedSlot( int index );              //! wenn sich die Einstellung für den Wassertyp ändert
+      // SETPOINTS
+      void setpointAutoChangedSlot( int index );                //! wenn sich die Einstellung für Autosetpoiunt ändert
+      void setpointValueChangedSlot( int index );               //! wenn sich der Wert des Autosetpoints verändert
   };
 }
 #endif // DEVICECONFIG_HPP
