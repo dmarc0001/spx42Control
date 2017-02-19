@@ -19,6 +19,8 @@ namespace spx42
                                            DECO_KEY_V_AGRESSIVE,
                                            DECO_KEY_CUSTOM
                                          };
+  enum class DisplayBrightness : qint8 { BRIGHT_20, BRIGHT_40, BRIGHT_60, BRIGHT_80, BRIGHT_100 };
+  enum class DisplayOrientation : qint8 { LANDSCAPE, LANDSCAPE_180 };
 
   // Declariere Typen für Gradienten
   using DecoGradient = std::pair<qint8,qint8>;

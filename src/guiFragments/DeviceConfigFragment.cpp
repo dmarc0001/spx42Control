@@ -73,10 +73,17 @@ namespace spx42
     //
     // Slots verbinden
     //
+    //Lizenz
     connect( spxConfig.get(), &SPX42Config::licenseChangedSig, this, &DeviceConfigFragment::licChangedSlot );
+    // dekompression
     connect( ui->conservatismComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &DeviceConfigFragment::decoComboChangedSlot );
     connect( ui->gradientLowSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &DeviceConfigFragment::decoGradientLowChangedSlot );
     connect( ui->gradientHighSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &DeviceConfigFragment::decoGradientHighChangedSlot );
+    connect( ui->dynamicGradientsOnCheckBox, QCheckBox::stateChanged, this, &DeviceConfigFragment::decoDynamicGradientStateChangedSlot );
+    connect( ui->deepStopOnCheckBox, QCheckBox::stateChanged, this, &DeviceConfigFragment::decoDeepStopsEnableChangedSlot );
+    // Displayeinstellungen
+    connect( ui->displayBrightnessComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &DeviceConfigFragment::displayBrightnessChangedSlot);
+    connect( ui->displayOrientationComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &DeviceConfigFragment::displayOrientationChangedSlot);
   }
 
   /**
@@ -87,9 +94,16 @@ namespace spx42
     //
     // Alle Slots trennen
     //
+    // DISPLAY
+    disconnect( ui->displayOrientationComboBox, 0, 0, 0);
+    disconnect( ui->displayBrightnessComboBox, 0, 0, 0);
+    // Dekompression
+    disconnect( ui->deepStopOnCheckBox, 0, 0, 0);
+    disconnect( ui->dynamicGradientsOnCheckBox, 0, 0, 0 );
     disconnect( ui->gradientHighSpinBox, 0, 0, 0 );
     disconnect( ui->gradientLowSpinBox, 0, 0, 0 );
     disconnect( ui->conservatismComboBox, 0, 0, 0 );
+    //Lizenz
     disconnect( spxConfig.get(), 0, 0, 0 );
   }
 
@@ -129,23 +143,26 @@ namespace spx42
    */
   void DeviceConfigFragment::decoComboChangedSlot( int index )
   {
+    DecoGradient newGradient;
+    //
     if( gradentSlotsIgnore ) return;
     //
     // index korrespondiert mit dem Key des Deko-Presets
     // QHash aus SPX42Config
     //
-    DecoGradient newGrad = spxConfig->getPresetValues( static_cast<DecompressionPreset>(index) );
+    newGradient = spxConfig->getPresetValues( static_cast<DecompressionPreset>(index) );
     lg->debug( QString("DeviceConfigFragment::decoComboChangedSlot: combobox new index: %1, new gradients low: %2, high: %3 ")
                .arg(index)
-               .arg(newGrad.first)
-               .arg(newGrad.second));
+               .arg(newGradient.first)
+               .arg(newGradient.second));
     //
     // Slots für changeInput kurz deaktivieren
     // und dann Werte neu eintragen
     //
     gradentSlotsIgnore = true;
-    ui->gradientLowSpinBox->setValue( newGrad.first );
-    ui->gradientHighSpinBox->setValue( newGrad.second );
+    ui->gradientLowSpinBox->setValue( newGradient.first );
+    ui->gradientHighSpinBox->setValue( newGradient.second );
+    spxConfig->setCurrentPreset( static_cast<DecompressionPreset>(index), newGradient.first, newGradient.second );
     gradentSlotsIgnore = false;
   }
 
@@ -156,6 +173,7 @@ namespace spx42
   void DeviceConfigFragment::decoGradientLowChangedSlot( int low )
   {
     DecompressionPreset preset;
+    DecoGradient newGradient;
     qint8 high;
     //
     if( gradentSlotsIgnore ) return;
@@ -167,7 +185,6 @@ namespace spx42
     // Passen die Werte zu einem Preset?
     //
     preset = spxConfig->getPresetForGradient( static_cast<qint8>(low), static_cast<qint8>(high) );
-    spxConfig->setCurrentPreset( preset, low, high );
     //
     // hat sich dabei das Preset verändert?
     //
@@ -175,6 +192,7 @@ namespace spx42
     {
       setGradientPresetWithoutCallback( preset );
     }
+    spxConfig->setCurrentPreset( preset, low, high );
   }
 
   /**
@@ -184,6 +202,7 @@ namespace spx42
   void DeviceConfigFragment::decoGradientHighChangedSlot( int high )
   {
     DecompressionPreset preset;
+    DecoGradient newGradient;
     qint8 low;
     //
     if( gradentSlotsIgnore ) return;
@@ -200,6 +219,7 @@ namespace spx42
     {
       setGradientPresetWithoutCallback( preset );
     }
+    spxConfig->setCurrentPreset( preset, low, high );
   }
 
   /**
@@ -209,7 +229,7 @@ namespace spx42
   void DeviceConfigFragment::setGradientPresetWithoutCallback( DecompressionPreset preset )
   {
     //
-    // zuerst Callbacks ignorieren, sondst gibt das eien Endlosschleife
+    // zuerst Callbacks ignorieren, sondst gibt das eine Endlosschleife
     //
     gradentSlotsIgnore = true;
     ui->conservatismComboBox->setCurrentIndex( static_cast<int>(preset) );
@@ -219,5 +239,76 @@ namespace spx42
     // Callbacks wieder erlauben
     //
     gradentSlotsIgnore = false;
+  }
+
+  void DeviceConfigFragment::decoDynamicGradientStateChangedSlot( int state )
+  {
+    bool newState = false;
+    //
+    lg->debug( QString("DeviceConfigFragment::decoDynamicGradientStateChangedSlot: changed to %1").arg(state) );
+    if( state == static_cast<int>(Qt::CheckState::Checked) )
+      newState = true;
+    spxConfig->setIsDecoDynamicGradients( newState );
+  }
+
+  void DeviceConfigFragment::decoDeepStopsEnableChangedSlot( int state )
+  {
+    bool newState = false;
+    //
+    lg->debug( QString("DeviceConfigFragment::decoDeepStopsEnableChangedSlot: changed to %1").arg(state) );
+    if( state == static_cast<int>(Qt::CheckState::Checked) )
+      newState = true;
+    spxConfig->setIsDeepstopsEnabled( newState );
+  }
+
+  void DeviceConfigFragment::displayBrightnessChangedSlot( int index )
+  {
+    //
+    if( lg->getThreshold() == LgThreshold::LG_DEBUG )
+    {
+      //
+      // das nur im debugging Modus machen
+      //
+      int brVal=0;
+      switch( index )
+      {
+        case static_cast<int>(DisplayBrightness::BRIGHT_20):
+          brVal = 20;
+          break;
+        case static_cast<int>(DisplayBrightness::BRIGHT_40):
+          brVal = 40;
+          break;
+        case static_cast<int>(DisplayBrightness::BRIGHT_60):
+          brVal = 60;
+          break;
+        case static_cast<int>(DisplayBrightness::BRIGHT_80):
+          brVal = 80;
+          break;
+        case static_cast<int>(DisplayBrightness::BRIGHT_100):
+        default:
+          brVal = 100;
+      }
+      lg->debug( QString( "DeviceConfigFragment::displayBrightnessChangedSlot: set brightness to %1").arg( brVal ));
+    }
+    //
+    // setze im config-Objekt die Helligkeit
+    //
+    spxConfig->setDisplayBrightness( static_cast<DisplayBrightness>(index) );
+  }
+
+  void DeviceConfigFragment::displayOrientationChangedSlot( int index )
+  {
+    QString orString;
+    //
+    if( index == 0 )
+    {
+      orString = "landscape";
+    }
+    else
+    {
+      orString = "landscape 180°";
+    }
+    lg->debug( QString("DeviceConfigFragment::displayOrientationChangedSlot: orientation to %1").arg(orString));
+    spxConfig->setDisplayOrientation( static_cast<DisplayOrientation>(index));
   }
 }

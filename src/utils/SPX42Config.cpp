@@ -6,7 +6,8 @@ namespace spx42
    * @brief Standartkonstruktor
    */
   SPX42Config::SPX42Config() :
-    QObject(Q_NULLPTR)
+    QObject(Q_NULLPTR),
+    sendSignals( true )
   {
     reset();
     connect( &spxLicense, &SPX42License::licenseChangedPrivateSig, this, &SPX42Config::licenseChangedPrivateSlot );
@@ -31,7 +32,10 @@ namespace spx42
     if( spxLicense != value )
     {
       spxLicense.setLicType( value.getLicType());
-      emit licenseChangedSig( spxLicense );
+      if( sendSignals )
+      {
+        emit licenseChangedSig( spxLicense );
+      }
     }
   }
 
@@ -72,6 +76,10 @@ namespace spx42
       gasList[0].reset();
     }
     currentPreset = DecompressionPreset::DECO_KEY_CONSERVATIVE;
+    decoDeepstopsEnabled = true;
+    decoDynamicGradient = true;
+    displayBrightness = DisplayBrightness::BRIGHT_100;
+    displayOrientation = DisplayOrientation::LANDSCAPE;
     emit licenseChangedSig( spxLicense );
   }
 
@@ -82,9 +90,15 @@ namespace spx42
 
   void SPX42Config::setSerialNumber(const QString &serial)
   {
-    serialNumber = serial;
+    if( serialNumber != serial )
+    {
+      serialNumber = serial;
+      if( sendSignals  )
+      {
+        emit serialNumberChangedSig( serialNumber );
+      }
+    }
   }
-
 
   void SPX42Config::setCurrentPreset( DecompressionPreset presetType, qint8 low, qint8 high )
   {
@@ -97,8 +111,24 @@ namespace spx42
       // insert macht ein update....
       //
       decoPresets.insert( static_cast<int>(DecompressionPreset::DECO_KEY_CUSTOM), DecoGradient(low,high) );
+      if( sendSignals )
+      {
+        emit decoGradientChangedSig( getCurrentDecoGradientValue() );
+      }
+      return;
     }
-    currentPreset = presetType;
+    //
+    // oder wenn sich der Typ geändert hat
+    //
+    if( currentPreset != presetType )
+    {
+      currentPreset = presetType;
+      if( sendSignals )
+      {
+        emit decoGradientChangedSig( getCurrentDecoGradientValue() );
+      }
+    }
+    // oder nix geändert, nix machen
   }
 
   DecompressionPreset SPX42Config::getCurrentDecoGradientPresetType()
@@ -140,7 +170,78 @@ namespace spx42
 
   void SPX42Config::licenseChangedPrivateSlot(void)
   {
-    emit licenseChangedSig( spxLicense );
+    if( sendSignals )
+    {
+      emit licenseChangedSig( spxLicense );
+    }
+  }
+
+  bool SPX42Config::getIsDecoDynamicGradients(void)
+  {
+    return( decoDynamicGradient );
+  }
+
+  void SPX42Config::setIsDecoDynamicGradients( bool isDynamicEnabled )
+  {
+    if( decoDynamicGradient != isDynamicEnabled )
+    {
+      decoDynamicGradient = isDynamicEnabled;
+      if( sendSignals )
+      {
+        emit decoDynamicGradientStateChangedSig( decoDynamicGradient );
+      }
+    }
+  }
+
+  bool SPX42Config::getIstDeepstopsEnabled( void )
+  {
+    return( decoDeepstopsEnabled );
+  }
+
+  void SPX42Config::setIsDeepstopsEnabled( bool isEnabled )
+  {
+    if( decoDeepstopsEnabled != isEnabled )
+    {
+      decoDeepstopsEnabled = isEnabled;
+      if( sendSignals )
+      {
+        emit decoDeepStopsEnabledSig( decoDeepstopsEnabled );
+      }
+    }
+  }
+
+  DisplayBrightness SPX42Config::getDisplayBrightness( void )
+  {
+    return( displayBrightness );
+  }
+
+  void SPX42Config::setDisplayBrightness( DisplayBrightness brightness )
+  {
+    if( displayBrightness != brightness )
+    {
+      displayBrightness = brightness;
+      if( sendSignals )
+      {
+        emit displayBrightnessChangedSig( displayBrightness );
+      }
+    }
+  }
+
+  DisplayOrientation SPX42Config::getDisplayOrientation( void )
+  {
+    return( displayOrientation );
+  }
+
+  void SPX42Config::setDisplayOrientation( DisplayOrientation orientation )
+  {
+    if( displayOrientation != orientation )
+    {
+      displayOrientation = orientation;
+      if( sendSignals )
+      {
+        emit displayOrientationChangedSig( displayOrientation );
+      }
+    }
   }
 
 }
