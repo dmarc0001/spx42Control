@@ -7,8 +7,9 @@
 
 namespace spx42
 {
-
-  // Aufzählungen
+  //
+  // Aufzählungen, einige sind eigentlich nur für die bessere Lesbarkeitdes Codes
+  //
   enum class LicenseType : qint8 { LIC_NITROX, LIC_NORMOXIX, LIC_FULLTMX, LIC_MIL };
   enum class IndividualLicense : qint8 { LIC_NONE, LIC_INDIVIDUAL };
   enum class DiluentType : qint8 { DIL_NONE, DIL_01, DIL_02 };
@@ -19,6 +20,8 @@ namespace spx42
                                            DECO_KEY_V_AGRESSIVE,
                                            DECO_KEY_CUSTOM
                                          };
+  enum class DecompressionDynamicGradient :  qint8 { DYNAMIC_GRADIENT_ON, DYNAMIC_GRADIENT_OFF };
+  enum class DecompressionDeepstops : qint8 { DEEPSTOPS_ENABLED, DEEPSTOPS_DISABLED };
   enum class DisplayBrightness : qint8 { BRIGHT_20, BRIGHT_40, BRIGHT_60, BRIGHT_80, BRIGHT_100 };
   enum class DisplayOrientation : qint8 { LANDSCAPE, LANDSCAPE_180 };
   enum class DeviceTemperaturUnit : qint8 { CELSIUS, FAHRENHEID };
@@ -26,7 +29,11 @@ namespace spx42
   enum class DeviceWaterType : qint8 { FRESHWATER, SALTWATER };
   enum class DeviceSetpointAuto : qint8 { AUTO_06, AUTO_10, AUTO_15, AUTO_20, AUTO_OFF };
   enum class DeviceSetpointValue : qint8 { SETPOINT_10, SETPOINT_11, SETPOINT_12, SETPOINT_13, SETPOINT_14 };
-
+  enum class DeviceIndividualSensors : qint8 { SENSORS_ON, SENSORS_OFF };
+  enum class DeviceIndividualPSCR : qint8 { PSCR_ON, PSCR_OFF };
+  enum class DeviceIndividualSensorCount : qint8 { SENSOR_COUNT_01, SENSOR_COUNT_02, SENSOR_COUNT_03 };
+  enum class DeviceIndividualAcoustic : qint8 { ACOUSTIC_OFF, ACOUSTIC_ON };
+  enum class DeviceIndividualLogInterval : qint8 { INTERVAL_20, INTERVAL_30, INTERVAL_60 };
 
   // Declariere Typen für Gradienten
   using DecoGradient = std::pair<qint8,qint8>;

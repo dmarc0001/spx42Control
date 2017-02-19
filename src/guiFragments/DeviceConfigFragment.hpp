@@ -58,6 +58,12 @@ namespace spx42
       // SETPOINTS
       void setpointAutoChangedSlot( int index );                //! wenn sich die Einstellung für Autosetpoiunt ändert
       void setpointValueChangedSlot( int index );               //! wenn sich der Wert des Autosetpoints verändert
+      // INDIVIDUAL
+      void individualSensorsOnChangedSlot( int state );         //! wenn sich die Einstellung Sensoren on/off ändert
+      void individualPscrModeChangedSlot( int state );          //! wenn sich die Einstellung für den PSCR Mode ändert
+      void individualSensorsCountChangedSlot( int index );      //! wenn sich die Einstellung für die Anzahl der Sensoren ändert
+      void individualAcousticChangedSlot( int state );          //! wenn sich ide Einstellung der Akustischen Warnung ändert
+      void individualLogIntervalChangedSlot( int state );       //! wenn sich die Einstellung des Logintervals ändert
   };
 }
 #endif // DEVICECONFIG_HPP

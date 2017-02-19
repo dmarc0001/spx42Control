@@ -76,8 +76,8 @@ namespace spx42
       gasList[0].reset();
     }
     currentPreset = DecompressionPreset::DECO_KEY_CONSERVATIVE;
-    decoDeepstopsEnabled = true;
-    decoDynamicGradient = true;
+    decoDeepstopsEnabled = DecompressionDeepstops::DEEPSTOPS_ENABLED;
+    decoDynamicGradient = DecompressionDynamicGradient::DYNAMIC_GRADIENT_ON;
     displayBrightness = DisplayBrightness::BRIGHT_100;
     displayOrientation = DisplayOrientation::LANDSCAPE;
     unitTemperature = DeviceTemperaturUnit::CELSIUS;
@@ -85,6 +85,11 @@ namespace spx42
     unitWaterType = DeviceWaterType::FRESHWATER;
     setpointAuto = DeviceSetpointAuto::AUTO_06;
     setpointValue = DeviceSetpointValue::SETPOINT_10;
+    individualSensorsOn = DeviceIndividualSensors::SENSORS_ON;
+    individualPSCROn = DeviceIndividualPSCR::PSCR_OFF;
+    individualSensorCount = DeviceIndividualSensorCount::SENSOR_COUNT_03;
+    individualAcustic = DeviceIndividualAcoustic::ACOUSTIC_ON;
+    individualLogInterval = DeviceIndividualLogInterval::INTERVAL_20;
     emit licenseChangedSig( spxLicense );
   }
 
@@ -181,12 +186,12 @@ namespace spx42
     }
   }
 
-  bool SPX42Config::getIsDecoDynamicGradients(void)
+  DecompressionDynamicGradient SPX42Config::getIsDecoDynamicGradients(void)
   {
     return( decoDynamicGradient );
   }
 
-  void SPX42Config::setIsDecoDynamicGradients( bool isDynamicEnabled )
+  void SPX42Config::setIsDecoDynamicGradients(DecompressionDynamicGradient isDynamicEnabled )
   {
     if( decoDynamicGradient != isDynamicEnabled )
     {
@@ -198,12 +203,12 @@ namespace spx42
     }
   }
 
-  bool SPX42Config::getIstDeepstopsEnabled( void )
+  DecompressionDeepstops SPX42Config::getIstDeepstopsEnabled( void )
   {
     return( decoDeepstopsEnabled );
   }
 
-  void SPX42Config::setIsDeepstopsEnabled( bool isEnabled )
+  void SPX42Config::setIsDeepstopsEnabled(DecompressionDeepstops isEnabled )
   {
     if( decoDeepstopsEnabled != isEnabled )
     {
@@ -330,6 +335,90 @@ namespace spx42
       if( sendSignals )
       {
         emit setpointValueChangedSig( setpointValue );
+      }
+    }
+  }
+
+  DeviceIndividualSensors SPX42Config::getIndividualSensorsOn( void )
+  {
+    return( individualSensorsOn );
+  }
+
+  void SPX42Config::setIndividualSensorsOn( DeviceIndividualSensors onOff )
+  {
+    if( individualSensorsOn != onOff )
+    {
+      individualSensorsOn = onOff;
+      if( sendSignals )
+      {
+        emit individualSensorsOnChangedSig( individualSensorsOn );
+      }
+    }
+  }
+
+
+  DeviceIndividualPSCR SPX42Config::getIndividualPscrMode( void )
+  {
+    return( individualPSCROn );
+  }
+
+  void SPX42Config::setIndividualPscrMode( DeviceIndividualPSCR pscrMode )
+  {
+    if( individualPSCROn != pscrMode )
+    {
+      if( sendSignals )
+      {
+        emit individualPscrModeChangedSig( individualPSCROn );
+      }
+    }
+  }
+
+  DeviceIndividualSensorCount SPX42Config::getIndividualSensorsCount( void )
+  {
+    return( individualSensorCount );
+  }
+
+  void SPX42Config::setIndividualSensorsCount( DeviceIndividualSensorCount sCount )
+  {
+    if( individualSensorCount != sCount )
+    {
+      if( sendSignals )
+      {
+        emit individualSensorsCountChangedSig( individualSensorCount );
+      }
+    }
+  }
+
+  DeviceIndividualAcoustic SPX42Config::getIndividualAcoustic( void )
+  {
+    return( individualAcustic );
+  }
+
+  void SPX42Config::setIndividualAcoustic( DeviceIndividualAcoustic acoustic )
+  {
+    if( individualAcustic != acoustic )
+    {
+      individualAcustic = acoustic;
+      if( sendSignals )
+      {
+        emit individualAcousticChangedSig( individualAcustic );
+      }
+    }
+  }
+
+  DeviceIndividualLogInterval SPX42Config::getIndividualLogInterval( void )
+  {
+    return( individualLogInterval );
+  }
+
+  void SPX42Config::setIndividualLogInterval( DeviceIndividualLogInterval logInterval )
+  {
+    if( individualLogInterval != logInterval )
+    {
+      individualLogInterval = logInterval;
+      if( sendSignals )
+      {
+        emit individualLogIntervalChangedSig( individualLogInterval );
       }
     }
   }

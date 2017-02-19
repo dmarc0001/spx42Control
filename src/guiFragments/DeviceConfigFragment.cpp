@@ -91,6 +91,12 @@ namespace spx42
     // Setpointeinstellungen
     connect( ui->setpointAutoOnComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &DeviceConfigFragment::setpointAutoChangedSlot);
     connect( ui->setpointSetpointComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &DeviceConfigFragment::setpointValueChangedSlot);
+    // Individual Einstellungen
+    connect( ui->individualSeonsorsOnCheckBox, QCheckBox::stateChanged, this, &DeviceConfigFragment::individualSensorsOnChangedSlot );
+    connect( ui->individualPSCRModeOnCheckBox, QCheckBox::stateChanged, this, &DeviceConfigFragment::individualPscrModeChangedSlot );
+    connect( ui->individualSensorsCountComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &DeviceConfigFragment::individualSensorsCountChangedSlot);
+    connect( ui->individualAcousticWarningsOnCheckBox, QCheckBox::stateChanged, this, &DeviceConfigFragment::individualAcousticChangedSlot );
+    connect( ui->individualLogIntervalComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &DeviceConfigFragment::individualLogIntervalChangedSlot);
   }
 
   /**
@@ -101,6 +107,12 @@ namespace spx42
     //
     // Alle Slots trennen
     //
+    // INDIVIDUAL
+    disconnect( ui->individualLogIntervalComboBox, 0, 0, 0);
+    disconnect( ui->individualAcousticWarningsOnCheckBox, 0, 0, 0 );
+    disconnect( ui->individualSensorsCountComboBox, 0, 0, 0 );
+    disconnect( ui->individualPSCRModeOnCheckBox, 0, 0, 0 );
+    disconnect( ui->individualSeonsorsOnCheckBox, 0, 0, 0 );
     // SETPOINT
     disconnect( ui->setpointSetpointComboBox, 0, 0, 0 );
     disconnect( ui->setpointAutoOnComboBox, 0, 0, 0 );
@@ -257,21 +269,21 @@ namespace spx42
 
   void DeviceConfigFragment::decoDynamicGradientStateChangedSlot( int state )
   {
-    bool newState = false;
+    DecompressionDynamicGradient newState = DecompressionDynamicGradient::DYNAMIC_GRADIENT_OFF;
     //
     lg->debug( QString("DeviceConfigFragment::decoDynamicGradientStateChangedSlot: changed to %1").arg(state) );
     if( state == static_cast<int>(Qt::CheckState::Checked) )
-      newState = true;
+      newState = DecompressionDynamicGradient::DYNAMIC_GRADIENT_ON;
     spxConfig->setIsDecoDynamicGradients( newState );
   }
 
   void DeviceConfigFragment::decoDeepStopsEnableChangedSlot( int state )
   {
-    bool newState = false;
+    DecompressionDeepstops newState = DecompressionDeepstops::DEEPSTOPS_DISABLED;
     //
     lg->debug( QString("DeviceConfigFragment::decoDeepStopsEnableChangedSlot: changed to %1").arg(state) );
     if( state == static_cast<int>(Qt::CheckState::Checked) )
-      newState = true;
+      newState = DecompressionDeepstops::DEEPSTOPS_ENABLED;
     spxConfig->setIsDeepstopsEnabled( newState );
   }
 
@@ -448,5 +460,81 @@ namespace spx42
       lg->debug( QString("DeviceConfigFragment::setpointValueChangedSlot: setpoint (ppo2) to %1").arg(setpoint));
     }
     spxConfig->setSetpointValue( setpointValue );
+  }
+
+  void DeviceConfigFragment::individualSensorsOnChangedSlot( int state )
+  {
+    DeviceIndividualSensors newState = DeviceIndividualSensors::SENSORS_OFF;
+    //
+    lg->debug( QString("DeviceConfigFragment::individualSensorsOnChangedSlot: changed to %1").arg(state) );
+    if( state == static_cast<int>(Qt::CheckState::Checked) )
+      newState = DeviceIndividualSensors::SENSORS_ON;
+    spxConfig->setIndividualSensorsOn( newState );
+  }
+
+  void DeviceConfigFragment::individualPscrModeChangedSlot( int state )
+  {
+    DeviceIndividualPSCR newState = DeviceIndividualPSCR::PSCR_OFF;
+    //
+    lg->debug( QString("DeviceConfigFragment::individualSensorsOnChangedSlot: changed to %1").arg(state) );
+    if( state == static_cast<int>(Qt::CheckState::Checked) )
+      newState = DeviceIndividualPSCR::PSCR_ON;
+    spxConfig->setIndividualPscrMode( newState );
+  }
+
+  void DeviceConfigFragment::individualSensorsCountChangedSlot( int index )
+  {
+    DeviceIndividualSensorCount setpointValue = static_cast<DeviceIndividualSensorCount>(index);
+    if( lg->getThreshold() == LgThreshold::LG_DEBUG )
+    {
+      int sensorCount;
+      switch( index )
+      {
+        case static_cast<int>(DeviceIndividualSensorCount::SENSOR_COUNT_01):
+          sensorCount = 1;
+          break;
+        case static_cast<int>(DeviceIndividualSensorCount::SENSOR_COUNT_02):
+          sensorCount = 2;
+          break;
+        case static_cast<int>(DeviceIndividualSensorCount::SENSOR_COUNT_03):
+        default:
+          sensorCount = 3;
+      }
+      lg->debug( QString("DeviceConfigFragment::individualSensorsCountChangedSlot: count sensors to %1").arg(sensorCount));
+    }
+    spxConfig->setIndividualSensorsCount( setpointValue );
+  }
+
+  void DeviceConfigFragment::individualAcousticChangedSlot( int state )
+  {
+    DeviceIndividualAcoustic newState = DeviceIndividualAcoustic::ACOUSTIC_OFF;
+    //
+    lg->debug( QString("DeviceConfigFragment::individualAcousticChangedSlot: changed to %1").arg(state) );
+    if( state == static_cast<int>(Qt::CheckState::Checked) )
+      newState = DeviceIndividualAcoustic::ACOUSTIC_ON;
+    spxConfig->setIndividualAcoustic( newState );
+  }
+
+  void DeviceConfigFragment::individualLogIntervalChangedSlot( int index )
+  {
+    DeviceIndividualLogInterval logInterval = static_cast<DeviceIndividualLogInterval>(index);
+    if( lg->getThreshold() == LgThreshold::LG_DEBUG )
+    {
+      int logInterval;
+      switch( index )
+      {
+        case static_cast<int>(DeviceIndividualLogInterval::INTERVAL_20):
+          logInterval = 20;
+          break;
+        case static_cast<int>(DeviceIndividualLogInterval::INTERVAL_30):
+          logInterval = 30;
+          break;
+        case static_cast<int>(DeviceIndividualLogInterval::INTERVAL_60):
+        default:
+          logInterval = 60;
+      }
+      lg->debug( QString("DeviceConfigFragment::individualLogIntervalChangedSlot: interrval to %1").arg(logInterval));
+    }
+    spxConfig->setIndividualLogInterval( logInterval );
   }
 }
