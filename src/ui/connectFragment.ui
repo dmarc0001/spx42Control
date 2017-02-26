@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ConnectForm</class>
- <widget class="QWidget" name="ConnectForm">
+ <class>connectForm</class>
+ <widget class="QWidget" name="connectForm">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -42,7 +42,7 @@
     <number>8</number>
    </property>
    <item>
-    <widget class="QWidget" name="widget" native="true">
+    <widget class="QWidget" name="bodyWidget" native="true">
      <layout class="QGridLayout" name="gridLayout">
       <property name="sizeConstraint">
        <enum>QLayout::SetMinAndMaxSize</enum>
@@ -99,7 +99,7 @@
          <string>connect device</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/spx42ControlRes.qrc">
+         <iconset resource="../res/Spx42ControlRes.qrc">
           <normaloff>:/icons/ic_bluetooth_black_24dp_1x.png</normaloff>
           <activeoff>:/icons/ic_bluetooth_black_24dp_1x_blue.png</activeoff>:/icons/ic_bluetooth_black_24dp_1x.png</iconset>
         </property>
@@ -110,6 +110,9 @@
          </size>
         </property>
         <property name="default">
+         <bool>true</bool>
+        </property>
+        <property name="flat">
          <bool>true</bool>
         </property>
        </widget>
@@ -140,7 +143,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../res/spx42ControlRes.qrc">
+         <iconset resource="../res/Spx42ControlRes.qrc">
           <normaloff>:/icons/ic_edit.png</normaloff>
           <activeoff>:/icons/ic_edit_blue.png</activeoff>:/icons/ic_edit.png</iconset>
         </property>
@@ -149,6 +152,9 @@
           <width>24</width>
           <height>24</height>
          </size>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -173,7 +179,7 @@
          <string>discover devices</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/spx42ControlRes.qrc">
+         <iconset resource="../res/Spx42ControlRes.qrc">
           <normaloff>:/icons/ic_bluetooth_searching.png</normaloff>
           <activeoff>:/icons/ic_bluetooth_searching_blue.png</activeoff>:/icons/ic_bluetooth_searching.png</iconset>
         </property>
@@ -182,6 +188,9 @@
           <width>24</width>
           <height>24</height>
          </size>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -311,7 +320,7 @@
   <tabstop>discoverPushButton</tabstop>
  </tabstops>
  <resources>
-  <include location="../res/spx42ControlRes.qrc"/>
+  <include location="../res/Spx42ControlRes.qrc"/>
  </resources>
  <connections/>
 </ui>

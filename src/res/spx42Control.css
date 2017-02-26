@@ -1,0 +1,35 @@
+﻿/******************************************************************************
+**** Stylesheets für die App spx42Control                                  ****
+******************************************************************************/
+
+/* Alle Anzeigeelemente */
+
+QWidget
+{
+  font-family: "DejaVu Sans Mono";
+  font-style: normal;
+  font-size: 11pt;
+}
+
+
+/* mit hover-Effekt */
+QPushButton:hover:!pressed, QComboBox:hover, QSpinBox:hover
+{
+  color: green;
+  border: 1px solid green;
+}
+
+/* gepresst */
+QPushButton:hover:pressed
+{
+  color: red;
+  border: 2px solid red;
+}
+
+QLabel#tabHeaderLabel
+{
+  font-style: bold;
+  font-size: 14pt;
+  color: red;
+}
+

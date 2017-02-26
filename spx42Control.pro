@@ -50,7 +50,8 @@ SOURCES                                += \
                                           src/utils/SPX42Gas.cpp \
                                           src/guiFragments/IFragmentInterface.cpp \
                                           src/guiFragments/DeviceConfigFragment.cpp \
-                                          src/config/SPX42Defs.cpp
+                                          src/config/SPX42Defs.cpp \
+                                          src/guiFragments/LogFragment.cpp
 
 HEADERS                                += \
                                           src/Spx42ControlMainWin.hpp \
@@ -65,20 +66,26 @@ HEADERS                                += \
                                           src/utils/SPX42Gas.hpp \
                                           src/config/SPX42Defs.hpp \
                                           src/guiFragments/IFragmentInterface.hpp \
-                                          src/guiFragments/DeviceConfigFragment.hpp
+                                          src/guiFragments/DeviceConfigFragment.hpp \
+                                          src/guiFragments/LogFragment.hpp \
+    src/ControlMain.hpp
 
 FORMS                                  += \
                                           src/ui/Spx42ControlMainWin.ui \
                                           src/ui/AboutDialog.ui \
                                           src/ui/GasFragment.ui \
                                           src/ui/ConnectFragment.ui \
-                                          src/ui/DeviceConfig.ui
+                                          src/ui/LogFragment.ui \
+                                          src/ui/DeviceConfigFragment.ui
 
 RESOURCES                              = \
                                           src/res/Spx42ControlRes.qrc
 
 TRANSLATIONS                           = \
                                           src/translations/Spx42Control_de_DE.ts
+
+DISTFILES                              += \
+    src/res/spx42Control.css
 
 
 ###############################################################################
@@ -103,3 +110,4 @@ SOURCES                 += \
 HEADERS                 += \
 
 }
+

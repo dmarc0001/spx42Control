@@ -59,7 +59,7 @@ namespace spx42
   void SPX42License::setLicType(const LicenseType &value)
   {
     licType = value;
-    emit licenseChangedPrivateSig();
+    //emit licenseChangedPrivateSig( this );
   }
 
   IndividualLicense SPX42License::getLicInd() const
@@ -70,7 +70,7 @@ namespace spx42
   void SPX42License::setLicInd(const IndividualLicense &value)
   {
     licInd = value;
-    emit licenseChangedPrivateSig();
+    //emit licenseChangedPrivateSig( this );
   }
 
 }

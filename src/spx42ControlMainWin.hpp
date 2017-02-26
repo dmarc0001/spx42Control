@@ -20,6 +20,7 @@
 #include "guiFragments/ConnectFragment.hpp"
 #include "guiFragments/DeviceConfigFragment.hpp"
 #include "guiFragments/GasFragment.hpp"
+#include "guiFragments/LogFragment.hpp"
 #include "utils/SPX42Config.hpp"
 
 namespace Ui
@@ -32,11 +33,6 @@ namespace Ui
 
 namespace spx42
 {
-  //! Welcher Tab ist aktiv
-  enum class ApplicationTab : int { CONNECT_TAB, CONFIG_TAB, GAS_TAB, COUNT_OF_TABS };
-  //! Welcher Status ist aktiv
-  enum class ApplicationStat : int { STAT_OFFLINE, STAT_ONLINE, STAT_ERROR };
-
   class SPX42ControlMainWin : public QMainWindow
   {
     private:
@@ -62,7 +58,7 @@ namespace spx42
       bool setActionStati( void );                              //! setze Actions entsprchend des Status
       bool connectActions( void );                              //! Verbinde Actions mit Slots
       void createApplicationTabs( void );                       //! Erzeuge die (noch leeren) Tabs
-      void clearApplicationTabs( void );                        //! Leere die eventuell vorhandenen Tab-Objekte
+      void clearApplicationTabs( void );                        //! Leere die Tabs
       void simulateLicenseChanged( LicenseType lType );         //! Simuliere lizenzwechsel
       ApplicationTab getApplicationTab( void );                 //! Welcher Tab war noch aktiv?
 
@@ -70,7 +66,8 @@ namespace spx42
       void aboutActionSlot( bool checked );                     //! ABOUT wurde gefordert
       void quitActionSlot( bool checked );                      //! ENDE wurde gefordert
       void tabCurrentChangedSlot( int idx );                    //! TAB Index gewechselt
-      void licenseChangedSlot( SPX42License& lic );             //! Lizenztyp getriggert
+      void licenseChangedSlot( void );                          //! Lizenztyp getriggert
+      void simulateIndividualLicenseChanged( void );            //! Individuallizenz geändert
   };
 } // namespace spx42
 

@@ -24,7 +24,6 @@ namespace spx42
     private:
       Q_OBJECT
       std::unique_ptr<Ui::DeviceConfig> ui;                     //! Smart-Zeiger für das UI Objekt (automatische Speicherverwaltung)
-      bool areSlotsConnected;                                   //! Ich merke mir, ob die Slots verbunden sind
       bool volatile gradentSlotsIgnore;                         //! Um Schleifen zu vermeiden kontrolliert Callbacks ignorieren
 
     public:
@@ -36,12 +35,17 @@ namespace spx42
       void changeEvent(QEvent *e);                              //! Globele Veränderungen
 
     private:
-      void connectSlots( void );                                //! verbinde signale mit Slots
+      void setGuiForDecompression( void );                      //! GUI nach spxConfig einstellen
+      void setGuiForDisplay( void );                            //! GUI nach spxConfig einstellen
+      void setGuiForUnits( void );                              //! GUI nach spxConfig einstellen
+      void setGuiForSetpoint( void );                           //! GUI nach spxConfig einstellen
+      void setGuiForLicense( void );                            //! GUI nach spxConfig einstellen
+      void setGuiForIndividual( void );                         //! GUI nach spxConfig einstellen
       void disconnectSlots( void );                             //! Trenne die Verbindung von Signalen und Slots
       void setGradientPresetWithoutCallback( DecompressionPreset preset ); //! Gradienten-Combobox setzten ohne Callback auszuführen
 
     private slots:
-      void licChangedSlot( SPX42License& lic );                 //! Wenn sich die Lizenz ändert
+      void confLicChangedSlot( void );                          //! Wenn sich die Lizenz ändert
       // DEKOMPRESSIONSEINSTELLUNGEN
       void decoComboChangedSlot( int index );                   //! ändert sich der Inhalt der Combobox für Dekompressionseinstellungen
       void decoGradientLowChangedSlot( int low );               //! wenn der Gradient LOW geändert wurde

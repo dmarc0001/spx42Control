@@ -10,7 +10,7 @@
 
 namespace Ui
 {
-  class ConnectForm;
+  class connectForm;
 }
 
 namespace spx42
@@ -19,7 +19,7 @@ namespace spx42
   {
     private:
       Q_OBJECT
-      std::unique_ptr<Ui::ConnectForm> ui;                      //! Zeiger auf die GUI Objekte
+      std::unique_ptr<Ui::connectForm> ui;                      //! Zeiger auf die GUI Objekte
 
     public:
       explicit ConnectFragment(QWidget *parent, std::shared_ptr<Logger> logger , std::shared_ptr<SPX42Config> spxCfg); //! Konstruktor

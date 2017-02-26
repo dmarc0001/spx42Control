@@ -3,6 +3,10 @@
 namespace spx42
 {
   //
+  // Einfache Konstanten
+  //
+
+  //
   // Defaults für DEKOMPRESSIONS Einstellungen
   //
   const DecoGradient ProjectConst::DECO_VAL_V_CONSERVATIVE( 35, 70 );

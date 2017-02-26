@@ -14,6 +14,7 @@
 #include "../logging/Logger.hpp"
 #include "../utils/SPX42Config.hpp"
 #include "../config/SPX42Defs.hpp"
+#include "../config/ProjectConst.hpp"
 #include "IFragmentInterface.hpp"
 
 namespace Ui
@@ -53,7 +54,6 @@ namespace spx42
       std::unique_ptr<Ui::GasForm> ui;                          //! Zeiger auf GUI-Objekte
       bool areSlotsConnected;                                   //! Ich merke mir, ob die Slots verbunden sind
       std::unique_ptr<GasFragmentGuiRef> gRef[8];               //! Referenzen für acht GUI-Objekte
-      //GasFragmentGuiRef *gRef[8];                               //! Referenzen für acht GUI-Objekte
 
     public:
       explicit GasFragment(QWidget *parent, std::shared_ptr<Logger> logger , std::shared_ptr<SPX42Config> spxCfg);    //! Konstruktor
@@ -71,7 +71,7 @@ namespace spx42
       void spinHeValueChangedSlot(int index, int heVal );       //! HE Wert eines Gases hat sich verändert
       void gasUseTypChangeSlot(int index, DiluentType which, int state ); //! wenn sich das Diluent ändert
       void baCheckChangeSlot( int index, int state );           //! wenn sich das Bailout ändert
-      void licChangedSlot( SPX42License& lic );                 //! Wenn sich die Lizenz ändert
+      void licChangedSlot( const SPX42License& lic );           //! Wenn sich die Lizenz ändert
   };
 
 }

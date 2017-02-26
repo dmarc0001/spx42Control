@@ -42,20 +42,23 @@ namespace spx42
       DeviceIndividualSensorCount individualSensorCount;                       //! wie viele Sensoren im SPX42 aktiv
       DeviceIndividualAcoustic individualAcustic;                              //! sollen akustische Warnunge ausggeben werden
       DeviceIndividualLogInterval individualLogInterval;                       //! welches Interval zum loggen
+      DeviceIndividualTempstick individualTempStick;                           //! welcher Tempstick wird genutzt?
 
     public:
       SPX42Config();                                                           //! Der Konstruktor
-      SPX42License& getLicense(void);                                          //! Lizenz des aktuellen SPX42
-      void setLicense(const SPX42License value);                               //! Lizenz des aktuellen SPX42 merken
+      SPX42License getLicense(void);                                           //! Lizenz des aktuellen SPX42
+      void setLicense(const LicenseType value);                                //! Lizenz des aktuellen SPX42 merken
+      void setLicense(const IndividualLicense value);                          //! Lizenz des aktuellen SPX42 merken
       QString getLicName(void) const;                                          //! Textliche Darstellung der Lizenz
-      SPX42Gas& getGasAt( int num );                                           //! Gib ein Gas mit der Nummer num vom SPX42 zurück
+      SPX42Gas getGasAt( int num ) const;                                      //! Gib ein Gas mit der Nummer num vom SPX42 zurück
       void reset(void);                                                        //! Resetiere das Objekt
       QString getSerialNumber(void) const;                                     //! Seriennummer des aktuellen SPX42 zurückgeben
       void setSerialNumber(const QString& serial);                             //! Seriennumemr des aktuellen SPX42 speichern
       // DEKOMPRESSIONSEINSTELLUNGEN
       void setCurrentPreset( DecompressionPreset presetType, qint8 low=0, qint8 high=0 ); //! Aktuelle Gradienteneinstellungen merken
+      void setCurrentPreset(DecompressionPreset presetType, const DecoGradient& dGradient ); //! Aktuelle Gradienteneinstellungen merken
       DecompressionPreset getCurrentDecoGradientPresetType();                  //! Welcher Typ Gradient ist gesetzt?
-      DecoGradient getCurrentDecoGradientValue();                              //! Gib die aktuelle Gradienteneinstellung zurück
+      DecoGradient getCurrentDecoGradientValue() const;                        //! Gib die aktuelle Gradienteneinstellung zurück
       DecoGradient getPresetValues( DecompressionPreset presetType ) const;    //! Gib die Werte füe ein Preset zurück
       DecompressionPreset getPresetForGradient( qint8 low, qint8 high );       //! Gib den Preset für gegebene Werte zurück
       DecompressionDynamicGradient getIsDecoDynamicGradients( void );          //! gib den aktuellen Wert zurück
@@ -90,33 +93,35 @@ namespace spx42
       void setIndividualAcoustic( DeviceIndividualAcoustic acoustic );         //! setzte Akustik an oder aus
       DeviceIndividualLogInterval getIndividualLogInterval( void );            //! wie ist das Log interval
       void setIndividualLogInterval( DeviceIndividualLogInterval logInterval );//! setze das Log interval
-
+      DeviceIndividualTempstick getIndividualTempStick( void );                //! welcher Temperatur Stick ist eingebaut?
+      void setIndividualTempStick(DeviceIndividualTempstick tStick);           //! setze den eingebauten TemperaturStick
     private slots:
-      void licenseChangedPrivateSlot(void);
+      //void licenseChangedPrivateSlot( SPX42License& lic );
 
     signals:
-      void licenseChangedSig( SPX42License& lic );                             //! Signal wenn die lizenz verändert wird
-      void serialNumberChangedSig( QString serialNumber );                     //! Signal wenn die Seriennummer neu gesetzt wird
+      void licenseChangedSig( const SPX42License& lic );                       //! Signal wenn die lizenz verändert wird
+      void serialNumberChangedSig( const QString& serialNumber );              //! Signal wenn die Seriennummer neu gesetzt wird
       // DEKOMPRESSIONSEINSTELLUNGEN
-      void decoGradientChangedSig( DecoGradient preset );                      //! Signal wird gesendet wenn Gradienten verändert sind ( nutze: Qt::QueuedConnection )
-      void decoDynamicGradientStateChangedSig( DecompressionDynamicGradient isDynamic ); //! Signal wenn "dynamische Gradienten" verändert wird
-      void decoDeepStopsEnabledSig( DecompressionDeepstops isEnabled );        //! Signal wenn "deep stops" geändert wird
+      void decoGradientChangedSig( const DecoGradient& preset );               //! Signal wird gesendet wenn Gradienten verändert sind ( nutze: Qt::QueuedConnection )
+      void decoDynamicGradientStateChangedSig( const DecompressionDynamicGradient& isDynamic ); //! Signal wenn "dynamische Gradienten" verändert wird
+      void decoDeepStopsEnabledSig( const DecompressionDeepstops& isEnabled ); //! Signal wenn "deep stops" geändert wird
       // DISPLAYEINSTELLUNGEN
-      void displayBrightnessChangedSig( DisplayBrightness brightness );        //! Signal wenn sich die Einstellung für Helligkeit ändert
-      void displayOrientationChangedSig( DisplayOrientation orientation );     //! Signal wenn die Diesplayausrichtung verändert wird
+      void displayBrightnessChangedSig( const DisplayBrightness& brightness ); //! Signal wenn sich die Einstellung für Helligkeit ändert
+      void displayOrientationChangedSig( const DisplayOrientation& orientation );//! Signal wenn die Diesplayausrichtung verändert wird
       // EINHEITEN
-      void unitsTemperaturChangedSig( DeviceTemperaturUnit tUnit );            //! Signal wenn die Temperatureinheit geändert wurde
-      void unitsLengtChangedSig( DeviceLenghtUnit lUnit );                     //! Signal wenn Längeneinheit geänder wird
-      void untisWaterTypeChangedSig( DeviceWaterType wUnit );                  //! Signal wenn Wassertyp geändert wird
+      void unitsTemperaturChangedSig( const DeviceTemperaturUnit& tUnit );     //! Signal wenn die Temperatureinheit geändert wurde
+      void unitsLengtChangedSig( const DeviceLenghtUnit& lUnit );              //! Signal wenn Längeneinheit geänder wird
+      void untisWaterTypeChangedSig( const DeviceWaterType& wUnit );           //! Signal wenn Wassertyp geändert wird
       // SETPOINT
-      void setpointAutoChangeSig( DeviceSetpointAuto aSetpoint );              //! Signal wenn autosetpoint geändert wird
-      void setpointValueChangedSig( DeviceSetpointValue ppo2 );                //! Signal wenn setpoint geändert wurde
+      void setpointAutoChangeSig( const DeviceSetpointAuto& aSetpoint );       //! Signal wenn autosetpoint geändert wird
+      void setpointValueChangedSig( const DeviceSetpointValue& ppo2 );         //! Signal wenn setpoint geändert wurde
       // INDIVIDUAL
-      void individualSensorsOnChangedSig( DeviceIndividualSensors sensorMode );//! Signal wenn sensoren an/aus geschaltet
-      void individualPscrModeChangedSig( DeviceIndividualPSCR pscrMode );      //! Signal wenn PSCR-Mode geändert wird
-      void individualSensorsCountChangedSig( DeviceIndividualSensorCount sCount ); //! Signal wenn Anzahl der Sensoren geändert
-      void individualAcousticChangedSig( DeviceIndividualAcoustic acoustic );  //! Signal wenn Akustik an oder aus geshaltet wird
-      void individualLogIntervalChangedSig( DeviceIndividualLogInterval lInterval ); //! Signal wenn das interval geändert wurde
+      void individualSensorsOnChangedSig( const DeviceIndividualSensors& sensorMode );//! Signal wenn sensoren an/aus geschaltet
+      void individualPscrModeChangedSig( const DeviceIndividualPSCR& pscrMode );//! Signal wenn PSCR-Mode geändert wird
+      void individualSensorsCountChangedSig( const DeviceIndividualSensorCount& sCount ); //! Signal wenn Anzahl der Sensoren geändert
+      void individualAcousticChangedSig( const DeviceIndividualAcoustic& acoustic );  //! Signal wenn Akustik an oder aus geshaltet wird
+      void individualLogIntervalChangedSig( const DeviceIndividualLogInterval& lInterval ); //! Signal wenn das interval geändert wurde
+      void individualTempstickChangedSig( const DeviceIndividualTempstick& tStick );  //! Signal, wenn sich der Stick verändert hat
   };
 }
 #endif // SPX42CONFIG_HPP

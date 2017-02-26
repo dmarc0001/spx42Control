@@ -12,7 +12,6 @@ namespace spx42
   class IFragmentInterface
   {
     protected:
-      LicenseType currLic;
       std::shared_ptr<Logger> lg;                               //! Zeiger auf das Log-Objekt
       std::shared_ptr<SPX42Config> spxConfig;                   //! Zeiger auf das SPX42 Config Objekt
 

@@ -1,5 +1,5 @@
 ﻿#include "DeviceConfigFragment.hpp"
-#include "ui_DeviceConfig.h"
+#include "ui_DeviceConfigFragment.h"
 
 namespace spx42
 {
@@ -13,16 +13,12 @@ namespace spx42
     QWidget(parent),
     IFragmentInterface(logger, spxCfg),
     ui(new Ui::DeviceConfig),
-    areSlotsConnected( false ),
     gradentSlotsIgnore( false )
   {
     lg->debug( "DeviceConfigFragment::DeviceConfigFragment...");
     ui->setupUi(this);
-
-    //fillReferences();
+    ui->transferProgressBar->setVisible(false);
     initGuiWithConfig();
-    connectSlots();
-
   }
 
   /**
@@ -39,64 +35,209 @@ namespace spx42
    */
   void DeviceConfigFragment::initGuiWithConfig( void )
   {
-    bool wasSlotsConnected = areSlotsConnected;
     //
     // Initialisiere die GUI
     //
-    if( wasSlotsConnected )
-    {
-      disconnectSlots();
-    }
-    ui->deviceConfigHeaderLabel->setText( QString(tr("SETTINGS SPX42 SERIAL [%1] LIC: %2")
+    ui.get()->tabHeaderLabel->setText( QString(tr("SETTINGS SPX42 SERIAL [%1] LIC: %2")
                                              .arg(spxConfig->getSerialNumber())
                                              .arg(spxConfig->getLicName()))
                                      );
     //
-    // Deko gradienten auf sinnvolle Anfangswerte
+    // Dekompression
     //
-    DecoGradient newGrad = spxConfig->getPresetValues( DecompressionPreset::DECO_KEY_MODERATE );
-    ui->gradientLowSpinBox->setValue( newGrad.first );
-    ui->gradientHighSpinBox->setValue( newGrad.second );
+    setGuiForDecompression();
     //
-    if( wasSlotsConnected )
-    {
-      connectSlots();
-    }
-
+    // Display von config
+    //
+    setGuiForDisplay();
+    //
+    // Einheiten von config
+    //
+    setGuiForUnits();
+    //
+    setGuiForSetpoint();
+    //
+    setGuiForLicense(); // individual wird hier implizit mit aufgerufen!
+    // Lizenz signal mit slot verbinden
+    connect( spxConfig.get(), &SPX42Config::licenseChangedSig, this, &DeviceConfigFragment::confLicChangedSlot );
   }
 
   /**
-   * @brief Verbinde Slots mit Signalen
+   * @brief GUI für Dekomprtession nach spxConfig einrichten
    */
-  void DeviceConfigFragment::connectSlots( void )
+  void DeviceConfigFragment::setGuiForDecompression( void )
   {
     //
-    // Slots verbinden
+    // Signale trennen um Schleifen zu vermeiden
     //
-    //Lizenz
-    connect( spxConfig.get(), &SPX42Config::licenseChangedSig, this, &DeviceConfigFragment::licChangedSlot );
-    // dekompression
+    disconnect( ui->deepStopOnCheckBox, 0, 0, 0);
+    disconnect( ui->dynamicGradientsOnCheckBox, 0, 0, 0 );
+    disconnect( ui->gradientHighSpinBox, 0, 0, 0 );
+    disconnect( ui->gradientLowSpinBox, 0, 0, 0 );
+    disconnect( ui->conservatismComboBox, 0, 0, 0 );
+    //
+    DecompressionPreset cPreset = spxConfig->getCurrentDecoGradientPresetType();
+    DecoGradient newGrad = spxConfig->getPresetValues( spxConfig->getCurrentDecoGradientPresetType() );
+    ui->conservatismComboBox->setCurrentIndex( static_cast<int>( cPreset ));
+    ui->gradientLowSpinBox->setValue( newGrad.first );
+    ui->gradientHighSpinBox->setValue( newGrad.second );
+    if( DecompressionDeepstops::DEEPSTOPS_ENABLED == spxConfig->getIstDeepstopsEnabled() )
+    {
+      ui->deepStopOnCheckBox->setCheckState( Qt::CheckState::Checked );
+    }
+    else
+    {
+      ui->deepStopOnCheckBox->setCheckState( Qt::CheckState::Unchecked );
+    }
+    if( DecompressionDynamicGradient::DYNAMIC_GRADIENT_ON == spxConfig->getIsDecoDynamicGradients() )
+    {
+      ui->dynamicGradientsOnCheckBox->setCheckState( Qt::CheckState::Checked );
+    }
+    else
+    {
+      ui->dynamicGradientsOnCheckBox->setCheckState( Qt::CheckState::Unchecked );
+    }
+    // Signale mit Slots verbinden
     connect( ui->conservatismComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &DeviceConfigFragment::decoComboChangedSlot );
     connect( ui->gradientLowSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &DeviceConfigFragment::decoGradientLowChangedSlot );
     connect( ui->gradientHighSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &DeviceConfigFragment::decoGradientHighChangedSlot );
-    connect( ui->dynamicGradientsOnCheckBox, QCheckBox::stateChanged, this, &DeviceConfigFragment::decoDynamicGradientStateChangedSlot );
-    connect( ui->deepStopOnCheckBox, QCheckBox::stateChanged, this, &DeviceConfigFragment::decoDeepStopsEnableChangedSlot );
-    // Displayeinstellungen
+    connect( ui->dynamicGradientsOnCheckBox, &QCheckBox::stateChanged, this, &DeviceConfigFragment::decoDynamicGradientStateChangedSlot );
+    connect( ui->deepStopOnCheckBox, &QCheckBox::stateChanged, this, &DeviceConfigFragment::decoDeepStopsEnableChangedSlot );
+  }
+
+  /**
+   * @brief GUI für Display nach spxConfig einrichten
+   */
+  void DeviceConfigFragment::setGuiForDisplay( void )
+  {
+    disconnect( ui->displayOrientationComboBox, 0, 0, 0);
+    disconnect( ui->displayBrightnessComboBox, 0, 0, 0);
+    //
+    ui->displayBrightnessComboBox->setCurrentIndex( static_cast<int>(spxConfig->getDisplayBrightness()));
+    ui->displayOrientationComboBox->setCurrentIndex( static_cast<int>(spxConfig->getDisplayOrientation()));
+    //
     connect( ui->displayBrightnessComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &DeviceConfigFragment::displayBrightnessChangedSlot);
     connect( ui->displayOrientationComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &DeviceConfigFragment::displayOrientationChangedSlot);
-    // Einheiteneinstellungen
+  }
+
+  /**
+   * @brief GUI für Einheiten nach spxConfig einrichten
+   */
+  void DeviceConfigFragment::setGuiForUnits( void )
+  {
+    disconnect( ui->unitsWaterTypeComboBox, 0, 0, 0 );
+    disconnect( ui->unitsDeepComboBox, 0, 0, 0 );
+    disconnect( ui->unitsTemperaturComboBox, 0, 0, 0 );
+    //
+    ui->unitsTemperaturComboBox->setCurrentIndex( static_cast<int>(spxConfig->getUnitsTemperatur()) );
+    ui->unitsDeepComboBox->setCurrentIndex( static_cast<int>(spxConfig->getUnitsLength()) );
+    ui->unitsWaterTypeComboBox->setCurrentIndex( static_cast<int>( spxConfig->getUnitsWaterType() ));
+    //
     connect( ui->unitsTemperaturComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &DeviceConfigFragment::unitsTemperatureChangedSlot);
     connect( ui->unitsDeepComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &DeviceConfigFragment::unitsLengthChangedSlot);
     connect( ui->unitsWaterTypeComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &DeviceConfigFragment::unitsWatertypeChangedSlot);
-    // Setpointeinstellungen
+  }
+
+  /**
+   * @brief GUI für Setpoint nach spxConfig einrichten
+   */
+  void DeviceConfigFragment::setGuiForSetpoint( void )
+  {
+    disconnect( ui->setpointSetpointComboBox, 0, 0, 0 );
+    disconnect( ui->setpointAutoOnComboBox, 0, 0, 0 );
+    //
+    ui->setpointSetpointComboBox->setCurrentIndex( static_cast<int>(spxConfig->getSetpointValue()) );
+    ui->setpointAutoOnComboBox->setCurrentIndex( static_cast<int>(spxConfig->getSetpointAuto()) );
+    //
     connect( ui->setpointAutoOnComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &DeviceConfigFragment::setpointAutoChangedSlot);
     connect( ui->setpointSetpointComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &DeviceConfigFragment::setpointValueChangedSlot);
-    // Individual Einstellungen
-    connect( ui->individualSeonsorsOnCheckBox, QCheckBox::stateChanged, this, &DeviceConfigFragment::individualSensorsOnChangedSlot );
-    connect( ui->individualPSCRModeOnCheckBox, QCheckBox::stateChanged, this, &DeviceConfigFragment::individualPscrModeChangedSlot );
-    connect( ui->individualSensorsCountComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &DeviceConfigFragment::individualSensorsCountChangedSlot);
-    connect( ui->individualAcousticWarningsOnCheckBox, QCheckBox::stateChanged, this, &DeviceConfigFragment::individualAcousticChangedSlot );
-    connect( ui->individualLogIntervalComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &DeviceConfigFragment::individualLogIntervalChangedSlot);
+  }
+
+  /**
+   * @brief GUI für Lizenz nach spxConfig einrichten
+   */
+  void DeviceConfigFragment::setGuiForLicense( void )
+  {
+    SPX42License lic = spxConfig->getLicense();
+
+    lg->debug( QString("DeviceConfigFragment::licChangedSlot -> set: %1").arg(static_cast<int>(lic.getLicType())) );
+    ui->tabHeaderLabel->setText( QString(tr("SETTINGS SPX42 SERIAL [%1] LIC: %2")
+                                             .arg(spxConfig->getSerialNumber())
+                                             .arg(spxConfig->getLicName()))
+                                     );
+    if( lic.getLicInd() == IndividualLicense::LIC_INDIVIDUAL )
+    {
+      // der darf das!
+      ui->individualVerticalWidget->setEnabled( true );
+      ui->individualVerticalWidget->show();
+    }
+    else
+    {
+      // die Grundeinstellungen (zur Sicherheit)
+      ui->individualVerticalWidget->setEnabled( false );
+      ui->individualVerticalWidget->hide();
+      // keine Callbacks!
+      disconnect( ui->individualLogIntervalComboBox, 0, 0, 0);
+      disconnect( ui->individualAcousticWarningsOnCheckBox, 0, 0, 0 );
+      disconnect( ui->individualSensorsCountComboBox, 0, 0, 0 );
+      disconnect( ui->individualPSCRModeOnCheckBox, 0, 0, 0 );
+      disconnect( ui->individualSeonsorsOnCheckBox, 0, 0, 0 );
+      // Einstellungen neutral
+      spxConfig->setIndividualSensorsOn( DeviceIndividualSensors::SENSORS_ON );
+      spxConfig->setIndividualPscrMode( DeviceIndividualPSCR::PSCR_OFF);
+      spxConfig->setIndividualSensorsCount( DeviceIndividualSensorCount::SENSOR_COUNT_03 );
+      spxConfig->setIndividualAcoustic( DeviceIndividualAcoustic::ACOUSTIC_ON );
+      spxConfig->setIndividualLogInterval( DeviceIndividualLogInterval::INTERVAL_60 );
+    }
+    setGuiForIndividual();
+  }
+
+  /**
+   * @brief GUI für Individual nach spxConfig einrichten
+   */
+  void DeviceConfigFragment::setGuiForIndividual( void )
+  {
+    if( spxConfig->getLicense().getLicInd() == IndividualLicense::LIC_INDIVIDUAL )
+    {
+      disconnect( ui->individualLogIntervalComboBox, 0, 0, 0);
+      disconnect( ui->individualAcousticWarningsOnCheckBox, 0, 0, 0 );
+      disconnect( ui->individualSensorsCountComboBox, 0, 0, 0 );
+      disconnect( ui->individualPSCRModeOnCheckBox, 0, 0, 0 );
+      disconnect( ui->individualSeonsorsOnCheckBox, 0, 0, 0 );
+      //
+      if( spxConfig->getIndividualSensorsOn() == DeviceIndividualSensors::SENSORS_ON )
+      {
+        ui->individualSeonsorsOnCheckBox->setCheckState( Qt::CheckState::Checked );
+      }
+      else
+      {
+        ui->individualSeonsorsOnCheckBox->setCheckState( Qt::CheckState::Unchecked );
+      }
+      if( spxConfig->getIndividualPscrMode() == DeviceIndividualPSCR::PSCR_ON )
+      {
+        ui->individualPSCRModeOnCheckBox->setCheckState( Qt::CheckState::Checked );
+      }
+      else
+      {
+        ui->individualPSCRModeOnCheckBox->setCheckState( Qt::CheckState::Unchecked );
+      }
+      ui->individualSensorsCountComboBox->setCurrentIndex( static_cast<int>(spxConfig->getIndividualSensorsCount()));
+      if( spxConfig->getIndividualAcoustic() == DeviceIndividualAcoustic::ACOUSTIC_ON )
+      {
+        ui->individualAcousticWarningsOnCheckBox->setCheckState( Qt::CheckState::Checked );
+      }
+      else
+      {
+        ui->individualAcousticWarningsOnCheckBox->setCheckState( Qt::CheckState::Unchecked );
+      }
+      ui->individualLogIntervalComboBox->setCurrentIndex( static_cast<int>(spxConfig->getIndividualLogInterval()) );
+      //
+      connect( ui->individualSeonsorsOnCheckBox, &QCheckBox::stateChanged, this, &DeviceConfigFragment::individualSensorsOnChangedSlot );
+      connect( ui->individualPSCRModeOnCheckBox, &QCheckBox::stateChanged, this, &DeviceConfigFragment::individualPscrModeChangedSlot );
+      connect( ui->individualSensorsCountComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &DeviceConfigFragment::individualSensorsCountChangedSlot);
+      connect( ui->individualAcousticWarningsOnCheckBox, &QCheckBox::stateChanged, this, &DeviceConfigFragment::individualAcousticChangedSlot );
+      connect( ui->individualLogIntervalComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &DeviceConfigFragment::individualLogIntervalChangedSlot);
+    }
   }
 
   /**
@@ -153,14 +294,9 @@ namespace spx42
    * @brief Slot beim ändern der Lizenz
    * @param Lizenz ders SPX
    */
-  void DeviceConfigFragment::licChangedSlot(SPX42License &lic )
+  void DeviceConfigFragment::confLicChangedSlot(void )
   {
-    lg->debug( QString("DeviceConfigFragment::licChangedSlot -> set: %1").arg(static_cast<int>(lic.getLicType())) );
-    ui->deviceConfigHeaderLabel->setText( QString(tr("SETTINGS SPX42 SERIAL [%1] LIC: %2")
-                                             .arg(spxConfig->getSerialNumber())
-                                             .arg(spxConfig->getLicName()))
-                                     );
-    // TODO: GUI überarbeiten!
+    setGuiForLicense();
   }
 
   /**
@@ -267,6 +403,10 @@ namespace spx42
     gradentSlotsIgnore = false;
   }
 
+  /**
+   * @brief Dynamiche gradienten ein/aus schalten
+   * @param state neuer Status
+   */
   void DeviceConfigFragment::decoDynamicGradientStateChangedSlot( int state )
   {
     DecompressionDynamicGradient newState = DecompressionDynamicGradient::DYNAMIC_GRADIENT_OFF;
@@ -277,6 +417,10 @@ namespace spx42
     spxConfig->setIsDecoDynamicGradients( newState );
   }
 
+  /**
+   * @brief Tiefe Deco-Stops ein/aus
+   * @param state neuer Status
+   */
   void DeviceConfigFragment::decoDeepStopsEnableChangedSlot( int state )
   {
     DecompressionDeepstops newState = DecompressionDeepstops::DEEPSTOPS_DISABLED;
@@ -287,6 +431,10 @@ namespace spx42
     spxConfig->setIsDeepstopsEnabled( newState );
   }
 
+  /**
+   * @brief Einstellung für Helligkeit des SPX42 Displays
+   * @param index INdex der neuen Einstellung
+   */
   void DeviceConfigFragment::displayBrightnessChangedSlot( int index )
   {
     //
@@ -322,6 +470,10 @@ namespace spx42
     spxConfig->setDisplayBrightness( static_cast<DisplayBrightness>(index) );
   }
 
+  /**
+   * @brief Änderung der Ausrichtung des Displays
+   * @param index der Displayorientierung
+   */
   void DeviceConfigFragment::displayOrientationChangedSlot( int index )
   {
     DisplayOrientation orientation = static_cast<DisplayOrientation>(index);
@@ -342,6 +494,10 @@ namespace spx42
     spxConfig->setDisplayOrientation( static_cast<DisplayOrientation>(index));
   }
 
+  /**
+   * @brief Änderung der Temperatureinheit
+   * @param index neuer Index der Einheit
+   */
   void DeviceConfigFragment::unitsTemperatureChangedSlot( int index )
   {
     DeviceTemperaturUnit tUnit = static_cast<DeviceTemperaturUnit>(index);
@@ -362,6 +518,10 @@ namespace spx42
     spxConfig->setUnitsTemperatur( tUnit );
   }
 
+  /**
+   * @brief Änderung der Längeneinheit
+   * @param index neuer Index der Einheit
+   */
   void DeviceConfigFragment::unitsLengthChangedSlot( int index )
   {
     DeviceLenghtUnit lUnit = static_cast<DeviceLenghtUnit>(index);
@@ -382,6 +542,10 @@ namespace spx42
     spxConfig->setUnitsLength( lUnit );
   }
 
+  /**
+   * @brief DeviceConfigFragment::unitsWatertypeChangedSlot
+   * @param index
+   */
   void DeviceConfigFragment::unitsWatertypeChangedSlot( int index )
   {
     DeviceWaterType wUnit = static_cast<DeviceWaterType>(index);
@@ -402,6 +566,10 @@ namespace spx42
     spxConfig->setUnitsWaterType( wUnit );
   }
 
+  /**
+   * @brief Änderung des Auto setpoints
+   * @param index neuer index des Autosetpoints
+   */
   void DeviceConfigFragment::setpointAutoChangedSlot( int index )
   {
     // TODO: imperiale Maße auch berücksichtigen
@@ -432,6 +600,10 @@ namespace spx42
     spxConfig->setSetpointAuto( autoSP );
   }
 
+  /**
+   * @brief Änderung des O2-Setpoints
+   * @param index index des neuen Wertes für Setpoint
+   */
   void DeviceConfigFragment::setpointValueChangedSlot( int index )
   {
     // TODO: imperiale Maße auch berücksichtigen
@@ -462,6 +634,10 @@ namespace spx42
     spxConfig->setSetpointValue( setpointValue );
   }
 
+  /**
+   * @brief Sensoren an/aus
+   * @param state neuer Status
+   */
   void DeviceConfigFragment::individualSensorsOnChangedSlot( int state )
   {
     DeviceIndividualSensors newState = DeviceIndividualSensors::SENSORS_OFF;
@@ -472,6 +648,10 @@ namespace spx42
     spxConfig->setIndividualSensorsOn( newState );
   }
 
+  /**
+   * @brief Passiv Semiclosed Rebreather Mode ein/aus
+   * @param state neuer Status
+   */
   void DeviceConfigFragment::individualPscrModeChangedSlot( int state )
   {
     DeviceIndividualPSCR newState = DeviceIndividualPSCR::PSCR_OFF;
@@ -482,6 +662,10 @@ namespace spx42
     spxConfig->setIndividualPscrMode( newState );
   }
 
+  /**
+   * @brief Änderung der Anzahl der genutzten Sensoren
+   * @param index index der Anzahl der Sensoren
+   */
   void DeviceConfigFragment::individualSensorsCountChangedSlot( int index )
   {
     DeviceIndividualSensorCount setpointValue = static_cast<DeviceIndividualSensorCount>(index);
@@ -505,6 +689,10 @@ namespace spx42
     spxConfig->setIndividualSensorsCount( setpointValue );
   }
 
+  /**
+   * @brief Änderung der akustischen Meldungen an/aus
+   * @param state neuer Status
+   */
   void DeviceConfigFragment::individualAcousticChangedSlot( int state )
   {
     DeviceIndividualAcoustic newState = DeviceIndividualAcoustic::ACOUSTIC_OFF;
@@ -515,6 +703,10 @@ namespace spx42
     spxConfig->setIndividualAcoustic( newState );
   }
 
+  /**
+   * @brief Änderung des Log intervals
+   * @param index index des neuen Wertes
+   */
   void DeviceConfigFragment::individualLogIntervalChangedSlot( int index )
   {
     DeviceIndividualLogInterval logInterval = static_cast<DeviceIndividualLogInterval>(index);

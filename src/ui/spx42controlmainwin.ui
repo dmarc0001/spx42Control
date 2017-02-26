@@ -82,7 +82,7 @@
      <x>0</x>
      <y>0</y>
      <width>1024</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -118,6 +118,8 @@
      <addaction name="actionNormoxic_TMX"/>
      <addaction name="actionFull_TMX"/>
      <addaction name="actionMilitary"/>
+     <addaction name="separator"/>
+     <addaction name="actionINDIVIDUAL_LIC"/>
     </widget>
     <addaction name="menuLizences"/>
    </widget>
@@ -128,7 +130,7 @@
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <property name="statusTip">
-    <string>Print current content...</string>
+    <string>print current content...</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -157,7 +159,7 @@
     <string>QUIT application</string>
    </property>
    <property name="statusTip">
-    <string>Quit this application...</string>
+    <string>quit this application...</string>
    </property>
    <property name="iconVisibleInMenu">
     <bool>true</bool>
@@ -173,7 +175,7 @@
     <string>About...</string>
    </property>
    <property name="statusTip">
-    <string>About this application...</string>
+    <string>about this application...</string>
    </property>
    <property name="menuRole">
     <enum>QAction::AboutRole</enum>
@@ -195,7 +197,7 @@
     <string>Open SPX42 database...</string>
    </property>
    <property name="statusTip">
-    <string>Open an database with SPX42 logs...</string>
+    <string>open an database with SPX42 logs...</string>
    </property>
   </action>
   <action name="actionActionPrint">
@@ -214,7 +216,7 @@
     <string>print current content</string>
    </property>
    <property name="statusTip">
-    <string>Print current content...</string>
+    <string>print current content...</string>
    </property>
   </action>
   <action name="actionSettings">
@@ -233,7 +235,7 @@
     <string>Application settings</string>
    </property>
    <property name="statusTip">
-    <string>Set application settings...</string>
+    <string>set application settings...</string>
    </property>
   </action>
   <action name="actionConnectBluetooth">
@@ -249,7 +251,7 @@
     <string>Bluetooth</string>
    </property>
    <property name="statusTip">
-    <string>Bluetooth switch and status...</string>
+    <string>bluetooth switch and status...</string>
    </property>
   </action>
   <action name="actionNitrox">
@@ -285,6 +287,14 @@
    </property>
    <property name="text">
     <string>Military</string>
+   </property>
+  </action>
+  <action name="actionINDIVIDUAL_LIC">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>INDIVIDUAL-LIC</string>
    </property>
   </action>
  </widget>

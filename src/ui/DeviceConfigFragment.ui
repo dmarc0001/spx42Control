@@ -7,13 +7,19 @@
     <x>0</x>
     <y>0</y>
     <width>1007</width>
-    <height>685</height>
+    <height>547</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>0</width>
-    <height>0</height>
+    <height>50</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>16777215</width>
+    <height>16777215</height>
    </size>
   </property>
   <property name="font">
@@ -30,45 +36,113 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
-    <widget class="QLabel" name="deviceConfigHeaderLabel">
-     <property name="maximumSize">
+    <widget class="QWidget" name="headerWidget" native="true">
+     <property name="minimumSize">
       <size>
-       <width>16777215</width>
-       <height>40</height>
+       <width>800</width>
+       <height>50</height>
       </size>
      </property>
-     <property name="font">
-      <font>
-       <pointsize>14</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
+     <property name="maximumSize">
+      <size>
+       <width>1024</width>
+       <height>50</height>
+      </size>
      </property>
-     <property name="text">
-      <string>SETTINGS SPX42 Serial [0x2cf3a56712] LIC: NITROX</string>
-     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Maximum</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>14</width>
+          <height>10</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="tabHeaderLabel">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>40</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>14</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>SETTINGS SPX42 Serial [0x2cf3a56712] LIC: NITROX</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>10</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>
     <widget class="QWidget" name="fieldWidget" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
       <property name="spacing">
-       <number>4</number>
+       <number>0</number>
       </property>
       <property name="sizeConstraint">
        <enum>QLayout::SetMaximumSize</enum>
       </property>
       <property name="leftMargin">
-       <number>4</number>
+       <number>0</number>
       </property>
       <property name="topMargin">
-       <number>8</number>
+       <number>0</number>
       </property>
       <property name="rightMargin">
-       <number>4</number>
+       <number>0</number>
       </property>
       <property name="bottomMargin">
-       <number>8</number>
+       <number>0</number>
       </property>
       <item>
        <widget class="QWidget" name="leftColumnVerticalWidget" native="true">
@@ -104,6 +178,9 @@
              <width>600</width>
              <height>185</height>
             </size>
+           </property>
+           <property name="statusTip">
+            <string>settings for decompression...</string>
            </property>
            <property name="autoFillBackground">
             <bool>false</bool>
@@ -190,6 +267,9 @@
                       <height>16777215</height>
                      </size>
                     </property>
+                    <property name="statusTip">
+                     <string>value for gradient factor low...</string>
+                    </property>
                    </widget>
                   </item>
                  </layout>
@@ -231,6 +311,9 @@
                       <height>16777215</height>
                      </size>
                     </property>
+                    <property name="statusTip">
+                     <string>value for gradient factor high...</string>
+                    </property>
                    </widget>
                   </item>
                  </layout>
@@ -271,6 +354,9 @@
                       <width>180</width>
                       <height>16777215</height>
                      </size>
+                    </property>
+                    <property name="statusTip">
+                     <string>preset for decompression gradients...</string>
                     </property>
                     <item>
                      <property name="text">
@@ -315,6 +401,9 @@
                    <height>24</height>
                   </size>
                  </property>
+                 <property name="statusTip">
+                  <string>switch dynamic gradients on or of (show manual)...</string>
+                 </property>
                  <property name="text">
                   <string>DYN. GRADIENTS ON</string>
                  </property>
@@ -327,6 +416,9 @@
                    <width>0</width>
                    <height>24</height>
                   </size>
+                 </property>
+                 <property name="statusTip">
+                  <string>switch deep deco stops on or off...</string>
                  </property>
                  <property name="text">
                   <string>DEEP STOPS ON</string>
@@ -358,6 +450,9 @@
              <family>DejaVu Sans Mono</family>
              <pointsize>11</pointsize>
             </font>
+           </property>
+           <property name="statusTip">
+            <string>settings for SPX42 display...</string>
            </property>
            <property name="styleSheet">
             <string notr="true"/>
@@ -435,6 +530,9 @@
                       <height>16777215</height>
                      </size>
                     </property>
+                    <property name="statusTip">
+                     <string>settings for display brightness...</string>
+                    </property>
                     <item>
                      <property name="text">
                       <string>20%</string>
@@ -501,6 +599,9 @@
                       <height>16777215</height>
                      </size>
                     </property>
+                    <property name="statusTip">
+                     <string>settings for display orientation...</string>
+                    </property>
                     <item>
                      <property name="text">
                       <string>LANDSCAPE</string>
@@ -535,6 +636,9 @@
              <width>600</width>
              <height>180</height>
             </size>
+           </property>
+           <property name="statusTip">
+            <string>settings for measure units...</string>
            </property>
            <property name="locale">
             <locale language="English" country="UnitedStates"/>
@@ -606,6 +710,9 @@
                       <height>16777215</height>
                      </size>
                     </property>
+                    <property name="statusTip">
+                     <string>switch temperature measuring unit...</string>
+                    </property>
                     <item>
                      <property name="text">
                       <string>CELSIUS</string>
@@ -657,6 +764,9 @@
                       <height>16777215</height>
                      </size>
                     </property>
+                    <property name="statusTip">
+                     <string>switch lenght/depth measuring unit...</string>
+                    </property>
                     <item>
                      <property name="text">
                       <string>METER</string>
@@ -707,6 +817,9 @@
                       <width>120</width>
                       <height>16777215</height>
                      </size>
+                    </property>
+                    <property name="statusTip">
+                     <string>switch (general) water type...</string>
                     </property>
                     <item>
                      <property name="text">
@@ -769,6 +882,9 @@
              <width>600</width>
              <height>140</height>
             </size>
+           </property>
+           <property name="statusTip">
+            <string>settings for oxygen setpoint...</string>
            </property>
            <property name="locale">
             <locale language="English" country="UnitedStates"/>
@@ -843,6 +959,9 @@
                       <height>16777215</height>
                      </size>
                     </property>
+                    <property name="statusTip">
+                     <string>set the point of automatic oxygen setpoint...</string>
+                    </property>
                     <item>
                      <property name="text">
                       <string>6 m</string>
@@ -909,6 +1028,9 @@
                       <height>16777215</height>
                      </size>
                     </property>
+                    <property name="statusTip">
+                     <string>set the oxygen setpoint value...</string>
+                    </property>
                     <item>
                      <property name="text">
                       <string>1.0</string>
@@ -959,6 +1081,9 @@
              <height>225</height>
             </size>
            </property>
+           <property name="statusTip">
+            <string>settings for individual settings (if licensed)...</string>
+           </property>
            <property name="locale">
             <locale language="English" country="UnitedStates"/>
            </property>
@@ -1001,6 +1126,9 @@
                    <height>24</height>
                   </size>
                  </property>
+                 <property name="statusTip">
+                  <string>switch sensors on or off (generally) CAUTION!!!</string>
+                 </property>
                  <property name="text">
                   <string>SENSORS ON</string>
                  </property>
@@ -1008,6 +1136,9 @@
                </item>
                <item>
                 <widget class="QCheckBox" name="individualPSCRModeOnCheckBox">
+                 <property name="statusTip">
+                  <string>switch on or off the passive semniclosed rebreather mode...</string>
+                 </property>
                  <property name="text">
                   <string>PSCR MODE ON</string>
                  </property>
@@ -1030,6 +1161,9 @@
                  <layout class="QHBoxLayout" name="individualSensorsCountHorizontalLayout">
                   <item>
                    <widget class="QLabel" name="individualSensorsCountLabel">
+                    <property name="statusTip">
+                     <string>set the count of sensors for measuring...</string>
+                    </property>
                     <property name="text">
                      <string>SENSORS COUNT</string>
                     </property>
@@ -1077,6 +1211,9 @@
                    <height>24</height>
                   </size>
                  </property>
+                 <property name="statusTip">
+                  <string>switch on or off acoustic warnings...</string>
+                 </property>
                  <property name="text">
                   <string>ACOUSTIC WARNINGS ON</string>
                  </property>
@@ -1117,6 +1254,9 @@
                       <width>80</width>
                       <height>16777215</height>
                      </size>
+                    </property>
+                    <property name="statusTip">
+                     <string>set the time between measurings (and logentrys)...</string>
                     </property>
                     <item>
                      <property name="text">
@@ -1163,6 +1303,9 @@
        <width>16777215</width>
        <height>12</height>
       </size>
+     </property>
+     <property name="statusTip">
+      <string>status of transfer...</string>
      </property>
      <property name="value">
       <number>24</number>

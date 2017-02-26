@@ -46,6 +46,7 @@ namespace spx42
   {
     lg->debug( "GasFragment::GasFragment...");
     ui->setupUi(this);
+    ui->transferProgressBar->setVisible(false);
     fillReferences();
     initGuiWithConfig();
     connectSlots();
@@ -165,7 +166,7 @@ namespace spx42
     {
       disconnectSlots();
     }
-    ui->gaslistHeaderLabel->setText( QString(tr("GASLIST SPX42 SERIAL [%1] LIC: %2")
+    ui->tabHeaderLabel->setText( QString(tr("GASLIST SPX42 SERIAL [%1] LIC: %2")
                                              .arg(spxConfig->getSerialNumber())
                                              .arg(spxConfig->getLicName()))
                                      );
@@ -292,7 +293,7 @@ namespace spx42
   {
     //
     // FIXME: Alle anderen Gase dürfen dann NICHT which sein!
-    // Nur ein DIL1, beliegig DIL2 aber nicht DIL! == DIL2
+    // Nur ein DIL1, beliegig DIL2 aber nicht DIL1 == DIL2
     //
     volatile static int whereIgnored = -1;
     if( whereIgnored == index )
@@ -316,6 +317,16 @@ namespace spx42
       currGas.setDiluentType(which);
       if( which == DiluentType::DIL_01 )
       {
+        for( int dil1Nr = 0; dil1Nr < 8; dil1Nr++ )
+        {
+          if( index != dil1Nr )
+          {
+            // alle anderen DIL1 löschen!
+            whereIgnored = dil1Nr;
+            lg->debug( QString("GasFragment::gasUseTypChange: uncheck DIL1 Nr <%1>").arg( dil1Nr ));
+            gRef[dil1Nr].get()->dil1CheckBox->setCheckState( Qt::Unchecked );
+          }
+        }
         whereIgnored = index;
         gRef[index].get()->dil2CheckBox->setCheckState( Qt::Unchecked );
         whereIgnored = -1;
@@ -352,10 +363,10 @@ namespace spx42
     }
   }
 
-  void GasFragment::licChangedSlot(SPX42License &lic )
+  void GasFragment::licChangedSlot( const SPX42License &lic )
   {
     lg->debug( QString("GasFragment::licChangedSlot -> set: %1").arg(static_cast<int>(lic.getLicType() )) );
-    ui->gaslistHeaderLabel->setText( QString(tr("Gaslist SPX42 Serial [%1] Lic: %2")
+    ui->tabHeaderLabel->setText( QString(tr("Gaslist SPX42 Serial [%1] Lic: %2")
                                              .arg(spxConfig->getSerialNumber())
                                              .arg(spxConfig->getLicName()))
                                      );

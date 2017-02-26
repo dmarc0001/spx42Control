@@ -24,19 +24,19 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
-    <number>15</number>
+    <number>6</number>
    </property>
    <property name="leftMargin">
-    <number>8</number>
+    <number>9</number>
    </property>
    <property name="topMargin">
-    <number>4</number>
+    <number>9</number>
    </property>
    <property name="rightMargin">
-    <number>8</number>
+    <number>9</number>
    </property>
    <property name="bottomMargin">
-    <number>4</number>
+    <number>9</number>
    </property>
    <item>
     <widget class="QWidget" name="HeaderWidget" native="true">
@@ -49,21 +49,24 @@
      <property name="maximumSize">
       <size>
        <width>1024</width>
-       <height>80</height>
+       <height>50</height>
       </size>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_01">
+      <property name="spacing">
+       <number>0</number>
+      </property>
       <property name="leftMargin">
-       <number>8</number>
+       <number>0</number>
       </property>
       <property name="topMargin">
-       <number>15</number>
+       <number>0</number>
       </property>
       <property name="rightMargin">
-       <number>8</number>
+       <number>0</number>
       </property>
       <property name="bottomMargin">
-       <number>8</number>
+       <number>0</number>
       </property>
       <item>
        <spacer name="horizontalSpacer">
@@ -82,7 +85,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QLabel" name="gaslistHeaderLabel">
+       <widget class="QLabel" name="tabHeaderLabel">
         <property name="font">
          <font>
           <pointsize>14</pointsize>
@@ -142,6 +145,9 @@
           <width>1024</width>
           <height>48</height>
          </size>
+        </property>
+        <property name="statusTip">
+         <string>gas propertys...</string>
         </property>
         <property name="title">
          <string>[ Gas #01 ]</string>
@@ -220,6 +226,9 @@
              <height>16777215</height>
             </size>
            </property>
+           <property name="statusTip">
+            <string>helium quantity (noticed license)...</string>
+           </property>
           </widget>
          </item>
          <item>
@@ -273,6 +282,9 @@
              <width>80</width>
              <height>16777215</height>
             </size>
+           </property>
+           <property name="statusTip">
+            <string>oxygen quantity (noticed license)...</string>
            </property>
            <property name="maximum">
             <number>100</number>
@@ -337,6 +349,9 @@
            <property name="cursor">
             <cursorShape>ArrowCursor</cursorShape>
            </property>
+           <property name="statusTip">
+            <string>nitrogen quantity (computed value)...</string>
+           </property>
            <property name="text">
             <string>0</string>
            </property>
@@ -388,6 +403,9 @@
          </item>
          <item>
           <widget class="QCheckBox" name="gas01dil01CheckBox">
+           <property name="statusTip">
+            <string>diluent #1...</string>
+           </property>
            <property name="text">
             <string>DIL1</string>
            </property>
@@ -408,6 +426,9 @@
          </item>
          <item>
           <widget class="QCheckBox" name="gas01dil02CheckBox">
+           <property name="statusTip">
+            <string>diluent #2...</string>
+           </property>
            <property name="text">
             <string>DIL2</string>
            </property>
@@ -428,6 +449,9 @@
          </item>
          <item>
           <widget class="QCheckBox" name="gas01bailoutCheckBox">
+           <property name="statusTip">
+            <string>bailout gas...</string>
+           </property>
            <property name="text">
             <string>Bailout</string>
            </property>
@@ -465,6 +489,9 @@
           <width>1024</width>
           <height>48</height>
          </size>
+        </property>
+        <property name="statusTip">
+         <string>gas propertys...</string>
         </property>
         <property name="title">
          <string>[ Gas #02 ]</string>
@@ -543,6 +570,9 @@
              <height>16777215</height>
             </size>
            </property>
+           <property name="statusTip">
+            <string>helium quantity (noticed license)...</string>
+           </property>
           </widget>
          </item>
          <item>
@@ -596,6 +626,9 @@
              <width>80</width>
              <height>16777215</height>
             </size>
+           </property>
+           <property name="statusTip">
+            <string>oxygen quantity (noticed license)...</string>
            </property>
            <property name="maximum">
             <number>100</number>
@@ -660,6 +693,9 @@
            <property name="cursor">
             <cursorShape>ArrowCursor</cursorShape>
            </property>
+           <property name="statusTip">
+            <string>nitrogen quantity (computed value)...</string>
+           </property>
            <property name="text">
             <string>0</string>
            </property>
@@ -711,6 +747,9 @@
          </item>
          <item>
           <widget class="QCheckBox" name="gas02dil01CheckBox">
+           <property name="statusTip">
+            <string>diluent #1...</string>
+           </property>
            <property name="text">
             <string>DIL1</string>
            </property>
@@ -731,6 +770,9 @@
          </item>
          <item>
           <widget class="QCheckBox" name="gas02dil02CheckBox">
+           <property name="statusTip">
+            <string>diluent #2...</string>
+           </property>
            <property name="text">
             <string>DIL2</string>
            </property>
@@ -751,6 +793,9 @@
          </item>
          <item>
           <widget class="QCheckBox" name="gas02bailoutCheckBox">
+           <property name="statusTip">
+            <string>bailout gas...</string>
+           </property>
            <property name="text">
             <string>Bailout</string>
            </property>
@@ -788,6 +833,9 @@
           <width>1024</width>
           <height>48</height>
          </size>
+        </property>
+        <property name="statusTip">
+         <string>gas propertys...</string>
         </property>
         <property name="title">
          <string>[ Gas #03 ]</string>
@@ -866,6 +914,9 @@
              <height>16777215</height>
             </size>
            </property>
+           <property name="statusTip">
+            <string>helium quantity (noticed license)...</string>
+           </property>
           </widget>
          </item>
          <item>
@@ -919,6 +970,9 @@
              <width>80</width>
              <height>16777215</height>
             </size>
+           </property>
+           <property name="statusTip">
+            <string>oxygen quantity (noticed license)...</string>
            </property>
            <property name="maximum">
             <number>100</number>
@@ -983,6 +1037,9 @@
            <property name="cursor">
             <cursorShape>ArrowCursor</cursorShape>
            </property>
+           <property name="statusTip">
+            <string>nitrogen quantity (computed value)...</string>
+           </property>
            <property name="text">
             <string>0</string>
            </property>
@@ -1034,6 +1091,9 @@
          </item>
          <item>
           <widget class="QCheckBox" name="gas03dil01CheckBox">
+           <property name="statusTip">
+            <string>diluent #1...</string>
+           </property>
            <property name="text">
             <string>DIL1</string>
            </property>
@@ -1054,6 +1114,9 @@
          </item>
          <item>
           <widget class="QCheckBox" name="gas03dil02CheckBox">
+           <property name="statusTip">
+            <string>diluent #2...</string>
+           </property>
            <property name="text">
             <string>DIL2</string>
            </property>
@@ -1074,6 +1137,9 @@
          </item>
          <item>
           <widget class="QCheckBox" name="gas03bailoutCheckBox">
+           <property name="statusTip">
+            <string>bailout gas...</string>
+           </property>
            <property name="text">
             <string>Bailout</string>
            </property>
@@ -1111,6 +1177,9 @@
           <width>1024</width>
           <height>48</height>
          </size>
+        </property>
+        <property name="statusTip">
+         <string>gas propertys...</string>
         </property>
         <property name="title">
          <string>[ Gas #04 ]</string>
@@ -1189,6 +1258,9 @@
              <height>16777215</height>
             </size>
            </property>
+           <property name="statusTip">
+            <string>helium quantity (noticed license)...</string>
+           </property>
           </widget>
          </item>
          <item>
@@ -1242,6 +1314,9 @@
              <width>80</width>
              <height>16777215</height>
             </size>
+           </property>
+           <property name="statusTip">
+            <string>oxygen quantity (noticed license)...</string>
            </property>
            <property name="maximum">
             <number>100</number>
@@ -1306,6 +1381,9 @@
            <property name="cursor">
             <cursorShape>ArrowCursor</cursorShape>
            </property>
+           <property name="statusTip">
+            <string>nitrogen quantity (computed value)...</string>
+           </property>
            <property name="text">
             <string>0</string>
            </property>
@@ -1357,6 +1435,9 @@
          </item>
          <item>
           <widget class="QCheckBox" name="gas04dil01CheckBox">
+           <property name="statusTip">
+            <string>diluent #1...</string>
+           </property>
            <property name="text">
             <string>DIL1</string>
            </property>
@@ -1377,6 +1458,9 @@
          </item>
          <item>
           <widget class="QCheckBox" name="gas04dil02CheckBox">
+           <property name="statusTip">
+            <string>diluent #2...</string>
+           </property>
            <property name="text">
             <string>DIL2</string>
            </property>
@@ -1397,6 +1481,9 @@
          </item>
          <item>
           <widget class="QCheckBox" name="gas04bailoutCheckBox">
+           <property name="statusTip">
+            <string>bailout gas...</string>
+           </property>
            <property name="text">
             <string>Bailout</string>
            </property>
@@ -1434,6 +1521,9 @@
           <width>1024</width>
           <height>48</height>
          </size>
+        </property>
+        <property name="statusTip">
+         <string>gas propertys...</string>
         </property>
         <property name="title">
          <string>[ Gas #05 ]</string>
@@ -1512,6 +1602,9 @@
              <height>16777215</height>
             </size>
            </property>
+           <property name="statusTip">
+            <string>helium quantity (noticed license)...</string>
+           </property>
           </widget>
          </item>
          <item>
@@ -1565,6 +1658,9 @@
              <width>80</width>
              <height>16777215</height>
             </size>
+           </property>
+           <property name="statusTip">
+            <string>oxygen quantity (noticed license)...</string>
            </property>
            <property name="maximum">
             <number>100</number>
@@ -1629,6 +1725,9 @@
            <property name="cursor">
             <cursorShape>ArrowCursor</cursorShape>
            </property>
+           <property name="statusTip">
+            <string>nitrogen quantity (computed value)...</string>
+           </property>
            <property name="text">
             <string>0</string>
            </property>
@@ -1680,6 +1779,9 @@
          </item>
          <item>
           <widget class="QCheckBox" name="gas05dil01CheckBox">
+           <property name="statusTip">
+            <string>diluent #1...</string>
+           </property>
            <property name="text">
             <string>DIL1</string>
            </property>
@@ -1700,6 +1802,9 @@
          </item>
          <item>
           <widget class="QCheckBox" name="gas05dil02CheckBox">
+           <property name="statusTip">
+            <string>diluent #2...</string>
+           </property>
            <property name="text">
             <string>DIL2</string>
            </property>
@@ -1720,6 +1825,9 @@
          </item>
          <item>
           <widget class="QCheckBox" name="gas05bailoutCheckBox">
+           <property name="statusTip">
+            <string>bailout gas...</string>
+           </property>
            <property name="text">
             <string>Bailout</string>
            </property>
@@ -1757,6 +1865,9 @@
           <width>1024</width>
           <height>48</height>
          </size>
+        </property>
+        <property name="statusTip">
+         <string>gas propertys...</string>
         </property>
         <property name="title">
          <string>[ Gas #06 ]</string>
@@ -1835,6 +1946,9 @@
              <height>16777215</height>
             </size>
            </property>
+           <property name="statusTip">
+            <string>helium quantity (noticed license)...</string>
+           </property>
           </widget>
          </item>
          <item>
@@ -1888,6 +2002,9 @@
              <width>80</width>
              <height>16777215</height>
             </size>
+           </property>
+           <property name="statusTip">
+            <string>oxygen quantity (noticed license)...</string>
            </property>
            <property name="maximum">
             <number>100</number>
@@ -1952,6 +2069,9 @@
            <property name="cursor">
             <cursorShape>ArrowCursor</cursorShape>
            </property>
+           <property name="statusTip">
+            <string>nitrogen quantity (computed value)...</string>
+           </property>
            <property name="text">
             <string>0</string>
            </property>
@@ -2003,6 +2123,9 @@
          </item>
          <item>
           <widget class="QCheckBox" name="gas06dil01CheckBox">
+           <property name="statusTip">
+            <string>diluent #1...</string>
+           </property>
            <property name="text">
             <string>DIL1</string>
            </property>
@@ -2023,6 +2146,9 @@
          </item>
          <item>
           <widget class="QCheckBox" name="gas06dil02CheckBox">
+           <property name="statusTip">
+            <string>diluent #2...</string>
+           </property>
            <property name="text">
             <string>DIL2</string>
            </property>
@@ -2043,6 +2169,9 @@
          </item>
          <item>
           <widget class="QCheckBox" name="gas06bailoutCheckBox">
+           <property name="statusTip">
+            <string>bailout gas...</string>
+           </property>
            <property name="text">
             <string>Bailout</string>
            </property>
@@ -2080,6 +2209,9 @@
           <width>1024</width>
           <height>48</height>
          </size>
+        </property>
+        <property name="statusTip">
+         <string>gas propertys...</string>
         </property>
         <property name="title">
          <string>[ Gas #07 ]</string>
@@ -2158,6 +2290,9 @@
              <height>16777215</height>
             </size>
            </property>
+           <property name="statusTip">
+            <string>helium quantity (noticed license)...</string>
+           </property>
           </widget>
          </item>
          <item>
@@ -2211,6 +2346,9 @@
              <width>80</width>
              <height>16777215</height>
             </size>
+           </property>
+           <property name="statusTip">
+            <string>oxygen quantity (noticed license)...</string>
            </property>
            <property name="maximum">
             <number>100</number>
@@ -2275,6 +2413,9 @@
            <property name="cursor">
             <cursorShape>ArrowCursor</cursorShape>
            </property>
+           <property name="statusTip">
+            <string>nitrogen quantity (computed value)...</string>
+           </property>
            <property name="text">
             <string>0</string>
            </property>
@@ -2326,6 +2467,9 @@
          </item>
          <item>
           <widget class="QCheckBox" name="gas07dil01CheckBox">
+           <property name="statusTip">
+            <string>diluent #1...</string>
+           </property>
            <property name="text">
             <string>DIL1</string>
            </property>
@@ -2346,6 +2490,9 @@
          </item>
          <item>
           <widget class="QCheckBox" name="gas07dil02CheckBox">
+           <property name="statusTip">
+            <string>diluent #2...</string>
+           </property>
            <property name="text">
             <string>DIL2</string>
            </property>
@@ -2366,6 +2513,9 @@
          </item>
          <item>
           <widget class="QCheckBox" name="gas07bailoutCheckBox">
+           <property name="statusTip">
+            <string>bailout gas...</string>
+           </property>
            <property name="text">
             <string>Bailout</string>
            </property>
@@ -2403,6 +2553,9 @@
           <width>1024</width>
           <height>48</height>
          </size>
+        </property>
+        <property name="statusTip">
+         <string>gas propertys...</string>
         </property>
         <property name="title">
          <string>[ Gas #08 ]</string>
@@ -2481,6 +2634,9 @@
              <height>16777215</height>
             </size>
            </property>
+           <property name="statusTip">
+            <string>helium quantity (noticed license)...</string>
+           </property>
           </widget>
          </item>
          <item>
@@ -2534,6 +2690,9 @@
              <width>80</width>
              <height>16777215</height>
             </size>
+           </property>
+           <property name="statusTip">
+            <string>oxygen quantity (noticed license)...</string>
            </property>
            <property name="maximum">
             <number>100</number>
@@ -2598,6 +2757,9 @@
            <property name="cursor">
             <cursorShape>ArrowCursor</cursorShape>
            </property>
+           <property name="statusTip">
+            <string>nitrogen quantity (computed value)...</string>
+           </property>
            <property name="text">
             <string>0</string>
            </property>
@@ -2649,6 +2811,9 @@
          </item>
          <item>
           <widget class="QCheckBox" name="gas08dil01CheckBox">
+           <property name="statusTip">
+            <string>diluent #1...</string>
+           </property>
            <property name="text">
             <string>DIL1</string>
            </property>
@@ -2669,6 +2834,9 @@
          </item>
          <item>
           <widget class="QCheckBox" name="gas08dil02CheckBox">
+           <property name="statusTip">
+            <string>diluent #2...</string>
+           </property>
            <property name="text">
             <string>DIL2</string>
            </property>
@@ -2689,6 +2857,9 @@
          </item>
          <item>
           <widget class="QCheckBox" name="gas08bailoutCheckBox">
+           <property name="statusTip">
+            <string>bailout gas...</string>
+           </property>
            <property name="text">
             <string>Bailout</string>
            </property>
@@ -2717,7 +2888,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QProgressBar" name="gaslistProgressBar">
+    <widget class="QProgressBar" name="transferProgressBar">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -2729,6 +2900,9 @@
        <width>16777215</width>
        <height>12</height>
       </size>
+     </property>
+     <property name="statusTip">
+      <string>transfer status...</string>
      </property>
      <property name="value">
       <number>24</number>

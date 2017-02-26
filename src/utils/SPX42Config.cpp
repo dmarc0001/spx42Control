@@ -10,7 +10,7 @@ namespace spx42
     sendSignals( true )
   {
     reset();
-    connect( &spxLicense, &SPX42License::licenseChangedPrivateSig, this, &SPX42Config::licenseChangedPrivateSlot );
+    //connect( &spxLicense, &SPX42License::licenseChangedPrivateSig, this, &SPX42Config::licenseChangedPrivateSlot );
     //
     // DECO Presets füllen
     //
@@ -22,16 +22,24 @@ namespace spx42
     decoPresets.insert( static_cast<int>(DecompressionPreset::DECO_KEY_CUSTOM), ProjectConst::DECO_VAL_CUSTOM );
   }
 
-  SPX42License& SPX42Config::getLicense()
+  /**
+   * @brief Gibt die aktuelle SPX42 Lizenz zurück
+   * @return Lizenz
+   */
+  SPX42License SPX42Config::getLicense()
   {
-    return spxLicense;
+    return( spxLicense );
   }
 
-  void SPX42Config::setLicense(const SPX42License value)
+  /**
+   * @brief Setze die neue SPX42 Lizenz
+   * @param value neue Lizenz
+   */
+  void SPX42Config::setLicense(const LicenseType value)
   {
-    if( spxLicense != value )
+    if( spxLicense.getLicType() != value )
     {
-      spxLicense.setLicType( value.getLicType());
+      spxLicense.setLicType( value );
       if( sendSignals )
       {
         emit licenseChangedSig( spxLicense );
@@ -39,24 +47,53 @@ namespace spx42
     }
   }
 
+  /**
+   * @brief Setze oder lösche Individual-Lizenz
+   * @param value
+   */
+  void SPX42Config::setLicense(const IndividualLicense value)
+  {
+    if( spxLicense.getLicInd() != value )
+    {
+      spxLicense.setLicInd( value );
+      if( sendSignals )
+      {
+        emit licenseChangedSig( spxLicense );
+      }
+    }
+  }
 
+  /**
+   * @brief gib den Lizenznamen als Sting zurück
+   * @return
+   */
   QString SPX42Config::getLicName() const
   {
+    QString individualName = "";
+    if( spxLicense.getLicInd() == IndividualLicense::LIC_INDIVIDUAL )
+    {
+      individualName = tr(" (I)");
+    }
     switch( static_cast<int>(spxLicense.getLicType()))
     {
       case static_cast<int>(LicenseType::LIC_NITROX):
-        return( tr("NITROX") );
+        return( tr("NITROX").append(individualName) );
       case static_cast<int>(LicenseType::LIC_NORMOXIX):
-        return( tr("NORMOXIC TMX") );
+        return( tr("NORMOXIC TMX").append(individualName) );
       case static_cast<int>(LicenseType::LIC_FULLTMX):
-        return( tr("FULL TMX") );
+        return( tr("FULL TMX").append(individualName) );
       case static_cast<int>(LicenseType::LIC_MIL):
-        return( tr("MILITARY") );
+        return( tr("MILITARY").append(individualName) );
     }
     return( tr("UNKNOWN") );
   }
 
-  SPX42Gas& SPX42Config::getGasAt( int num )
+  /**
+   * @brief Gib ein gesetztes Gas zurück
+   * @param num Nummer des Gases (0..7)
+   * @return Das Gas
+   */
+  SPX42Gas SPX42Config::getGasAt( int num ) const
   {
     if( num < 0 || num > 7 )
     {
@@ -65,11 +102,14 @@ namespace spx42
     return( gasList[num]);
   }
 
+  /**
+   * @brief Setze das Objekt auf einen definierten Grundzustand
+   */
   void SPX42Config::reset(void)
   {
     isValid = false;
     spxLicense.setLicType( LicenseType::LIC_NITROX );
-    spxLicense.setLicInd( IndividualLicense::LIC_NONE );
+    spxLicense.setLicInd( IndividualLicense::LIC_NONE);
     serialNumber = "0000000000";
     for( int i=0; i<8; i++)
     {
@@ -90,14 +130,23 @@ namespace spx42
     individualSensorCount = DeviceIndividualSensorCount::SENSOR_COUNT_03;
     individualAcustic = DeviceIndividualAcoustic::ACOUSTIC_ON;
     individualLogInterval = DeviceIndividualLogInterval::INTERVAL_20;
+    individualTempStick = DeviceIndividualTempstick::TEMPSTICK01;
     emit licenseChangedSig( spxLicense );
   }
 
+  /**
+   * @brief Eefrage die gespeicherte SPX42 Seriennummer
+   * @return
+   */
   QString SPX42Config::getSerialNumber() const
   {
     return( serialNumber );
   }
 
+  /**
+   * @brief Setzte die Seriennummer für den SPX42
+   * @param serial Seriennummer als String
+   */
   void SPX42Config::setSerialNumber(const QString &serial)
   {
     if( serialNumber != serial )
@@ -110,6 +159,12 @@ namespace spx42
     }
   }
 
+  /**
+   * @brief Setzte die Dekompressions-Voreinstellung
+   * @param presetType der Typ des Presets
+   * @param low LOW Gradient, wenn Preset == CUSTOM
+   * @param high HIGH Gradient, wenn Preset == CUSTOM
+   */
   void SPX42Config::setCurrentPreset( DecompressionPreset presetType, qint8 low, qint8 high )
   {
     //
@@ -141,16 +196,65 @@ namespace spx42
     // oder nix geändert, nix machen
   }
 
+  /**
+   * @brief Setzte die Dekompressions-Voreinstellung
+   * @param presetType der Typ des Presets
+   * @param dGraient Einstellung für Deko-Gradient
+   */
+  void SPX42Config::setCurrentPreset( DecompressionPreset presetType, const DecoGradient& dGradient )
+  {
+    //
+    // wenn CUSTOM gegeben ist, dann die Werte eintragen
+    //
+    if( presetType == DecompressionPreset::DECO_KEY_CUSTOM )
+    {
+      //
+      // insert macht ein update....
+      //
+      decoPresets.insert( static_cast<int>(DecompressionPreset::DECO_KEY_CUSTOM), dGradient );
+      if( sendSignals )
+      {
+        emit decoGradientChangedSig( getCurrentDecoGradientValue() );
+      }
+      return;
+    }
+    //
+    // oder wenn sich der Typ geändert hat
+    //
+    if( currentPreset != presetType )
+    {
+      currentPreset = presetType;
+      if( sendSignals )
+      {
+        emit decoGradientChangedSig( getCurrentDecoGradientValue() );
+      }
+    }
+    // oder nix geändert, nix machen
+  }
+
+  /**
+   * @brief Gib das aktuelle Preset zurück
+   * @return
+   */
   DecompressionPreset SPX42Config::getCurrentDecoGradientPresetType()
   {
     return( currentPreset );
   }
 
-  DecoGradient SPX42Config::getCurrentDecoGradientValue()
+  /**
+   * @brief Gib die Gradienten zurück
+   * @return Die Gradienten als Objekt DecoGradient
+   */
+  DecoGradient SPX42Config::getCurrentDecoGradientValue() const
   {
     return( decoPresets.value( static_cast<int>(currentPreset) ));
   }
 
+  /**
+   * @brief Gib die Grdienten aür einen bestimmten Typ zurück
+   * @param presetType der Tp, für den die Gradienten gesucht werden
+   * @return Die Gradienten als Objekt DecoGradient
+   */
   DecoGradient SPX42Config::getPresetValues( DecompressionPreset presetType ) const
   {
     //
@@ -177,20 +281,34 @@ namespace spx42
     return( DecompressionPreset::DECO_KEY_CUSTOM );
   }
 
+  /**
+   * @brief Slot, wenn sich die Lizenz geändert hat
+   */
+  //void SPX42Config::licenseChangedPrivateSlot(SPX42License &lic)
+  //{
+  //  if( spxLicense != lic )
+  //  {
+  //    spxLicense = lic;
+  //    if( sendSignals )
+  //    {
+  //      emit licenseChangedSig( spxLicense );
+  //    }
+  //  }
+  //}
 
-  void SPX42Config::licenseChangedPrivateSlot(void)
-  {
-    if( sendSignals )
-    {
-      emit licenseChangedSig( spxLicense );
-    }
-  }
-
+  /**
+   * @brief gib aktuelle dynamische Gradienten zurück
+   * @return Gradientenobjekt
+   */
   DecompressionDynamicGradient SPX42Config::getIsDecoDynamicGradients(void)
   {
     return( decoDynamicGradient );
   }
 
+  /**
+   * @brief setzte dynamische Gadienten an/aus
+   * @param isDynamicEnabled
+   */
   void SPX42Config::setIsDecoDynamicGradients(DecompressionDynamicGradient isDynamicEnabled )
   {
     if( decoDynamicGradient != isDynamicEnabled )
@@ -203,11 +321,19 @@ namespace spx42
     }
   }
 
+  /**
+   * @brief erfrage ob tiefe Dekostops erlaubt sind
+   * @return sind Dekostops erlaubt?
+   */
   DecompressionDeepstops SPX42Config::getIstDeepstopsEnabled( void )
   {
     return( decoDeepstopsEnabled );
   }
 
+  /**
+   * @brief SPX42Config::setIsDeepstopsEnabled
+   * @param isEnabled
+   */
   void SPX42Config::setIsDeepstopsEnabled(DecompressionDeepstops isEnabled )
   {
     if( decoDeepstopsEnabled != isEnabled )
@@ -220,11 +346,19 @@ namespace spx42
     }
   }
 
+  /**
+   * @brief Gib die einsgestellte Displayhelligkeit zurück
+   * @return Helligkeit als Objekt
+   */
   DisplayBrightness SPX42Config::getDisplayBrightness( void )
   {
     return( displayBrightness );
   }
 
+  /**
+   * @brief Setzte Display Helligkeit
+   * @param brightness die Helligkeit
+   */
   void SPX42Config::setDisplayBrightness( DisplayBrightness brightness )
   {
     if( displayBrightness != brightness )
@@ -237,6 +371,10 @@ namespace spx42
     }
   }
 
+  /**
+   * @brief Gib die Helligkeit als Objekt zurück
+   * @return Helligkeit als Objekt
+   */
   DisplayOrientation SPX42Config::getDisplayOrientation( void )
   {
     return( displayOrientation );
@@ -254,11 +392,19 @@ namespace spx42
     }
   }
 
+  /**
+   * @brief gib die Temperatureinheit als Objekt zurück
+   * @return Temperatureinheit als Objekt
+   */
   DeviceTemperaturUnit SPX42Config::getUnitsTemperatur( void )
   {
     return( unitTemperature );
   }
 
+  /**
+   * @brief Setzte die Temperatureiheit
+   * @param tUnit Wert der Einheit
+   */
   void SPX42Config::setUnitsTemperatur( DeviceTemperaturUnit tUnit )
   {
     if( unitTemperature != tUnit )
@@ -271,11 +417,19 @@ namespace spx42
     }
   }
 
+  /**
+   * @brief Gib die Einheit der Länge zurück
+   * @return Einheit der Länge als Objekt
+   */
   DeviceLenghtUnit SPX42Config::getUnitsLength( void )
   {
     return( unitLength );
   }
 
+  /**
+   * @brief Setzte die Einheit der Längen
+   * @param lUnit Einhait als Objekt
+   */
   void SPX42Config::setUnitsLength( DeviceLenghtUnit lUnit )
   {
     if( unitLength != lUnit )
@@ -288,11 +442,19 @@ namespace spx42
     }
   }
 
+  /**
+   * @brief Gib den Wassertyp zurück
+   * @return Wassertyp als Objekt
+   */
   DeviceWaterType SPX42Config::getUnitsWaterType( void )
   {
     return( unitWaterType );
   }
 
+  /**
+   * @brief setzte den Wassertyp
+   * @param wUnit Wassertyp als Objekt
+   */
   void SPX42Config::setUnitsWaterType( DeviceWaterType wUnit )
   {
     if( unitWaterType != wUnit )
@@ -305,11 +467,19 @@ namespace spx42
     }
   }
 
+  /**
+   * @brief Gib den Autosetpoint zurück
+   * @return Autosetpoint als Obhekt
+   */
   DeviceSetpointAuto SPX42Config::getSetpointAuto( void )
   {
     return( setpointAuto );
   }
 
+  /**
+   * @brief setzte den Autosetpoint
+   * @param aSetpoint autosetpoint als Objekt
+   */
   void SPX42Config::setSetpointAuto( DeviceSetpointAuto aSetpoint )
   {
     if( setpointAuto != aSetpoint )
@@ -322,11 +492,19 @@ namespace spx42
     }
   }
 
+  /**
+   * @brief Gib den Setpoint zurück
+   * @return der Setpoint als Obhekt
+   */
   DeviceSetpointValue SPX42Config::getSetpointValue( void )
   {
     return( setpointValue );
   }
 
+  /**
+   * @brief setzte den Setpoint
+   * @param ppo2 als Objekt
+   */
   void SPX42Config::setSetpointValue( DeviceSetpointValue ppo2 )
   {
     if( setpointValue != ppo2 )
@@ -339,11 +517,19 @@ namespace spx42
     }
   }
 
+  /**
+   * @brief gib die Einstellung Sensoren ein/aus zurück
+   * @return Einstellung der Sensoren (ein/aus)
+   */
   DeviceIndividualSensors SPX42Config::getIndividualSensorsOn( void )
   {
     return( individualSensorsOn );
   }
 
+  /**
+   * @brief setzte die Einstellunge Sensoren (ein/aus)
+   * @param onOff Wert der Einstellung
+   */
   void SPX42Config::setIndividualSensorsOn( DeviceIndividualSensors onOff )
   {
     if( individualSensorsOn != onOff )
@@ -356,12 +542,19 @@ namespace spx42
     }
   }
 
-
+  /**
+   * @brief SPX42Config::getIndividualPscrMode
+   * @return Wert der Einstellung als Objekt
+   */
   DeviceIndividualPSCR SPX42Config::getIndividualPscrMode( void )
   {
     return( individualPSCROn );
   }
 
+  /**
+   * @brief Setzte die Einstellung für Passive Semiclosed Rebreather (ein/aus)
+   * @param pscrMode Einstellung als Objekt
+   */
   void SPX42Config::setIndividualPscrMode( DeviceIndividualPSCR pscrMode )
   {
     if( individualPSCROn != pscrMode )
@@ -373,11 +566,19 @@ namespace spx42
     }
   }
 
+  /**
+   * @brief gib die Anzahl der Sensoren zurück
+   * @return Anzahl der Sensoren als Objekt
+   */
   DeviceIndividualSensorCount SPX42Config::getIndividualSensorsCount( void )
   {
     return( individualSensorCount );
   }
 
+  /**
+   * @brief Setzte die Anzahl der aktiven Sensoren
+   * @param sCount Anzahl als Objekt
+   */
   void SPX42Config::setIndividualSensorsCount( DeviceIndividualSensorCount sCount )
   {
     if( individualSensorCount != sCount )
@@ -389,11 +590,19 @@ namespace spx42
     }
   }
 
+  /**
+   * @brief Gib die Einstellung für akustische Warnungen zurück
+   * @return Einstellung für akustische Warnungen als Objekt
+   */
   DeviceIndividualAcoustic SPX42Config::getIndividualAcoustic( void )
   {
     return( individualAcustic );
   }
 
+  /**
+   * @brief Setze Einstellung zr akustichen Warnung (ein/aus)
+   * @param acoustic Einstellung als Objekt
+   */
   void SPX42Config::setIndividualAcoustic( DeviceIndividualAcoustic acoustic )
   {
     if( individualAcustic != acoustic )
@@ -406,11 +615,19 @@ namespace spx42
     }
   }
 
+  /**
+   * @brief gib die Einstellung für das Loginterval zurück
+   * @return Einstellung als Objekt
+   */
   DeviceIndividualLogInterval SPX42Config::getIndividualLogInterval( void )
   {
     return( individualLogInterval );
   }
 
+  /**
+   * @brief Setzte Einstellung für das Loginterval
+   * @param logInterval Interval als Objjekt
+   */
   void SPX42Config::setIndividualLogInterval( DeviceIndividualLogInterval logInterval )
   {
     if( individualLogInterval != logInterval )
@@ -419,6 +636,31 @@ namespace spx42
       if( sendSignals )
       {
         emit individualLogIntervalChangedSig( individualLogInterval );
+      }
+    }
+  }
+
+  /**
+   * @brief Erfrage die Einstellungen für den Tempstick
+   * @return Einstellung des Tempsticks
+   */
+  DeviceIndividualTempstick SPX42Config::getIndividualTempStick( void )
+  {
+    return( individualTempStick );
+  }
+
+  /**
+   * @brief Setze Einstellung für Typ des Tempertursticks
+   * @param tStick Einstellung als Objekt
+   */
+  void SPX42Config::setIndividualTempStick( DeviceIndividualTempstick tStick )
+  {
+    if( individualTempStick != tStick )
+    {
+      individualTempStick = tStick;
+      if( sendSignals )
+      {
+        emit individualTempstickChangedSig( individualTempStick );
       }
     }
   }

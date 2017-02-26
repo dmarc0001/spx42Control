@@ -6,9 +6,9 @@ namespace spx42
   ConnectFragment::ConnectFragment(QWidget *parent, std::shared_ptr<Logger> logger , std::shared_ptr<SPX42Config> spxCfg) :
     QWidget(parent),
     IFragmentInterface(logger, spxCfg),
-    ui(new Ui::ConnectForm)
+    ui(new Ui::connectForm)
   {
-    lg->debug( "ConnectForm::ConnectForm...");
+    lg->debug( "ConnectFragment::ConnectFragment...");
     ui->setupUi(this);
     ui->connectProgressBar->setVisible(false);
     // FIXME: zur Ansicht einfach Elemente einfügen
@@ -26,28 +26,28 @@ namespace spx42
 
   ConnectFragment::~ConnectFragment()
   {
-    lg->debug( "ConnectForm::~ConnectForm...");
+    lg->debug( "ConnectFragment::~ConnectForm...");
     //delete ui;
   }
 
   void ConnectFragment::connectButtonSlot(void)
   {
-    lg->debug("ConnectForm::connectButtonSlot -> connect button clicked.");
+    lg->debug("ConnectFragment::connectButtonSlot -> connect button clicked.");
   }
 
   void ConnectFragment::propertyButtonSlot( void )
   {
-    lg->debug("ConnectForm::propertyButtonSlot -> property button clicked.");
+    lg->debug("ConnectFragment::propertyButtonSlot -> property button clicked.");
   }
 
   void ConnectFragment::discoverButtonSlot( void )
   {
-    lg->debug("ConnectForm::discoverButtonSlot -> discover button clicked.");
+    lg->debug("ConnectFragment::discoverButtonSlot -> discover button clicked.");
   }
 
   void ConnectFragment::currentIndexChangedSlot(int index)
   {
-    lg->debug( QString("ConnectForm::currentIndexChangedSlot -> index changed to <%1>.").arg(index, 2, 10, QChar('0')));
+    lg->debug( QString("ConnectFragment::currentIndexChangedSlot -> index changed to <%1>.").arg(index, 2, 10, QChar('0')));
   }
 
 }

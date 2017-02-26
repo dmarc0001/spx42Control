@@ -10,6 +10,8 @@ namespace spx42
   //
   // Aufzählungen, einige sind eigentlich nur für die bessere Lesbarkeitdes Codes
   //
+  enum class ApplicationTab : int { CONNECT_TAB, CONFIG_TAB, GAS_TAB, LOG_TAB, COUNT_OF_TABS };
+  enum class ApplicationStat : int { STAT_OFFLINE, STAT_ONLINE, STAT_ERROR };
   enum class LicenseType : qint8 { LIC_NITROX, LIC_NORMOXIX, LIC_FULLTMX, LIC_MIL };
   enum class IndividualLicense : qint8 { LIC_NONE, LIC_INDIVIDUAL };
   enum class DiluentType : qint8 { DIL_NONE, DIL_01, DIL_02 };
@@ -34,6 +36,7 @@ namespace spx42
   enum class DeviceIndividualSensorCount : qint8 { SENSOR_COUNT_01, SENSOR_COUNT_02, SENSOR_COUNT_03 };
   enum class DeviceIndividualAcoustic : qint8 { ACOUSTIC_OFF, ACOUSTIC_ON };
   enum class DeviceIndividualLogInterval : qint8 { INTERVAL_20, INTERVAL_30, INTERVAL_60 };
+  enum class DeviceIndividualTempstick : qint8 { TEMPSTICK01, TEMPSTICK02, TEMPSTICK03 };
 
   // Declariere Typen für Gradienten
   using DecoGradient = std::pair<qint8,qint8>;
@@ -59,7 +62,7 @@ namespace spx42
       void setLicInd(const IndividualLicense &value);           //! setzte Individual Lizenz
 
     signals:
-      void licenseChangedPrivateSig( void );                    //! Signal das sich das geändert hat
+      //void licenseChangedPrivateSig( const SPX42License lic );  //! Signal das sich das geändert hat
 
   };
 }
