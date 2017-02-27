@@ -96,7 +96,6 @@ namespace spx42
       lg->crit("SPX42ControlMainWin::~SPX42ControlMainWin -> watchdog stopping failed");
     }
     lg->shutdown();
-    //delete ui;
   }
 
   /**

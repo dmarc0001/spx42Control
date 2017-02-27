@@ -5,8 +5,8 @@
 //
 // automatic generated file
 //
-#define SPX_BUILDTIME "26.02.2017 16:38:18"
-#define SPX_BUILDCOUNT "00000176"
+#define SPX_BUILDTIME "27.02.2017 20:53:57"
+#define SPX_BUILDCOUNT "00000199"
 
 
 #endif

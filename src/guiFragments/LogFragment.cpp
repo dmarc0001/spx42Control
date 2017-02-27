@@ -1,5 +1,6 @@
 ﻿#include "LogFragment.hpp"
 
+using namespace QtCharts;
 namespace spx42
 {
   /**
@@ -12,8 +13,14 @@ namespace spx42
     QWidget(parent),
     IFragmentInterface(logger, spxCfg),
     ui(new Ui::LogFragment() ),
-    model( new QStringListModel() )
+    model( new QStringListModel() ),
+    //chart( new QtCharts::QChart() ),
+    //chartView( new QtCharts::QChartView(chart.get()))
+    chart( new QtCharts::QChart() ),
+    chartView( new QtCharts::QChartView(chart)),
+    axisY( new QCategoryAxis() )
   {
+    lg->debug("LogFragment::LogFragment...");
     ui->setupUi(this);
     ui->transferProgressBar->setVisible(false);
     ui->logentryListView->setModel( model.get() );
@@ -25,6 +32,8 @@ namespace spx42
     ui->diveNumberLabel->setText(diveNumberStr.arg("-") );
     ui->diveDateLabel->setText(diveDateStr.arg("-") );
     ui->diveDepthLabel->setText(diveDepthStr.arg("-") );
+    prepareMiniChart();
+    delete ui->detailsGroupBox->layout()->replaceWidget( ui->diveProfileGraphicsView, chartView );
     //
     connect( ui->readLogdirPushButton, &QPushButton::clicked, this, &LogFragment::readLogDirectorySlot );
     connect( ui->readLogContentPushButton, &QPushButton::clicked, this, &LogFragment::readLogContentSlot );
@@ -36,7 +45,9 @@ namespace spx42
    */
   LogFragment::~LogFragment()
   {
+    lg->debug("LogFragment::~LogFragment...");
     ui->logentryListView->setModel( Q_NULLPTR );
+    //ui->detailsGroupBox->layout()->replaceWidget( chartView, ui->diveProfileGraphicsView );
   }
 
   /**
@@ -107,6 +118,8 @@ namespace spx42
     ui->diveNumberLabel->setText(diveNumberStr.arg(number) );
     ui->diveDateLabel->setText(diveDateStr.arg(date) );
     ui->diveDepthLabel->setText(diveDepthStr.arg(depth) );
+    // FIXME: natürlich noch die richtigen Daten einbauen
+    getDiveDataForGraph( 1, 2 );
   }
 
   /**
@@ -129,4 +142,88 @@ namespace spx42
   {
     lg->debug( QString("LogFragment::addLogLineSlot: logline: <").append(line).append(">") );
   }
+
+  void LogFragment::prepareMiniChart(void)
+  {
+    chart->legend()->hide();                                    // Keine Legende in der Minivorschau
+    // Chart Titel aufhübschen
+    QFont font;
+    font.setPixelSize(10);
+    chart->setTitleFont(font);
+    chart->setTitleBrush(QBrush(Qt::white));
+    chart->setTitle(tr("PREVIEW"));
+    // Hintergrund aufhübschen
+    QBrush backgroundBrush(Qt::NoBrush);
+    chart->setBackgroundBrush(backgroundBrush);
+    // Malhintergrund auch noch
+    QLinearGradient plotAreaGradient;
+    plotAreaGradient.setStart(QPointF(0, 1));
+    plotAreaGradient.setFinalStop(QPointF(1, 0));
+    plotAreaGradient.setColorAt(0.0, QRgb(0x202040));
+    plotAreaGradient.setColorAt(1.0, QRgb(0x2020f0));
+    plotAreaGradient.setCoordinateMode(QGradient::ObjectBoundingMode);
+    chart->setPlotAreaBackgroundBrush(plotAreaGradient);
+    chart->setPlotAreaBackgroundVisible(true);
+    //
+    // Achse machen
+    //
+    // Y-Achse
+    QPen axisPen(QRgb(0xd18952));
+    axisPen.setWidth(1);
+    axisY->setLinePen(axisPen);
+    QBrush axisBrush(Qt::white);
+    axisY->setLabelsBrush(axisBrush);
+    // achsen grid lines and shades
+    axisY->setGridLineVisible(false);
+    axisY->setShadesPen(Qt::NoPen);
+    axisY->setShadesBrush(QBrush(QColor(0x99, 0xcc, 0xcc, 0x55)));
+    axisY->setShadesVisible(true);
+    // Achsen Werte und Bereiche setzten
+    axisY->setRange(0, 30);
+    QLineSeries *se = new QLineSeries();
+    chart->setAxisY(axisY, se);
+    // Hübsch malen
+    chartView->setRenderHint(QPainter::Antialiasing);
+  }
+
+  /**
+   * @brief hole/erzeuge daten für einen Tauchgang wenn vorhanden
+   * @param deviceId Geräteid in der Datenbank
+   * @param diveNum Nummer des TG für das Gerät
+   */
+  void LogFragment::getDiveDataForGraph( int deviceId, int diveNum )
+  {
+    // Polimorphes Objekt hier mit DEBUG belegt
+    IDataSeriesGenerator* gen = new DebugDataSeriesGenerator( lg, spxConfig );
+    // Device-Id für Datenbank hinterlegen
+    gen->setDeviceId( deviceId );
+    // erzeuge Datenserie(n)
+    QLineSeries *series = gen->makeDepthSerie( diveNum );
+    // die Serie aufhübschen
+    QPen pen(QRgb(0xfdb157));
+    pen.setWidth(2);
+    series->setPen(pen);
+    // Chartobjekt etwas leeren
+    chart->removeAllSeries();
+    chart->removeAxis( axisY );
+    chart->addSeries(series);                                   // Serie zufügen
+    // Y-Achse
+    // Achsen Werte und Bereiche setzten
+    // vorher Skalierung testen
+    QVector<QPointF> points = series->pointsVector();
+    QVector<QPointF>::iterator it = points.begin();
+    float min = 0.0;
+    while( it != points.end() )
+    {
+      if( it->ry() < min )
+        min = it->ry();
+      it++;
+    }
+    min += (min/8.0f);
+    axisY->setRange(min, 0.50f );
+    //in chart setzten
+    chart->setAxisY(axisY, series);
+
+  }
+
 }

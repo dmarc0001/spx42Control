@@ -22,6 +22,7 @@ QT                                     += gui
 QT                                     += widgets
 unix:QT                                += bluetooth
 QT                                     += sql
+QT                                     += charts
 CONFIG                                 += stl
 CONFIG                                 += c++11
 DESTDIR                                = out
@@ -51,7 +52,10 @@ SOURCES                                += \
                                           src/guiFragments/IFragmentInterface.cpp \
                                           src/guiFragments/DeviceConfigFragment.cpp \
                                           src/config/SPX42Defs.cpp \
-                                          src/guiFragments/LogFragment.cpp
+                                          src/guiFragments/LogFragment.cpp \
+                                          src/utils/IDataSeriesGenerator.cpp \
+    src/utils/DebugDataSeriesGenerator.cpp \
+    src/utils/DiveDataSeriesGenerator.cpp
 
 HEADERS                                += \
                                           src/Spx42ControlMainWin.hpp \
@@ -68,7 +72,10 @@ HEADERS                                += \
                                           src/guiFragments/IFragmentInterface.hpp \
                                           src/guiFragments/DeviceConfigFragment.hpp \
                                           src/guiFragments/LogFragment.hpp \
-    src/ControlMain.hpp
+                                          src/ControlMain.hpp \
+                                          src/utils/IDataSeriesGenerator.hpp \
+    src/utils/DebugDataSeriesGenerator.hpp \
+    src/utils/DiveDataSeriesGenerator.hpp
 
 FORMS                                  += \
                                           src/ui/Spx42ControlMainWin.ui \
