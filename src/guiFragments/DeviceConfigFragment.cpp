@@ -299,6 +299,11 @@ namespace spx42
     setGuiForLicense();
   }
 
+  void DeviceConfigFragment::onlineStatusChangedSlot( bool isOnline )
+  {
+    // TODO: was machen
+  }
+
   /**
    * @brief Dekompressionseinstellung geändert
    * @param der neue Index

@@ -49,6 +49,7 @@ namespace spx42
     ui->transferProgressBar->setVisible(false);
     fillReferences();
     initGuiWithConfig();
+    confLicChangedSlot();
     connectSlots();
   }
 
@@ -199,7 +200,7 @@ namespace spx42
       connect( gRef[i].get()->dil2CheckBox, &QCheckBox::stateChanged, this,  [=] (int state) { gasUseTypChangeSlot( i, DiluentType::DIL_02, state ); });
       connect( gRef[i].get()->baCheckBox, &QCheckBox::stateChanged, this,  [=] (int state) { baCheckChangeSlot( i, state ); });
     }
-    connect( spxConfig.get(), &SPX42Config::licenseChangedSig, this, &GasFragment::licChangedSlot );
+    connect( spxConfig.get(), &SPX42Config::licenseChangedSig, this, &GasFragment::confLicChangedSlot );
   }
 
   void GasFragment::disconnectSlots( void )
@@ -363,14 +364,20 @@ namespace spx42
     }
   }
 
-  void GasFragment::licChangedSlot( const SPX42License &lic )
+  void GasFragment::confLicChangedSlot( void )
   {
-    lg->debug( QString("GasFragment::licChangedSlot -> set: %1").arg(static_cast<int>(lic.getLicType() )) );
-    ui->tabHeaderLabel->setText( QString(tr("Gaslist SPX42 Serial [%1] Lic: %2")
+    lg->debug( QString("GasFragment::confLicChangedSlot -> set: %1").arg(static_cast<int>(spxConfig->getLicense().getLicType() )) );
+    ui->tabHeaderLabel->setText( QString(tr("GASLIST SPX42 Serial [%1] Lic: %2")
                                              .arg(spxConfig->getSerialNumber())
                                              .arg(spxConfig->getLicName()))
                                      );
     checkGases();
     // TODO: GUI überarbeiten!
   }
+
+  void GasFragment::onlineStatusChangedSlot( bool isOnline )
+  {
+    // TODO: was machen
+  }
+
 }

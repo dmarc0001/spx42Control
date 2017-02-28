@@ -153,6 +153,7 @@ namespace spx42
     tabTitle << tr("SPX42 Config"); // CONFIG_TAB
     tabTitle << tr("Gas Lists");    // GAS_TAB
     tabTitle << tr("Diving Log");   // Logger-Tab
+    tabTitle << tr("Log Charts");   // Loggiing CHARTS
   }
 
   /**
@@ -268,6 +269,12 @@ namespace spx42
     wg = new QWidget();
     wg->setObjectName("DUMMY");
     ui->areaTabWidget->addTab(wg, tabTitle.at(3));
+    //
+    // der Chart Platzhalter
+    //
+    wg = new QWidget();
+    wg->setObjectName("DUMMY");
+    ui->areaTabWidget->addTab(wg, tabTitle.at(4));
   }
 
   /**
@@ -381,6 +388,14 @@ namespace spx42
         currObj->setObjectName( "spx42log" );
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at(static_cast<int>(ApplicationTab::LOG_TAB)) );
         currentTab = ApplicationTab::LOG_TAB;
+        break;
+
+      case static_cast<int>(ApplicationTab::CHART_TAB):
+        lg->debug("SPX42ControlMainWin::setApplicationTab -> CHART TAB...");
+        currObj = new ChartsFragment( Q_NULLPTR, lg, spx42Config);
+        currObj->setObjectName( "spx42charts" );
+        ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at(static_cast<int>(ApplicationTab::CHART_TAB)) );
+        currentTab = ApplicationTab::CHART_TAB;
         break;
     }
     ui->areaTabWidget->setCurrentIndex(idx);

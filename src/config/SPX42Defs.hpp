@@ -10,7 +10,7 @@ namespace spx42
   //
   // Aufzählungen, einige sind eigentlich nur für die bessere Lesbarkeitdes Codes
   //
-  enum class ApplicationTab : int { CONNECT_TAB, CONFIG_TAB, GAS_TAB, LOG_TAB, COUNT_OF_TABS };
+  enum class ApplicationTab : int { CONNECT_TAB, CONFIG_TAB, GAS_TAB, LOG_TAB, CHART_TAB, COUNT_OF_TABS };
   enum class ApplicationStat : int { STAT_OFFLINE, STAT_ONLINE, STAT_ERROR };
   enum class LicenseType : qint8 { LIC_NITROX, LIC_NORMOXIX, LIC_FULLTMX, LIC_MIL };
   enum class IndividualLicense : qint8 { LIC_NONE, LIC_INDIVIDUAL };

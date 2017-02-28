@@ -26,6 +26,8 @@ namespace spx42
       ~ConnectFragment();                                       //! Destruktor, muss GUI säubern
 
     private slots:
+      virtual void onlineStatusChangedSlot( bool isOnline ) Q_DECL_OVERRIDE; //! Wenn sich der Onlinestatus des SPX42 ändert
+      virtual void confLicChangedSlot( void ) Q_DECL_OVERRIDE;  //! Wenn sich die Lizenz ändert
       void connectButtonSlot(void);                             //! Wenn der Verbinde-Knopf gedrückt wurde
       void propertyButtonSlot( void );                          //! Verbindungs/Geräte eigenschaften
       void discoverButtonSlot( void );                          //! Suche nach BT Geräten

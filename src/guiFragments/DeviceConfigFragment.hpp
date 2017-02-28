@@ -45,7 +45,8 @@ namespace spx42
       void setGradientPresetWithoutCallback( DecompressionPreset preset ); //! Gradienten-Combobox setzten ohne Callback auszuführen
 
     private slots:
-      void confLicChangedSlot( void );                          //! Wenn sich die Lizenz ändert
+      virtual void onlineStatusChangedSlot( bool isOnline ) Q_DECL_OVERRIDE;   //! Wenn sich der Onlinestatus des SPX42 ändert
+      virtual void confLicChangedSlot( void ) Q_DECL_OVERRIDE;  //! Wenn sich die Lizenz ändert
       // DEKOMPRESSIONSEINSTELLUNGEN
       void decoComboChangedSlot( int index );                   //! ändert sich der Inhalt der Combobox für Dekompressionseinstellungen
       void decoGradientLowChangedSlot( int low );               //! wenn der Gradient LOW geändert wurde

@@ -14,10 +14,9 @@ namespace spx42
     IFragmentInterface(logger, spxCfg),
     ui(new Ui::LogFragment() ),
     model( new QStringListModel() ),
-    //chart( new QtCharts::QChart() ),
-    //chartView( new QtCharts::QChartView(chart.get()))
     chart( new QtCharts::QChart() ),
-    chartView( new QtCharts::QChartView(chart)),
+    dummyChart( new QtCharts::QChart() ),
+    chartView( new QtCharts::QChartView(dummyChart)),
     axisY( new QCategoryAxis() )
   {
     lg->debug("LogFragment::LogFragment...");
@@ -33,8 +32,11 @@ namespace spx42
     ui->diveDateLabel->setText(diveDateStr.arg("-") );
     ui->diveDepthLabel->setText(diveDepthStr.arg("-") );
     prepareMiniChart();
+    // tausche den Platzhalter aus und entsorge den gleich
     delete ui->detailsGroupBox->layout()->replaceWidget( ui->diveProfileGraphicsView, chartView );
     //
+    confLicChangedSlot();
+    connect( spxConfig.get(), &SPX42Config::licenseChangedSig, this, &LogFragment::confLicChangedSlot );
     connect( ui->readLogdirPushButton, &QPushButton::clicked, this, &LogFragment::readLogDirectorySlot );
     connect( ui->readLogContentPushButton, &QPushButton::clicked, this, &LogFragment::readLogContentSlot );
     connect( ui->logentryListView, &QAbstractItemView::clicked, this, &LogFragment::logListViewClickedSlot );
@@ -46,8 +48,10 @@ namespace spx42
   LogFragment::~LogFragment()
   {
     lg->debug("LogFragment::~LogFragment...");
+    // setze wieder den Dummy ein und lasse den
+    // uniqe_ptr die Objekte im ChartView entsorgen
+    chartView->setChart(dummyChart);
     ui->logentryListView->setModel( Q_NULLPTR );
-    //ui->detailsGroupBox->layout()->replaceWidget( chartView, ui->diveProfileGraphicsView );
   }
 
   /**
@@ -118,8 +122,20 @@ namespace spx42
     ui->diveNumberLabel->setText(diveNumberStr.arg(number) );
     ui->diveDateLabel->setText(diveDateStr.arg(date) );
     ui->diveDepthLabel->setText(diveDepthStr.arg(depth) );
-    // FIXME: natürlich noch die richtigen Daten einbauen
-    getDiveDataForGraph( 1, 2 );
+    //
+    // Daten anzeigen, oder auch nicht
+    // FIXME: zum testen nur gerade anzahl
+    //
+    if( (index.row() % 2) > 0 )
+    {
+      // FIXME: natürlich noch die richtigen Daten einbauen
+      showDiveDataForGraph( 1, 2 );
+    }
+    else
+    {
+      chartView->setChart(dummyChart);
+    }
+
   }
 
   /**
@@ -150,7 +166,7 @@ namespace spx42
     QFont font;
     font.setPixelSize(10);
     chart->setTitleFont(font);
-    chart->setTitleBrush(QBrush(Qt::white));
+    chart->setTitleBrush(QBrush(Qt::darkBlue));
     chart->setTitle(tr("PREVIEW"));
     // Hintergrund aufhübschen
     QBrush backgroundBrush(Qt::NoBrush);
@@ -182,6 +198,7 @@ namespace spx42
     axisY->setRange(0, 30);
     QLineSeries *se = new QLineSeries();
     chart->setAxisY(axisY, se);
+    chart->setMargins( QMargins(0, 0, 0, 0) );
     // Hübsch malen
     chartView->setRenderHint(QPainter::Antialiasing);
   }
@@ -191,7 +208,7 @@ namespace spx42
    * @param deviceId Geräteid in der Datenbank
    * @param diveNum Nummer des TG für das Gerät
    */
-  void LogFragment::getDiveDataForGraph( int deviceId, int diveNum )
+  void LogFragment::showDiveDataForGraph( int deviceId, int diveNum )
   {
     // Polimorphes Objekt hier mit DEBUG belegt
     IDataSeriesGenerator* gen = new DebugDataSeriesGenerator( lg, spxConfig );
@@ -210,20 +227,64 @@ namespace spx42
     // Y-Achse
     // Achsen Werte und Bereiche setzten
     // vorher Skalierung testen
+    float min = getMinYValue( series );
+    min += (min/8.0f);                                          // 8% zugeben
+    axisY->setRange(min, 0.50f );
+    //in chart setzten
+    chart->setAxisY(axisY, series);
+    chartView->setChart(chart.get());
+  }
+
+  /**
+   * @brief Y-Minimum einer Serie finden
+   * @param series Zeiger auf die serie (const)
+   * @return Minimum
+   */
+  float LogFragment::getMinYValue( const QLineSeries* series )
+  {
     QVector<QPointF> points = series->pointsVector();
     QVector<QPointF>::iterator it = points.begin();
-    float min = 0.0;
+    float min = FLT_MAX;
     while( it != points.end() )
     {
       if( it->ry() < min )
         min = it->ry();
       it++;
     }
-    min += (min/8.0f);
-    axisY->setRange(min, 0.50f );
-    //in chart setzten
-    chart->setAxisY(axisY, series);
+    return( min );
+  }
 
+  /**
+   * @brief Y-Maximum einer Serie finden
+   * @param series Zeiger auf die serie (const)
+   * @return Maximum
+   */
+  float LogFragment::getMaxYValue( const QLineSeries* series )
+  {
+    QVector<QPointF> points = series->pointsVector();
+    QVector<QPointF>::iterator it = points.begin();
+    float max = FLT_MIN;
+    while( it != points.end() )
+    {
+      if( it->ry() > max )
+        max = it->ry();
+      it++;
+    }
+    return( max );
+  }
+
+  void LogFragment::onlineStatusChangedSlot( bool isOnline )
+  {
+    // TODO: was machen
+  }
+
+  void LogFragment::confLicChangedSlot( void )
+  {
+    lg->debug( QString("LogFragment::confLicChangedSlot -> set: %1").arg(static_cast<int>(spxConfig->getLicense().getLicType() )) );
+    ui->tabHeaderLabel->setText( QString(tr("LOGFILES SPX42 Serial [%1] Lic: %2")
+                                             .arg(spxConfig->getSerialNumber())
+                                             .arg(spxConfig->getLicName()))
+                                     );
   }
 
 }

@@ -17,7 +17,8 @@ namespace spx42
     ui->deviceComboBox->addItem("ZWEI", 2);
     ui->deviceComboBox->addItem("DREI", 3);
     ui->deviceComboBox->addItem("VIER", 4);
-
+    confLicChangedSlot();
+    connect( spxConfig.get(), &SPX42Config::licenseChangedSig, this, &ConnectFragment::confLicChangedSlot );
     connect( ui->connectButton, &QPushButton::clicked, this, &ConnectFragment::connectButtonSlot );
     connect( ui->propertyPushButton, &QPushButton::clicked, this, &ConnectFragment::propertyButtonSlot );
     connect( ui->discoverPushButton, &QPushButton::clicked, this, &ConnectFragment::discoverButtonSlot );
@@ -28,6 +29,16 @@ namespace spx42
   {
     lg->debug( "ConnectFragment::~ConnectForm...");
     //delete ui;
+  }
+
+  void ConnectFragment::onlineStatusChangedSlot( bool isOnline )
+  {
+    // TODO: was machen
+  }
+
+  void ConnectFragment::confLicChangedSlot( void )
+  {
+    // TODO was machen
   }
 
   void ConnectFragment::connectButtonSlot(void)

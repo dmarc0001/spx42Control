@@ -18,6 +18,11 @@ namespace spx42
     public:
       explicit IFragmentInterface(std::shared_ptr<Logger> logger, std::shared_ptr<SPX42Config> spxCfg); //! Standartkonstruktor
       virtual ~IFragmentInterface(void);                        //! Destruktor
+
+    public slots:
+      virtual void onlineStatusChangedSlot( bool isOnline ) = 0L;//! Wenn sich der Onlinestatus des SPX42 ändert
+      virtual void confLicChangedSlot( void ) = 0L;             //! Wenn sich die Lizenz ändert
+
   };
 }
 

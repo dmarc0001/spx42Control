@@ -21,6 +21,7 @@
 #include "guiFragments/DeviceConfigFragment.hpp"
 #include "guiFragments/GasFragment.hpp"
 #include "guiFragments/LogFragment.hpp"
+#include "guiFragments/ChartsFragment.hpp"
 #include "utils/SPX42Config.hpp"
 
 namespace Ui

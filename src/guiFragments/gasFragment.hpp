@@ -67,11 +67,12 @@ namespace spx42
       void checkGases( void );                                  //! Alle Gase nach Lizenzwechsel testen
 
     private slots:
+      virtual void onlineStatusChangedSlot( bool isOnline ) Q_DECL_OVERRIDE;//! Wenn sich der Onlinestatus des SPX42 ändert
+      virtual void confLicChangedSlot( void ) Q_DECL_OVERRIDE;  //! Wenn sich die Lizenz ändert
       void spinO2ValueChangedSlot(int index, int o2Val );       //! O2 Wert eines Gases hat sich verändert
       void spinHeValueChangedSlot(int index, int heVal );       //! HE Wert eines Gases hat sich verändert
       void gasUseTypChangeSlot(int index, DiluentType which, int state ); //! wenn sich das Diluent ändert
       void baCheckChangeSlot( int index, int state );           //! wenn sich das Bailout ändert
-      void licChangedSlot( const SPX42License& lic );           //! Wenn sich die Lizenz ändert
   };
 
 }

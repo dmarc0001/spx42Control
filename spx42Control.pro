@@ -54,8 +54,9 @@ SOURCES                                += \
                                           src/config/SPX42Defs.cpp \
                                           src/guiFragments/LogFragment.cpp \
                                           src/utils/IDataSeriesGenerator.cpp \
-    src/utils/DebugDataSeriesGenerator.cpp \
-    src/utils/DiveDataSeriesGenerator.cpp
+                                          src/utils/DebugDataSeriesGenerator.cpp \
+                                          src/utils/DiveDataSeriesGenerator.cpp \
+    src/guiFragments/ChartsFragment.cpp
 
 HEADERS                                += \
                                           src/Spx42ControlMainWin.hpp \
@@ -74,8 +75,9 @@ HEADERS                                += \
                                           src/guiFragments/LogFragment.hpp \
                                           src/ControlMain.hpp \
                                           src/utils/IDataSeriesGenerator.hpp \
-    src/utils/DebugDataSeriesGenerator.hpp \
-    src/utils/DiveDataSeriesGenerator.hpp
+                                          src/utils/DebugDataSeriesGenerator.hpp \
+                                          src/utils/DiveDataSeriesGenerator.hpp \
+    src/guiFragments/ChartsFragment.hpp
 
 FORMS                                  += \
                                           src/ui/Spx42ControlMainWin.ui \
@@ -83,7 +85,8 @@ FORMS                                  += \
                                           src/ui/GasFragment.ui \
                                           src/ui/ConnectFragment.ui \
                                           src/ui/LogFragment.ui \
-                                          src/ui/DeviceConfigFragment.ui
+                                          src/ui/DeviceConfigFragment.ui \
+                                          src/ui/ChartsFragment.ui
 
 RESOURCES                              = \
                                           src/res/Spx42ControlRes.qrc

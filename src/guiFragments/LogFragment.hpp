@@ -3,10 +3,12 @@
 
 #include <memory>
 #include <algorithm>
+#include <float.h>
 #include <QWidget>
 #include <QStringList>
 #include <QStringListModel>
 #include <QtCharts>
+#include <QMargins>
 
 #include "IFragmentInterface.hpp"
 #include "../logging/Logger.hpp"
@@ -31,7 +33,8 @@ namespace spx42
       Q_OBJECT
       std::unique_ptr<Ui::LogFragment> ui;                          //! Zeiger auf GUI-Objekte
       std::unique_ptr<QStringListModel> model;                      //! Zeiger auf Strionglist Model
-      QtCharts::QChart* chart;                                      //! Zeiger auf das Chart
+      std::unique_ptr<QtCharts::QChart> chart;                      //! Zeiger auf das Chart
+      QtCharts::QChart* dummyChart;                                 //! Zeiger auf das weisse, leere chart
       QtCharts::QChartView* chartView;                              //! Zeiger auf das ChartView
       QtCharts::QCategoryAxis* axisY;                               //! Y-Achse für Chart
       QString diveNumberStr;
@@ -46,9 +49,13 @@ namespace spx42
 
     private:
       void prepareMiniChart(void);
-      void getDiveDataForGraph( int deviceId, int diveNum );
+      void showDiveDataForGraph( int deviceId, int diveNum );
+      float getMinYValue( const QLineSeries* series );
+      float getMaxYValue( const QLineSeries* series );
 
     private slots:
+      virtual void onlineStatusChangedSlot( bool isOnline ) Q_DECL_OVERRIDE; //! Wenn sich der Onlinestatus des SPX42 ändert
+      virtual void confLicChangedSlot( void ) Q_DECL_OVERRIDE;       //! Wenn sich die Lizenz ändert
       void readLogDirectorySlot(void);
       void readLogContentSlot(void);
       void logListViewClickedSlot( const QModelIndex &index );
