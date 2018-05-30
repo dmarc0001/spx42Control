@@ -14,7 +14,7 @@ namespace Ui {
   class DeviceConfig;
 }
 
-namespace spx42
+namespace spx
 {
   /**
    * @brief Klasse für das Management der Geräteeinstellungen

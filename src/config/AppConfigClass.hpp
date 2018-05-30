@@ -7,7 +7,7 @@
 
 #include "CurrBuildDef.hpp"
 
-namespace spx42
+namespace spx
 {
   class AppConfigClass
   {

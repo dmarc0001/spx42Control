@@ -1,6 +1,6 @@
 ﻿#include "SPX42Defs.hpp"
 
-namespace spx42
+namespace spx
 {
   SPX42License::SPX42License(void) :
     licType( LicenseType::LIC_NITROX ),

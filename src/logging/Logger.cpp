@@ -3,7 +3,7 @@
 #include <QFileInfo>
 
 
-namespace spx42
+namespace spx
 {
   const QString Logger::dateTimeFormat = "[yyyy-MM-dd hh:mm:ss.z] ";
   const QString Logger::DEBUG_STR = "DEBUG ";

@@ -25,7 +25,7 @@ namespace Ui {
   class LogFragment;
 }
 
-namespace spx42
+namespace spx
 {
   class LogFragment : public QWidget, IFragmentInterface
   {

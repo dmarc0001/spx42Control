@@ -10,7 +10,7 @@
 #include "SPX42Gas.hpp"
 #include "../config/ProjectConst.hpp"
 
-namespace spx42
+namespace spx
 {
   class SPX42Config : public QObject
   {
@@ -50,7 +50,7 @@ namespace spx42
       void setLicense(const LicenseType value);                                //! Lizenz des aktuellen SPX42 merken
       void setLicense(const IndividualLicense value);                          //! Lizenz des aktuellen SPX42 merken
       QString getLicName(void) const;                                          //! Textliche Darstellung der Lizenz
-      SPX42Gas getGasAt( int num ) const;                                      //! Gib ein Gas mit der Nummer num vom SPX42 zurück
+      SPX42Gas& getGasAt( int num );                                            //! Gib ein Gas mit der Nummer num vom SPX42 zurück
       void reset(void);                                                        //! Resetiere das Objekt
       QString getSerialNumber(void) const;                                     //! Seriennummer des aktuellen SPX42 zurückgeben
       void setSerialNumber(const QString& serial);                             //! Seriennumemr des aktuellen SPX42 speichern

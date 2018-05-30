@@ -1,7 +1,7 @@
 ﻿#include "ChartsFragment.hpp"
 #include "ui_ChartsFragment.h"
 
-namespace spx42
+namespace spx
 {
   ChartsFragment::ChartsFragment(QWidget *parent, std::shared_ptr<Logger> logger , std::shared_ptr<SPX42Config> spxCfg) :
     QWidget(parent),

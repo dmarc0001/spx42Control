@@ -9,7 +9,7 @@
 
 #include <QtCharts>
 
-namespace spx42
+namespace spx
 {
   class IDataSeriesGenerator
   {

@@ -1,6 +1,6 @@
 ﻿#include "IDataSeriesGenerator.hpp"
 
-namespace spx42
+namespace spx
 {
   IDataSeriesGenerator::IDataSeriesGenerator( std::shared_ptr<Logger> logger, std::shared_ptr<SPX42Config> spxCfg) :
     lg( logger ),

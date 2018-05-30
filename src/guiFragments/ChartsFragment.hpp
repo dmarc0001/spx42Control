@@ -13,7 +13,7 @@ namespace Ui
   class  ChartsFragment;
 }
 
-namespace spx42
+namespace spx
 {
   class ChartsFragment : public QWidget, IFragmentInterface
   {

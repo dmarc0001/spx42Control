@@ -1,6 +1,6 @@
 ﻿#include "SPX42Config.hpp"
 
-namespace spx42
+namespace spx
 {
   /**
    * @brief Standartkonstruktor
@@ -93,13 +93,13 @@ namespace spx42
    * @param num Nummer des Gases (0..7)
    * @return Das Gas
    */
-  SPX42Gas SPX42Config::getGasAt( int num ) const
+  SPX42Gas &SPX42Config::getGasAt( int num )
   {
     if( num < 0 || num > 7 )
     {
       return( gasList[0] );
     }
-    return( gasList[num]);
+    return( gasList[num] );
   }
 
   /**

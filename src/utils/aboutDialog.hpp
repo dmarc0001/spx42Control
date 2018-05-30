@@ -11,7 +11,7 @@
 #include "../config/AppConfigClass.hpp"
 #include "../logging/Logger.hpp"
 
-namespace spx42
+namespace spx
 {
   class AboutDialog : public QDialog
   {

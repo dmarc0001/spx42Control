@@ -1,7 +1,7 @@
 ﻿#include "LogFragment.hpp"
 
 using namespace QtCharts;
-namespace spx42
+namespace spx
 {
   /**
    * @brief Konstruktor für das Logfragment

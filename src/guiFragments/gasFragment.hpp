@@ -22,7 +22,7 @@ namespace Ui
   class GasForm;
 }
 
-namespace spx42
+namespace spx
 {
   #define QSpinboxIntValueChanged  static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged)
 

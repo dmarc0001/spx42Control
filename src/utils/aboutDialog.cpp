@@ -1,6 +1,6 @@
 ﻿#include "AboutDialog.hpp"
 
-namespace spx42
+namespace spx
 {
   AboutDialog::AboutDialog( QWidget *parent, AppConfigClass& conf, std::shared_ptr<Logger> logger ) :
     QDialog(parent),

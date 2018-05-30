@@ -5,7 +5,7 @@
 #include <QObject>
 #include <QtGlobal>
 
-namespace spx42
+namespace spx
 {
   //
   // Aufzählungen, einige sind eigentlich nur für die bessere Lesbarkeitdes Codes

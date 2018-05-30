@@ -13,7 +13,7 @@ namespace Ui
   class connectForm;
 }
 
-namespace spx42
+namespace spx
 {
   class ConnectFragment : public QWidget, IFragmentInterface
   {

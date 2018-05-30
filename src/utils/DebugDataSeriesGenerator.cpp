@@ -1,7 +1,7 @@
 ﻿#include "DebugDataSeriesGenerator.hpp"
 
 using namespace QtCharts;
-namespace spx42
+namespace spx
 {
   DebugDataSeriesGenerator::DebugDataSeriesGenerator( std::shared_ptr<Logger> logger, std::shared_ptr<SPX42Config> spxCfg) :
     IDataSeriesGenerator( logger, spxCfg ),

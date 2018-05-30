@@ -11,7 +11,7 @@
 
 #include "../config/AppConfigClass.hpp"
 
-namespace spx42
+namespace spx
 {
   enum LgThreshold : quint8 { LG_NONE=0,LG_CRIT,LG_WARN,LG_INFO,LG_DEBUG };
 

@@ -23,6 +23,7 @@
 #include "guiFragments/LogFragment.hpp"
 #include "guiFragments/ChartsFragment.hpp"
 #include "utils/SPX42Config.hpp"
+#include "bluetooth/ABTDevice.hpp"
 
 namespace Ui
 {
@@ -32,7 +33,7 @@ namespace Ui
   class SPX42ControlMainWin;
 }
 
-namespace spx42
+namespace spx
 {
   class SPX42ControlMainWin : public QMainWindow
   {
@@ -47,6 +48,7 @@ namespace spx42
       AppConfigClass cf;                                        //! Konfiguration aus Datei
       ApplicationTab currentTab;                                //! welcher Tab ist aktiv?
       QStringList tabTitle;                                     //! Tab Titel (nicht statisch, das Objekt gibts eh nur einmal)
+      std::shared_ptr<ABTDevice> btDevice;                      //! Das Blauzahnobjekt, im Konstruktor zu erzeugen
 
     public:
       explicit SPX42ControlMainWin(QWidget *parent = 0);
@@ -69,7 +71,27 @@ namespace spx42
       void tabCurrentChangedSlot( int idx );                    //! TAB Index gewechselt
       void licenseChangedSlot( void );                          //! Lizenztyp getriggert
       void simulateIndividualLicenseChanged( void );            //! Individuallizenz geändert
+      // Blutooth Slots vom BTDevice
+      /*
+      void btConnectingSlot( void );                            //! Signal, wenn eine Verbindung aufgebaut wird
+      void btConnectedSlot( const QByteArray& dAddr );          //! Signal, wenn eine Verbindung zustande gekommen ist
+      void btDisconnectSlot( void );                            //! Signal, wenn eine Verbindung beendet/unterbrochen wurde
+      void btConnectErrorSlot( int errnr );                     //! Signal, wenn es Fehler beim Verbinden gab
+      void btDataRecivedSlot();                                 //! Signal, wenn Daten kamen
+      void btPairingPinRequestSlot(void);                       //! Signal, wenn Pairing gefordert wird
+      */
   };
 } // namespace spx42
 
+
+/*
+      ==BtDevice....==
+      void btConnectingSig( void );                               //! Signal, wenn eine Verbindung aufgebaut wird
+      void btConnectedSig( const QByteArray& dAddr );             //! Signal, wenn eine Verbindung zustande gekommen ist
+      void btDisconnectSig( void );                               //! Signal, wenn eine Verbindung beendet/unterbrochen wurde
+      void btConnectErrorSig( int errnr );                        //! Signal, wenn es Fehler beim Verbinden gab
+      void btDataRecivedSig();                                    //! Signal, wenn Daten kamen
+      void btPairingPinRequestSig(void);                          //! Signal, wenn Pairing gefordert wird
+
+ */
 #endif // SPX42CONTROLMAINWIN_HPP

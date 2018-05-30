@@ -1,7 +1,7 @@
 ﻿#include "Spx42ControlMainWin.hpp"
 #include "ui_Spx42controlmainwin.h"
 
-namespace spx42
+namespace spx
 {
   /**
    * @brief Der Konstruktor des Hauptfensters
@@ -53,6 +53,14 @@ namespace spx42
       setFont(QFont("DejaVu Sans Mono", 12));
     #endif
     }
+    //
+    // erzeuge ein Bluethooth Objekt
+    //
+
+
+
+
+
     //
     // das folgende wird nur kompiliert, wenn DEBUG NICHT konfiguriert ist
     //

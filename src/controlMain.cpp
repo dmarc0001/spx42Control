@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
   //
   // Hauptfenster erzeugen, Fenster zeigen
   //
-  spx42::SPX42ControlMainWin w;
+  spx::SPX42ControlMainWin w;
   //
   // Die Einstellugnen (für QT) auf Systemlocale setzen
   //

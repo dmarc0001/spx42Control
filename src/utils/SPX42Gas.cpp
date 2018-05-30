@@ -1,6 +1,6 @@
 ﻿#include "SPX42Gas.hpp"
 
-namespace spx42
+namespace spx
 {
   SPX42Gas::SPX42Gas(void) :
     O2(21),
@@ -11,7 +11,7 @@ namespace spx42
 
   }
 
-  SPX42Gas::SPX42Gas(int o2, int he, DiluentType dilType, bool isBaulout ) :
+  SPX42Gas::SPX42Gas(quint8 o2, quint8 he, DiluentType dilType, bool isBaulout ) :
     O2(o2),
     He(he),
     dType( dilType ),
@@ -25,12 +25,12 @@ namespace spx42
 
   }
 
-  int SPX42Gas::getO2(void) const
+  quint8 SPX42Gas::getO2(void)
   {
     return O2;
   }
 
-  int SPX42Gas::setO2(int value, LicenseType licType)
+  quint8 SPX42Gas::setO2(quint8 value, LicenseType licType)
   {
     if( value > 100 )
     {
@@ -42,13 +42,18 @@ namespace spx42
     {
       case static_cast<qint8>(LicenseType::LIC_NITROX ):
         He = 0;                                                                // Bei der Lizenz ist HE immer 0
-      // weiter bei normoxic, dabei auch O2 auf Zulässigkeit testen
+        if( O2 < 21 )                                                          // Hier darf O2 nicht kleiner als 21%
+        {
+          O2 = 21;
+        }
+        break;
+
       case static_cast<qint8>(LicenseType::LIC_NORMOXIX ):
         if( O2 < 21 )                                                          // Hier darf O2 nicht kleiner als 21%
         {
           O2 = 21;
         }
-        He = 100 - O2;
+        //He = 100 - O2;
       // weiter bei höheren Lizenzen, da darf O2 kleiner 21 und He darf auch
       case static_cast<qint8>(LicenseType::LIC_FULLTMX ):
       case static_cast<qint8>(LicenseType::LIC_MIL ):
@@ -62,12 +67,12 @@ namespace spx42
     return( O2 );
   }
 
-  int SPX42Gas::getHe(void) const
+  quint8 SPX42Gas::getHe(void)
   {
     return He;
   }
 
-  int SPX42Gas::setHe(int value, LicenseType licType)
+  quint8 SPX42Gas::setHe(quint8 value, LicenseType licType)
   {
     if( value > 99 )
     {
@@ -85,10 +90,6 @@ namespace spx42
         {
           O2 = 21;
         }
-        if( He > 78 )                                                       // und damit darf HE nicht mehr als 78
-        {
-          He = 78;
-        }
       // weiter bei höheren Lizenzen, da darf O2 kleiner 21 und He darf auch
       case static_cast<qint8>(LicenseType::LIC_FULLTMX ):
       case static_cast<qint8>(LicenseType::LIC_MIL ):
@@ -102,7 +103,7 @@ namespace spx42
     return( He );
   }
 
-  int SPX42Gas::getN2(void) const
+  quint8 SPX42Gas::getN2(void)
   {
     return(100 - O2 - He);
   }
@@ -143,25 +144,25 @@ namespace spx42
       {
         return( QObject::tr("Air"));
       }
-      return( QString(QObject::tr("NX%1")).arg(O2, 1, 10));
+      return( QString(QObject::tr("NX%1")).arg(O2, 2, 10, QChar('0')));
     }
     // Hier bleibt noch TX und HX
     int n2 = 100 - O2 - He;
     if( n2 == 0 )
     {
       // Heliox
-      return( QString(QObject::tr("HX%1/%2")).arg(O2, 1, 10).arg(He, 1, 10));
+      return( QString(QObject::tr("HX%1/%2")).arg(O2, 2, 10, QChar('0')).arg(He, 2, 10, QChar('0')));
     }
-    return( QString(QObject::tr("TX%1/%2")).arg(O2, 1, 10).arg(He, 1, 10));
+    return( QString(QObject::tr("TX%1/%2")).arg(O2, 2, 10, QChar('0')).arg(He, 2, 10, QChar('0')));
   }
 
-  int SPX42Gas::getMOD(void)
+  qint16 SPX42Gas::getMOD(void)
   {
     // FIXME: Berechne MOD
     return(0);
   }
 
-  int SPX42Gas::getEAD(void)
+  qint16 SPX42Gas::getEAD(void)
   {
     // FIXME: Berechne EAD
     return(0);

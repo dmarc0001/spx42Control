@@ -7,7 +7,7 @@
 #include "../utils/SPX42Config.hpp"
 #include "../config/SPX42Defs.hpp"
 
-namespace spx42
+namespace spx
 {
   class IFragmentInterface
   {

@@ -4,7 +4,7 @@
 
 #include "AppConfigClass.hpp"
 
-namespace spx42
+namespace spx
 {
   const QString AppConfigClass::constBuildDate = SPX_BUILDTIME;
   const QString AppConfigClass::constBuildNumStr = SPX_BUILDCOUNT;

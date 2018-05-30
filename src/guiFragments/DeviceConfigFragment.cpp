@@ -1,7 +1,7 @@
 ﻿#include "DeviceConfigFragment.hpp"
 #include "ui_DeviceConfigFragment.h"
 
-namespace spx42
+namespace spx
 {
   /**
    * @brief Konstruktor für Konfigurationsfragment

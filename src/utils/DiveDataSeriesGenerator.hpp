@@ -12,7 +12,7 @@
 #include "IDataSeriesGenerator.hpp"
 
 
-namespace spx42
+namespace spx
 {
   class DiveDataSeriesGenerator : public IDataSeriesGenerator
   {

@@ -12,7 +12,7 @@
 #include "../config/ProjectConst.hpp"
 #include "IDataSeriesGenerator.hpp"
 
-namespace spx42
+namespace spx
 {
   class DebugDataSeriesGenerator : public IDataSeriesGenerator
   {
