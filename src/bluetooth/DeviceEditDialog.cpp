@@ -49,7 +49,6 @@ namespace spx
  * @brief DeviceEditDialog::pinEdited
  * @param text
  */
-  #pragma GCC diagnostic ignored "-Wunused-parameter"
   void DeviceEditDialog::pinEdited(const QString &text)
   {
     //

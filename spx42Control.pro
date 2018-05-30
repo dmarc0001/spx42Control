@@ -65,12 +65,7 @@ SOURCES                 += \
     src/spx42/Spx42Commands.cpp \
     src/spx42/SpxCommandDef.cpp \
     src/bluetooth/BtDeviceDescriber.cpp \
-    src/bluetooth/ABTDevice.cpp \
-    src/windows/BTDevice.cpp \
-    src/windows/BTCommWorker.cpp \
-    src/windows/BTConnectThread.cpp \
-    src/windows/BTDisconnectThread.cpp \
-    src/windows/BTDiscoverThread.cpp
+    src/bluetooth/ABTDevice.cpp
 
 HEADERS                 += \
     src/Spx42ControlMainWin.hpp \
@@ -97,12 +92,7 @@ HEADERS                 += \
     src/spx42/Spx42Commands.hpp \
     src/spx42/SpxCommandDef.hpp \
     src/bluetooth/BtDeviceDescriber.hpp \
-    src/bluetooth/ABTDevice.hpp \
-    src/windows/BTDevice.hpp \
-    src/windows/BTCommWorker.hpp \
-    src/windows/BTConnectThread.hpp \
-    src/windows/BTDisconnectThread.hpp \
-    src/windows/BTDiscoverThread.hpp
+    src/bluetooth/ABTDevice.hpp
 
 FORMS                   += \
     src/ui/Spx42ControlMainWin.ui \
@@ -131,8 +121,18 @@ DISTFILES               += \
 
 win32 {
 SOURCES                 += \
+    src/windows/BTDevice.cpp \
+    src/windows/BTCommWorker.cpp \
+    src/windows/BTConnectThread.cpp \
+    src/windows/BTDisconnectThread.cpp \
+    src/windows/BTDiscoverThread.cpp
 
 HEADERS                 += \
+    src/windows/BTDevice.hpp \
+    src/windows/BTCommWorker.hpp \
+    src/windows/BTConnectThread.hpp \
+    src/windows/BTDisconnectThread.hpp \
+    src/windows/BTDiscoverThread.hpp
 
 INCLUDEPATH             += \
     src/windows
