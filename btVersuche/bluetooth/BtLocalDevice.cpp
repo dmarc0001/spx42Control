@@ -3,8 +3,7 @@
 /**
  * @brief BtLocalDevice::BtLocalDevice
  */
-BtLocalDevice::BtLocalDevice( std::shared_ptr< Logger > logger,
-                              QObject *parent )
+BtLocalDevice::BtLocalDevice( std::shared_ptr< Logger > logger, QObject *parent )
     : QObject( parent ), lg( logger ), localDevice( new QBluetoothLocalDevice )
 {
   //
@@ -16,14 +15,10 @@ BtLocalDevice::BtLocalDevice( std::shared_ptr< Logger > logger,
   // Signale mit Slots verbinden
   //
   lg->debug( "BtLocalDevice::BtLocalDevice: connect signals..." );
-  connect( discoveryAgent, &QBluetoothDeviceDiscoveryAgent::deviceDiscovered,
-           this, &BtLocalDevice::addDevice );
-  connect( discoveryAgent, &QBluetoothDeviceDiscoveryAgent::finished, this,
-           &BtLocalDevice::scanFinished );
-  connect( localDevice, &QBluetoothLocalDevice::hostModeStateChanged, this,
-           &BtLocalDevice::hostModeStateChanged );
-  connect( localDevice, &QBluetoothLocalDevice::pairingFinished, this,
-           &BtLocalDevice::pairingDone );
+  connect( discoveryAgent, &QBluetoothDeviceDiscoveryAgent::deviceDiscovered, this, &BtLocalDevice::addDevice );
+  connect( discoveryAgent, &QBluetoothDeviceDiscoveryAgent::finished, this, &BtLocalDevice::scanFinished );
+  connect( localDevice, &QBluetoothLocalDevice::hostModeStateChanged, this, &BtLocalDevice::hostModeStateChanged );
+  connect( localDevice, &QBluetoothLocalDevice::pairingFinished, this, &BtLocalDevice::pairingDone );
   //
   // den richtigen Hostmode einstellen (via slot)
   //
@@ -48,8 +43,7 @@ void BtLocalDevice::startDeviceScan( void )
 
 void BtLocalDevice::scanFinished( void )
 {
-  lg->info(
-      "BtLocalDevice::startDeviceScan: start device scanning finished..." );
+  lg->info( "BtLocalDevice::startDeviceScan: start device scanning finished..." );
   emit sigDiscoverFinished();
 }
 
@@ -57,10 +51,8 @@ void BtLocalDevice::addDevice( const QBluetoothDeviceInfo &info )
 {
   bool paired;  // ist device gepaart
   // pairing status abfragen
-  QBluetoothLocalDevice::Pairing pairingStatus =
-      localDevice->pairingStatus( info.address() );
-  if ( pairingStatus == QBluetoothLocalDevice::Paired ||
-       pairingStatus == QBluetoothLocalDevice::AuthorizedPaired )
+  QBluetoothLocalDevice::Pairing pairingStatus = localDevice->pairingStatus( info.address() );
+  if ( pairingStatus == QBluetoothLocalDevice::Paired || pairingStatus == QBluetoothLocalDevice::AuthorizedPaired )
   {
     paired = true;
   }
@@ -80,25 +72,22 @@ void BtLocalDevice::hostModeStateChanged( QBluetoothLocalDevice::HostMode mode )
   switch ( mode )
   {
     case QBluetoothLocalDevice::HostPoweredOff:
-      lg->debug( "host powered off" );
+      lg->debug( "BtLocalDevice::hostModeStateChanged: host powered off" );
       break;
     case QBluetoothLocalDevice::HostConnectable:
-      lg->debug( "host is connectable" );
+      lg->debug( "BtLocalDevice::hostModeStateChanged: host is connectable" );
       break;
     case QBluetoothLocalDevice::HostDiscoverable:
-      lg->debug( "host is discoverable" );
+      lg->debug( "BtLocalDevice::hostModeStateChanged: host is discoverable" );
       break;
     case QBluetoothLocalDevice::HostDiscoverableLimitedInquiry:
-      lg->debug( "host is limited inquiryable " );
+      lg->debug( "BtLocalDevice::hostModeStateChanged: host is limited inquiryable " );
   }
   // TODO: Signal über Änderung senden?
 }
 
-void BtLocalDevice::pairingDone( const QBluetoothAddress &addr,
-                                 QBluetoothLocalDevice::Pairing pairing )
+void BtLocalDevice::pairingDone( const QBluetoothAddress &addr, QBluetoothLocalDevice::Pairing pairing )
 {
-  lg->info( QString( "BtLocalDevice::pairingDone for %1, return: %2..." )
-                .arg( addr.toString() )
-                .arg( pairing ) );
+  lg->info( QString( "BtLocalDevice::pairingDone for %1, return: %2..." ).arg( addr.toString() ).arg( pairing ) );
   // TODO: signal über Pairing senden
 }

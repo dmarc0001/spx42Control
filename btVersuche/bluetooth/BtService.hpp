@@ -16,15 +16,23 @@ class BtService : public QObject
   std::shared_ptr< Logger > lg;
 
   public:
-  explicit BtService( std::shared_ptr< Logger > logger,
-                      const QBluetoothAddress &address,
-                      QObject *parent = nullptr );
+  explicit BtService( std::shared_ptr< Logger > logger, const QBluetoothAddress &address, QObject *parent = nullptr );
   ~BtService();
+
+  signals:
+  void sigServiceDiscoverStarted( void );
+  void sigCanceled( void );
+  void sigError( QBluetoothServiceDiscoveryAgent::Error error );
+  void sigServiceDiscovered( const QBluetoothServiceInfo &info );
+  void sigServiceDiscoverFinished( void );
 
   private:
   QBluetoothServiceDiscoveryAgent *discoveryAgent;
 
-  public slots:
+  private slots:
+  void started( void );
+  void canceled( void );
+  void discoverError( QBluetoothServiceDiscoveryAgent::Error error );
   void addService( const QBluetoothServiceInfo &info );
   void discoverFinished( void );
 };

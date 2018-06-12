@@ -3,8 +3,8 @@
 
 int main( int argc, char *argv[] )
 {
-  qDebug() << "start...";
-  return ( 1 );
-  // MainObject m( argc, argv );
-  // return m.exec();
+  qDebug() << "main.cpp: start...";
+  MainObject m( argc, argv );
+  return m.exec();
+  qDebug() << "main.cpp: end...";
 }
