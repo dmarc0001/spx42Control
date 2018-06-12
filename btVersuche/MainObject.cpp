@@ -79,9 +79,7 @@ void MainObject::slotServiceDiscoverStarted( void )
 void MainObject::slotServiceDiscoverCanceled( void )
 {
   lg->debug( "MainObject::slotServiceDiscoverCanceled..." );
-  mmmmmmmmmmmmmmmmmmmmmmmmmmm
-      mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
-}
+ }
 
 void MainObject::slotServiceDiscoverError( QBluetoothServiceDiscoveryAgent::Error error )
 {
