@@ -5,6 +5,7 @@
 #include <QBluetoothDeviceInfo>
 #include <QBluetoothLocalDevice>
 #include <QObject>
+#include <QTimer>
 #include <logging/Logger.hpp>
 
 // QT_FORWARD_DECLARE_CLASS( QBluetoothDeviceDiscoveryAgent )
@@ -18,26 +19,36 @@ class BtLocalDevice : public QObject
 
   private:
   std::shared_ptr< Logger > lg;
+  constexpr static int discoverTimeout = 5000;
+  constexpr static char testDevice[] = "00:80:25:41:88:31";
 
   public:
-  explicit BtLocalDevice( std::shared_ptr< Logger > logger,
-                          QObject *parent = nullptr );
+  explicit BtLocalDevice( std::shared_ptr< Logger > logger, QObject *parent = nullptr );
   ~BtLocalDevice();
   void startDeviceScan( void );
 
   signals:
   void sigDiscoverStarted( void );
-  void sigFoundDevice( const QBluetoothDeviceInfo &info );
+  void sigDiscoveredDevice( const QBluetoothDeviceInfo &info );
+  void sigDevicePaitingDone( const QBluetoothAddress &addr, QBluetoothLocalDevice::Pairing pairing );
+  void sigDeviceHostModeStateChanged( QBluetoothLocalDevice::HostMode );
+  void sigDiscoverCanceled( void );
   void sigDiscoverFinished( void );
-
-  public slots:
-  void addDevice( const QBluetoothDeviceInfo &info );
-  void pairingDone( const QBluetoothAddress &addr,
-                    QBluetoothLocalDevice::Pairing pairing );
+  void sigDiscoverError( QBluetoothDeviceDiscoveryAgent::Error error );
 
   private slots:
-  void scanFinished( void );
-  void hostModeStateChanged( QBluetoothLocalDevice::HostMode );
+  void slotDiscoveredDevice( const QBluetoothDeviceInfo &info );
+  void slotDevicePairingDone( const QBluetoothAddress &addr, QBluetoothLocalDevice::Pairing pairing );
+  void slotDeviceHostModeStateChanged( QBluetoothLocalDevice::HostMode );
+  void slotDiscoverCanceled( void );
+  void slotDiscoverFinished( void );
+  void slotDiscoverError( QBluetoothDeviceDiscoveryAgent::Error error );
+  void slotDeviceConnected( const QBluetoothAddress &address );
+  void slotDeviceDisconnected( const QBluetoothAddress &address );
+  void slotDeviceError( QBluetoothLocalDevice::Error error );
+  void slotDevicePairingDisplayConfirmation( const QBluetoothAddress &address, QString pin );
+  void slotDevicePairingDisplayPinCode( const QBluetoothAddress &address, QString pin );
+  void slotTimeout( void );
 
   private:
   QBluetoothDeviceDiscoveryAgent *discoveryAgent;

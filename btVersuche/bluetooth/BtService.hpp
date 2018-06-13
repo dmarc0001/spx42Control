@@ -6,7 +6,10 @@
 #include <QBluetoothServiceDiscoveryAgent>
 #include <QBluetoothServiceInfo>
 #include <QObject>
+#include <QTimer>
 #include <logging/Logger.hpp>
+
+QT_USE_NAMESPACE
 
 class BtService : public QObject
 {
@@ -30,11 +33,10 @@ class BtService : public QObject
   QBluetoothServiceDiscoveryAgent *discoveryAgent;
 
   private slots:
-  void started( void );
-  void canceled( void );
-  void discoverError( QBluetoothServiceDiscoveryAgent::Error error );
-  void addService( const QBluetoothServiceInfo &info );
-  void discoverFinished( void );
+  void slotDiscoverCanceled( void );
+  void slotDiscoverError( QBluetoothServiceDiscoveryAgent::Error error );
+  void slotDiscoveredService( const QBluetoothServiceInfo &info );
+  void slotDiscoverFinished( void );
 };
 
 #endif  // BTSERVICES_HPP

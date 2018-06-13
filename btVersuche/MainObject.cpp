@@ -29,7 +29,7 @@ int MainObject::exec( void )
   //
   // verbinde Signale
   //
-  connect( &lbtd, &BtLocalDevice::sigFoundDevice, this, &MainObject::slotDeviceDiscovered );
+  connect( &lbtd, &BtLocalDevice::sigDiscoveredDevice, this, &MainObject::slotDeviceDiscovered );
   connect( &lbtd, &BtLocalDevice::sigDiscoverFinished, this, &MainObject::slotDeviceDiscoverFinished );
   //
   // initiiere einen SCAN
@@ -56,7 +56,7 @@ void MainObject::slotDeviceDiscoverFinished( void )
   //
   // falls geräte gefunden, finde services
   //
-  lg->debug( "MainObject::slotDeviceDiscoverFinished..." );
+  lg->debug( QString( "MainObject::slotDeviceDiscoverFinished, devices: %1..." ).arg( btDevices.count() ) );
   if ( !btDevices.isEmpty() )
   {
     lg->debug( "MainObject::slotDeviceDiscoverFinished: found devices try discover services..." );
@@ -79,7 +79,7 @@ void MainObject::slotServiceDiscoverStarted( void )
 void MainObject::slotServiceDiscoverCanceled( void )
 {
   lg->debug( "MainObject::slotServiceDiscoverCanceled..." );
- }
+}
 
 void MainObject::slotServiceDiscoverError( QBluetoothServiceDiscoveryAgent::Error error )
 {

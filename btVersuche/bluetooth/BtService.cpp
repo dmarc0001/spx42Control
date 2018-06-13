@@ -1,8 +1,6 @@
 ﻿#include "BtService.hpp"
 
-BtService::BtService( std::shared_ptr< Logger > logger,
-                        const QBluetoothAddress &address,
-                        QObject *parent )
+BtService::BtService( std::shared_ptr< Logger > logger, const QBluetoothAddress &address, QObject *parent )
     : QObject( parent ), lg( logger )
 {
   lg->debug( "BtServices::BtServices..." );
@@ -25,13 +23,16 @@ BtService::BtService( std::shared_ptr< Logger > logger,
   //
   // die Signale des Agent mit den Slots verbinden
   //
-  connect( discoveryAgent, &QBluetoothServiceDiscoveryAgent::serviceDiscovered,
-           this, &BtService::addService );
-  connect( discoveryAgent, &QBluetoothServiceDiscoveryAgent::finished, this,
-           &BtService::discoverFinished );
+  connect( discoveryAgent, &QBluetoothServiceDiscoveryAgent::canceled, this, &BtService::slotDiscoverCanceled );
+  connect( discoveryAgent, &QBluetoothServiceDiscoveryAgent::serviceDiscovered, this, &BtService::slotDiscoveredService );
+  connect( discoveryAgent, &QBluetoothServiceDiscoveryAgent::finished, this, &BtService::slotDiscoverFinished );
+  connect( discoveryAgent, QOverload< QBluetoothServiceDiscoveryAgent::Error >::of( &QBluetoothServiceDiscoveryAgent::error ), this,
+           &BtService::slotDiscoverError );
   //
   // Agenten starten
   //
+  emit sigServiceDiscoverStarted();
+  discoveryAgent->clear();
   discoveryAgent->start();
 }
 
@@ -40,7 +41,7 @@ BtService::~BtService()
   delete discoveryAgent;
 }
 
-void BtService::addService( const QBluetoothServiceInfo &info )
+void BtService::slotDiscoveredService( const QBluetoothServiceInfo &info )
 {
   if ( info.serviceName().isEmpty() )
   {
@@ -54,9 +55,21 @@ void BtService::addService( const QBluetoothServiceInfo &info )
   if ( !info.serviceProvider().isEmpty() )
     line.append( "\n\t" + info.serviceProvider() );
   lg->info( QString( "BtServices::addService: " ).append( line ) );
+  emit sigServiceDiscovered( info );
 }
 
-void BtService::discoverFinished( void )
+void BtService::slotDiscoverFinished( void )
 {
   lg->debug( "BtServices::discoverFinished..." );
+  emit sigServiceDiscoverFinished();
+}
+
+void BtService::slotDiscoverCanceled( void )
+{
+  lg->debug( "BtService::slotDiscoverCanceled" );
+}
+
+void BtService::slotDiscoverError( QBluetoothServiceDiscoveryAgent::Error error )
+{
+  lg->crit( QString( "BtService::slotDiscoverError: %1" ).arg( error ) );
 }
