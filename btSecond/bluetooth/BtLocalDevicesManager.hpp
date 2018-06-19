@@ -35,12 +35,6 @@ namespace spx
     void sigDevicePairingDone( const QBluetoothAddress &addr, QBluetoothLocalDevice::Pairing paring );
     void sigDiscoverScanFinished( void );
     void sigDeviceHostModeStateChanged( QBluetoothLocalDevice::HostMode mode );
-
-    private slots:
-    void slotDiscoveredDevice( const QBluetoothDeviceInfo &info );
-    void slotDevicePairingDone( const QBluetoothAddress &addr, QBluetoothLocalDevice::Pairing paring );
-    void slotDiscoverScanFinished( void );
-    void slotDeviceHostModeStateChanged( QBluetoothLocalDevice::HostMode mode );
   };
 }
 #endif  // BTDEVICES_HPP

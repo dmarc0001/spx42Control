@@ -5,6 +5,8 @@
 #include <QBluetoothLocalDevice>
 #include <QBluetoothServiceDiscoveryAgent>
 #include <QDialog>
+#include <memory>
+#include "bluetooth/BtServiceDiscover.hpp"
 #include "logging/Logger.hpp"
 #include "ui_ServiceDiscoveryDialog.h"
 
@@ -22,9 +24,8 @@ class ServiceDiscoveryDialog : public QDialog
   std::shared_ptr< Logger > lg;
   QString &name;
   QBluetoothAddress &addr;
-  Ui::ServiceDiscoveryDialog *ui;
-  int servicesDiscovered;
-  QBluetoothServiceDiscoveryAgent *discoveryAgent;
+  std::unique_ptr< Ui::ServiceDiscoveryDialog > ui;
+  std::unique_ptr< BtServiceDiscover > discoveryAgent;
 
   public:
   explicit ServiceDiscoveryDialog( std::shared_ptr< Logger > logger,
@@ -40,8 +41,7 @@ class ServiceDiscoveryDialog : public QDialog
   void sigDiscoveredService( const QString &name, const QBluetoothServiceInfo &info );
 
   private slots:
-  void slotDiscoveredService( const QBluetoothServiceInfo &info );
-  void slotDialogClose( void );
+  void slotDiscoveredService( const QString &name, const QBluetoothServiceInfo &info );
 };
 
 #endif  // SERVICEDISCOVERYDIALOG_HPP

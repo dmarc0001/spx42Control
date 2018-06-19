@@ -19,13 +19,15 @@ SOURCES += \
     MainDialog.cpp \
     logging/Logger.cpp \
     ServiceDiscoveryDialog.cpp \
-    bluetooth/BtLocalDevicesManager.cpp
+    bluetooth/BtLocalDevicesManager.cpp \
+    bluetooth/BtServiceDiscover.cpp
 
 HEADERS += \
     MainDialog.hpp \
     logging/Logger.hpp \
     ServiceDiscoveryDialog.hpp \
-    bluetooth/BtLocalDevicesManager.hpp
+    bluetooth/BtLocalDevicesManager.hpp \
+    bluetooth/BtServiceDiscover.hpp
 
 FORMS += \
     ui/MainDialog.ui \

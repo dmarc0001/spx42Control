@@ -4,7 +4,11 @@ ServiceDiscoveryDialog::ServiceDiscoveryDialog( std::shared_ptr< Logger > logger
                                                 QString &dname,
                                                 QBluetoothAddress &daddr,
                                                 QWidget *parent )
-    : QDialog( parent ), lg( logger ), name( dname ), addr( daddr ), ui( new Ui::ServiceDiscoveryDialog ), servicesDiscovered( 0 )
+    : QDialog( parent )
+    , lg( logger )
+    , name( dname )
+    , addr( daddr )
+    , ui( std::unique_ptr< Ui::ServiceDiscoveryDialog >( new Ui::ServiceDiscoveryDialog ) )
 {
   ui->setupUi( this );
   //
@@ -22,15 +26,14 @@ ServiceDiscoveryDialog::ServiceDiscoveryDialog( std::shared_ptr< Logger > logger
    * QBluetoothAddress adapterAddress("XX:XX:XX:XX:XX:XX");
    * discoveryAgent = new QBluetoothServiceDiscoveryAgent(adapterAddress);
    */
-  discoveryAgent = new QBluetoothServiceDiscoveryAgent( adapterAddress );
-  discoveryAgent->setRemoteAddress( addr );
+  discoveryAgent = std::unique_ptr< BtServiceDiscover >( new BtServiceDiscover( lg, name, adapterAddress, addr, this ) );
   setWindowTitle( name );
   //
   // signale mit Slots verbinden
   //
-  connect( ui->closePushButton, &QPushButton::clicked, this, [=] { this->done( servicesDiscovered ); } );
-  connect( discoveryAgent, &QBluetoothServiceDiscoveryAgent::serviceDiscovered, this, &ServiceDiscoveryDialog::slotDiscoveredService );
-  connect( discoveryAgent, &QBluetoothServiceDiscoveryAgent::finished, ui->status, &QLabel::hide );
+  connect( ui->closePushButton, &QPushButton::clicked, this, [=] { this->done( discoveryAgent->servicesDiscovered() ); } );
+  connect( discoveryAgent.get(), &BtServiceDiscover::sigDiscoveredService, this, &ServiceDiscoveryDialog::slotDiscoveredService );
+  connect( discoveryAgent.get(), &BtServiceDiscover::sigDiscoverScanFinished, ui->status, &QLabel::hide );
   //
   // starte das suchen nach Services
   //
@@ -39,10 +42,9 @@ ServiceDiscoveryDialog::ServiceDiscoveryDialog( std::shared_ptr< Logger > logger
 
 ServiceDiscoveryDialog::~ServiceDiscoveryDialog()
 {
-  delete ui;
 }
 
-void ServiceDiscoveryDialog::slotDiscoveredService( const QBluetoothServiceInfo &info )
+void ServiceDiscoveryDialog::slotDiscoveredService( const QString &name, const QBluetoothServiceInfo &info )
 {
   if ( info.serviceName().isEmpty() )
     return;
@@ -58,12 +60,6 @@ void ServiceDiscoveryDialog::slotDiscoveredService( const QBluetoothServiceInfo 
   // signalisiere dem interessierten dass ein Service gefunden wurde
   //
   emit sigDiscoveredService( name, info );
-  servicesDiscovered++;
-}
-
-void ServiceDiscoveryDialog::slotDialogClose( void )
-{
-  done( servicesDiscovered );
 }
 
 void ServiceDiscoveryDialog::changeEvent( QEvent *e )

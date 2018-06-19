@@ -29,14 +29,15 @@ namespace spx
     //
     connect( discoveryAgent.get(), &QBluetoothDeviceDiscoveryAgent::deviceDiscovered, this,
              [=]( const QBluetoothDeviceInfo &info ) { emit sigDiscoveredDevice( info ); } );
-    // connect( discoveryAgent.get(), &QBluetoothDeviceDiscoveryAgent::deviceDiscovered, this, &BtDevices::slotDiscoveredDevice );
-    connect( discoveryAgent.get(), &QBluetoothDeviceDiscoveryAgent::finished, this, &BtLocalDevicesManager::slotDiscoverScanFinished );
+    connect( discoveryAgent.get(), &QBluetoothDeviceDiscoveryAgent::finished, this, [=] { emit sigDiscoverScanFinished(); } );
     //
     // local device
     //
     connect( localDevice.get(), &QBluetoothLocalDevice::hostModeStateChanged, this,
-             &BtLocalDevicesManager::slotDeviceHostModeStateChanged );
-    connect( localDevice.get(), &QBluetoothLocalDevice::pairingFinished, this, &BtLocalDevicesManager::slotDevicePairingDone );
+             [=]( QBluetoothLocalDevice::HostMode mode ) { emit sigDeviceHostModeStateChanged( mode ); } );
+    connect(
+        localDevice.get(), &QBluetoothLocalDevice::pairingFinished, this,
+        [=]( const QBluetoothAddress &addr, QBluetoothLocalDevice::Pairing pairing ) { emit sigDevicePairingDone( addr, pairing ); } );
     //
     lg->debug( "BtDevices::BtDevices: connect signals...OK" );
   }
@@ -53,7 +54,7 @@ namespace spx
     //
     // ereignis für hostmode einmal ausführen
     //
-    slotDeviceHostModeStateChanged( localDevice->hostMode() );
+    emit sigDeviceHostModeStateChanged( localDevice->hostMode() );
   }
 
   void BtLocalDevicesManager::startDiscoverDevices( void )
@@ -94,50 +95,5 @@ namespace spx
   void BtLocalDevicesManager::requestPairing( const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing )
   {
     localDevice->requestPairing( address, pairing );
-  }
-
-  void BtLocalDevicesManager::slotDiscoveredDevice( const QBluetoothDeviceInfo &info )
-  {
-    lg->debug( QString( "BtDevices::slotDiscoveredDevice: %1" ).arg( info.address().toString() ) );
-    emit sigDiscoveredDevice( info );
-  }
-
-  void BtLocalDevicesManager::slotDevicePairingDone( const QBluetoothAddress &addr, QBluetoothLocalDevice::Pairing pairing )
-  {
-    lg->debug( "BtDevices::slotDevicePairingDone..." );
-    emit sigDevicePairingDone( addr, pairing );
-  }
-
-  void BtLocalDevicesManager::slotDiscoverScanFinished()
-  {
-    lg->debug( "BtDevices::slotDiscoverScanFinished..." );
-    emit sigDiscoverScanFinished();
-  }
-
-  void BtLocalDevicesManager::slotDeviceHostModeStateChanged( QBluetoothLocalDevice::HostMode mode )
-  {
-    if ( mode != QBluetoothLocalDevice::HostPoweredOff )
-    {
-      lg->info( QString( "BtDevices::slotDeviceHostModeStateChanged: host power off: true" ) );
-    }
-    else
-    {
-      lg->info( QString( "BtDevices::slotDeviceHostModeStateChanged: host power off: false" ) );
-    }
-
-    if ( mode == QBluetoothLocalDevice::HostDiscoverable )
-    {
-      lg->info( QString( "BtDevices::slotDeviceHostModeStateChanged: host discoverable: true" ) );
-    }
-    else
-    {
-      lg->info( QString( "BtDevices::slotDeviceHostModeStateChanged: host discoverable: false" ) );
-    }
-    //
-    // ist der Host nun an?
-    //
-    bool on = !( mode == QBluetoothLocalDevice::HostPoweredOff );
-    lg->info( QString( "BtDevices::slotDeviceHostModeStateChanged: host online: %1" ).arg( on ) );
-    emit sigDeviceHostModeStateChanged( mode );
   }
 }
