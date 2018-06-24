@@ -158,7 +158,8 @@ void MainDialog::slotGuiItemActivated( QListWidgetItem *item )
   //
   // erzeuge und starte den Dialog zum Service discovering
   //
-  ServiceDiscoveryDialog d( lg, name, address );
+  QBluetoothAddress l_addr = btDevices->getLocalDevice()->address();
+  ServiceDiscoveryDialog d( lg, name, l_addr, address, this );
   lg->debug( "MainDialog::slotGuiItemActivated: open service discovering dialog and start service discovering..." );
   index = d.exec();
   lg->debug( QString( "MainDialog::slotGuiItemActivated: service discovering dialog end with %1" ).arg( index ) );

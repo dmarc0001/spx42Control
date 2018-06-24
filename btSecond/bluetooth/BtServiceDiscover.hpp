@@ -1,5 +1,5 @@
-﻿#ifndef BTSERVICEDISCOVER_HPP
-#define BTSERVICEDISCOVER_HPP
+﻿#ifndef BT_SERVICE_DISCOVER_HPP
+#define BT_SERVICE_DISCOVER_HPP
 
 #include <QBluetoothLocalDevice>
 #include <QBluetoothServiceDiscoveryAgent>
@@ -34,7 +34,7 @@ namespace spx
 
     signals:
     void sigDiscoveredService( const QString &name, const QBluetoothServiceInfo &info );
-    void sigDiscoverScanFinished( void );
+    void sigDiscoverScanFinished( const QString &name );
 
     private slots:
     void slotDiscoveredService( const QBluetoothServiceInfo &info );

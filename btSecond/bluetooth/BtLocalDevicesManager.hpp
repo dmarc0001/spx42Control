@@ -1,5 +1,5 @@
-﻿#ifndef BTDEVICES_HPP
-#define BTDEVICES_HPP
+﻿#ifndef BT_LOCAL_DEVICES_MANAGER_HPP
+#define BT_LOCAL_DEVICES_MANAGER_HPP
 
 #include <QBluetoothAddress>
 #include <QBluetoothDeviceDiscoveryAgent>

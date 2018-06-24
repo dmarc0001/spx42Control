@@ -23,14 +23,16 @@ class ServiceDiscoveryDialog : public QDialog
   private:
   std::shared_ptr< Logger > lg;
   QString &name;
-  QBluetoothAddress &addr;
+  QBluetoothAddress &laddr;
+  QBluetoothAddress &raddr;
   std::unique_ptr< Ui::ServiceDiscoveryDialog > ui;
   std::unique_ptr< BtServiceDiscover > discoveryAgent;
 
   public:
   explicit ServiceDiscoveryDialog( std::shared_ptr< Logger > logger,
                                    QString &dname,
-                                   QBluetoothAddress &daddr,
+                                   QBluetoothAddress &local_addr,
+                                   QBluetoothAddress &remote_addr,
                                    QWidget *parent = nullptr );
   ~ServiceDiscoveryDialog();
 

@@ -9,7 +9,7 @@ namespace spx
    */
   BtLocalDevicesManager::BtLocalDevicesManager( std::shared_ptr< Logger > logger, QObject *parent ) : QObject( parent ), lg( logger )
   {
-    localDevice = std::unique_ptr< QBluetoothLocalDevice >( new QBluetoothLocalDevice );
+    localDevice = std::unique_ptr< QBluetoothLocalDevice >( new QBluetoothLocalDevice( this ) );
     /*
      * In case of multiple Bluetooth adapters it is possible to set adapter
      * which will be used. Example code:
@@ -47,6 +47,7 @@ namespace spx
    */
   BtLocalDevicesManager::~BtLocalDevicesManager()
   {
+    lg->debug( "BtLocalDevicesManager::~BtLocalDevicesManager..." );
   }
 
   void BtLocalDevicesManager::init( void )
@@ -59,7 +60,6 @@ namespace spx
 
   void BtLocalDevicesManager::startDiscoverDevices( void )
   {
-    lg->debug( "BtDevices::startDiscoverDevices..." );
     discoveryAgent->start();
   }
 

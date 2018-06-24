@@ -2,22 +2,23 @@
 
 ServiceDiscoveryDialog::ServiceDiscoveryDialog( std::shared_ptr< Logger > logger,
                                                 QString &dname,
-                                                QBluetoothAddress &daddr,
+                                                QBluetoothAddress &local_addr,
+                                                QBluetoothAddress &remote_addr,
                                                 QWidget *parent )
     : QDialog( parent )
     , lg( logger )
     , name( dname )
-    , addr( daddr )
+    , laddr( local_addr )
+    , raddr( remote_addr )
     , ui( std::unique_ptr< Ui::ServiceDiscoveryDialog >( new Ui::ServiceDiscoveryDialog ) )
 {
   ui->setupUi( this );
   //
-  // default Bluetooth adapter
+  // Service discovery Objekt instanzieren
   //
-  QBluetoothLocalDevice localDevice;
-  QBluetoothAddress adapterAddress = localDevice.address();
-  lg->debug( QString( "discovery dialog: local adapter addr: " ).append( adapterAddress.toString() ) );
-  lg->debug( QString( "discovery dialog: remote adapter addr: " ).append( addr.toString() ) );
+  discoveryAgent = std::unique_ptr< BtServiceDiscover >( new BtServiceDiscover( lg, name, laddr, raddr, this ) );
+  lg->debug( QString( "discovery dialog: local adapter addr: " ).append( laddr.toString() ) );
+  lg->debug( QString( "discovery dialog: remote adapter addr: " ).append( raddr.toString() ) );
   /*
    * In case of multiple Bluetooth adapters it is possible to
    * set which adapter will be used by providing MAC Address.
@@ -26,7 +27,6 @@ ServiceDiscoveryDialog::ServiceDiscoveryDialog( std::shared_ptr< Logger > logger
    * QBluetoothAddress adapterAddress("XX:XX:XX:XX:XX:XX");
    * discoveryAgent = new QBluetoothServiceDiscoveryAgent(adapterAddress);
    */
-  discoveryAgent = std::unique_ptr< BtServiceDiscover >( new BtServiceDiscover( lg, name, adapterAddress, addr, this ) );
   setWindowTitle( name );
   //
   // signale mit Slots verbinden

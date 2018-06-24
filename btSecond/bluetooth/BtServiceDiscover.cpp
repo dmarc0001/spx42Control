@@ -31,7 +31,7 @@ namespace spx
     //
     connect( discoveryAgent.get(), &QBluetoothServiceDiscoveryAgent::serviceDiscovered, this,
              &BtServiceDiscover::slotDiscoveredService );
-    connect( discoveryAgent.get(), &QBluetoothServiceDiscoveryAgent::finished, this, [=] { emit sigDiscoverScanFinished(); } );
+    connect( discoveryAgent.get(), &QBluetoothServiceDiscoveryAgent::finished, this, [=] { emit sigDiscoverScanFinished( name ); } );
   }
 
   BtServiceDiscover::~BtServiceDiscover()
@@ -58,10 +58,12 @@ namespace spx
       return;
 
     QString line = info.serviceName();
+    lg->info( QString( "BtServiceDiscover::slotDiscoveredService: %1 on %2" ).arg( line ).arg( name ) );
+
     if ( !info.serviceDescription().isEmpty() )
-      line.append( "\n\t" + info.serviceDescription() );
+      line.append( " " + info.serviceDescription() );
     if ( !info.serviceProvider().isEmpty() )
-      line.append( "\n\t" + info.serviceProvider() );
+      line.append( " " + info.serviceProvider() );
     lg->info( QString( "BtServiceDiscover::slotDiscoveredService: %1 on %2" ).arg( line ).arg( name ) );
     //
     // signalisiere dem interessierten dass ein Service gefunden wurde
