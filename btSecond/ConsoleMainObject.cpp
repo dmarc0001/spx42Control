@@ -40,16 +40,22 @@ namespace spx
     //
     btDevices->startDiscover();
 
-    lg->debug( "ConsoleMainObject::execute: DEBUGGING: start kill timer with 120000 ms..." );
-    QTimer::singleShot( 120000, this, &ConsoleMainObject::end );
+    lg->debug( "ConsoleMainObject::execute: DEBUGGING: start kill timer with 30000 ms..." );
+    QTimer::singleShot( 30000, this, &ConsoleMainObject::end );
 
     lg->debug( "ConsoleMainObject::execute: start execute->eventloop until signal quit..." );
+    QTimer loopTimer( this );
+    loopTimer.setInterval( 10 );
+    connect( &loopTimer, &QTimer::timeout, this, [=] { a->processEvents(); }, Qt::QueuedConnection );
+    loopTimer.start();
+    lg->debug( "ConsoleMainObject::execute: start execute->eventloop until signal quit..." );
+    // a->processEvents();
     return ( a->exec() );
   }
 
   void ConsoleMainObject::slotDiscoveredDevice( const QBluetoothDeviceInfo &info )
   {
-    lg->debug( "ConsoleMainObject::slotDiscoveredDevice:" );
+    lg->debug( QString( "ConsoleMainObject::slotDiscoveredDevice: %1" ).arg( info.address().toString() ) );
   }
 
   void ConsoleMainObject::slotDevicePairingDone( const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing )
@@ -88,4 +94,4 @@ namespace spx
     lg->debug( "ConsoleMainObject::end: emit signal quit..." );
     emit quit();
   }
-}
+}  // namespace spx
