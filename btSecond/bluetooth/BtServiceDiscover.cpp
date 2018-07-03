@@ -7,7 +7,7 @@ namespace spx
                                         QBluetoothAddress &l_addr,
                                         QBluetoothAddress &r_addr,
                                         QObject *parent )
-      : QObject( parent ), lg( logger ), name( dname ), laddr( l_addr ), raddr( r_addr )
+      : QObject( parent ), lg( logger ), name( dname ), laddr( l_addr ), raddr( r_addr ), expression( ".*" )
   {
     //
     // default Bluetooth adapter
@@ -15,7 +15,7 @@ namespace spx
     QBluetoothLocalDevice localDevice;
     QBluetoothAddress adapterAddress = localDevice.address();
     lg->debug( QString( "BtServiceDiscover::BtServiceDiscover: local adapter addr: " ).append( adapterAddress.toString() ) );
-    lg->debug( QString( "BtServiceDiscover::BtServiceDiscover: remote adapter addr: " ).append( laddr.toString() ) );
+    lg->debug( QString( "BtServiceDiscover::BtServiceDiscover: remote adapter addr: " ).append( raddr.toString() ) );
     /*
      * In case of multiple Bluetooth adapters it is possible to
      * set which adapter will be used by providing MAC Address.
@@ -39,6 +39,20 @@ namespace spx
     lg->debug( "BtServiceDiscover::~BtServiceDiscover..." );
   }
 
+  bool BtServiceDiscover::setServiceFilter( const QString &expr )
+  {
+    expression.setPattern( expr );
+    if ( expression.isValid() )
+      return ( true );
+    expression.setPattern( ".*" );
+    return ( false );
+  }
+
+  void BtServiceDiscover::resetServiceFilter( void )
+  {
+    expression.setPattern( ".*" );
+  }
+
   void BtServiceDiscover::start( void )
   {
     //
@@ -56,15 +70,25 @@ namespace spx
   {
     if ( info.serviceName().isEmpty() )
       return;
-
     QString line = info.serviceName();
     lg->info( QString( "BtServiceDiscover::slotDiscoveredService: %1 on %2" ).arg( line ).arg( name ) );
-
+    //
+    // ist das ein gesuchter service
+    //
+    if ( expression.isValid() )
+    {
+      if ( expression.indexIn( line ) < 0 )
+      {
+        lg->debug( QString( "BtServiceDiscover::slotDiscoveredService: service %1 is not matching. ignore" ).arg( line ) );
+        return;
+      }
+    }
+    //
     if ( !info.serviceDescription().isEmpty() )
       line.append( " " + info.serviceDescription() );
     if ( !info.serviceProvider().isEmpty() )
       line.append( " " + info.serviceProvider() );
-    lg->info( QString( "BtServiceDiscover::slotDiscoveredService: %1 on %2" ).arg( line ).arg( name ) );
+    lg->info( QString( "BtServiceDiscover::slotDiscoveredService: %1 on %2 insert to list..." ).arg( line ).arg( name ) );
     //
     // signalisiere dem interessierten dass ein Service gefunden wurde
     //

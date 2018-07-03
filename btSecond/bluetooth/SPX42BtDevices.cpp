@@ -95,6 +95,10 @@ namespace spx
     {
       lg->debug( QString( "SPX42BtDevices::slotDiscoveredDevice: device %1 always discovered. ignore." ).arg( device ) );
     }
+    else if ( info.address().isNull() )
+    {
+      lg->debug( "SPX42BtDevices::slotDiscoveredDevice: device has no address. Ignore." );
+    }
     else
     {
       lg->debug( QString( "SPX42BtDevices::slotDiscoveredDevice: device %1 in local list inserted." ).arg( device ) );
@@ -158,6 +162,10 @@ namespace spx
       lg->debug( "SPX42BtDevices::startDiscoverServices: remote adapter addr is valid. scan..." );
       btServicesAgent = std::unique_ptr< BtServiceDiscover >(
           new BtServiceDiscover( lg, currentServiceScanDevice.first, laddr, currentServiceScanDevice.second, this ) );
+      //
+      // Filter um nur die richtigen Geräte zu finden
+      //
+      btServicesAgent->setServiceFilter( "SPX42|SPP" );
       lg->debug( QString( "SPX42BtDevices::startDiscoverServices: local adapter addr: " ).append( laddr.toString() ) );
       lg->debug( QString( "SPX42BtDevices::startDiscoverServices: remote adapter addr: " )
                      .append( currentServiceScanDevice.second.toString() ) );

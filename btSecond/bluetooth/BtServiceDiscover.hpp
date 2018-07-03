@@ -5,6 +5,7 @@
 #include <QBluetoothServiceDiscoveryAgent>
 #include <QBluetoothServiceInfo>
 #include <QObject>
+#include <QRegExp>
 #include <memory>
 #include "logging/Logger.hpp"
 
@@ -14,13 +15,13 @@ namespace spx
   {
     Q_OBJECT
     private:
-    private:
     std::shared_ptr< Logger > lg;
     QString name;
     QBluetoothAddress &laddr;
     QBluetoothAddress &raddr;
     std::unique_ptr< QBluetoothServiceDiscoveryAgent > discoveryAgent;
     int servicesCount;
+    QRegExp expression;
 
     public:
     explicit BtServiceDiscover( std::shared_ptr< Logger > logger,
@@ -29,6 +30,8 @@ namespace spx
                                 QBluetoothAddress &r_addr,
                                 QObject *parent = nullptr );
     ~BtServiceDiscover();
+    bool setServiceFilter( const QString &expr );
+    void resetServiceFilter( void );
     int servicesDiscovered( void );
     void start( void );
 
