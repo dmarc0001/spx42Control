@@ -18,11 +18,10 @@ namespace spx
     public:
     explicit ConsoleMainObject( QObject *parent = nullptr );
     ~ConsoleMainObject();
-    int execute( QCoreApplication *a );
-    void end( void );
+    void init( void );
 
     signals:
-    void quit( void );
+    void sigQuit( void );
 
     private slots:
     void slotDiscoveredDevice( const QBluetoothDeviceInfo &info );

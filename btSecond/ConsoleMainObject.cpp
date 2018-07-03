@@ -15,10 +15,9 @@ namespace spx
     lg->debug( "ConsoleMainObject::~ConsoleMainObject..." );
   }
 
-  int ConsoleMainObject::execute( QCoreApplication *a )
+  void ConsoleMainObject::init( void )
   {
     lg->debug( "ConsoleMainObject::execute: start execute, init any things..." );
-    connect( this, &ConsoleMainObject::quit, a, &QCoreApplication::quit );
     //
     // ein SPX-Geräteobjekt anlegen (könnte auch im Konstruktor passieren
     //
@@ -41,18 +40,10 @@ namespace spx
     btDevices->startDiscover();
 
     lg->debug( "ConsoleMainObject::execute: DEBUGGING: start kill timer with 120 s..." );
-    QTimer::singleShot( 120000, this, &ConsoleMainObject::end );
-
-    lg->debug( "ConsoleMainObject::execute: start execute->eventloop until signal quit..." );
-    /*
-    QTimer loopTimer( this );
-    loopTimer.setInterval( 0 );
-    connect( &loopTimer, &QTimer::timeout, this, [=] { a->processEvents(); }, Qt::QueuedConnection );
-    loopTimer.start();
-    lg->debug( "ConsoleMainObject::execute: start event timer..." );
-    */
-    // a->processEvents();
-    return ( a->exec() );
+    QTimer::singleShot( 120000, this, [=] {
+      qInfo() << "timer TIMEOUT";
+      emit this->sigQuit();
+    } );
   }
 
   void ConsoleMainObject::slotDiscoveredDevice( const QBluetoothDeviceInfo &info )
@@ -88,12 +79,7 @@ namespace spx
   void ConsoleMainObject::slotAllScansFinished( void )
   {
     lg->info( "ConsoleMainObject::slotAllScansFinished..." );
-    end();
+    emit sigQuit();
   }
 
-  void ConsoleMainObject::end( void )
-  {
-    lg->debug( "ConsoleMainObject::end: emit signal quit..." );
-    emit quit();
-  }
 }  // namespace spx
