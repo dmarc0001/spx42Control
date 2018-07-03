@@ -132,7 +132,7 @@ namespace spx
 
   void SPX42BtDevices::startDiscoverServices( void )
   {
-    lg->debug( "SPX42BtDevices::startDiscoverServices: start, if possible discovering servises, else wait via timer service..." );
+    lg->debug( "SPX42BtDevices::startDiscoverServices:..." );
     if ( devicesToDiscoverServices.isEmpty() && deviceDiscoverFinished )
     {
       emit sigAllScansFinished();
@@ -144,6 +144,18 @@ namespace spx
       // scanne ein Gerät nach Services, momenmtan wird keiner gescannt
       //
       currentServiceScanDevice = devicesToDiscoverServices.dequeue();
+      if ( currentServiceScanDevice.second.isNull() )
+      {
+        //
+        // den lokalen Adapter will ich nicht scannen.
+        // starte einen Timer, der das nächste Gerät scannt, falls noch vorhanden
+        //
+        lg->debug( "SPX42BtDevices::startDiscoverServices: remote adapter addr is empty. ignore..." );
+        QTimer::singleShot( 60, this, &SPX42BtDevices::startDiscoverServices );
+        return;
+      }
+      // Die Adresse ist nicht leer, scanne!
+      lg->debug( "SPX42BtDevices::startDiscoverServices: remote adapter addr is valid. scan..." );
       btServicesAgent = std::unique_ptr< BtServiceDiscover >(
           new BtServiceDiscover( lg, currentServiceScanDevice.first, laddr, currentServiceScanDevice.second, this ) );
       lg->debug( QString( "SPX42BtDevices::startDiscoverServices: local adapter addr: " ).append( laddr.toString() ) );
@@ -165,6 +177,7 @@ namespace spx
       // das sollte soll ange wiederholt werden, bis das Objekt vernichtet oder
       // di Queue leer ist
       //
+      lg->debug( "SPX42BtDevices::startDiscoverServices: service is in progress, wait for ending..." );
       QTimer::singleShot( 600, this, &SPX42BtDevices::startDiscoverServices );
     }
   }
