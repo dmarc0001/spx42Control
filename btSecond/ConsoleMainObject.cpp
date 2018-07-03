@@ -3,7 +3,7 @@
 
 namespace spx
 {
-  ConsoleMainObject::ConsoleMainObject( QObject *parent ) : QObject( parent )
+  ConsoleMainObject::ConsoleMainObject( QObject *parent ) : QObject( parent ), myTimer( this )
   {
     lg = std::shared_ptr< Logger >( new Logger() );
     lg->startLogging( LG_DEBUG, "btsecond_console.log" );
@@ -44,6 +44,13 @@ namespace spx
       qInfo() << "timer TIMEOUT";
       emit this->sigQuit();
     } );
+
+    //
+    // DEBUG:events erzeugen um zu sehen ob alles läuft
+    //
+    myTimer.setInterval( 300 );
+    connect( &myTimer, &QTimer::timeout, this, [=] { qDebug() << "TIMER tick..."; } );
+    myTimer.start();
   }
 
   void ConsoleMainObject::slotDiscoveredDevice( const QBluetoothDeviceInfo &info )

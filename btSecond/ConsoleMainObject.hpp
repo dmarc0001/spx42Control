@@ -3,6 +3,7 @@
 
 #include <QCoreApplication>
 #include <QObject>
+#include <QTimer>
 #include "bluetooth/SPX42BtDevices.hpp"
 #include "logging/Logger.hpp"
 
@@ -14,6 +15,7 @@ namespace spx
     private:
     std::shared_ptr< Logger > lg;
     std::unique_ptr< SPX42BtDevices > btDevices;
+    QTimer myTimer;
 
     public:
     explicit ConsoleMainObject( QObject *parent = nullptr );
