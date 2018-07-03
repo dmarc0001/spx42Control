@@ -1,4 +1,4 @@
-﻿#include "BtLocalDevicesManager.hpp"
+﻿#include "BtDevicesManager.hpp"
 
 namespace spx
 {
@@ -7,7 +7,7 @@ namespace spx
    * @param logger
    * @param parent
    */
-  BtLocalDevicesManager::BtLocalDevicesManager( std::shared_ptr< Logger > logger, QObject *parent ) : QObject( parent ), lg( logger )
+  BtDevicesManager::BtDevicesManager( std::shared_ptr< Logger > logger, QObject *parent ) : QObject( parent ), lg( logger )
   {
     localDevice = std::unique_ptr< QBluetoothLocalDevice >( new QBluetoothLocalDevice( this ) );
     /*
@@ -45,12 +45,12 @@ namespace spx
   /**
    * @brief BtDevices::~BtDevices
    */
-  BtLocalDevicesManager::~BtLocalDevicesManager()
+  BtDevicesManager::~BtDevicesManager()
   {
     lg->debug( "BtLocalDevicesManager::~BtLocalDevicesManager..." );
   }
 
-  void BtLocalDevicesManager::init( void )
+  void BtDevicesManager::init( void )
   {
     //
     // ereignis für hostmode einmal ausführen
@@ -58,17 +58,17 @@ namespace spx
     emit sigDeviceHostModeStateChanged( localDevice->hostMode() );
   }
 
-  void BtLocalDevicesManager::startDiscoverDevices( void )
+  void BtDevicesManager::startDiscoverDevices( void )
   {
     discoveryAgent->start();
   }
 
-  const QBluetoothLocalDevice *BtLocalDevicesManager::getLocalDevice( void )
+  const QBluetoothLocalDevice *BtDevicesManager::getLocalDevice( void )
   {
     return ( localDevice.get() );
   }
 
-  void BtLocalDevicesManager::setInquiryGeneralUnlimited( bool unlimited )
+  void BtDevicesManager::setInquiryGeneralUnlimited( bool unlimited )
   {
     if ( unlimited )
       discoveryAgent->setInquiryType( QBluetoothDeviceDiscoveryAgent::GeneralUnlimitedInquiry );
@@ -76,7 +76,7 @@ namespace spx
       discoveryAgent->setInquiryType( QBluetoothDeviceDiscoveryAgent::LimitedInquiry );
   }
 
-  void BtLocalDevicesManager::setHostDiscoverable( bool discoverable )
+  void BtDevicesManager::setHostDiscoverable( bool discoverable )
   {
     if ( discoverable )
       localDevice->setHostMode( QBluetoothLocalDevice::HostDiscoverable );
@@ -84,7 +84,7 @@ namespace spx
       localDevice->setHostMode( QBluetoothLocalDevice::HostConnectable );
   }
 
-  void BtLocalDevicesManager::setHostPower( bool on )
+  void BtDevicesManager::setHostPower( bool on )
   {
     if ( on )
       localDevice->powerOn();
@@ -92,7 +92,7 @@ namespace spx
       localDevice->setHostMode( QBluetoothLocalDevice::HostPoweredOff );
   }
 
-  void BtLocalDevicesManager::requestPairing( const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing )
+  void BtDevicesManager::requestPairing( const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing )
   {
     localDevice->requestPairing( address, pairing );
   }

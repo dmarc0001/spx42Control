@@ -7,7 +7,7 @@
 #include <QVector>
 #include <memory>
 #include "../logging/Logger.hpp"
-#include "BtLocalDevicesManager.hpp"
+#include "BtDevicesManager.hpp"
 #include "BtServiceDiscover.hpp"
 
 namespace spx
@@ -26,7 +26,7 @@ namespace spx
     std::shared_ptr< Logger > lg;
     bool deviceDiscoverFinished;
     ToScannedDecice currentServiceScanDevice;
-    std::unique_ptr< BtLocalDevicesManager > btDevicesManager;
+    std::unique_ptr< BtDevicesManager > btDevicesManager;
     std::unique_ptr< BtServiceDiscover > btServicesAgent;
     QBluetoothAddress laddr;
     SPXDeviceList discoverdDevices;
@@ -34,9 +34,14 @@ namespace spx
 
     public:
     explicit SPX42BtDevices( std::shared_ptr< Logger > logger, QObject *parent = nullptr );
-    ~SPX42BtDevices();
-    void startDiscover( void );
-    SPXDeviceList getDevices( void ) const;
+    ~SPX42BtDevices();                                                                         //! Der Destruktor
+    void startDiscoverDevices( void );                                                         //! Geräte suchen
+    SPXDeviceList getDiscoveredDevices( void ) const;                                          //! gefundene Geräte zurückgeben
+    QBluetoothLocalDevice::Pairing getPairingStatus( QBluetoothAddress addr );                 //! pairing für remote gerät
+    void setInquiryGeneralUnlimited( bool inquiry );                                           //! set scan mode
+    void setHostDiscoverable( bool discoverable );                                             //! Host ist zu finden/nicht zu finden
+    void setHostPower( bool powered );                                                         //! host power on/off
+    void requestPairing( QBluetoothAddress address, QBluetoothLocalDevice::Pairing pairing );  //! pairing anfordern
 
     private:
     void startDiscoverServices( void );  //! starte discovering, warte ggf bis ein laufender Prozess abgelaufen ist

@@ -11,7 +11,7 @@
 
 namespace spx
 {
-  class BtLocalDevicesManager : public QObject
+  class BtDevicesManager : public QObject
   {
     Q_OBJECT
     private:
@@ -20,8 +20,8 @@ namespace spx
     std::unique_ptr< QBluetoothLocalDevice > localDevice;
 
     public:
-    explicit BtLocalDevicesManager( std::shared_ptr< Logger > logger, QObject *parent = nullptr );
-    ~BtLocalDevicesManager();
+    explicit BtDevicesManager( std::shared_ptr< Logger > logger, QObject *parent = nullptr );
+    ~BtDevicesManager();
     void init( void );
     void startDiscoverDevices( void );
     const QBluetoothLocalDevice *getLocalDevice( void );

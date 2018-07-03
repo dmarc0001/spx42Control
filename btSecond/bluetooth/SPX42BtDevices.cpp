@@ -20,17 +20,16 @@ namespace spx
     // Geräte Discovering Objekt erschaffen
     //
     lg->debug( "SPX42BtDevices::SPX42BtDevices: create device discovering object..." );
-    btDevicesManager = std::unique_ptr< BtLocalDevicesManager >( new BtLocalDevicesManager( lg, this ) );
+    btDevicesManager = std::unique_ptr< BtDevicesManager >( new BtDevicesManager( lg, this ) );
     //
     // discovering agent object
     //
     lg->debug( "SPX42BtDevices::SPX42BtDevices: connect signals..." );
-    connect( btDevicesManager.get(), &BtLocalDevicesManager::sigDiscoveredDevice, this, &SPX42BtDevices::slotDiscoveredDevice );
-    connect( btDevicesManager.get(), &BtLocalDevicesManager::sigDiscoverScanFinished, this,
-             &SPX42BtDevices::slotDiscoverScanFinished );
-    connect( btDevicesManager.get(), &BtLocalDevicesManager::sigDeviceHostModeStateChanged, this,
+    connect( btDevicesManager.get(), &BtDevicesManager::sigDiscoveredDevice, this, &SPX42BtDevices::slotDiscoveredDevice );
+    connect( btDevicesManager.get(), &BtDevicesManager::sigDiscoverScanFinished, this, &SPX42BtDevices::slotDiscoverScanFinished );
+    connect( btDevicesManager.get(), &BtDevicesManager::sigDeviceHostModeStateChanged, this,
              &SPX42BtDevices::slotDeviceHostModeStateChanged );
-    connect( btDevicesManager.get(), &BtLocalDevicesManager::sigDevicePairingDone, this, &SPX42BtDevices::slotDevicePairingDone );
+    connect( btDevicesManager.get(), &BtDevicesManager::sigDevicePairingDone, this, &SPX42BtDevices::slotDevicePairingDone );
     //
     lg->debug( "SPX42BtDevices::SPX42BtDevices: connect signals...OK" );
     //
@@ -44,7 +43,7 @@ namespace spx
     lg->debug( "SPX42BtDevices::~SPX42BtDevices" );
   }
 
-  void SPX42BtDevices::startDiscover( void )
+  void SPX42BtDevices::startDiscoverDevices( void )
   {
     lg->debug( "SPX42BtDevices::startDiscover..." );
     //
@@ -56,9 +55,34 @@ namespace spx
     btDevicesManager->startDiscoverDevices();
   }
 
-  SPXDeviceList SPX42BtDevices::getDevices( void ) const
+  SPXDeviceList SPX42BtDevices::getDiscoveredDevices( void ) const
   {
     return ( discoverdDevices );
+  }
+
+  QBluetoothLocalDevice::Pairing SPX42BtDevices::getPairingStatus( QBluetoothAddress addr )
+  {
+    return ( btDevicesManager->getLocalDevice()->pairingStatus( addr ) );
+  }
+
+  void SPX42BtDevices::setInquiryGeneralUnlimited( bool inquiry )
+  {
+    btDevicesManager->setInquiryGeneralUnlimited( inquiry );
+  }
+
+  void SPX42BtDevices::setHostDiscoverable( bool discoverable )
+  {
+    btDevicesManager->setHostDiscoverable( discoverable );
+  }
+
+  void SPX42BtDevices::setHostPower( bool powered )
+  {
+    btDevicesManager->setHostPower( powered );
+  }
+
+  void SPX42BtDevices::requestPairing( QBluetoothAddress address, QBluetoothLocalDevice::Pairing pairing )
+  {
+    btDevicesManager->requestPairing( address, pairing );
   }
 
   void SPX42BtDevices::slotDiscoveredDevice( const QBluetoothDeviceInfo &info )

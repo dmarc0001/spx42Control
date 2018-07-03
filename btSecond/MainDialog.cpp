@@ -24,7 +24,7 @@ MainDialog::MainDialog( QWidget *parent ) : QDialog( parent ), ui( std::unique_p
   // Geräte Discovering Objekt erschaffen
   //
   lg->debug( "MainDialog::MainDialog: create device discovering object..." );
-  btDevices = std::unique_ptr< BtLocalDevicesManager >( new BtLocalDevicesManager( lg, this ) );
+  btDevices = std::unique_ptr< SPX42BtDevices >( new SPX42BtDevices( lg, this ) );
   //
   // add context menu for devices to be able to pair device
   //
@@ -42,16 +42,12 @@ MainDialog::MainDialog( QWidget *parent ) : QDialog( parent ), ui( std::unique_p
   //
   // discovering agent object
   //
-  connect( btDevices.get(), &BtLocalDevicesManager::sigDiscoveredDevice, this, &MainDialog::slotDiscoveredDevice );
-  connect( btDevices.get(), &BtLocalDevicesManager::sigDiscoverScanFinished, this, &MainDialog::slotDiscoverScanFinished );
-  connect( btDevices.get(), &BtLocalDevicesManager::sigDeviceHostModeStateChanged, this, &MainDialog::slotDeviceHostModeStateChanged );
-  connect( btDevices.get(), &BtLocalDevicesManager::sigDevicePairingDone, this, &MainDialog::slotDevicePairingDone );
+  connect( btDevices.get(), &SPX42BtDevices::sigDiscoveredDevice, this, &MainDialog::slotDiscoveredDevice );
+  connect( btDevices.get(), &SPX42BtDevices::sigDiscoverScanFinished, this, &MainDialog::slotDiscoverScanFinished );
+  connect( btDevices.get(), &SPX42BtDevices::sigDeviceHostModeStateChanged, this, &MainDialog::slotDeviceHostModeStateChanged );
+  connect( btDevices.get(), &SPX42BtDevices::sigDevicePairingDone, this, &MainDialog::slotDevicePairingDone );
   //
   lg->debug( "MainDialog::MainDialog: connect signals...OK" );
-  //
-  // initialisierung durchführen
-  //
-  btDevices->init();
 }
 
 /**
@@ -74,7 +70,7 @@ void MainDialog::slotDiscoveredDevice( const QBluetoothDeviceInfo &info )
   //
   QString label = QString( "%1 %2" ).arg( info.address().toString() ).arg( info.name() );
   QList< QListWidgetItem * > items = ui->list->findItems( label, Qt::MatchExactly );
-  lg->debug( QString( "MainDialog::slotDiscoveredDevice: addr: %1, name %2" ).arg( info.address().toString() ).arg( info.name() ) );
+  // lg->debug( QString( "MainDialog::slotDiscoveredDevice: addr: %1, name %2" ).arg( info.address().toString() ).arg( info.name() ) );
   //
   // sollte keiner gefunden sein, dann einen dazu tragen
   //
@@ -84,7 +80,7 @@ void MainDialog::slotDiscoveredDevice( const QBluetoothDeviceInfo &info )
     // erzeuge einien Eintrag und fülle diesen mit Info
     //
     QListWidgetItem *item = new QListWidgetItem( label );
-    QBluetoothLocalDevice::Pairing pairingStatus = btDevices->getLocalDevice()->pairingStatus( info.address() );
+    QBluetoothLocalDevice::Pairing pairingStatus = btDevices->getPairingStatus( info.address() );
     //
     // unterscheide den Pairing status
     //
@@ -139,6 +135,7 @@ void MainDialog::slotGuiSetGeneralUnlimited( bool unlimited )
  * @brief MainDialog::slotGuiItemActivated
  * @param item
  */
+
 void MainDialog::slotGuiItemActivated( QListWidgetItem *item )
 {
   QString text = item->text();
@@ -152,6 +149,7 @@ void MainDialog::slotGuiItemActivated( QListWidgetItem *item )
   //
   // Adresse des Gerätes (MAC)
   //
+  /*
   QBluetoothAddress address( text.left( index ) );
   QString name( text.mid( index + 1 ) );
 
@@ -163,6 +161,7 @@ void MainDialog::slotGuiItemActivated( QListWidgetItem *item )
   lg->debug( "MainDialog::slotGuiItemActivated: open service discovering dialog and start service discovering..." );
   index = d.exec();
   lg->debug( QString( "MainDialog::slotGuiItemActivated: service discovering dialog end with %1" ).arg( index ) );
+  */
 }
 
 /**

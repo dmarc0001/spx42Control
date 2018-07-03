@@ -7,8 +7,7 @@
 #include <QMenu>
 
 #include <memory>
-#include "ServiceDiscoveryDialog.hpp"
-#include "bluetooth/BtLocalDevicesManager.hpp"
+#include "bluetooth/SPX42BtDevices.hpp"
 #include "logging/Logger.hpp"
 #include "ui_MainDialog.h"
 
@@ -25,7 +24,7 @@ class MainDialog : public QDialog
 
   private:
   std::shared_ptr< Logger > lg;
-  std::unique_ptr< BtLocalDevicesManager > btDevices;
+  std::unique_ptr< SPX42BtDevices > btDevices;
   std::unique_ptr< Ui::MainDialog > ui;
 
   public:
@@ -41,6 +40,7 @@ class MainDialog : public QDialog
   void slotGuiDiscoverableClicked( bool clicked );
   void slotGuiDisplayPairingMenu( const QPoint &pos );
   void slotDevicePairingDone( const QBluetoothAddress &, QBluetoothLocalDevice::Pairing );
+
   private slots:
   void slotGuiStartScan();
   void slotDiscoverScanFinished();
