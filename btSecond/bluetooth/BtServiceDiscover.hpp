@@ -16,7 +16,6 @@ namespace spx
     Q_OBJECT
     private:
     std::shared_ptr< Logger > lg;
-    QString name;
     QBluetoothAddress &laddr;
     QBluetoothAddress &raddr;
     std::unique_ptr< QBluetoothServiceDiscoveryAgent > discoveryAgent;
@@ -25,7 +24,6 @@ namespace spx
 
     public:
     explicit BtServiceDiscover( std::shared_ptr< Logger > logger,
-                                QString &dname,
                                 QBluetoothAddress &l_addr,
                                 QBluetoothAddress &r_addr,
                                 QObject *parent = nullptr );
@@ -36,8 +34,8 @@ namespace spx
     void start( void );
 
     signals:
-    void sigDiscoveredService( const QString &name, const QBluetoothServiceInfo &info );
-    void sigDiscoverScanFinished( const QString &name );
+    void sigDiscoveredService( const QBluetoothAddress &raddr, const QBluetoothServiceInfo &info );
+    void sigDiscoverScanFinished( const QBluetoothAddress &raddr );
 
     private slots:
     void slotDiscoveredService( const QBluetoothServiceInfo &info );

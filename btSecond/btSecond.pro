@@ -18,7 +18,6 @@ SOURCES += \
         main_gui.cpp \
     MainDialog.cpp \
     logging/Logger.cpp \
-    ServiceDiscoveryDialog.cpp \
     bluetooth/BtServiceDiscover.cpp \
     bluetooth/SPX42BtDevices.cpp \
     bluetooth/BtDevicesManager.cpp
@@ -26,14 +25,12 @@ SOURCES += \
 HEADERS += \
     MainDialog.hpp \
     logging/Logger.hpp \
-    ServiceDiscoveryDialog.hpp \
     bluetooth/BtServiceDiscover.hpp \
     bluetooth/SPX42BtDevices.hpp \
     bluetooth/BtDevicesManager.hpp
 
 FORMS += \
-    ui/MainDialog.ui \
-    ui/ServiceDiscoveryDialog.ui
+    ui/MainDialog.ui
 
 target.path = exportpath
 INSTALLS += target

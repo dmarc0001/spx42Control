@@ -3,11 +3,10 @@
 namespace spx
 {
   BtServiceDiscover::BtServiceDiscover( std::shared_ptr< Logger > logger,
-                                        QString &dname,
                                         QBluetoothAddress &l_addr,
                                         QBluetoothAddress &r_addr,
                                         QObject *parent )
-      : QObject( parent ), lg( logger ), name( dname ), laddr( l_addr ), raddr( r_addr ), expression( ".*" )
+      : QObject( parent ), lg( logger ), laddr( l_addr ), raddr( r_addr ), expression( ".*" )
   {
     //
     // default Bluetooth adapter
@@ -31,7 +30,7 @@ namespace spx
     //
     connect( discoveryAgent.get(), &QBluetoothServiceDiscoveryAgent::serviceDiscovered, this,
              &BtServiceDiscover::slotDiscoveredService );
-    connect( discoveryAgent.get(), &QBluetoothServiceDiscoveryAgent::finished, this, [=] { emit sigDiscoverScanFinished( name ); } );
+    connect( discoveryAgent.get(), &QBluetoothServiceDiscoveryAgent::finished, this, [=] { emit sigDiscoverScanFinished( raddr ); } );
   }
 
   BtServiceDiscover::~BtServiceDiscover()
@@ -71,7 +70,7 @@ namespace spx
     if ( info.serviceName().isEmpty() )
       return;
     QString line = info.serviceName();
-    lg->info( QString( "BtServiceDiscover::slotDiscoveredService: %1 on %2" ).arg( line ).arg( name ) );
+    lg->info( QString( "BtServiceDiscover::slotDiscoveredService: %1 on %2" ).arg( line ).arg( raddr.toString() ) );
     //
     // ist das ein gesuchter service
     //
@@ -88,11 +87,11 @@ namespace spx
       line.append( " " + info.serviceDescription() );
     if ( !info.serviceProvider().isEmpty() )
       line.append( " " + info.serviceProvider() );
-    lg->info( QString( "BtServiceDiscover::slotDiscoveredService: %1 on %2 insert to list..." ).arg( line ).arg( name ) );
+    lg->info( QString( "BtServiceDiscover::slotDiscoveredService: %1 on %2 signal to list..." ).arg( line ).arg( raddr.toString() ) );
     //
     // signalisiere dem interessierten dass ein Service gefunden wurde
     //
-    emit sigDiscoveredService( name, info );
+    emit sigDiscoveredService( raddr, info );
     servicesCount++;
   }
 }
