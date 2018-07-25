@@ -2,5 +2,7 @@
     <qresource prefix="/scanner">
         <file alias="workerAnimation">working.gif</file>
         <file alias="worker">no_working.gif</file>
+        <file alias="bluetooth_black_normal">ic_bluetooth_black_24dp_1x.png</file>
+        <file alias="bluethooth_black_gross">ic_bluetooth_black_24dp_2x.png</file>
     </qresource>
 </RCC>
