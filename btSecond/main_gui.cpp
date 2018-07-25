@@ -1,5 +1,7 @@
 ﻿#include <QApplication>
-#include "MainDialog.hpp"
+#include "BtDiscoveringDialog.hpp"
+
+using namespace spx;
 
 /**
  * @brief start der anwendung
@@ -10,8 +12,8 @@
 int main( int argc, char *argv[] )
 {
   QApplication a( argc, argv );
-  MainDialog w;
-  QObject::connect( &w, &MainDialog::accepted, &a, &QApplication::quit );
+  BtDiscoveringDialog w;
+  QObject::connect( &w, &BtDiscoveringDialog::accepted, &a, &QApplication::quit );
   w.show();
   return a.exec();
 }

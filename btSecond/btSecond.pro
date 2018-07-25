@@ -21,21 +21,21 @@ CONFIG(release, debug|release) {
 
 SOURCES += \
         main_gui.cpp \
-    MainDialog.cpp \
     logging/Logger.cpp \
     bluetooth/BtServiceDiscover.cpp \
     bluetooth/SPX42BtDevices.cpp \
-    bluetooth/BtDevicesManager.cpp
+    bluetooth/BtDevicesManager.cpp \
+    BtDiscoveringDialog.cpp
 
 HEADERS += \
-    MainDialog.hpp \
     logging/Logger.hpp \
     bluetooth/BtServiceDiscover.hpp \
     bluetooth/SPX42BtDevices.hpp \
-    bluetooth/BtDevicesManager.hpp
+    bluetooth/BtDevicesManager.hpp \
+    BtDiscoveringDialog.hpp
 
 FORMS += \
-    ui/MainDialog.ui
+    ui/BtDiscoverDialog.ui
 
 target.path = exportpath
 INSTALLS += target
