@@ -1,4 +1,5 @@
 ﻿#include "MainDialog.hpp"
+#include <QMovie>
 
 using namespace spx;
 
@@ -6,9 +7,12 @@ using namespace spx;
  * @brief MainDialog::MainDialog Device scanner
  * @param parent
  */
-MainDialog::MainDialog( QWidget *parent ) : QDialog( parent ), ui( std::unique_ptr< Ui::MainDialog >( new Ui::MainDialog ) )
+MainDialog::MainDialog( QWidget *parent )
+    : QDialog( parent ), ui( std::unique_ptr< Ui::MainDialog >( new Ui::MainDialog ) ), msgTimer( this ), timerCountdowwn( 0 )
 {
   ui->setupUi( this );
+  ui->currentTaskLabel->setText( tr( "WAITING..." ) );
+  ui->CancelPushButton->setText( tr( "CANCEL" ) );
   lg = std::shared_ptr< Logger >( new Logger() );
   lg->startLogging( LG_DEBUG, "btsecond.log" );
   lg->debug( "MainDialog::MainDialog" );
@@ -28,17 +32,28 @@ MainDialog::MainDialog( QWidget *parent ) : QDialog( parent ), ui( std::unique_p
   //
   // add context menu for devices to be able to pair device
   //
-  ui->list->setContextMenuPolicy( Qt::CustomContextMenu );
+  ui->deviceList->setContextMenuPolicy( Qt::CustomContextMenu );
+  //
+  // Message deactivation Timer vorbereiten
+  //
+  msgTimer.setInterval( timerInterval );
+  //
+  // Arbeiter-Animation erzeugen, aber noch nicht starten
+  //
+  movie = std::unique_ptr< QMovie >( new QMovie( ":/scanner/workerAnimation" ) );
+  ui->processLabel->setMovie( movie.get() );
+  movie->start();
+  movie->stop();
+  movie->jumpToFrame( 0 );
   //
   lg->debug( "MainDialog::MainDialog: connect signals..." );
   //
   // Signale zum Slots verbinden
   // GUI
   //
-  connect( ui->inquiryType, &QCheckBox::toggled, this, &MainDialog::slotGuiSetGeneralUnlimited );
-  connect( ui->scan, &QPushButton::clicked, this, &MainDialog::slotGuiStartScan );
-  connect( ui->list, &QListWidget::itemActivated, this, &MainDialog::slotGuiItemActivated );
-  connect( ui->list, &QListWidget::customContextMenuRequested, this, &MainDialog::slotGuiDisplayPairingMenu );
+  connect( ui->scanPushButton, &QPushButton::clicked, this, &MainDialog::slotGuiStartScan );
+  connect( ui->deviceList, &QListWidget::itemActivated, this, &MainDialog::slotGuiItemActivated );
+  connect( ui->deviceList, &QListWidget::customContextMenuRequested, this, &MainDialog::slotGuiDisplayPairingMenu );
   //
   // discovering agent object
   //
@@ -47,6 +62,11 @@ MainDialog::MainDialog( QWidget *parent ) : QDialog( parent ), ui( std::unique_p
   connect( btDevices.get(), &SPX42BtDevices::sigDeviceHostModeStateChanged, this, &MainDialog::slotDeviceHostModeStateChanged );
   connect( btDevices.get(), &SPX42BtDevices::sigDevicePairingDone, this, &MainDialog::slotDevicePairingDone );
   //
+  // timer füer messages verbinden
+  //
+  connect( &msgTimer, &QTimer::timeout, this, &MainDialog::slotMessageTimer );
+  //
+  setMessage( tr( "SCANNER READY..." ) );
   lg->debug( "MainDialog::MainDialog: connect signals...OK" );
 }
 
@@ -59,6 +79,23 @@ MainDialog::~MainDialog()
   lg->shutdown();
 }
 
+void MainDialog::setMessage( const QString &msg )
+{
+  if ( ui->currentTaskLabel )
+  {
+    ui->currentTaskLabel->setText( msg );
+    //
+    // timer Timeout setzen;
+    //
+    timerCountdowwn = timerStartValue;
+    //
+    // timer starten, wenn nicht geschehen
+    //
+    if ( !msgTimer.isActive() )
+      msgTimer.start();
+  }
+}
+
 /**
  * @brief MainDialog::slotDiscoveredDevice
  * @param info
@@ -69,8 +106,7 @@ void MainDialog::slotDiscoveredDevice( const QBluetoothDeviceInfo &info )
   // finde exakt den Eintrag, welcher angeklickt wurde
   //
   QString label = QString( "%1 %2" ).arg( info.address().toString() ).arg( info.name() );
-  QList< QListWidgetItem * > items = ui->list->findItems( label, Qt::MatchExactly );
-  // lg->debug( QString( "MainDialog::slotDiscoveredDevice: addr: %1, name %2" ).arg( info.address().toString() ).arg( info.name() ) );
+  QList< QListWidgetItem * > items = ui->deviceList->findItems( label, Qt::MatchExactly );
   //
   // sollte keiner gefunden sein, dann einen dazu tragen
   //
@@ -95,7 +131,8 @@ void MainDialog::slotDiscoveredDevice( const QBluetoothDeviceInfo &info )
     //
     // Eintrag in die Liste setzen
     //
-    ui->list->addItem( item );
+    ui->deviceList->addItem( item );
+    setMessage( tr( "FOUND DEVICE: %1..." ).arg( info.address().toString() ) );
   }
 }
 
@@ -105,9 +142,15 @@ void MainDialog::slotDiscoveredDevice( const QBluetoothDeviceInfo &info )
 void MainDialog::slotGuiStartScan()
 {
   lg->debug( "MainDialog::slotGuiStartScan..." );
+  btDevices->setHostDiscoverable( true );
+  btDevices->setHostPower( true );
+  btDevices->setInquiryGeneralUnlimited( true );
   btDevices->startDiscoverDevices();
-  ui->scan->setEnabled( false );
-  ui->inquiryType->setEnabled( false );
+  ui->scanPushButton->setEnabled( false );
+  ui->deviceList->clear();
+  ui->CancelPushButton->setText( tr( "CANCEL" ) );
+  setMessage( tr( "START SCAN..." ) );
+  movie->start();
 }
 
 /**
@@ -116,19 +159,11 @@ void MainDialog::slotGuiStartScan()
 void MainDialog::slotDiscoverScanFinished()
 {
   lg->debug( "MainDialog::slotDiscoverScanFinished..." );
-  ui->scan->setEnabled( true );
-  ui->inquiryType->setEnabled( true );
-}
-
-/**
- * @brief MainDialog::slotGuiSetGeneralUnlimited
- * @param unlimited
- */
-void MainDialog::slotGuiSetGeneralUnlimited( bool unlimited )
-{
-  lg->debug( QString( "MainDialog::slotGuiSetGeneralUnlimited: %1" ).arg( unlimited ) );
-  //
-  btDevices->setInquiryGeneralUnlimited( unlimited );
+  ui->scanPushButton->setEnabled( true );
+  setMessage( tr( "SCAN FINISHED..." ) );
+  ui->CancelPushButton->setText( tr( "DONE" ) );
+  movie->stop();
+  movie->jumpToFrame( 0 );
 }
 
 /**
@@ -146,6 +181,7 @@ void MainDialog::slotGuiItemActivated( QListWidgetItem *item )
   if ( index == -1 )
     return;
   lg->debug( "MainDialog::slotGuiItemActivated..." );
+  setMessage( tr( "DEVICE %1 ACTIVETED..." ).arg( text ) );
   //
   // Adresse des Gerätes (MAC)
   //
@@ -162,17 +198,6 @@ void MainDialog::slotGuiItemActivated( QListWidgetItem *item )
   index = d.exec();
   lg->debug( QString( "MainDialog::slotGuiItemActivated: service discovering dialog end with %1" ).arg( index ) );
   */
-}
-
-/**
- * @brief MainDialog::slotGuiDiscoverableClicked
- * @param clicked
- */
-void MainDialog::slotGuiDiscoverableClicked( bool clicked )
-{
-  lg->debug( QString( "MainDialog::slotGuiDiscoverableClicked: %1" ).arg( clicked ) );
-  //
-  btDevices->setHostDiscoverable( clicked );
 }
 
 /**
@@ -195,23 +220,21 @@ void MainDialog::slotDeviceHostModeStateChanged( QBluetoothLocalDevice::HostMode
   if ( mode != QBluetoothLocalDevice::HostPoweredOff )
   {
     lg->info( QString( "MainDialog::slotDeviceHostModeStateChanged: host power off: true" ) );
-    ui->power->setChecked( true );
+    setMessage( tr( "BT HOST POWERED ON..." ) );
   }
   else
   {
     lg->info( QString( "MainDialog::slotDeviceHostModeStateChanged: host power off: false" ) );
-    ui->power->setChecked( false );
+    setMessage( tr( "BT HOST POWERED OFF..." ) );
   }
 
   if ( mode == QBluetoothLocalDevice::HostDiscoverable )
   {
     lg->info( QString( "MainDialog::slotDeviceHostModeStateChanged: host discoverable: true" ) );
-    ui->discoverable->setChecked( true );
   }
   else
   {
     lg->info( QString( "MainDialog::slotDeviceHostModeStateChanged: host discoverable: false" ) );
-    ui->discoverable->setChecked( false );
   }
   //
   // ist der Host nun an?
@@ -220,8 +243,7 @@ void MainDialog::slotDeviceHostModeStateChanged( QBluetoothLocalDevice::HostMode
   //
   // gui richten
   //
-  ui->scan->setEnabled( on );
-  ui->discoverable->setEnabled( on );
+  ui->scanPushButton->setEnabled( on );
 }
 
 /**
@@ -233,15 +255,15 @@ void MainDialog::slotGuiDisplayPairingMenu( const QPoint &pos )
   //
   // Gültigkeit des Eintrages testen
   //
-  if ( ui->list->count() == 0 )
+  if ( ui->deviceList->count() == 0 )
     return;
   lg->info( "MainDialog::slotGuiDisplayPairingMenu: display pairing menu..." );
   //
   QMenu menu( this );
   QAction *pairAction = menu.addAction( "Pair" );
   QAction *removePairAction = menu.addAction( "Remove Pairing" );
-  QAction *chosenAction = menu.exec( ui->list->viewport()->mapToGlobal( pos ) );
-  QListWidgetItem *currentItem = ui->list->currentItem();
+  QAction *chosenAction = menu.exec( ui->deviceList->viewport()->mapToGlobal( pos ) );
+  QListWidgetItem *currentItem = ui->deviceList->currentItem();
   //
   QString text = currentItem->text();
   int index = text.indexOf( ' ' );
@@ -273,7 +295,7 @@ void MainDialog::slotDevicePairingDone( const QBluetoothAddress &address, QBluet
 {
   lg->info( QString( "MainDialog::slotDevicePairingDone: device: %1" ).arg( address.toString() ) );
   //
-  QList< QListWidgetItem * > items = ui->list->findItems( address.toString(), Qt::MatchContains );
+  QList< QListWidgetItem * > items = ui->deviceList->findItems( address.toString(), Qt::MatchContains );
 
   if ( pairing == QBluetoothLocalDevice::Paired || pairing == QBluetoothLocalDevice::AuthorizedPaired )
   {
@@ -289,6 +311,21 @@ void MainDialog::slotDevicePairingDone( const QBluetoothAddress &address, QBluet
     {
       QListWidgetItem *item = items.at( var );
       item->setTextColor( QColor( Qt::red ) );
+    }
+  }
+}
+
+void MainDialog::slotMessageTimer( void )
+{
+  //
+  // wenn die Message noch da ist, langsam runterzählen
+  //
+  if ( --timerCountdowwn < 0 )
+  {
+    if ( ui->currentTaskLabel )
+    {
+      ui->currentTaskLabel->clear();
+      msgTimer.stop();
     }
   }
 }

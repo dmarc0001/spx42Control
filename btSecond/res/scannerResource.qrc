@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/scanner">
+        <file alias="workerAnimation">working.gif</file>
+        <file alias="worker">no_working.gif</file>
+    </qresource>
+</RCC>
