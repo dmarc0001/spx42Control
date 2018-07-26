@@ -8,6 +8,7 @@
 #include <QTimer>
 #include <memory>
 #include "bluetooth/SPX42BtDevices.hpp"
+#include "database/SPX42Database.hpp"
 #include "logging/Logger.hpp"
 #include "ui_BtDiscoverDialog.h"
 
@@ -18,29 +19,35 @@ namespace Ui
 
 namespace spx
 {
-  class BtDiscoveringDialog : public QDialog
+  // TODO: implementieren, dass die DB übergeben wird
+  static const QString testDbName = "spx42Database.db";
+
+  class BtDiscoverDialog : public QDialog
   {
     Q_OBJECT
 
     private:
-    std::shared_ptr< Logger > lg;
-    std::unique_ptr< SPX42BtDevices > btDevices;
-    std::unique_ptr< Ui::BtDiscoverDialog > ui;
-    std::unique_ptr< QMovie > movie;
-    QTimer msgTimer;
-    qint16 timerCountdowwn;
-    static const qint16 timerStartValue = 6;  //! Timer Zyklen bis zum löschen der Meldung
-    static const int timerInterval = 1000;    //! Timer interval in ms
+    std::shared_ptr< Logger > lg;                 //! Zeiger auf Logger
+    std::unique_ptr< SPX42BtDevices > btDevices;  //! Zeiger auf BT Geräte
+    std::unique_ptr< Ui::BtDiscoverDialog > ui;   //! GUI Objekt
+    std::unique_ptr< QMovie > movie;              //! Animation
+    QTimer msgTimer;                              //! Timeout für Meldungen
+    qint16 timerCountdowwn;                       //! Countdown
+    std::shared_ptr< SPX42Database > database;    //! Datenbank, geöffnet und bereit
+    static const qint16 timerStartValue = 6;      //! Timer Zyklen bis zum löschen der Meldung
+    static const int timerInterval = 1000;        //! Timer interval in ms
 
     public:
-    explicit BtDiscoveringDialog( QWidget *parent = nullptr );
-    ~BtDiscoveringDialog();
+    explicit BtDiscoverDialog( QWidget *parent = nullptr );
+    ~BtDiscoverDialog();
+    void debugSetDatabase( const QString strdPath );
 
     protected:
     void changeEvent( QEvent *e );
 
     private:
     void setMessage( const QString &msg );
+    void debugCloseDatabase( void );
 
     public slots:
     void slotDiscoveredDevice( const QBluetoothDeviceInfo & );

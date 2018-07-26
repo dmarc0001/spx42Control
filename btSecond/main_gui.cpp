@@ -1,5 +1,6 @@
 ﻿#include <QApplication>
-#include "BtDiscoveringDialog.hpp"
+#include <QStandardPaths>
+#include "BtDiscoverDialog.hpp"
 
 using namespace spx;
 
@@ -12,8 +13,10 @@ using namespace spx;
 int main( int argc, char *argv[] )
 {
   QApplication a( argc, argv );
-  BtDiscoveringDialog w;
-  QObject::connect( &w, &BtDiscoveringDialog::accepted, &a, &QApplication::quit );
+  QString stdPath = QStandardPaths::writableLocation( QStandardPaths::AppDataLocation );
+  BtDiscoverDialog w;
+  w.debugSetDatabase( stdPath );
+  QObject::connect( &w, &BtDiscoverDialog::accepted, &a, &QApplication::quit );
   w.show();
   return a.exec();
 }

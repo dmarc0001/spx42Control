@@ -1,4 +1,4 @@
-﻿#include "BtDiscoveringDialog.hpp"
+﻿#include "BtDiscoverDialog.hpp"
 #include <QMovie>
 
 namespace spx
@@ -7,7 +7,7 @@ namespace spx
    * @brief MainDialog::MainDialog Device scanner
    * @param parent
    */
-  BtDiscoveringDialog::BtDiscoveringDialog( QWidget *parent )
+  BtDiscoverDialog::BtDiscoverDialog( QWidget *parent )
       : QDialog( parent )
       , ui( std::unique_ptr< Ui::BtDiscoverDialog >( new Ui::BtDiscoverDialog ) )
       , msgTimer( this )
@@ -16,8 +16,10 @@ namespace spx
     ui->setupUi( this );
     ui->currentTaskLabel->setText( tr( "WAITING..." ) );
     ui->CancelPushButton->setText( tr( "CANCEL" ) );
+    // TODO: später entfernen
     lg = std::shared_ptr< Logger >( new Logger() );
     lg->startLogging( LG_DEBUG, "btsecond.log" );
+    //
     lg->debug( "MainDialog::MainDialog" );
     /*
      * In case of multiple Bluetooth adapters it is possible to set adapter
@@ -54,21 +56,21 @@ namespace spx
     // Signale zum Slots verbinden
     // GUI
     //
-    connect( ui->scanPushButton, &QPushButton::clicked, this, &BtDiscoveringDialog::slotGuiStartScan );
-    connect( ui->deviceList, &QListWidget::itemActivated, this, &BtDiscoveringDialog::slotGuiItemActivated );
-    connect( ui->deviceList, &QListWidget::customContextMenuRequested, this, &BtDiscoveringDialog::slotGuiDisplayPairingMenu );
+    connect( ui->scanPushButton, &QPushButton::clicked, this, &BtDiscoverDialog::slotGuiStartScan );
+    connect( ui->deviceList, &QListWidget::itemActivated, this, &BtDiscoverDialog::slotGuiItemActivated );
+    connect( ui->deviceList, &QListWidget::customContextMenuRequested, this, &BtDiscoverDialog::slotGuiDisplayPairingMenu );
     //
     // discovering agent object
     //
-    connect( btDevices.get(), &SPX42BtDevices::sigDiscoveredDevice, this, &BtDiscoveringDialog::slotDiscoveredDevice );
-    connect( btDevices.get(), &SPX42BtDevices::sigDiscoverScanFinished, this, &BtDiscoveringDialog::slotDiscoverScanFinished );
+    connect( btDevices.get(), &SPX42BtDevices::sigDiscoveredDevice, this, &BtDiscoverDialog::slotDiscoveredDevice );
+    connect( btDevices.get(), &SPX42BtDevices::sigDiscoverScanFinished, this, &BtDiscoverDialog::slotDiscoverScanFinished );
     connect( btDevices.get(), &SPX42BtDevices::sigDeviceHostModeStateChanged, this,
-             &BtDiscoveringDialog::slotDeviceHostModeStateChanged );
-    connect( btDevices.get(), &SPX42BtDevices::sigDevicePairingDone, this, &BtDiscoveringDialog::slotDevicePairingDone );
+             &BtDiscoverDialog::slotDeviceHostModeStateChanged );
+    connect( btDevices.get(), &SPX42BtDevices::sigDevicePairingDone, this, &BtDiscoverDialog::slotDevicePairingDone );
     //
     // timer füer messages verbinden
     //
-    connect( &msgTimer, &QTimer::timeout, this, &BtDiscoveringDialog::slotMessageTimer );
+    connect( &msgTimer, &QTimer::timeout, this, &BtDiscoverDialog::slotMessageTimer );
     //
     setMessage( tr( "SCANNER READY..." ) );
     lg->debug( "MainDialog::MainDialog: connect signals...OK" );
@@ -77,13 +79,29 @@ namespace spx
   /**
    * @brief MainDialog::~MainDialog
    */
-  BtDiscoveringDialog::~BtDiscoveringDialog()
+  BtDiscoverDialog::~BtDiscoverDialog()
   {
     lg->debug( "MainDialog::~MainDialog..." );
-    lg->shutdown();
+    // TODO: später entfernen
+    debugCloseDatabase();
+    // lg->shutdown();
   }
 
-  void BtDiscoveringDialog::setMessage( const QString &msg )
+  void BtDiscoverDialog::debugSetDatabase( const QString strdPath )
+  {
+    //
+    // TODO: später entfernen: Datenbank auftun
+    //
+    database = std::shared_ptr< SPX42Database >( new SPX42Database( lg, QString( "%1/%2" ).arg( strdPath ).arg( testDbName ), this ) );
+    QSqlError err = database->openDatabase();
+    if ( err.type() != QSqlError::NoError )
+    {
+      return;
+    }
+    database->getDeviceAliasHash();
+  }
+
+  void BtDiscoverDialog::setMessage( const QString &msg )
   {
     if ( ui->currentTaskLabel )
     {
@@ -104,7 +122,7 @@ namespace spx
    * @brief MainDialog::slotDiscoveredDevice
    * @param info
    */
-  void BtDiscoveringDialog::slotDiscoveredDevice( const QBluetoothDeviceInfo &info )
+  void BtDiscoverDialog::slotDiscoveredDevice( const QBluetoothDeviceInfo &info )
   {
     //
     // finde exakt den Eintrag, welcher angeklickt wurde
@@ -143,7 +161,7 @@ namespace spx
   /**
    * @brief MainDialog::slotGuiStartScan
    */
-  void BtDiscoveringDialog::slotGuiStartScan()
+  void BtDiscoverDialog::slotGuiStartScan()
   {
     lg->debug( "MainDialog::slotGuiStartScan..." );
     btDevices->setHostDiscoverable( true );
@@ -160,7 +178,7 @@ namespace spx
   /**
    * @brief MainDialog::slotDiscoverScanFinished
    */
-  void BtDiscoveringDialog::slotDiscoverScanFinished()
+  void BtDiscoverDialog::slotDiscoverScanFinished()
   {
     lg->debug( "MainDialog::slotDiscoverScanFinished..." );
     ui->scanPushButton->setEnabled( true );
@@ -175,7 +193,7 @@ namespace spx
    * @param item
    */
 
-  void BtDiscoveringDialog::slotGuiItemActivated( QListWidgetItem *item )
+  void BtDiscoverDialog::slotGuiItemActivated( QListWidgetItem *item )
   {
     QString text = item->text();
     int index = text.indexOf( ' ' );
@@ -208,7 +226,7 @@ namespace spx
    * @brief MainDialog::slotGuiPowerClicked
    * @param clicked
    */
-  void BtDiscoveringDialog::slotGuiPowerClicked( bool clicked )
+  void BtDiscoverDialog::slotGuiPowerClicked( bool clicked )
   {
     lg->debug( QString( "MainDialog::slotGuiPowerClicked: %1" ).arg( clicked ) );
     //
@@ -219,7 +237,7 @@ namespace spx
    * @brief MainDialog::slotDeviceHostModeStateChanged
    * @param mode
    */
-  void BtDiscoveringDialog::slotDeviceHostModeStateChanged( QBluetoothLocalDevice::HostMode mode )
+  void BtDiscoverDialog::slotDeviceHostModeStateChanged( QBluetoothLocalDevice::HostMode mode )
   {
     if ( mode != QBluetoothLocalDevice::HostPoweredOff )
     {
@@ -254,7 +272,7 @@ namespace spx
    * @brief MainDialog::slotGuiDisplayPairingMenu
    * @param pos
    */
-  void BtDiscoveringDialog::slotGuiDisplayPairingMenu( const QPoint &pos )
+  void BtDiscoverDialog::slotGuiDisplayPairingMenu( const QPoint &pos )
   {
     //
     // Gültigkeit des Eintrages testen
@@ -295,7 +313,7 @@ namespace spx
    * @param address
    * @param pairing
    */
-  void BtDiscoveringDialog::slotDevicePairingDone( const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing )
+  void BtDiscoverDialog::slotDevicePairingDone( const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing )
   {
     lg->info( QString( "MainDialog::slotDevicePairingDone: device: %1" ).arg( address.toString() ) );
     //
@@ -319,7 +337,7 @@ namespace spx
     }
   }
 
-  void BtDiscoveringDialog::slotMessageTimer( void )
+  void BtDiscoverDialog::slotMessageTimer( void )
   {
     //
     // wenn die Message noch da ist, langsam runterzählen
@@ -338,7 +356,7 @@ namespace spx
    * @brief MainDialog::changeEvent
    * @param e
    */
-  void BtDiscoveringDialog::changeEvent( QEvent *e )
+  void BtDiscoverDialog::changeEvent( QEvent *e )
   {
     QDialog::changeEvent( e );
     switch ( e->type() )
@@ -348,6 +366,14 @@ namespace spx
         break;
       default:
         break;
+    }
+  }
+
+  void BtDiscoverDialog::debugCloseDatabase( void )
+  {
+    if ( database->isDbOpen() )
+    {
+      database->closeDatabase();
     }
   }
 }

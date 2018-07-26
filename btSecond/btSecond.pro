@@ -5,6 +5,7 @@ QT                                     += core
 QT                                     += gui
 QT                                     += widgets
 QT                                     += bluetooth
+QT                                     += sql
 CONFIG                                 += stl
 CONFIG                                 += c++11
 DESTDIR                                = out
@@ -25,14 +26,16 @@ SOURCES += \
     bluetooth/BtServiceDiscover.cpp \
     bluetooth/SPX42BtDevices.cpp \
     bluetooth/BtDevicesManager.cpp \
-    BtDiscoveringDialog.cpp
+    BtDiscoverDialog.cpp \
+    database/SPX42Database.cpp
 
 HEADERS += \
     logging/Logger.hpp \
     bluetooth/BtServiceDiscover.hpp \
     bluetooth/SPX42BtDevices.hpp \
     bluetooth/BtDevicesManager.hpp \
-    BtDiscoveringDialog.hpp
+    BtDiscoverDialog.hpp \
+    database/SPX42Database.hpp
 
 FORMS += \
     ui/BtDiscoverDialog.ui
