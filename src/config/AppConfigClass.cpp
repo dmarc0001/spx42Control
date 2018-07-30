@@ -1,32 +1,35 @@
-﻿#include <QSettings>
-#include <QApplication>
+﻿#include <QApplication>
 #include <QDebug>
+#include <QSettings>
 
 #include "AppConfigClass.hpp"
 
 namespace spx
 {
-  const QString AppConfigClass::constBuildDate = SPX_BUILDTIME;
-  const QString AppConfigClass::constBuildNumStr = SPX_BUILDCOUNT;
-  const QString AppConfigClass::constLogGroupName = "logger";
-  const QString AppConfigClass::constLogFileKey = "logFileName";
-  const QString AppConfigClass::constNoData = "-";
-  const QString AppConfigClass::constAppGroupName = "application";
-  const QString AppConfigClass::constAppTimeoutKey = "watchdogTimeout";
-  const int AppConfigClass::defaultWatchdogTimerVal = 20 ;
-  const QString AppConfigClass::constAppThresholdKey = "loggingThreshold";
-  const qint8 AppConfigClass::defaultAppThreshold = 4;
+  const QString AppConfigClass::constBuildDate{SPX_BUILDTIME};
+  const QString AppConfigClass::constBuildNumStr{SPX_BUILDCOUNT};
+  const QString AppConfigClass::constLogGroupName{"logger"};
+  const QString AppConfigClass::constLogFileKey{"logFileName"};
+  const QString AppConfigClass::constNoData{"-"};
+  const QString AppConfigClass::constAppGroupName{"application"};
+  const QString AppConfigClass::constAppTimeoutKey{"watchdogTimeout"};
+  const QString AppConfigClass::constAppDatabaseNameKey{"databaseFile"};
+  const QString AppConfigClass::constAppDatabasePathKey{"databasePath"};
+  const int AppConfigClass::defaultWatchdogTimerVal{20};
+  const QString AppConfigClass::constAppThresholdKey{"loggingThreshold"};
+  const qint8 AppConfigClass::defaultAppThreshold{4};
+  const QString AppConfigClass::defaultDatabaseName{"spx42Database.db"};
+  const QString AppConfigClass::defaultDatabasePath{QStandardPaths::writableLocation( QStandardPaths::AppDataLocation )};
 
   /**
    * @brief LoggerClass::LoggerClass Der Konstruktor mit Name der Konfigdatei im Programmverzeichnis
    * @param cfg
    */
-  AppConfigClass::AppConfigClass(void)
-    : configFile(QApplication::applicationName() + ".ini")
+  AppConfigClass::AppConfigClass( void ) : configFile( QApplication::applicationName() + ".ini" ), databasePath( defaultDatabasePath )
   {
   }
 
-  AppConfigClass::~AppConfigClass(void)
+  AppConfigClass::~AppConfigClass( void )
   {
     qDebug().noquote() << "AppConfigClass::~AppConfigClass()";
     saveSettings();
@@ -36,28 +39,28 @@ namespace spx
    * @brief AppConfigClass::getConfigFile Gibt das konfigurierte CONFIG File zurück (aus loadSettings)
    * @return
    */
-  QString AppConfigClass::getConfigFile(void) const
+  QString AppConfigClass::getConfigFile( void ) const
   {
-    return( configFile );
+    return ( configFile );
   }
 
   /**
-  * @brief LoggerClass::loadSettings Lade Einstellungen aus der Datei
-  * @return
-  */
-  bool AppConfigClass::loadSettings(void)
+   * @brief LoggerClass::loadSettings Lade Einstellungen aus der Datei
+   * @return
+   */
+  bool AppConfigClass::loadSettings( void )
   {
     qDebug().noquote() << "AppConfigClass::loadSettings(void) CONFIG: <" + configFile + ">";
-    QSettings settings(configFile, QSettings::IniFormat);
-    if( !loadLogSettings(settings) )
+    QSettings settings( configFile, QSettings::IniFormat );
+    if ( !loadLogSettings( settings ) )
     {
       makeDefaultLogSettings( settings );
     }
-    if( ! loadAppSettings( settings ) )
+    if ( !loadAppSettings( settings ) )
     {
       makeAppDefaultSettings( settings );
     }
-    return( true );
+    return ( true );
   }
 
   /**
@@ -65,48 +68,46 @@ namespace spx
    * @param cFile
    * @return
    */
-  bool AppConfigClass::loadSettings( QString& cFile)
+  bool AppConfigClass::loadSettings( QString &cFile )
   {
     qDebug().noquote() << "AppConfigClass::loadSettings(" << cFile << ")";
     configFile = cFile;
-    QSettings settings(configFile, QSettings::IniFormat);
-    if( !loadLogSettings(settings) )
+    QSettings settings( configFile, QSettings::IniFormat );
+    if ( !loadLogSettings( settings ) )
     {
       makeDefaultLogSettings( settings );
     }
-    if( ! loadAppSettings( settings ) )
+    if ( !loadAppSettings( settings ) )
     {
       makeAppDefaultSettings( settings );
     }
-    return( true );
+    return ( true );
   }
-
 
   /**
    * @brief LoggerClass::saveSettings sichere Einstellunge in Datei
    * @return
    */
-  bool AppConfigClass::saveSettings(void)
+  bool AppConfigClass::saveSettings( void )
   {
     qDebug().noquote() << "AppConfigClass::saveSettings()";
     bool retVal = true;
     qDebug().noquote() << "AppConfigClass::saveSettings(void) CONFIG: <" + configFile + ">";
-    //QSettings settings(configFile, QSettings::NativeFormat);
-    QSettings settings(configFile, QSettings::IniFormat);
+    // QSettings settings(configFile, QSettings::NativeFormat);
+    QSettings settings( configFile, QSettings::IniFormat );
     //
     // die Logeinstellungen sichern
     //
-    if( !saveLogSettings( settings ) )
+    if ( !saveLogSettings( settings ) )
     {
       retVal = false;
     }
-    if( ! saveAppSettings( settings ))
+    if ( !saveAppSettings( settings ) )
     {
       retVal = false;
     }
-    return( retVal );
+    return ( retVal );
   }
-
 
   /*###########################################################################
    ############################################################################
@@ -118,7 +119,7 @@ namespace spx
    * @brief AppConfigClass::getLogfileName Gib den Namen der LOGDATEI zurück
    * @return
    */
-  QString AppConfigClass::getLogfileName(void) const
+  QString AppConfigClass::getLogfileName( void ) const
   {
     return logfileName;
   }
@@ -127,7 +128,7 @@ namespace spx
    * @brief AppConfigClass::setLogfileName Setze den Dateinamen des LOGFILES
    * @param value
    */
-  void AppConfigClass::setLogfileName(const QString& value)
+  void AppConfigClass::setLogfileName( const QString &value )
   {
     logfileName = value;
   }
@@ -137,19 +138,19 @@ namespace spx
    * @param settings
    * @return
    */
-  bool AppConfigClass::loadLogSettings(QSettings& settings)
+  bool AppConfigClass::loadLogSettings( QSettings &settings )
   {
     bool retval = true;
     qDebug().noquote() << "AppConfigClass::loadLogSettings()";
     //
     // Öffne die Gruppe Logeinstellungen
     //
-    settings.beginGroup(constLogGroupName);
+    settings.beginGroup( constLogGroupName );
     //
     // Lese den Dateinamen aus
     //
-    logfileName = settings.value(constLogFileKey, AppConfigClass::constNoData).toString();
-    if( QString::compare(logfileName, constNoData) == 0 )
+    logfileName = settings.value( constLogFileKey, AppConfigClass::constNoData ).toString();
+    if ( QString::compare( logfileName, constNoData ) == 0 )
     {
       // Nicht gefunden -> Fehler markieren
       retval = false;
@@ -162,25 +163,25 @@ namespace spx
     //
     // Ergebnis kommunizieren
     //
-    return( retval );
+    return ( retval );
   }
 
   /**
    * @brief AppConfigClass::makeDefaultLogSettings Erzeuge VORGABE Einstellungen für LOGGING
    * @param settings
    */
-  void AppConfigClass::makeDefaultLogSettings( QSettings& settings )
+  void AppConfigClass::makeDefaultLogSettings( QSettings &settings )
   {
     qDebug().noquote() << "AppConfigClass::makeDefaultLogSettings()";
     //
     // Öffne die Gruppe Logeinstellungen
     //
-    settings.beginGroup(constLogGroupName);
+    settings.beginGroup( constLogGroupName );
     //
     // defaultwerte setzten
     //
     logfileName = QApplication::applicationName() + ".log";
-    settings.setValue(constLogFileKey, logfileName );
+    settings.setValue( constLogFileKey, logfileName );
     //
     // Ende der Gruppe
     //
@@ -192,22 +193,21 @@ namespace spx
    * @param settings
    * @return
    */
-  bool AppConfigClass::saveLogSettings(QSettings& settings)
+  bool AppConfigClass::saveLogSettings( QSettings &settings )
   {
     qDebug().noquote().nospace() << "AppConfigClass::saveLogSettings() DATEI: <" + configFile + ">";
     //
     // Öffne die Gruppe Logeinstellungen
     //
-    settings.beginGroup(constLogGroupName);
+    settings.beginGroup( constLogGroupName );
     //
-    settings.setValue(constLogFileKey, logfileName );
+    settings.setValue( constLogFileKey, logfileName );
     //
     // Ende der Gruppe
     //
     settings.endGroup();
-    return( true );
+    return ( true );
   }
-
 
   /*###########################################################################
    ############################################################################
@@ -215,33 +215,33 @@ namespace spx
    ############################################################################
   ###########################################################################*/
 
-  int AppConfigClass::getWatchdogTime(void)
+  int AppConfigClass::getWatchdogTime( void )
   {
-    return( watchdogTimer );
+    return ( watchdogTimer );
   }
   void AppConfigClass::setLogThreshold( qint8 th )
   {
     logThreshold = th;
   }
 
-  qint8 AppConfigClass::getLogTreshold(void)
+  qint8 AppConfigClass::getLogTreshold( void )
   {
-    return( logThreshold );
+    return ( logThreshold );
   }
 
-  bool AppConfigClass::loadAppSettings( QSettings& settings)
+  bool AppConfigClass::loadAppSettings( QSettings &settings )
   {
     bool retval = true;
     qDebug().noquote() << "AppConfigClass::loadAppSettings()";
     //
     // Öffne die Gruppe app
     //
-    settings.beginGroup(constAppGroupName);
+    settings.beginGroup( constAppGroupName );
     //
     // Lese den Timeoutwert
     //
-    watchdogTimer = settings.value(constAppTimeoutKey, 0).toInt();
-    if( watchdogTimer == 0 )
+    watchdogTimer = settings.value( constAppTimeoutKey, 0 ).toInt();
+    if ( watchdogTimer == 0 )
     {
       // Nicht gefunden -> Fehler markieren
       retval = false;
@@ -250,13 +250,19 @@ namespace spx
     //
     // Lese die Loggerstufe
     //
-    logThreshold = (qint8)(settings.value(constAppThresholdKey, 0).toInt() & 0xff);
-    if( logThreshold == 0 )
+    logThreshold = static_cast< qint8 >( settings.value( constAppThresholdKey, 0 ).toInt() & 0xff );
+    if ( logThreshold == 0 )
     {
       // Nicht gefunden -> default DEBUG
       logThreshold = defaultAppThreshold;
     }
     qDebug().noquote().nospace() << "AppConfigClass::loadAppSettings(): logThreshold: <" << logThreshold << ">";
+    //
+    // lese den Namen der Datenbank
+    //
+    databaseName = settings.value( constAppDatabaseNameKey, defaultDatabaseName ).toString();
+    databasePath = settings.value( constAppDatabasePathKey, defaultDatabasePath ).toString();
+    qDebug().noquote().nospace() << "AppConfigClass::loadAppSettings(): database: <" << databasePath << "/" << databaseName << ">";
     //
     // Ende der Gruppe
     //
@@ -264,45 +270,53 @@ namespace spx
     //
     // Ergebnis kommunizieren
     //
-    return( retval );
+    return ( retval );
   }
 
-  void AppConfigClass::makeAppDefaultSettings( QSettings& settings )
+  void AppConfigClass::makeAppDefaultSettings( QSettings &settings )
   {
     qDebug().noquote() << "AppConfigClass::makeAppDefaultSettings()";
     //
     // Öffne die Gruppe App
     //
-    settings.beginGroup(constAppGroupName);
+    settings.beginGroup( constAppGroupName );
     //
     // defaultwerte setzten
     //
     watchdogTimer = AppConfigClass::defaultWatchdogTimerVal;
-    settings.setValue(constAppTimeoutKey, watchdogTimer );
+    settings.setValue( constAppTimeoutKey, watchdogTimer );
     logThreshold = defaultAppThreshold;
-    settings.setValue(constAppThresholdKey, (int)logThreshold );
+    settings.setValue( constAppThresholdKey, static_cast< int >( logThreshold ) );
+    databaseName = defaultDatabaseName;
+    settings.setValue( constAppDatabaseNameKey, databaseName );
+    databasePath = defaultDatabasePath;
+    settings.setValue( constAppDatabasePathKey, databasePath );
     //
     // Ende der Gruppe
     //
     settings.endGroup();
   }
 
-  bool AppConfigClass::saveAppSettings(QSettings& settings)
+  bool AppConfigClass::saveAppSettings( QSettings &settings )
   {
     //
     // Öffne die Gruppe Logeinstellungen
     //
-    settings.beginGroup(constAppGroupName);
+    settings.beginGroup( constAppGroupName );
     //
     qDebug().noquote().nospace() << "AppConfigClass::saveAppSettings watchdog timer: <" << watchdogTimer << ">";
-    settings.setValue(constAppTimeoutKey, watchdogTimer );
+    settings.setValue( constAppTimeoutKey, watchdogTimer );
     qDebug().noquote().nospace() << "AppConfigClass::saveAppSettings threshold: <" << logThreshold << ">";
-    settings.setValue(constAppThresholdKey, (int)logThreshold );
+    settings.setValue( constAppThresholdKey, static_cast< int >( logThreshold ) );
+    qDebug().noquote().nospace() << "AppConfigClass::saveAppSettings databasename: <" << databaseName << ">";
+    settings.setValue( constAppDatabaseNameKey, databaseName );
+    qDebug().noquote().nospace() << "AppConfigClass::saveAppSettings databasepath: <" << databasePath << ">";
+    settings.setValue( constAppDatabasePathKey, databasePath );
     //
     // Ende der Gruppe
     //
     settings.endGroup();
-    return( true );
+    return ( true );
   }
 
   QString AppConfigClass::getBuildDate()
@@ -315,5 +329,32 @@ namespace spx
     return constBuildNumStr;
   }
 
+  QString AppConfigClass::getDatabaseName() const
+  {
+    return databaseName;
+  }
 
+  void AppConfigClass::setDatabaseName( const QString &value )
+  {
+    databaseName = value;
+  }
+
+  QString AppConfigClass::getDatabasePath() const
+  {
+    return databasePath;
+  }
+
+  void AppConfigClass::setDatabasePath( const QString &value )
+  {
+    databasePath = value;
+  }
+
+  QString AppConfigClass::getFullDatabaseLocation( void ) const
+  {
+    // um korrekte Pfade zu erzeugen ein QFileobjekt
+    QFile dbFile( QString().append( databasePath ).append( "/" ).append( databaseName ) );
+    // Fileinfo zur korrekten erzeugung des kompletten Pfdades
+    QFileInfo dbFileInfo( dbFile );
+    return ( dbFileInfo.filePath() );
+  }
 }

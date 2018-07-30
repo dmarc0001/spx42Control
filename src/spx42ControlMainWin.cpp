@@ -1,5 +1,5 @@
 ﻿#include "Spx42ControlMainWin.hpp"
-#include "ui_Spx42controlmainwin.h"
+#include "ui_Spx42ControlMainWin.h"
 
 namespace spx
 {
@@ -7,12 +7,12 @@ namespace spx
    * @brief Der Konstruktor des Hauptfensters
    * @param parent Elternteil...
    */
-  SPX42ControlMainWin::SPX42ControlMainWin(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::SPX42ControlMainWin ),
-    watchdog( new QTimer(this) ),
-    spx42Config(new SPX42Config() ),
-    currentStatus( ApplicationStat::STAT_OFFLINE )
+  SPX42ControlMainWin::SPX42ControlMainWin( QWidget *parent )
+      : QMainWindow( parent )
+      , ui( new Ui::SPX42ControlMainWin )
+      , watchdog( new QTimer( this ) )
+      , spx42Config( new SPX42Config() )
+      , currentStatus( ApplicationStat::STAT_OFFLINE )
   {
     //
     // Hilfebutton ausblenden
@@ -25,50 +25,48 @@ namespace spx
     //
     // Programmlogger initialisieren
     //
-    if( !createLogger() )
+    if ( !createLogger() )
     {
       exit( -1 );
     }
-    lg->debug( QString("SPX42ControlMainWin::SPX42ControlMainWin:").append( "Program start..." ) );
-    lg->debug( QString("SPX42ControlMainWin::SPX42ControlMainWin:").append( "Program build date:   " ).append(cf.getBuildDate()) );
-    lg->debug( QString("SPX42ControlMainWin::SPX42ControlMainWin:").append( "Program build number: " ).append(cf.getBuildNumStr()) );
+    lg->debug( QString( "SPX42ControlMainWin::SPX42ControlMainWin:" ).append( "Program start..." ) );
+    lg->debug( QString( "SPX42ControlMainWin::SPX42ControlMainWin:" ).append( "Program build date:   " ).append( cf.getBuildDate() ) );
+    lg->debug(
+        QString( "SPX42ControlMainWin::SPX42ControlMainWin:" ).append( "Program build number: " ).append( cf.getBuildNumStr() ) );
+    spx42Database = std::shared_ptr< SPX42Database >( new SPX42Database( lg, cf.getFullDatabaseLocation(), this ) );
     //
     // GUI initialisieren
     //
-    ui->setupUi(this);
+    ui->setupUi( this );
     //
     // Font laden
     //
-    int id1 = QFontDatabase::addApplicationFont(":/fonts/Hack-Regular.ttf");
-    int id2 = QFontDatabase::addApplicationFont(":/fonts/DejaVuSansMono.ttf");
-    if( id1 < 0 || id2 < 0 )
+    int id1 = QFontDatabase::addApplicationFont( ":/fonts/Hack-Regular.ttf" );
+    int id2 = QFontDatabase::addApplicationFont( ":/fonts/DejaVuSansMono.ttf" );
+    if ( id1 < 0 || id2 < 0 )
     {
-      QMessageBox::critical(this,tr("CRITICAL"), tr("internal font can't load!"));
+      QMessageBox::critical( this, tr( "CRITICAL" ), tr( "internal font can't load!" ) );
     }
     else
     {
-    #ifdef UNIX
-      setFont(QFont("DejaVu Sans Mono", 11));
-    #else
-      setFont(QFont("DejaVu Sans Mono", 12));
-    #endif
+#ifdef UNIX
+      setFont( QFont( "DejaVu Sans Mono", 11 ) );
+#else
+      setFont( QFont( "DejaVu Sans Mono", 12 ) );
+#endif
     }
-    //
-    // erzeuge ein Bluethooth Objekt
-    //
+//
+// erzeuge ein Bluethooth Objekt
+//
 
-
-
-
-
-    //
-    // das folgende wird nur kompiliert, wenn DEBUG NICHT konfiguriert ist
-    //
-    #ifndef DEBUG
+//
+// das folgende wird nur kompiliert, wenn DEBUG NICHT konfiguriert ist
+//
+#ifndef DEBUG
     ui->menuDEBUGGING->clear();
-    ui->menuDEBUGGING->setParent(Q_NULLPTR);
+    ui->menuDEBUGGING->setParent( Q_NULLPTR );
     delete ( ui->menuDEBUGGING );
-    #endif
+#endif
     //
     fillTabTitleArray();
     //
@@ -82,7 +80,7 @@ namespace spx
     //
     // Actions mit den richtigen Slots verbinden
     //
-    ui->areaTabWidget->setCurrentIndex(0);
+    ui->areaTabWidget->setCurrentIndex( 0 );
     tabCurrentChangedSlot( 0 );
     connectActions();
   }
@@ -94,14 +92,14 @@ namespace spx
   {
     try
     {
-      if( watchdog->isActive() )
+      if ( watchdog->isActive() )
       {
         watchdog->stop();
       }
     }
-    catch( std::exception ex )
+    catch ( std::exception ex )
     {
-      lg->crit("SPX42ControlMainWin::~SPX42ControlMainWin -> watchdog stopping failed");
+      lg->crit( "SPX42ControlMainWin::~SPX42ControlMainWin -> watchdog stopping failed" );
     }
     lg->shutdown();
   }
@@ -110,24 +108,24 @@ namespace spx
    * @brief Ereignis bei der Anfrage nach Beenden der App
    * @param event Das Ereignis
    */
-  void SPX42ControlMainWin::closeEvent(QCloseEvent *event)
+  void SPX42ControlMainWin::closeEvent( QCloseEvent *event )
   {
     QMessageBox msgBox;
-    msgBox.setText(tr("Really EXIT?"));
-    msgBox.setDetailedText( tr("Will you really quit this programm and close all files, databases, connections?"));
-    msgBox.setIcon(QMessageBox::Question);
-    msgBox.setStandardButtons(QMessageBox::No|QMessageBox::Yes);
-    lg->debug("SPX42ControlMainWin::closeEvent -> show dialogbox...");
-    if( QMessageBox::Yes != msgBox.exec() )
+    msgBox.setText( tr( "Really EXIT?" ) );
+    msgBox.setDetailedText( tr( "Will you really quit this programm and close all files, databases, connections?" ) );
+    msgBox.setIcon( QMessageBox::Question );
+    msgBox.setStandardButtons( QMessageBox::No | QMessageBox::Yes );
+    lg->debug( "SPX42ControlMainWin::closeEvent -> show dialogbox..." );
+    if ( QMessageBox::Yes != msgBox.exec() )
     {
       event->ignore();
-      lg->debug("SPX42ControlMainWin::closeEvent -> ignore close application...");
+      lg->debug( "SPX42ControlMainWin::closeEvent -> ignore close application..." );
       return;
     }
     event->accept();
-    lg->debug("SPX42ControlMainWin::closeEvent -> close application...");
-    //TODO: Aufräumen, Datenbanke schliessen, Connection beenden
-    QMainWindow::closeEvent(event);
+    lg->debug( "SPX42ControlMainWin::closeEvent -> close application..." );
+    // TODO: Aufräumen, Datenbanke schliessen, Connection beenden
+    QMainWindow::closeEvent( event );
   }
 
   /**
@@ -137,18 +135,19 @@ namespace spx
   bool SPX42ControlMainWin::createLogger()
   {
     // erzeuge einen Logger mit
-    lg = std::shared_ptr<Logger>(new Logger( std::shared_ptr<AppConfigClass>(&cf) ));
-    if( lg )
+    lg = std::shared_ptr< Logger >( new Logger() );
+    if ( lg )
     {
-      lg->startLogging(static_cast<LgThreshold>(cf.getLogTreshold()));
-      return (true);
+      lg->startLogging( static_cast< LgThreshold >( cf.getLogTreshold() ), cf.getLogfileName() );
+      return ( true );
     }
+
     QMessageBox msgBox;
-    msgBox.setText(tr("Logging start FAIL!"));
-    msgBox.setDetailedText( tr("Check write rights for program directory or reinstall software."));
-    msgBox.setIcon(QMessageBox::Critical);
+    msgBox.setText( tr( "Logging start FAIL!" ) );
+    msgBox.setDetailedText( tr( "Check write rights for program directory or reinstall software." ) );
+    msgBox.setIcon( QMessageBox::Critical );
     msgBox.exec();
-    return (false);
+    return ( false );
   }
 
   /**
@@ -157,11 +156,11 @@ namespace spx
   void SPX42ControlMainWin::fillTabTitleArray( void )
   {
     tabTitle.clear();
-    tabTitle << tr("Connection");   // CONNECT_TAB
-    tabTitle << tr("SPX42 Config"); // CONFIG_TAB
-    tabTitle << tr("Gas Lists");    // GAS_TAB
-    tabTitle << tr("Diving Log");   // Logger-Tab
-    tabTitle << tr("Log Charts");   // Loggiing CHARTS
+    tabTitle << tr( "Connection" );    // CONNECT_TAB
+    tabTitle << tr( "SPX42 Config" );  // CONFIG_TAB
+    tabTitle << tr( "Gas Lists" );     // GAS_TAB
+    tabTitle << tr( "Diving Log" );    // Logger-Tab
+    tabTitle << tr( "Log Charts" );    // Loggiing CHARTS
   }
 
   /**
@@ -170,31 +169,31 @@ namespace spx
    */
   bool SPX42ControlMainWin::setActionStati( void )
   {
-    switch( currentStatus )
+    switch ( currentStatus )
     {
       case ApplicationStat::STAT_OFFLINE:
-        ui->actionAbout->setEnabled(true);
-        ui->actionActionPrint->setEnabled(false);
-        ui->actionConnectBluetooth->setEnabled(true);
-        ui->actionOpenDB->setEnabled(true);
-        ui->actionSettings->setEnabled(true);
+        ui->actionAbout->setEnabled( true );
+        ui->actionActionPrint->setEnabled( false );
+        ui->actionConnectBluetooth->setEnabled( true );
+        ui->actionOpenDB->setEnabled( true );
+        ui->actionSettings->setEnabled( true );
         break;
       case ApplicationStat::STAT_ONLINE:
-        ui->actionAbout->setEnabled(true);
-        ui->actionActionPrint->setEnabled(false);
-        ui->actionConnectBluetooth->setEnabled(false);
-        ui->actionOpenDB->setEnabled(true);
-        ui->actionSettings->setEnabled(true);
+        ui->actionAbout->setEnabled( true );
+        ui->actionActionPrint->setEnabled( false );
+        ui->actionConnectBluetooth->setEnabled( false );
+        ui->actionOpenDB->setEnabled( true );
+        ui->actionSettings->setEnabled( true );
         break;
       case ApplicationStat::STAT_ERROR:
-        ui->actionAbout->setEnabled(true);
-        ui->actionActionPrint->setEnabled(false);
-        ui->actionConnectBluetooth->setEnabled(true);
-        ui->actionOpenDB->setEnabled(false);
-        ui->actionSettings->setEnabled(true);
+        ui->actionAbout->setEnabled( true );
+        ui->actionActionPrint->setEnabled( false );
+        ui->actionConnectBluetooth->setEnabled( true );
+        ui->actionOpenDB->setEnabled( false );
+        ui->actionSettings->setEnabled( true );
         break;
     }
-    return( true );
+    return ( true );
   }
 
   /**
@@ -209,20 +208,32 @@ namespace spx
       connect( ui->actionQUIT, &QAction::triggered, this, &SPX42ControlMainWin::quitActionSlot );
       connect( ui->areaTabWidget, &QTabWidget::currentChanged, this, &SPX42ControlMainWin::tabCurrentChangedSlot );
       connect( spx42Config.get(), &SPX42Config::licenseChangedSig, this, &SPX42ControlMainWin::licenseChangedSlot );
-  #ifdef DEBUG
-      connect( ui->actionNitrox, &QAction::triggered, this, [=] (bool tr) { if( tr ) simulateLicenseChanged( LicenseType::LIC_NITROX ); } );
-      connect( ui->actionNormoxic_TMX, &QAction::triggered, this, [=] (bool tr) { if( tr ) simulateLicenseChanged( LicenseType::LIC_NORMOXIX ); } );
-      connect( ui->actionFull_TMX, &QAction::triggered, this, [=] (bool tr) { if( tr ) simulateLicenseChanged( LicenseType::LIC_FULLTMX ); } );
-      connect( ui->actionMilitary, &QAction::triggered, this, [=] (bool tr) { if( tr ) simulateLicenseChanged( LicenseType::LIC_MIL ); } );
+#ifdef DEBUG
+      connect( ui->actionNitrox, &QAction::triggered, this, [=]( bool tr ) {
+        if ( tr )
+          simulateLicenseChanged( LicenseType::LIC_NITROX );
+      } );
+      connect( ui->actionNormoxic_TMX, &QAction::triggered, this, [=]( bool tr ) {
+        if ( tr )
+          simulateLicenseChanged( LicenseType::LIC_NORMOXIX );
+      } );
+      connect( ui->actionFull_TMX, &QAction::triggered, this, [=]( bool tr ) {
+        if ( tr )
+          simulateLicenseChanged( LicenseType::LIC_FULLTMX );
+      } );
+      connect( ui->actionMilitary, &QAction::triggered, this, [=]( bool tr ) {
+        if ( tr )
+          simulateLicenseChanged( LicenseType::LIC_MIL );
+      } );
       connect( ui->actionINDIVIDUAL_LIC, &QAction::triggered, this, &SPX42ControlMainWin::simulateIndividualLicenseChanged );
-  #endif
+#endif
     }
-    catch(std::exception ex )
+    catch ( std::exception ex )
     {
-      lg->crit( QString("exception while connecting signals to slots (").append(ex.what()).append( ")"));
-      return( false );
+      lg->crit( QString( "exception while connecting signals to slots (" ).append( ex.what() ).append( ")" ) );
+      return ( false );
     }
-    return( true );
+    return ( true );
   }
 
   /**
@@ -242,14 +253,14 @@ namespace spx
    */
   void SPX42ControlMainWin::createApplicationTabs( void )
   {
-     QWidget* wg;
+    QWidget *wg;
     //
     // lasse die TABs und Inhalte verschwinden
     //
-    while (ui->areaTabWidget->count() )
+    while ( ui->areaTabWidget->count() )
     {
-      QWidget *canDel = ui->areaTabWidget->widget(0);
-      ui->areaTabWidget->removeTab(0);
+      QWidget *canDel = ui->areaTabWidget->widget( 0 );
+      ui->areaTabWidget->removeTab( 0 );
       delete canDel;
     }
     //
@@ -257,32 +268,32 @@ namespace spx
     // ACHTUNG: tabTitle hat eine Grösse, bein einfügen tabTitle erweitern
     //
     wg = new QWidget();
-    wg->setObjectName("DUMMY");
-    ui->areaTabWidget->addTab(wg, tabTitle.at(0));
+    wg->setObjectName( "DUMMY" );
+    ui->areaTabWidget->addTab( wg, tabTitle.at( 0 ) );
     //
     // der CONFIG-Platzhalter
     //
     wg = new QWidget();
-    wg->setObjectName("DUMMY");
-    ui->areaTabWidget->addTab(wg, tabTitle.at(1));
+    wg->setObjectName( "DUMMY" );
+    ui->areaTabWidget->addTab( wg, tabTitle.at( 1 ) );
     //
     // der Gaslisten-Platzhalter
     //
     wg = new QWidget();
-    wg->setObjectName("DUMMY");
-    ui->areaTabWidget->addTab(wg, tabTitle.at(2));
+    wg->setObjectName( "DUMMY" );
+    ui->areaTabWidget->addTab( wg, tabTitle.at( 2 ) );
     //
     // der Logging-Platzhalter
     //
     wg = new QWidget();
-    wg->setObjectName("DUMMY");
-    ui->areaTabWidget->addTab(wg, tabTitle.at(3));
+    wg->setObjectName( "DUMMY" );
+    ui->areaTabWidget->addTab( wg, tabTitle.at( 3 ) );
     //
     // der Chart Platzhalter
     //
     wg = new QWidget();
-    wg->setObjectName("DUMMY");
-    ui->areaTabWidget->addTab(wg, tabTitle.at(4));
+    wg->setObjectName( "DUMMY" );
+    ui->areaTabWidget->addTab( wg, tabTitle.at( 4 ) );
   }
 
   /**
@@ -290,22 +301,22 @@ namespace spx
    */
   void SPX42ControlMainWin::clearApplicationTabs( void )
   {
-    #ifdef DEBUG
-    for( int i = 0; i < ui->areaTabWidget->count(); i++ )
+#ifdef DEBUG
+    for ( int i = 0; i < ui->areaTabWidget->count(); i++ )
     {
       QWidget *currObj = ui->areaTabWidget->widget( i );
-      if( ! QString(currObj->metaObject()->className()).startsWith( "QWidget" ) )
+      if ( !QString( currObj->metaObject()->className() ).startsWith( "QWidget" ) )
       {
-        lg->debug( QString("SPX42ControlMainWin::clearApplicationTabs -> <%1> should delete").arg(currObj->objectName()) );
-        QString title = ui->areaTabWidget->tabText( i ).append("-D");
-        ui->areaTabWidget->removeTab(i);
+        lg->debug( QString( "SPX42ControlMainWin::clearApplicationTabs -> <%1> should delete" ).arg( currObj->objectName() ) );
+        QString title = ui->areaTabWidget->tabText( i ).append( "-D" );
+        ui->areaTabWidget->removeTab( i );
         delete currObj;
         currObj = new QWidget();
-        currObj->setObjectName("DUMMY");
+        currObj->setObjectName( "DUMMY" );
         ui->areaTabWidget->insertTab( i, currObj, title );
       }
     }
-    #endif
+#endif
   }
 
   /**
@@ -314,7 +325,7 @@ namespace spx
    */
   ApplicationTab SPX42ControlMainWin::getApplicationTab( void )
   {
-    return( currentTab );
+    return ( currentTab );
   }
 
   /**
@@ -323,7 +334,7 @@ namespace spx
    */
   void SPX42ControlMainWin::aboutActionSlot( bool checked )
   {
-    lg->debug(QString("SPX42ControlMainWin::aboutActionSlot <%1>").arg(checked));
+    lg->debug( QString( "SPX42ControlMainWin::aboutActionSlot <%1>" ).arg( checked ) );
     AboutDialog dlg( this, cf, lg );
     dlg.exec();
   }
@@ -334,7 +345,7 @@ namespace spx
    */
   void SPX42ControlMainWin::quitActionSlot( bool checked )
   {
-    lg->debug(QString("SPX42ControlMainWin::quitActionSlot <%1>").arg(checked));
+    lg->debug( QString( "SPX42ControlMainWin::quitActionSlot <%1>" ).arg( checked ) );
     close();
   }
 
@@ -347,117 +358,116 @@ namespace spx
     static bool ignore = false;
     QWidget *currObj;
 
-    if( ignore )
+    if ( ignore )
     {
       return;
     }
     ignore = true;
-    lg->debug(QString("SPX42ControlMainWin::tabCurrentChanged -> new index <%1>").arg(idx, 2, 10, QChar('0')));
+    lg->debug( QString( "SPX42ControlMainWin::tabCurrentChanged -> new index <%1>" ).arg( idx, 2, 10, QChar( '0' ) ) );
     clearApplicationTabs();  // DEBUG:
     //
     // alten Inhalt entfernen
     //
-    QWidget *oldTab = ui->areaTabWidget->widget(idx);
-    ui->areaTabWidget->removeTab(idx);
+    QWidget *oldTab = ui->areaTabWidget->widget( idx );
+    ui->areaTabWidget->removeTab( idx );
     delete oldTab;
     //
     // Neuen Inhalt des Tabs aufbauen
     //
-    switch( idx )
+    switch ( idx )
     {
-      //default:
-      case static_cast<int>(ApplicationTab::CONNECT_TAB):
-        lg->debug("SPX42ControlMainWin::setApplicationTab -> CONNECT TAB...");
-        currObj = new ConnectFragment( Q_NULLPTR, lg, spx42Config);
+      // default:
+      case static_cast< int >( ApplicationTab::CONNECT_TAB ):
+        lg->debug( "SPX42ControlMainWin::setApplicationTab -> CONNECT TAB..." );
+        currObj = new ConnectFragment( Q_NULLPTR, lg, spx42Config );
         currObj->setObjectName( "spx42Connect" );
-        ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at(static_cast<int>(ApplicationTab::CONNECT_TAB)) );
+        ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::CONNECT_TAB ) ) );
         currentTab = ApplicationTab::CONNECT_TAB;
         break;
 
-      case static_cast<int>(ApplicationTab::CONFIG_TAB):
-        lg->debug("SPX42ControlMainWin::setApplicationTab -> CONFIG TAB...");
-        currObj = new DeviceConfigFragment( Q_NULLPTR, lg, spx42Config);
+      case static_cast< int >( ApplicationTab::CONFIG_TAB ):
+        lg->debug( "SPX42ControlMainWin::setApplicationTab -> CONFIG TAB..." );
+        currObj = new DeviceConfigFragment( Q_NULLPTR, lg, spx42Config );
         currObj->setObjectName( "spx42Config" );
-        ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at(static_cast<int>(ApplicationTab::CONFIG_TAB)) );
+        ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::CONFIG_TAB ) ) );
         currentTab = ApplicationTab::CONFIG_TAB;
         break;
 
-      case static_cast<int>(ApplicationTab::GAS_TAB):
-        lg->debug("SPX42ControlMainWin::setApplicationTab -> GAS TAB...");
-        currObj = new GasFragment( Q_NULLPTR, lg, spx42Config);
+      case static_cast< int >( ApplicationTab::GAS_TAB ):
+        lg->debug( "SPX42ControlMainWin::setApplicationTab -> GAS TAB..." );
+        currObj = new GasFragment( Q_NULLPTR, lg, spx42Config );
         currObj->setObjectName( "spx42Gas" );
-        ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at(static_cast<int>(ApplicationTab::GAS_TAB)) );
+        ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::GAS_TAB ) ) );
         currentTab = ApplicationTab::GAS_TAB;
         break;
 
-      case static_cast<int>(ApplicationTab::LOG_TAB):
-        lg->debug("SPX42ControlMainWin::setApplicationTab -> LOG TAB...");
-        currObj = new LogFragment( Q_NULLPTR, lg, spx42Config);
+      case static_cast< int >( ApplicationTab::LOG_TAB ):
+        lg->debug( "SPX42ControlMainWin::setApplicationTab -> LOG TAB..." );
+        currObj = new LogFragment( Q_NULLPTR, lg, spx42Config );
         currObj->setObjectName( "spx42log" );
-        ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at(static_cast<int>(ApplicationTab::LOG_TAB)) );
+        ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::LOG_TAB ) ) );
         currentTab = ApplicationTab::LOG_TAB;
         break;
 
-      case static_cast<int>(ApplicationTab::CHART_TAB):
-        lg->debug("SPX42ControlMainWin::setApplicationTab -> CHART TAB...");
-        currObj = new ChartsFragment( Q_NULLPTR, lg, spx42Config);
+      case static_cast< int >( ApplicationTab::CHART_TAB ):
+        lg->debug( "SPX42ControlMainWin::setApplicationTab -> CHART TAB..." );
+        currObj = new ChartsFragment( Q_NULLPTR, lg, spx42Config );
         currObj->setObjectName( "spx42charts" );
-        ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at(static_cast<int>(ApplicationTab::CHART_TAB)) );
+        ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::CHART_TAB ) ) );
         currentTab = ApplicationTab::CHART_TAB;
         break;
     }
-    ui->areaTabWidget->setCurrentIndex(idx);
+    ui->areaTabWidget->setCurrentIndex( idx );
     ignore = false;
   }
 
   /**
    * @brief Reaktion auf Lizenzänderung (Signal Lizenz Änderung)
    */
-  void SPX42ControlMainWin::licenseChangedSlot(void)
+  void SPX42ControlMainWin::licenseChangedSlot( void )
   {
-    lg->debug( QString("SPX42ControlMainWin::licenseChanged -> set: %1")
-               .arg( spx42Config->getLicName()));
-    //
-    // das folgende wird nur kompiliert, wenn DEBUG konfiguriert ist
-    //
-    #ifdef DEBUG
-    switch( static_cast<int>(spx42Config->getLicense().getLicType()) )
+    lg->debug( QString( "SPX42ControlMainWin::licenseChanged -> set: %1" ).arg( spx42Config->getLicName() ) );
+//
+// das folgende wird nur kompiliert, wenn DEBUG konfiguriert ist
+//
+#ifdef DEBUG
+    switch ( static_cast< int >( spx42Config->getLicense().getLicType() ) )
     {
-      case static_cast<int>(LicenseType::LIC_NITROX):
-        ui->actionNormoxic_TMX->setChecked(false);
-        ui->actionFull_TMX->setChecked(false);
-        ui->actionMilitary->setChecked(false);
+      case static_cast< int >( LicenseType::LIC_NITROX ):
+        ui->actionNormoxic_TMX->setChecked( false );
+        ui->actionFull_TMX->setChecked( false );
+        ui->actionMilitary->setChecked( false );
         break;
-      case static_cast<int>(LicenseType::LIC_NORMOXIX):
-        ui->actionNitrox->setChecked(false);
-        ui->actionFull_TMX->setChecked(false);
-        ui->actionMilitary->setChecked(false);
+      case static_cast< int >( LicenseType::LIC_NORMOXIX ):
+        ui->actionNitrox->setChecked( false );
+        ui->actionFull_TMX->setChecked( false );
+        ui->actionMilitary->setChecked( false );
         break;
-      case static_cast<int>(LicenseType::LIC_FULLTMX):
-        ui->actionNitrox->setChecked(false);
-        ui->actionNormoxic_TMX->setChecked(false);
-        ui->actionMilitary->setChecked(false);
+      case static_cast< int >( LicenseType::LIC_FULLTMX ):
+        ui->actionNitrox->setChecked( false );
+        ui->actionNormoxic_TMX->setChecked( false );
+        ui->actionMilitary->setChecked( false );
         break;
-      case static_cast<int>(LicenseType::LIC_MIL):
-        ui->actionNitrox->setChecked(false);
-        ui->actionNormoxic_TMX->setChecked(false);
-        ui->actionFull_TMX->setChecked(false);
+      case static_cast< int >( LicenseType::LIC_MIL ):
+        ui->actionNitrox->setChecked( false );
+        ui->actionNormoxic_TMX->setChecked( false );
+        ui->actionFull_TMX->setChecked( false );
         break;
     }
-    #endif
+#endif
   }
 
   /**
    * @brief Slot für Signal Lizenzänderung
    */
-  void SPX42ControlMainWin::simulateIndividualLicenseChanged(void )
+  void SPX42ControlMainWin::simulateIndividualLicenseChanged( void )
   {
     lg->debug( "SPX42ControlMainWin::simulateIndividualLicenseChanged ..." );
-    //
-    // das folgende wird nur kompiliert, wenn DEBUG konfiguriert ist
-    //
-    #ifdef DEBUG
-    if( ui->actionINDIVIDUAL_LIC->isChecked() )
+//
+// das folgende wird nur kompiliert, wenn DEBUG konfiguriert ist
+//
+#ifdef DEBUG
+    if ( ui->actionINDIVIDUAL_LIC->isChecked() )
     {
       spx42Config->setLicense( IndividualLicense::LIC_INDIVIDUAL );
     }
@@ -465,6 +475,6 @@ namespace spx
     {
       spx42Config->setLicense( IndividualLicense::LIC_NONE );
     }
-    #endif
+#endif
   }
 }

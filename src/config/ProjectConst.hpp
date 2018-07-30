@@ -1,13 +1,12 @@
 ﻿#ifndef PROJECTCONST_HPP
 #define PROJECTCONST_HPP
 
-#include <iostream>
-#include <utility>
 #include <QColor>
 #include <QRegExp>
+#include <iostream>
+#include <utility>
 
 #include "SPX42Defs.hpp"
-
 
 //
 // Definitionen
@@ -19,16 +18,15 @@ namespace spx
   {
     enum class IndicatorStati;
 
-
     //###########################################################################
     //#### Einfache Konstanten                                               ####
     //###########################################################################
-    static constexpr int BUFFER_LEN = 1200;              //! Empfangspufferlänge
-    static constexpr int CXN_SUCCESS = 0;                //! Winsock OK Value
-    static constexpr int CXN_ERROR = 1;                  //! Winsock ERROR Value
-    static constexpr int SOCK_BUFFLEN = 128;             //! WINSOCK Pufferlänge (fuer BT)
-    static const QString RFCommUUID;                     //! RFComm UUID bei den SPX-Services
-    static const QRegExp searchedServiceRegex;           //! Suchausdruck für SPX42 Service
+    static constexpr int BUFFER_LEN = 1200;     //! Empfangspufferlänge
+    static constexpr int CXN_SUCCESS = 0;       //! Winsock OK Value
+    static constexpr int CXN_ERROR = 1;         //! Winsock ERROR Value
+    static constexpr int SOCK_BUFFLEN = 128;    //! WINSOCK Pufferlänge (fuer BT)
+    static const QString RFCommUUID;            //! RFComm UUID bei den SPX-Services
+    static const QString searchedServiceRegex;  //! Suchausdruck für SPX42 Service
 
     //###########################################################################
     // Defaults für DEKOMPRESSIONS Einstellungen                             ####
@@ -54,10 +52,15 @@ namespace spx
   //
   // Definition der Stati
   //
-  enum class IndicatorStati
+  enum class IndicatorStati : quint8
   {
-    OFFLINE, DISCOVERING, CONNECTING, ONLINE, TRANSFER, FW_PROGRAMMING, AERROR
+    OFFLINE,
+    DISCOVERING,
+    CONNECTING,
+    ONLINE,
+    TRANSFER,
+    FW_PROGRAMMING,
+    AERROR
   };
-
 }
 #endif

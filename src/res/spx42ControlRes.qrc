@@ -43,4 +43,10 @@
         <file>ic_bluetooth_black_24dp_1x.png</file>
     </qresource>
     <qresource prefix="/" lang="de"/>
+    <qresource prefix="/scanner">
+        <file alias="bluetooth_black_normal">ic_bluetooth_black_24dp_1x.png</file>
+        <file alias="bluetooth_black_gross">ic_bluetooth_black_24dp_2x.png</file>
+        <file alias="worker">no_working.gif</file>
+        <file alias="workerAnimation">working.gif</file>
+    </qresource>
 </RCC>

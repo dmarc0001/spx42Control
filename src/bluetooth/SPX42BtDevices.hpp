@@ -7,9 +7,10 @@
 #include <QQueue>
 #include <QVector>
 #include <memory>
-#include "../logging/Logger.hpp"
 #include "BtDevicesManager.hpp"
 #include "BtServiceDiscover.hpp"
+#include "config/ProjectConst.hpp"
+#include "logging/Logger.hpp"
 
 namespace spx
 {

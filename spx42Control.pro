@@ -5,13 +5,13 @@
 #### Autor: Dirk Marciniak                                                 ####
 ####                                                                       ####
 ###############################################################################
-win32:VERSION_PE_HEADER                = 0.1
+win32:VERSION_PE_HEADER                = 0.2
 win32:QMAKE_TARGET_COMPANY             = submatix.com
 win32:QMAKE_TARGET_COPYRIGHT           = D. Marciniak
 win32:QMAKE_TARGET_PRODUCT             = SPX42 BT-Controller
 win32:RC_ICONS                         = src/res/programIcon.ico
-win32:VERSION                          = 0.1.0.0 # major.minor.patch.build
-else:VERSION                           = 0.1.0    # major.minor.patch
+win32:VERSION                          = 0.2.0.0 # major.minor.patch.build
+else:VERSION                           = 0.2.0    # major.minor.patch
 macx:ICON                              = src/res/programIcon.ico
 #
 TARGET                                 = spx42Control
@@ -20,12 +20,12 @@ TEMPLATE                               = app
 QT                                     += core
 QT                                     += gui
 QT                                     += widgets
-unix:QT                                += bluetooth
-macx:QT                                += bluetooth
+QT                                     += bluetooth
 QT                                     += sql
 QT                                     += charts
 CONFIG                                 += stl
 CONFIG                                 += c++11
+INCLUDEPATH                            += src
 DESTDIR                                = out
 MOC_DIR                                = moc
 RCC_DIR                                = rcc
@@ -33,12 +33,10 @@ UI_DIR                                 = ui
 
 
 # wenn debug in der config steht, die EXE auch so benennen
-#build_pass:CONFIG(debug, debug|release) {
-#  unix: TARGET = $$join(TARGET,,,_debug)
-#  else: TARGET = $$join(TARGET,,,_D)
-#  DEBUG=DEBUG
-#}
-unix:DEFINES            += UNIX
+build_pass:CONFIG(debug, debug|release) {
+  unix: TARGET = $$join(TARGET,,,_debug)
+  else: TARGET = $$join(TARGET,,,_D)
+}
 DEFINES                 += $$DEBUG
 
 SOURCES                 += \
@@ -60,12 +58,14 @@ SOURCES                 += \
     src/utils/DebugDataSeriesGenerator.cpp \
     src/utils/DiveDataSeriesGenerator.cpp \
     src/guiFragments/ChartsFragment.cpp \
-    src/bluetooth/DeviceEditDialog.cpp \
     src/bluetooth/PinDialog.cpp \
     src/spx42/Spx42Commands.cpp \
     src/spx42/SpxCommandDef.cpp \
-    src/bluetooth/BtDeviceDescriber.cpp \
-    src/bluetooth/ABTDevice.cpp
+    src/bluetooth/BtDevicesManager.cpp \
+    src/bluetooth/BtServiceDiscover.cpp \
+    src/bluetooth/SPX42BtDevices.cpp \
+    src/bluetooth/BtDiscoverDialog.cpp \
+    src/database/SPX42Database.cpp
 
 HEADERS                 += \
     src/Spx42ControlMainWin.hpp \
@@ -87,12 +87,14 @@ HEADERS                 += \
     src/utils/DebugDataSeriesGenerator.hpp \
     src/utils/DiveDataSeriesGenerator.hpp \
     src/guiFragments/ChartsFragment.hpp \
-    src/bluetooth/DeviceEditDialog.hpp \
     src/bluetooth/PinDialog.hpp \
     src/spx42/Spx42Commands.hpp \
     src/spx42/SpxCommandDef.hpp \
-    src/bluetooth/BtDeviceDescriber.hpp \
-    src/bluetooth/ABTDevice.hpp
+    src/bluetooth/BtDevicesManager.hpp \
+    src/bluetooth/BtServiceDiscover.hpp \
+    src/bluetooth/SPX42BtDevices.hpp \
+    src/bluetooth/BtDiscoverDialog.hpp \
+    src/database/SPX42Database.hpp
 
 FORMS                   += \
     src/ui/Spx42ControlMainWin.ui \
@@ -102,8 +104,8 @@ FORMS                   += \
     src/ui/LogFragment.ui \
     src/ui/DeviceConfigFragment.ui \
     src/ui/ChartsFragment.ui \
-    src/ui/DeviceEditDialog.ui \
-    src/ui/PinDialog.ui
+    src/ui/PinDialog.ui \
+    src/ui/BtDiscoverDialog.ui
 
 RESOURCES               = \
     src/res/Spx42ControlRes.qrc
@@ -112,6 +114,16 @@ TRANSLATIONS            = \
     src/translations/Spx42Control_de_DE.ts
 
 DISTFILES               += \
+    src/res/spx42Control.css \
+    src/res/no_working.gif \
+    src/res/working.gif \
+    src/res/ic_bluetooth_black_24dp_1x.png \
+    src/res/ic_bluetooth_black_24dp_2x.png \
+    src/res/DejaVuSansMono.ttf \
+    src/res/Hack-Bold.ttf \
+    src/res/Hack-BoldItalic.ttf \
+    src/res/Hack-Italic.ttf \
+    src/res/Hack-Regular.ttf \
     src/res/spx42Control.css
 
 
@@ -120,27 +132,13 @@ DISTFILES               += \
 ###############################################################################
 
 win32 {
-SOURCES                 += \
-    src/windows/BTDevice.cpp \
-    src/windows/BTCommWorker.cpp \
-    src/windows/BTConnectThread.cpp \
-    src/windows/BTDisconnectThread.cpp \
-    src/windows/BTDiscoverThread.cpp
+SOURCES                 +=
 
 HEADERS                 += \
-    src/windows/BTDevice.hpp \
-    src/windows/BTCommWorker.hpp \
-    src/windows/BTConnectThread.hpp \
-    src/windows/BTDisconnectThread.hpp \
-    src/windows/BTDiscoverThread.hpp
 
 INCLUDEPATH             += \
-    src/windows
 
 LIBS                    += \
-    -lws2_32 \
-    -luuid \
-    -lbthprops
 
 }
 
@@ -150,7 +148,6 @@ SOURCES                 += \
 HEADERS                 += \
 
 INCLUDEPATH             += \
-    src/unix
 
 }
 
@@ -160,7 +157,6 @@ SOURCES                 += \
 HEADERS                 += \
 
 INCLUDEPATH             += \
-    src/macx
 
 
 }

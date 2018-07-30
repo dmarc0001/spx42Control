@@ -13,9 +13,9 @@
 #include <QTabWidget>
 #include <QTimer>
 
-#include "bluetooth/ABTDevice.hpp"
 #include "config/AppConfigClass.hpp"
 #include "config/ProjectConst.hpp"
+#include "database/SPX42Database.hpp"
 #include "guiFragments/ChartsFragment.hpp"
 #include "guiFragments/ConnectFragment.hpp"
 #include "guiFragments/DeviceConfigFragment.hpp"
@@ -44,14 +44,14 @@ namespace spx
     const std::unique_ptr< QTimer > watchdog;          //! Wachhund für Timeouts
     const std::shared_ptr< SPX42Config > spx42Config;  //! Konfiguration des verbundenen SPX42
     ApplicationStat currentStatus;                     //! welchen Status hat die App?
+    std::shared_ptr< SPX42Database > spx42Database;    //! Datenbankobjekt zur Speicherung der SPX Daten/Einstellungen
     int watchdogTimer;                                 //! Zeitspanne zum Timeout
     AppConfigClass cf;                                 //! Konfiguration aus Datei
     ApplicationTab currentTab;                         //! welcher Tab ist aktiv?
     QStringList tabTitle;                              //! Tab Titel (nicht statisch, das Objekt gibts eh nur einmal)
-    std::shared_ptr< ABTDevice > btDevice;             //! Das Blauzahnobjekt, im Konstruktor zu erzeugen
 
     public:
-    explicit SPX42ControlMainWin( QWidget *parent = 0 );
+    explicit SPX42ControlMainWin( QWidget *parent = nullptr );
     ~SPX42ControlMainWin();
     void closeEvent( QCloseEvent *event );  //! Das Beenden-Ereignis
 

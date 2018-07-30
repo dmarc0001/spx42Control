@@ -1,12 +1,12 @@
 ﻿#ifndef CONNECTFORM_HPP
 #define CONNECTFORM_HPP
 
-#include <memory>
 #include <QWidget>
+#include <memory>
 
-#include "../logging/Logger.hpp"
-#include "../utils/SPX42Config.hpp"
 #include "IFragmentInterface.hpp"
+#include "logging/Logger.hpp"
+#include "utils/SPX42Config.hpp"
 
 namespace Ui
 {
@@ -18,21 +18,22 @@ namespace spx
   class ConnectFragment : public QWidget, IFragmentInterface
   {
     private:
-      Q_OBJECT
-      std::unique_ptr<Ui::connectForm> ui;                      //! Zeiger auf die GUI Objekte
+    Q_OBJECT
+    std::unique_ptr< Ui::connectForm > ui;  //! Zeiger auf die GUI Objekte
 
     public:
-      explicit ConnectFragment(QWidget *parent, std::shared_ptr<Logger> logger , std::shared_ptr<SPX42Config> spxCfg); //! Konstruktor
-      ~ConnectFragment();                                       //! Destruktor, muss GUI säubern
+    explicit ConnectFragment( QWidget *parent,
+                              std::shared_ptr< Logger > logger,
+                              std::shared_ptr< SPX42Config > spxCfg );  //! Konstruktor
+    ~ConnectFragment();                                                 //! Destruktor, muss GUI säubern
 
     private slots:
-      virtual void onlineStatusChangedSlot( bool isOnline ) Q_DECL_OVERRIDE; //! Wenn sich der Onlinestatus des SPX42 ändert
-      virtual void confLicChangedSlot( void ) Q_DECL_OVERRIDE;  //! Wenn sich die Lizenz ändert
-      void connectButtonSlot(void);                             //! Wenn der Verbinde-Knopf gedrückt wurde
-      void propertyButtonSlot( void );                          //! Verbindungs/Geräte eigenschaften
-      void discoverButtonSlot( void );                          //! Suche nach BT Geräten
-      void currentIndexChangedSlot(int index);                  //! Dropdown box: Auswahl geändert
-
+    virtual void onlineStatusChangedSlot( bool isOnline ) Q_DECL_OVERRIDE;  //! Wenn sich der Onlinestatus des SPX42 ändert
+    virtual void confLicChangedSlot( void ) Q_DECL_OVERRIDE;                //! Wenn sich die Lizenz ändert
+    void connectButtonSlot( void );                                         //! Wenn der Verbinde-Knopf gedrückt wurde
+    void propertyButtonSlot( void );                                        //! Verbindungs/Geräte eigenschaften
+    void discoverButtonSlot( void );                                        //! Suche nach BT Geräten
+    void currentIndexChangedSlot( int index );                              //! Dropdown box: Auswahl geändert
   };
 }
-#endif // CONNECTFORM_HPP
+#endif  // CONNECTFORM_HPP

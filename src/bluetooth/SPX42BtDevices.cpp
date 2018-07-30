@@ -152,7 +152,7 @@ namespace spx
       //
       // Filter um nur die richtigen Geräte zu finden
       //
-      btServicesAgent->setServiceFilter( "SPX42|SPP" );
+      btServicesAgent->setServiceFilter( ProjectConst::searchedServiceRegex );
       lg->debug( QString( "SPX42BtDevices::startDiscoverServices: local adapter addr: " ).append( laddr.toString() ) );
       lg->debug(
           QString( "SPX42BtDevices::startDiscoverServices: remote adapter addr: " ).append( currentServiceScanDevice.toString() ) );

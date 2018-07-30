@@ -7,18 +7,18 @@ namespace spx
    * @brief MainDialog::MainDialog Device scanner
    * @param parent
    */
-  BtDiscoverDialog::BtDiscoverDialog( QWidget *parent )
+  BtDiscoverDialog::BtDiscoverDialog( std::shared_ptr< Logger > logger,
+                                      std::shared_ptr< SPX42Database > spx42Database,
+                                      QWidget *parent )
       : QDialog( parent )
+      , lg( logger )
+      , database( spx42Database )
       , ui( std::unique_ptr< Ui::BtDiscoverDialog >( new Ui::BtDiscoverDialog ) )
-      , msgTimer( this )
       , timerCountdowwn( 0 )
   {
     ui->setupUi( this );
     ui->currentTaskLabel->setText( tr( "WAITING..." ) );
     ui->CancelPushButton->setText( tr( "CANCEL" ) );
-    // TODO: später entfernen
-    lg = std::shared_ptr< Logger >( new Logger() );
-    lg->startLogging( LG_DEBUG, "btsecond.log" );
     //
     lg->debug( "MainDialog::MainDialog" );
     /*
@@ -82,23 +82,6 @@ namespace spx
   BtDiscoverDialog::~BtDiscoverDialog()
   {
     lg->debug( "MainDialog::~MainDialog..." );
-    // TODO: später entfernen
-    debugCloseDatabase();
-    // lg->shutdown();
-  }
-
-  void BtDiscoverDialog::debugSetDatabase( const QString strdPath )
-  {
-    //
-    // TODO: später entfernen: Datenbank auftun
-    //
-    database = std::shared_ptr< SPX42Database >( new SPX42Database( lg, QString( "%1/%2" ).arg( strdPath ).arg( testDbName ), this ) );
-    QSqlError err = database->openDatabase();
-    if ( err.type() != QSqlError::NoError )
-    {
-      return;
-    }
-    database->getDeviceAliasHash();
   }
 
   void BtDiscoverDialog::setMessage( const QString &msg )
@@ -366,14 +349,6 @@ namespace spx
         break;
       default:
         break;
-    }
-  }
-
-  void BtDiscoverDialog::debugCloseDatabase( void )
-  {
-    if ( database->isDbOpen() )
-    {
-      database->closeDatabase();
     }
   }
 }
