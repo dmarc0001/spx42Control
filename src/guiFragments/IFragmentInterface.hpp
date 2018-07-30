@@ -21,7 +21,9 @@ namespace spx
     explicit IFragmentInterface( std::shared_ptr< Logger > logger,
                                  std::shared_ptr< SPX42Database > spx42Database,
                                  std::shared_ptr< SPX42Config > spxCfg );  //! Standartkonstruktor
-    virtual ~IFragmentInterface( void );                                   //! Destruktor
+    virtual ~IFragmentInterface( void )
+    {
+    }  //! Destruktor
 
     public slots:
     virtual void onOnlineStatusChangedSlot( bool isOnline ) = 0;  //! Wenn sich der Onlinestatus des SPX42 ändert

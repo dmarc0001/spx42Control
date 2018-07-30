@@ -8,8 +8,4 @@ namespace spx
       : lg( logger ), database( spx42Database ), spxConfig( spxCfg )
   {
   }
-
-  IFragmentInterface::~IFragmentInterface( void )
-  {
-  }
 }
