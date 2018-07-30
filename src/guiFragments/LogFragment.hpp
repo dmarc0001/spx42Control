@@ -9,17 +9,16 @@
 #include <QtCharts>
 #include <algorithm>
 #include <memory>
-
 #include "IFragmentInterface.hpp"
 #include "config/ProjectConst.hpp"
 #include "config/SPX42Defs.hpp"
+#include "database/SPX42Database.hpp"
 #include "logging/Logger.hpp"
+#include "ui_LogFragment.h"
 #include "utils/DebugDataSeriesGenerator.hpp"
 #include "utils/DiveDataSeriesGenerator.hpp"
 #include "utils/IDataSeriesGenerator.hpp"
 #include "utils/SPX42Config.hpp"
-
-#include "ui_LogFragment.h"
 
 namespace Ui
 {
@@ -43,11 +42,14 @@ namespace spx
     QString diveDepthStr;
 
     public:
-    explicit LogFragment( QWidget *parent, std::shared_ptr< Logger > logger, std::shared_ptr< SPX42Config > spxCfg );  //! Konstruktor
-    ~LogFragment();
+    explicit LogFragment( QWidget *parent,
+                          std::shared_ptr< Logger > logger,
+                          std::shared_ptr< SPX42Database > spx42Database,
+                          std::shared_ptr< SPX42Config > spxCfg );  //! Konstruktor
+    ~LogFragment() override;
 
     protected:
-    void changeEvent( QEvent *e );
+    void changeEvent( QEvent *e ) override;
 
     private:
     void prepareMiniChart( void );
@@ -56,8 +58,9 @@ namespace spx
     float getMaxYValue( const QLineSeries *series );
 
     private slots:
-    virtual void onlineStatusChangedSlot( bool isOnline ) Q_DECL_OVERRIDE;  //! Wenn sich der Onlinestatus des SPX42 ändert
-    virtual void confLicChangedSlot( void ) Q_DECL_OVERRIDE;                //! Wenn sich die Lizenz ändert
+    virtual void onOnlineStatusChangedSlot( bool isOnline ) override;  //! Wenn sich der Onlinestatus des SPX42 ändert
+    virtual void onConfLicChangedSlot( void ) override;                //! Wenn sich die Lizenz ändert
+    virtual void onCloseDatabaseSlot( void ) override;                 //! wenn die Datenbank geschlosen wird
     void readLogDirectorySlot( void );
     void readLogContentSlot( void );
     void logListViewClickedSlot( const QModelIndex &index );

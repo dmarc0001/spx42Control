@@ -3,8 +3,8 @@
 
 #include <QWidget>
 #include <memory>
-
 #include "IFragmentInterface.hpp"
+#include "database/SPX42Database.hpp"
 #include "logging/Logger.hpp"
 #include "utils/SPX42Config.hpp"
 
@@ -28,12 +28,13 @@ namespace spx
     public:
     explicit DeviceConfigFragment( QWidget *parent,
                                    std::shared_ptr< Logger > logger,
+                                   std::shared_ptr< SPX42Database > spx42Database,
                                    std::shared_ptr< SPX42Config > spxCfg );  //! Konstruktor
-    ~DeviceConfigFragment();                                                 //! Destruktor
+    ~DeviceConfigFragment() override;                                        //! Destruktor
     void initGuiWithConfig( void );                                          //! Initialisiere die GUI mit Werten aus der Config
 
     protected:
-    void changeEvent( QEvent *e );  //! Globele Veränderungen
+    void changeEvent( QEvent *e ) override;  //! Globele Veränderungen
 
     private:
     void setGuiForDecompression( void );                                  //! GUI nach spxConfig einstellen
@@ -46,8 +47,9 @@ namespace spx
     void setGradientPresetWithoutCallback( DecompressionPreset preset );  //! Gradienten-Combobox setzten ohne Callback auszuführen
 
     private slots:
-    virtual void onlineStatusChangedSlot( bool isOnline ) Q_DECL_OVERRIDE;  //! Wenn sich der Onlinestatus des SPX42 ändert
-    virtual void confLicChangedSlot( void ) Q_DECL_OVERRIDE;                //! Wenn sich die Lizenz ändert
+    virtual void onOnlineStatusChangedSlot( bool isOnline ) override;  //! Wenn sich der Onlinestatus des SPX42 ändert
+    virtual void onConfLicChangedSlot( void ) override;                //! Wenn sich die Lizenz ändert
+    virtual void onCloseDatabaseSlot( void ) override;                 //! wenn die Datenbank geschlosen wird
     // DEKOMPRESSIONSEINSTELLUNGEN
     void decoComboChangedSlot( int index );                 //! ändert sich der Inhalt der Combobox für Dekompressionseinstellungen
     void decoGradientLowChangedSlot( int low );             //! wenn der Gradient LOW geändert wurde

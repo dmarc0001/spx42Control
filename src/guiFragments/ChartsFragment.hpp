@@ -3,8 +3,8 @@
 
 #include <QWidget>
 #include <memory>
-
 #include "IFragmentInterface.hpp"
+#include "database/SPX42Database.hpp"
 #include "logging/Logger.hpp"
 #include "utils/SPX42Config.hpp"
 
@@ -24,12 +24,14 @@ namespace spx
     public:
     explicit ChartsFragment( QWidget *parent,
                              std::shared_ptr< Logger > logger,
+                             std::shared_ptr< SPX42Database > spx42Database,
                              std::shared_ptr< SPX42Config > spxCfg );  //! Konstruktor
-    ~ChartsFragment();                                                 //! Destruktor, muss GUI säubern
+    ~ChartsFragment() override;                                        //! Destruktor, muss GUI säubern
 
     private slots:
-    virtual void onlineStatusChangedSlot( bool isOnline ) Q_DECL_OVERRIDE;  //! Wenn sich der Onlinestatus des SPX42 ändert
-    virtual void confLicChangedSlot( void ) Q_DECL_OVERRIDE;                //! Wenn sich die Lizenz ändert
+    virtual void onOnlineStatusChangedSlot( bool isOnline ) override;  //! Wenn sich der Onlinestatus des SPX42 ändert
+    virtual void onConfLicChangedSlot( void ) override;                //! Wenn sich die Lizenz ändert
+    virtual void onCloseDatabaseSlot( void ) override;                 //! wenn die Datenbank geschlosen wird
   };
 }
 #endif  // CHARTSFRAGMENT_HPP
