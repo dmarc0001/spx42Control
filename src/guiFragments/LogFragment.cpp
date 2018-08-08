@@ -276,7 +276,7 @@ namespace spx
     return ( max );
   }
 
-  void LogFragment::onOnlineStatusChangedSlot( bool isOnline )
+  void LogFragment::onOnlineStatusChangedSlot( bool )
   {
     // TODO: was machen
   }
@@ -293,4 +293,4 @@ namespace spx
   {
     // TODO: implementieren
   }
-}
+}  // namespace spx

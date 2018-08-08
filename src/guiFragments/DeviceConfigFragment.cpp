@@ -68,11 +68,11 @@ namespace spx
     //
     // Signale trennen um Schleifen zu vermeiden
     //
-    disconnect( ui->deepStopOnCheckBox, 0, 0, 0 );
-    disconnect( ui->dynamicGradientsOnCheckBox, 0, 0, 0 );
-    disconnect( ui->gradientHighSpinBox, 0, 0, 0 );
-    disconnect( ui->gradientLowSpinBox, 0, 0, 0 );
-    disconnect( ui->conservatismComboBox, 0, 0, 0 );
+    disconnect( ui->deepStopOnCheckBox );
+    disconnect( ui->dynamicGradientsOnCheckBox );
+    disconnect( ui->gradientHighSpinBox );
+    disconnect( ui->gradientLowSpinBox );
+    disconnect( ui->conservatismComboBox );
     //
     DecompressionPreset cPreset = spxConfig->getCurrentDecoGradientPresetType();
     DecoGradient newGrad = spxConfig->getPresetValues( spxConfig->getCurrentDecoGradientPresetType() );
@@ -112,8 +112,8 @@ namespace spx
    */
   void DeviceConfigFragment::setGuiForDisplay( void )
   {
-    disconnect( ui->displayOrientationComboBox, 0, 0, 0 );
-    disconnect( ui->displayBrightnessComboBox, 0, 0, 0 );
+    disconnect( ui->displayOrientationComboBox );
+    disconnect( ui->displayBrightnessComboBox );
     //
     ui->displayBrightnessComboBox->setCurrentIndex( static_cast< int >( spxConfig->getDisplayBrightness() ) );
     ui->displayOrientationComboBox->setCurrentIndex( static_cast< int >( spxConfig->getDisplayOrientation() ) );
@@ -129,9 +129,9 @@ namespace spx
    */
   void DeviceConfigFragment::setGuiForUnits( void )
   {
-    disconnect( ui->unitsWaterTypeComboBox, 0, 0, 0 );
-    disconnect( ui->unitsDeepComboBox, 0, 0, 0 );
-    disconnect( ui->unitsTemperaturComboBox, 0, 0, 0 );
+    disconnect( ui->unitsWaterTypeComboBox );
+    disconnect( ui->unitsDeepComboBox );
+    disconnect( ui->unitsTemperaturComboBox );
     //
     ui->unitsTemperaturComboBox->setCurrentIndex( static_cast< int >( spxConfig->getUnitsTemperatur() ) );
     ui->unitsDeepComboBox->setCurrentIndex( static_cast< int >( spxConfig->getUnitsLength() ) );
@@ -150,8 +150,8 @@ namespace spx
    */
   void DeviceConfigFragment::setGuiForSetpoint( void )
   {
-    disconnect( ui->setpointSetpointComboBox, 0, 0, 0 );
-    disconnect( ui->setpointAutoOnComboBox, 0, 0, 0 );
+    disconnect( ui->setpointSetpointComboBox );
+    disconnect( ui->setpointAutoOnComboBox );
     //
     ui->setpointSetpointComboBox->setCurrentIndex( static_cast< int >( spxConfig->getSetpointValue() ) );
     ui->setpointAutoOnComboBox->setCurrentIndex( static_cast< int >( spxConfig->getSetpointAuto() ) );
@@ -167,7 +167,7 @@ namespace spx
    */
   void DeviceConfigFragment::setGuiForLicense( void )
   {
-    SPX42License lic = spxConfig->getLicense();
+    SPX42License lic( spxConfig->getLicense() );
 
     lg->debug( QString( "DeviceConfigFragment::licChangedSlot -> set: %1" ).arg( static_cast< int >( lic.getLicType() ) ) );
     ui->tabHeaderLabel->setText(
@@ -184,11 +184,11 @@ namespace spx
       ui->individualVerticalWidget->setEnabled( false );
       ui->individualVerticalWidget->hide();
       // keine Callbacks!
-      disconnect( ui->individualLogIntervalComboBox, 0, 0, 0 );
-      disconnect( ui->individualAcousticWarningsOnCheckBox, 0, 0, 0 );
-      disconnect( ui->individualSensorsCountComboBox, 0, 0, 0 );
-      disconnect( ui->individualPSCRModeOnCheckBox, 0, 0, 0 );
-      disconnect( ui->individualSeonsorsOnCheckBox, 0, 0, 0 );
+      disconnect( ui->individualLogIntervalComboBox );
+      disconnect( ui->individualAcousticWarningsOnCheckBox );
+      disconnect( ui->individualSensorsCountComboBox );
+      disconnect( ui->individualPSCRModeOnCheckBox );
+      disconnect( ui->individualSeonsorsOnCheckBox );
       // Einstellungen neutral
       spxConfig->setIndividualSensorsOn( DeviceIndividualSensors::SENSORS_ON );
       spxConfig->setIndividualPscrMode( DeviceIndividualPSCR::PSCR_OFF );
@@ -206,11 +206,11 @@ namespace spx
   {
     if ( spxConfig->getLicense().getLicInd() == IndividualLicense::LIC_INDIVIDUAL )
     {
-      disconnect( ui->individualLogIntervalComboBox, 0, 0, 0 );
-      disconnect( ui->individualAcousticWarningsOnCheckBox, 0, 0, 0 );
-      disconnect( ui->individualSensorsCountComboBox, 0, 0, 0 );
-      disconnect( ui->individualPSCRModeOnCheckBox, 0, 0, 0 );
-      disconnect( ui->individualSeonsorsOnCheckBox, 0, 0, 0 );
+      disconnect( ui->individualLogIntervalComboBox );
+      disconnect( ui->individualAcousticWarningsOnCheckBox );
+      disconnect( ui->individualSensorsCountComboBox );
+      disconnect( ui->individualPSCRModeOnCheckBox );
+      disconnect( ui->individualSeonsorsOnCheckBox );
       //
       if ( spxConfig->getIndividualSensorsOn() == DeviceIndividualSensors::SENSORS_ON )
       {
@@ -261,29 +261,29 @@ namespace spx
     // Alle Slots trennen
     //
     // INDIVIDUAL
-    disconnect( ui->individualLogIntervalComboBox, 0, 0, 0 );
-    disconnect( ui->individualAcousticWarningsOnCheckBox, 0, 0, 0 );
-    disconnect( ui->individualSensorsCountComboBox, 0, 0, 0 );
-    disconnect( ui->individualPSCRModeOnCheckBox, 0, 0, 0 );
-    disconnect( ui->individualSeonsorsOnCheckBox, 0, 0, 0 );
+    disconnect( ui->individualLogIntervalComboBox );
+    disconnect( ui->individualAcousticWarningsOnCheckBox );
+    disconnect( ui->individualSensorsCountComboBox );
+    disconnect( ui->individualPSCRModeOnCheckBox );
+    disconnect( ui->individualSeonsorsOnCheckBox );
     // SETPOINT
-    disconnect( ui->setpointSetpointComboBox, 0, 0, 0 );
-    disconnect( ui->setpointAutoOnComboBox, 0, 0, 0 );
+    disconnect( ui->setpointSetpointComboBox );
+    disconnect( ui->setpointAutoOnComboBox );
     // EINHEITEN
-    disconnect( ui->unitsWaterTypeComboBox, 0, 0, 0 );
-    disconnect( ui->unitsDeepComboBox, 0, 0, 0 );
-    disconnect( ui->unitsTemperaturComboBox, 0, 0, 0 );
+    disconnect( ui->unitsWaterTypeComboBox );
+    disconnect( ui->unitsDeepComboBox );
+    disconnect( ui->unitsTemperaturComboBox );
     // DISPLAY
-    disconnect( ui->displayOrientationComboBox, 0, 0, 0 );
-    disconnect( ui->displayBrightnessComboBox, 0, 0, 0 );
+    disconnect( ui->displayOrientationComboBox );
+    disconnect( ui->displayBrightnessComboBox );
     // Dekompression
-    disconnect( ui->deepStopOnCheckBox, 0, 0, 0 );
-    disconnect( ui->dynamicGradientsOnCheckBox, 0, 0, 0 );
-    disconnect( ui->gradientHighSpinBox, 0, 0, 0 );
-    disconnect( ui->gradientLowSpinBox, 0, 0, 0 );
-    disconnect( ui->conservatismComboBox, 0, 0, 0 );
+    disconnect( ui->deepStopOnCheckBox );
+    disconnect( ui->dynamicGradientsOnCheckBox );
+    disconnect( ui->gradientHighSpinBox );
+    disconnect( ui->gradientLowSpinBox );
+    disconnect( ui->conservatismComboBox );
     // Lizenz
-    disconnect( spxConfig.get(), 0, 0, 0 );
+    disconnect( spxConfig.get() );
   }
 
   /**
@@ -312,7 +312,7 @@ namespace spx
     setGuiForLicense();
   }
 
-  void DeviceConfigFragment::onOnlineStatusChangedSlot( bool isOnline )
+  void DeviceConfigFragment::onOnlineStatusChangedSlot( bool )
   {
     // TODO: was machen
   }
@@ -359,7 +359,7 @@ namespace spx
   void DeviceConfigFragment::decoGradientLowChangedSlot( int low )
   {
     DecompressionPreset preset;
-    DecoGradient newGradient;
+    // DecoGradient newGradient;
     qint8 high;
     //
     if ( gradentSlotsIgnore )
@@ -379,7 +379,7 @@ namespace spx
     {
       setGradientPresetWithoutCallback( preset );
     }
-    spxConfig->setCurrentPreset( preset, low, high );
+    spxConfig->setCurrentPreset( preset, static_cast< qint8 >( low ), high );
   }
 
   /**
@@ -389,7 +389,7 @@ namespace spx
   void DeviceConfigFragment::decoGradientHighChangedSlot( int high )
   {
     DecompressionPreset preset;
-    DecoGradient newGradient;
+    // DecoGradient newGradient;
     qint8 low;
     //
     if ( gradentSlotsIgnore )
@@ -402,12 +402,12 @@ namespace spx
     // Passen die Werte zu einem Preset?
     //
     preset = spxConfig->getPresetForGradient( static_cast< qint8 >( low ), static_cast< qint8 >( high ) );
-    spxConfig->setCurrentPreset( preset, low, high );
+    spxConfig->setCurrentPreset( preset, low, static_cast< qint8 >( high ) );
     if ( ui->conservatismComboBox->currentIndex() != static_cast< qint8 >( preset ) )
     {
       setGradientPresetWithoutCallback( preset );
     }
-    spxConfig->setCurrentPreset( preset, low, high );
+    spxConfig->setCurrentPreset( preset, low, static_cast< qint8 >( high ) );
   }
 
   /**
@@ -755,4 +755,4 @@ namespace spx
     }
     spxConfig->setIndividualLogInterval( logInterval );
   }
-}
+}  // namespace spx
