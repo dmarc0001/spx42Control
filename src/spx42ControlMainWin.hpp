@@ -66,20 +66,18 @@ namespace spx
     ApplicationTab getApplicationTab( void );          //! Welcher Tab war noch aktiv?
 
     private slots:
-    void aboutActionSlot( bool checked );           //! ABOUT wurde gefordert
-    void quitActionSlot( bool checked );            //! ENDE wurde gefordert
-    void tabCurrentChangedSlot( int idx );          //! TAB Index gewechselt
-    void licenseChangedSlot( void );                //! Lizenztyp getriggert
-    void simulateIndividualLicenseChanged( void );  //! Individuallizenz geändert
-                                                    // Blutooth Slots vom BTDevice
-                                                    /*
-                                                    void btConnectingSlot( void );                            //! Signal, wenn eine Verbindung aufgebaut wird
-                                                    void btConnectedSlot( const QByteArray& dAddr );          //! Signal, wenn eine Verbindung zustande gekommen ist
-                                                    void btDisconnectSlot( void );                            //! Signal, wenn eine Verbindung beendet/unterbrochen wurde
-                                                    void btConnectErrorSlot( int errnr );                     //! Signal, wenn es Fehler beim Verbinden gab
-                                                    void btDataRecivedSlot();                                 //! Signal, wenn Daten kamen
-                                                    void btPairingPinRequestSlot(void);                       //! Signal, wenn Pairing gefordert wird
-                                                    */
+    void tabCurrentChangedSlot( int idx );  //! TAB Index gewechselt
+    void licenseChangedSlot( void );        //! Lizenztyp getriggert
+
+    // Blutooth Slots vom BTDevice
+    /*
+    void btConnectingSlot( void );                            //! Signal, wenn eine Verbindung aufgebaut wird
+    void btConnectedSlot( const QByteArray& dAddr );          //! Signal, wenn eine Verbindung zustande gekommen ist
+    void btDisconnectSlot( void );                            //! Signal, wenn eine Verbindung beendet/unterbrochen wurde
+    void btConnectErrorSlot( int errnr );                     //! Signal, wenn es Fehler beim Verbinden gab
+    void btDataRecivedSlot();                                 //! Signal, wenn Daten kamen
+    void btPairingPinRequestSlot(void);                       //! Signal, wenn Pairing gefordert wird
+    */
   };
 }  // namespace spx42
 

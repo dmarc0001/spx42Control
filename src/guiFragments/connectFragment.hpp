@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <memory>
 #include "IFragmentInterface.hpp"
+#include "bluetooth/BtDiscoverDialog.hpp"
 #include "database/SPX42Database.hpp"
 #include "logging/Logger.hpp"
 #include "utils/SPX42Config.hpp"

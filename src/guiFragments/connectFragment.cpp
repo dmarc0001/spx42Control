@@ -61,6 +61,31 @@ namespace spx
   void ConnectFragment::discoverButtonSlot( void )
   {
     lg->debug( "ConnectFragment::discoverButtonSlot -> discover button clicked." );
+    //
+    // den Dialog erzeugen
+    //
+    BtDiscoverDialog discoverDialog( lg, database );
+    if ( QDialog::Accepted == discoverDialog.exec() )
+    {
+      //
+      // Ergebnis übernehmen
+      //
+      lg->debug( "ConnectFragment::discoverButtonSlot -> discovering dialog returned: accept result...." );
+      SPXDeviceList devList( discoverDialog.getSPX42Devices() );
+      lg->debug( QString( "ConnectFragment::discoverButtonSlot -> scanned %1 devices" ).arg( devList.count(), 2, 10, QChar( '0' ) ) );
+      QBluetoothDeviceInfo devInfo( discoverDialog.getActivatedDevice() );
+      //
+      // ein Gerät gültig markiert?
+      //
+      if ( devInfo.isValid() )
+      {
+        lg->debug( QString( "ConnectFragment::discoverButtonSlot -> selected device <%1>" ).arg( devInfo.address().toString() ) );
+      }
+      else
+      {
+        lg->debug( "ConnectFragment::discoverButtonSlot -> not an device selected..." );
+      }
+    }
   }
 
   void ConnectFragment::currentIndexChangedSlot( int index )

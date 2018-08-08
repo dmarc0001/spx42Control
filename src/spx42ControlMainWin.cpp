@@ -55,13 +55,9 @@ namespace spx
       setFont( QFont( "DejaVu Sans Mono", 12 ) );
 #endif
     }
-//
-// erzeuge ein Bluethooth Objekt
-//
-
-//
-// das folgende wird nur kompiliert, wenn DEBUG NICHT konfiguriert ist
-//
+      //
+      // das folgende wird nur kompiliert, wenn DEBUG NICHT konfiguriert ist
+      //
 #ifndef DEBUG
     ui->menuDEBUGGING->clear();
     ui->menuDEBUGGING->setParent( Q_NULLPTR );
@@ -101,7 +97,6 @@ namespace spx
     {
       lg->crit( "SPX42ControlMainWin::~SPX42ControlMainWin -> watchdog stopping failed" );
     }
-    lg->shutdown();
   }
 
   /**
@@ -124,7 +119,8 @@ namespace spx
     }
     event->accept();
     lg->debug( "SPX42ControlMainWin::closeEvent -> close application..." );
-    // TODO: Aufräumen, Datenbanke schliessen, Connection beenden
+    // TODO: Aufräumen Connection beenden
+    spx42Database->closeDatabase();
     QMainWindow::closeEvent( event );
   }
 
@@ -204,28 +200,72 @@ namespace spx
   {
     try
     {
-      connect( ui->actionAbout, &QAction::triggered, this, &SPX42ControlMainWin::aboutActionSlot );
-      connect( ui->actionQUIT, &QAction::triggered, this, &SPX42ControlMainWin::quitActionSlot );
+      //
+      // About angeklickt
+      //
+      connect( ui->actionAbout, &QAction::triggered, [=]( bool checked ) {
+        lg->debug( QString( "SPX42ControlMainWin::aboutActionSlot <%1>" ).arg( checked ) );
+        AboutDialog dlg( this, cf, lg );
+        dlg.exec();
+      } );
+      //
+      // CLOSE
+      //
+      connect( ui->actionQUIT, &QAction::triggered, [=]( bool checked ) {
+        lg->debug( QString( "SPX42ControlMainWin::quitActionSlot <%1>" ).arg( checked ) );
+        close();
+      } );
+      //
+      // TAB wurde gewechselt
+      //
       connect( ui->areaTabWidget, &QTabWidget::currentChanged, this, &SPX42ControlMainWin::tabCurrentChangedSlot );
+      //
+      // Lizenz wurde geändert
+      //
       connect( spx42Config.get(), &SPX42Config::licenseChangedSig, this, &SPX42ControlMainWin::licenseChangedSlot );
 #ifdef DEBUG
+      //
+      // simuliert zu Nitrox lizenz geändert
+      //
       connect( ui->actionNitrox, &QAction::triggered, this, [=]( bool tr ) {
         if ( tr )
           simulateLicenseChanged( LicenseType::LIC_NITROX );
       } );
+      //
+      // simuliert zu TX Normoxic geändert
+      //
       connect( ui->actionNormoxic_TMX, &QAction::triggered, this, [=]( bool tr ) {
         if ( tr )
           simulateLicenseChanged( LicenseType::LIC_NORMOXIX );
       } );
+      //
+      // simuliert zu full Trimix geändert
+      //
       connect( ui->actionFull_TMX, &QAction::triggered, this, [=]( bool tr ) {
         if ( tr )
           simulateLicenseChanged( LicenseType::LIC_FULLTMX );
       } );
+      //
+      // simuliert zu militära Lizenz geändert
+      //
       connect( ui->actionMilitary, &QAction::triggered, this, [=]( bool tr ) {
         if ( tr )
           simulateLicenseChanged( LicenseType::LIC_MIL );
       } );
-      connect( ui->actionINDIVIDUAL_LIC, &QAction::triggered, this, &SPX42ControlMainWin::simulateIndividualLicenseChanged );
+      //
+      // simuliert Individuell Lizenz geändert
+      //
+      connect( ui->actionINDIVIDUAL_LIC, &QAction::triggered, [=]() {
+        lg->debug( "SPX42ControlMainWin::simulateIndividualLicenseChanged ..." );
+        if ( ui->actionINDIVIDUAL_LIC->isChecked() )
+        {
+          spx42Config->setLicense( IndividualLicense::LIC_INDIVIDUAL );
+        }
+        else
+        {
+          spx42Config->setLicense( IndividualLicense::LIC_NONE );
+        }
+      } );
 #endif
     }
     catch ( std::exception ex )
@@ -326,27 +366,6 @@ namespace spx
   ApplicationTab SPX42ControlMainWin::getApplicationTab( void )
   {
     return ( currentTab );
-  }
-
-  /**
-   * @brief Erzeuge den ABOUT-Dialog
-   * @param checked ?
-   */
-  void SPX42ControlMainWin::aboutActionSlot( bool checked )
-  {
-    lg->debug( QString( "SPX42ControlMainWin::aboutActionSlot <%1>" ).arg( checked ) );
-    AboutDialog dlg( this, cf, lg );
-    dlg.exec();
-  }
-
-  /**
-   * @brief Slot welcher mit dem QUIT Signal verbunden wird
-   * @param checked ?
-   */
-  void SPX42ControlMainWin::quitActionSlot( bool checked )
-  {
-    lg->debug( QString( "SPX42ControlMainWin::quitActionSlot <%1>" ).arg( checked ) );
-    close();
   }
 
   /**
@@ -453,27 +472,6 @@ namespace spx
         ui->actionNormoxic_TMX->setChecked( false );
         ui->actionFull_TMX->setChecked( false );
         break;
-    }
-#endif
-  }
-
-  /**
-   * @brief Slot für Signal Lizenzänderung
-   */
-  void SPX42ControlMainWin::simulateIndividualLicenseChanged( void )
-  {
-    lg->debug( "SPX42ControlMainWin::simulateIndividualLicenseChanged ..." );
-//
-// das folgende wird nur kompiliert, wenn DEBUG konfiguriert ist
-//
-#ifdef DEBUG
-    if ( ui->actionINDIVIDUAL_LIC->isChecked() )
-    {
-      spx42Config->setLicense( IndividualLicense::LIC_INDIVIDUAL );
-    }
-    else
-    {
-      spx42Config->setLicense( IndividualLicense::LIC_NONE );
     }
 #endif
   }

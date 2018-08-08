@@ -30,6 +30,7 @@ namespace spx
     std::unique_ptr< Ui::BtDiscoverDialog > ui;   //! GUI Objekt
     std::unique_ptr< QMovie > movie;              //! Animation
     qint16 timerCountdowwn;                       //! Countdown
+    QString selectedDeviceAddr;                   //! MAC des ausgewählten Gerätes
     QTimer msgTimer;                              //! Timeout für Meldungen
     static const qint16 timerStartValue = 6;      //! Timer Zyklen bis zum löschen der Meldung
     static const int timerInterval = 1000;        //! Timer interval in ms
@@ -38,7 +39,9 @@ namespace spx
     explicit BtDiscoverDialog( std::shared_ptr< Logger > logger,
                                std::shared_ptr< SPX42Database > spx42Database,
                                QWidget *parent = nullptr );
-    ~BtDiscoverDialog();
+    ~BtDiscoverDialog();                                    //! Destruktor
+    SPXDeviceList getSPX42Devices( void ) const;            //! Liste aller gefundenen Geräte
+    QBluetoothDeviceInfo getActivatedDevice( void ) const;  //! das aktiviert Gerät (wenn aktiviert)
 
     protected:
     void changeEvent( QEvent *e );
@@ -48,14 +51,13 @@ namespace spx
 
     public slots:
     void slotDiscoveredDevice( const QBluetoothDeviceInfo & );
-    void slotGuiPowerClicked( bool clicked );
     void slotGuiDisplayPairingMenu( const QPoint &pos );
     void slotDevicePairingDone( const QBluetoothAddress &, QBluetoothLocalDevice::Pairing );
 
     private slots:
     void slotGuiStartScan();
     void slotDiscoverScanFinished();
-    void slotGuiItemActivated( QListWidgetItem *item );
+    void itemClicked( QListWidgetItem *item );
     void slotDeviceHostModeStateChanged( QBluetoothLocalDevice::HostMode );
     void slotMessageTimer( void );
   };

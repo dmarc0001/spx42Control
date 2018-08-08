@@ -14,7 +14,7 @@
    <string>Bluetooth Scanner</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../res/scannerResource.qrc">
+   <iconset resource="../res/Spx42ControlRes.qrc">
     <normaloff>:/scanner/bluetooth_black_normal</normaloff>:/scanner/bluetooth_black_normal</iconset>
   </property>
   <property name="modal">
@@ -147,24 +147,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../res/scannerResource.qrc"/>
+  <include location="../res/Spx42ControlRes.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>CancelPushButton</sender>
-   <signal>clicked()</signal>
-   <receiver>BtDiscoverDialog</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>323</x>
-     <y>275</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>396</x>
-     <y>268</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

@@ -108,7 +108,8 @@ FORMS                   += \
     src/ui/BtDiscoverDialog.ui
 
 RESOURCES               = \
-    src/res/Spx42ControlRes.qrc
+    src/res/Spx42ControlRes.qrc \
+    src/res/spx42ControlRes.qrc
 
 TRANSLATIONS            = \
     src/translations/Spx42Control_de_DE.ts

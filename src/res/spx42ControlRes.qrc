@@ -49,4 +49,7 @@
         <file alias="worker">no_working.gif</file>
         <file alias="workerAnimation">working.gif</file>
     </qresource>
+    <qresource prefix="/style">
+        <file alias="defaultStyle.css">spx42Control.css</file>
+    </qresource>
 </RCC>

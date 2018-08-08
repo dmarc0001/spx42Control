@@ -1,25 +1,24 @@
 ﻿
 #include "ControlMain.hpp"
 
-
-int main(int argc, char *argv[])
+int main( int argc, char *argv[] )
 {
-  QApplication app(argc, argv);
+  QApplication app( argc, argv );
   //
   // Übersetzter...
   //
   QTranslator qtTranslator;
-  QDir currDir = QDir::currentPath( );
+  QDir currDir = QDir::currentPath();
   QString fileName = "spx42Control";
   QString prefix = "_";
   QString suffix = ".qm";
-  QString destPath = currDir.absolutePath( ) + "/";
+  QString destPath = currDir.absolutePath() + "/";
   qDebug() << "File: " << fileName;
-  qDebug() << "Locale: " << QLocale::system( ).name( );
-  qDebug() << "Path: " << currDir.absolutePath( );
-  qDebug() << "searchFile: " << destPath + fileName + prefix + QLocale::system( ).name( ) + suffix;
-  qDebug() << "Translation load: " << qtTranslator.load( QLocale::system( ).name( ), fileName, prefix, destPath, suffix );
-  qDebug() << "Tanslator isEmpty: " << qtTranslator.isEmpty( );
+  qDebug() << "Locale: " << QLocale::system().name();
+  qDebug() << "Path: " << currDir.absolutePath();
+  qDebug() << "searchFile: " << destPath + fileName + prefix + QLocale::system().name() + suffix;
+  qDebug() << "Translation load: " << qtTranslator.load( QLocale::system().name(), fileName, prefix, destPath, suffix );
+  qDebug() << "Tanslator isEmpty: " << qtTranslator.isEmpty();
   app.installTranslator( &qtTranslator );
   //
   // Stylesheet laden, wenn vorhanden
@@ -27,14 +26,23 @@ int main(int argc, char *argv[])
   suffix = ".css";
   qDebug().nospace().noquote() << "File: " << fileName << suffix;
   qDebug() << "Path: " << destPath;
-  qDebug().nospace() << "searchFile: " << destPath.append(fileName).append(suffix);
-  if( readStylesheetFromFile( &app, destPath ) )
+  qDebug().nospace() << "searchFile: " << destPath.append( fileName ).append( suffix );
+  if ( readStylesheetFromFile( &app, destPath ) )
   {
     qDebug() << "Stylesheet correct loadet...";
   }
   else
   {
-    qWarning() << "Can't load stylesheet...";
+    qWarning() << "Can't load external stylesheet, try internal...";
+    destPath = ":/style/defaultStyle.css";
+    if ( readStylesheetFromFile( &app, destPath ) )
+    {
+      qDebug() << "internal Stylesheet correct loadet...";
+    }
+    else
+    {
+      qWarning() << "Can't load internal stylesheet, work without it...";
+    }
   }
   //
   // Hauptfenster erzeugen, Fenster zeigen
@@ -51,24 +59,23 @@ int main(int argc, char *argv[])
   return app.exec();
 }
 
-bool readStylesheetFromFile(QApplication* app, QString& file )
+bool readStylesheetFromFile( QApplication *app, QString &file )
 {
   QFile styleFile( file );
   //
-  if( !styleFile.open(QIODevice::ReadOnly) )
+  if ( !styleFile.open( QIODevice::ReadOnly ) )
   {
-    qCritical() << "Cant open stylesheet readonly: " << styleFile.errorString();
-    return( false );
+    qDebug() << "Cant open stylesheet readonly: " << styleFile.errorString();
+    return ( false );
   }
   //
   // die Datei einlesen
   //
   QString line = styleFile.readAll();
   // Zeilenvorschübe entfernen (global)
-  line.replace(QRegularExpression("(\n|\r)"), " ");
+  line.replace( QRegularExpression( "(\n|\r)" ), " " );
   // Kommentare entfernen (globel)
-  line.remove(QRegularExpression("/\\*.*?\\*/"));
-  //qDebug() << "Line replaced: " << line;
+  line.remove( QRegularExpression( "/\\*.*?\\*/" ) );
   app->setStyleSheet( line );
-  return( true );
+  return ( true );
 }
