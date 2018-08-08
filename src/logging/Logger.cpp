@@ -4,11 +4,11 @@
 
 namespace spx
 {
-  const QString Logger::dateTimeFormat = "[yyyy-MM-dd hh:mm:ss.z] ";
-  const QString Logger::DEBUG_STR = "DEBUG ";
-  const QString Logger::INFO_STR = "INFO  ";
-  const QString Logger::WARN_STR = "WARN  ";
-  const QString Logger::CRIT_STR = "CRIT  ";
+  const QString Logger::dateTimeFormat{"[yyyy-MM-dd hh:mm:ss.z] "};
+  const QString Logger::DEBUG_STR{"DEBUG "};
+  const QString Logger::INFO_STR{"INFO  "};
+  const QString Logger::WARN_STR{"WARN  "};
+  const QString Logger::CRIT_STR{"CRIT  "};
 
   /**
    * @brief Logger::Logger Konstruktor mit Konfigurationsdatei Übergabe

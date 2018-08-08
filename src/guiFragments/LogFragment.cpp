@@ -232,7 +232,7 @@ namespace spx
     // vorher Skalierung testen
     float min = getMinYValue( series );
     min += ( min / 8.0f );  // 8% zugeben
-    axisY->setRange( min, 0.50f );
+    axisY->setRange( static_cast< qreal >( min ), 0.50 );
     // in chart setzten
     chart->setAxisY( axisY, series );
     chartView->setChart( chart.get() );
@@ -250,8 +250,8 @@ namespace spx
     float min = FLT_MAX;
     while ( it != points.end() )
     {
-      if ( it->ry() < min )
-        min = it->ry();
+      if ( it->ry() < static_cast< qreal >( min ) )
+        min = static_cast< float >( it->ry() );
       it++;
     }
     return ( min );
@@ -269,8 +269,8 @@ namespace spx
     float max = FLT_MIN;
     while ( it != points.end() )
     {
-      if ( it->ry() > max )
-        max = it->ry();
+      if ( it->ry() > static_cast< qreal >( max ) )
+        max = static_cast< float >( it->ry() );
       it++;
     }
     return ( max );

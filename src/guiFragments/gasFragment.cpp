@@ -143,10 +143,10 @@ namespace spx
     //
     for ( int i = 0; i < 8; i++ )
     {
-      disconnect( gRef[ i ].get()->heSpin, 0, 0, 0 );
-      disconnect( gRef[ i ].get()->o2Spin, 0, 0, 0 );
+      disconnect( gRef[ i ].get()->heSpin );
+      disconnect( gRef[ i ].get()->o2Spin );
     }
-    disconnect( spxConfig.get(), 0, 0, 0 );
+    disconnect( spxConfig.get() );
   }
 
   void GasFragment::spinO2ValueChangedSlot( int index, int o2Val )
@@ -164,7 +164,7 @@ namespace spx
     // Gas setzen, Plausibilität prüfen, ggf korrigieren
     //
     SPX42Gas &currGas = spxConfig->getGasAt( index );
-    currGas.setO2( o2Val, spxConfig->getLicense().getLicType() );
+    currGas.setO2( static_cast< quint8 >( o2Val ), spxConfig->getLicense().getLicType() );
     whereIgnored = index;  // igfnorieren weitere Aufrufe für diesen index, GUI verändern
     gRef[ index ].get()->o2Spin->setValue( currGas.getO2() );
     gRef[ index ].get()->heSpin->setValue( currGas.getHe() );
@@ -189,7 +189,7 @@ namespace spx
     // Gas setzen, Plausibilität prüfen, ggf korrigieren
     //
     SPX42Gas &currGas = spxConfig->getGasAt( index );
-    currGas.setHe( heVal, spxConfig->getLicense().getLicType() );
+    currGas.setHe( static_cast< quint8 >( heVal ), spxConfig->getLicense().getLicType() );
     whereIgnored = index;  // igfnorieren weitere Aufrufe für diesen index, GUI verändern
     gRef[ index ].get()->o2Spin->setValue( currGas.getO2() );
     gRef[ index ].get()->heSpin->setValue( currGas.getHe() );

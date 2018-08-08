@@ -18,7 +18,7 @@ namespace spx
   {
     private:
     std::random_device rd;  //! DEBUG Generator für DataSerien
-    float maxdepth;
+    double maxdepth;
     int samples;
     std::mt19937 gen;
 

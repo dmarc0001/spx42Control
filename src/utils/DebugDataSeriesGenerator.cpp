@@ -3,78 +3,76 @@
 using namespace QtCharts;
 namespace spx
 {
-  DebugDataSeriesGenerator::DebugDataSeriesGenerator( std::shared_ptr<Logger> logger, std::shared_ptr<SPX42Config> spxCfg) :
-    IDataSeriesGenerator( logger, spxCfg ),
-    gen(rd())
+  DebugDataSeriesGenerator::DebugDataSeriesGenerator( std::shared_ptr< Logger > logger, std::shared_ptr< SPX42Config > spxCfg )
+      : IDataSeriesGenerator( logger, spxCfg ), gen( rd() )
   {
   }
 
   DebugDataSeriesGenerator::~DebugDataSeriesGenerator()
   {
-
   }
 
   void DebugDataSeriesGenerator::setDeviceId( int deviceId )
   {
     this->deviceId = deviceId;
     // Verteilung der Werte für Tiefe auswählen
-    std::uniform_real_distribution<> depth(5, 90);
+    std::uniform_real_distribution<> depth( 5, 90 );
     // Jetz hab ich die Verteilung für die Tiefe
-    maxdepth =  static_cast<float>( std::floor( depth( gen ) ) );
+    maxdepth = static_cast< double >( std::floor( depth( gen ) ) );
     // Länge des TG zwischen 30 und 90 Minuten, samples a 20 Sekunden
-    std::uniform_real_distribution<> len(600, 1800);
-    samples = static_cast<int>(std::floor( len( gen ) ) );
+    std::uniform_real_distribution<> len( 600, 1800 );
+    samples = static_cast< int >( std::floor( len( gen ) ) );
     dataAvaivible = true;
   }
 
-  QLineSeries* DebugDataSeriesGenerator::makeDepthSerie( int diveNum )
+  QLineSeries *DebugDataSeriesGenerator::makeDepthSerie( int )
   {
-    QLineSeries* ser = new QLineSeries();
-    float ind = 0;
-    float depth = 0;
-    if( !dataAvaivible ) return( ser );
+    QLineSeries *ser = new QLineSeries();
+    double ind = 0;
+    double depth = 0;
+    if ( !dataAvaivible )
+      return ( ser );
     //
     // Alle Samples machen
     // TODO: am Ende flacher werden lassen
     //
-    for( int i = 0; i < samples; i ++ )
+    for ( int i = 0; i < samples; i++ )
     {
-      std::uniform_real_distribution<> dist( std::max( 0.0f, depth - 1.0f ), std::min( depth + 1.8f, maxdepth ) );
-      ind = static_cast<float>( i );
-      depth = static_cast<float>( dist( gen ) );
-      *ser << QPointF( ind, 0.0 - depth );
+      std::uniform_real_distribution<> dist( std::max( 0.0, depth - 1.0 ), std::min( depth + 1.8, maxdepth ) );
+      ind = static_cast< double >( i );
+      depth = static_cast< double >( dist( gen ) );
+      *ser << QPointF( static_cast< qreal >( ind ), 0.0 - static_cast< qreal >( depth ) );
     }
-    return( ser );
+    return ( ser );
   }
 
-  QLineSeries* DebugDataSeriesGenerator::makeTempSerie( int diveNum )
+  QLineSeries *DebugDataSeriesGenerator::makeTempSerie( int )
   {
-    QLineSeries* ser = new QLineSeries();
-    return( ser );
+    QLineSeries *ser = new QLineSeries();
+    return ( ser );
   }
 
-  QLineSeries* DebugDataSeriesGenerator::makePPOSerie( int diveNum )
+  QLineSeries *DebugDataSeriesGenerator::makePPOSerie( int )
   {
-    QLineSeries* ser = new QLineSeries();
-    return( ser );
+    QLineSeries *ser = new QLineSeries();
+    return ( ser );
   }
 
-  QLineSeries* DebugDataSeriesGenerator::makeSensor1Serie( int diveNum )
+  QLineSeries *DebugDataSeriesGenerator::makeSensor1Serie( int )
   {
-    QLineSeries* ser = new QLineSeries();
-    return( ser );
+    QLineSeries *ser = new QLineSeries();
+    return ( ser );
   }
 
-  QLineSeries* DebugDataSeriesGenerator::makeSensor2Serie( int diveNum )
+  QLineSeries *DebugDataSeriesGenerator::makeSensor2Serie( int )
   {
-    QLineSeries* ser = new QLineSeries();
-    return( ser );
+    QLineSeries *ser = new QLineSeries();
+    return ( ser );
   }
 
-  QLineSeries* DebugDataSeriesGenerator::makeSensor3Serie( int diveNum )
+  QLineSeries *DebugDataSeriesGenerator::makeSensor3Serie( int )
   {
-    QLineSeries* ser = new QLineSeries();
-    return( ser );
+    QLineSeries *ser = new QLineSeries();
+    return ( ser );
   }
-
 }

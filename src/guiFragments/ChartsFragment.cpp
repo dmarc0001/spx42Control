@@ -21,7 +21,7 @@ namespace spx
     lg->debug( "ConnectFragment::~ConnectFragment..." );
   }
 
-  void ChartsFragment::onOnlineStatusChangedSlot( bool isOnline )
+  void ChartsFragment::onOnlineStatusChangedSlot( bool )
   {
     // TODO: was machen
   }

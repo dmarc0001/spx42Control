@@ -10,8 +10,8 @@ win32:QMAKE_TARGET_COMPANY             = submatix.com
 win32:QMAKE_TARGET_COPYRIGHT           = D. Marciniak
 win32:QMAKE_TARGET_PRODUCT             = SPX42 BT-Controller
 win32:RC_ICONS                         = src/res/programIcon.ico
-win32:VERSION                          = 0.2.0.0 # major.minor.patch.build
-else:VERSION                           = 0.2.0    # major.minor.patch
+win32:VERSION                          = 0.2.1.0  # major.minor.patch.build
+else:VERSION                           = 0.2.1    # major.minor.patch
 macx:ICON                              = src/res/programIcon.ico
 #
 TARGET                                 = spx42Control
