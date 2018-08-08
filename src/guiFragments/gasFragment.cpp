@@ -307,7 +307,7 @@ namespace spx
     // TODO: GUI überarbeiten!
   }
 
-  void GasFragment::onOnlineStatusChangedSlot( bool isOnline )
+  void GasFragment::onOnlineStatusChangedSlot( bool )
   {
     // TODO: was machen
   }
@@ -316,4 +316,4 @@ namespace spx
   {
     // TODO: implementieren
   }
-}
+}  // namespace spx

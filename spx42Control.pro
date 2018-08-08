@@ -72,7 +72,6 @@ HEADERS                 += \
     src/config/AppConfigClass.hpp \
     src/config/ProjectConst.hpp \
     src/logging/Logger.hpp \
-    src/config/CurrBuildDef.hpp \
     src/utils/AboutDialog.hpp \
     src/guiFragments/ConnectFragment.hpp \
     src/guiFragments/GasFragment.hpp \
@@ -94,7 +93,8 @@ HEADERS                 += \
     src/bluetooth/BtServiceDiscover.hpp \
     src/bluetooth/SPX42BtDevices.hpp \
     src/bluetooth/BtDiscoverDialog.hpp \
-    src/database/SPX42Database.hpp
+    src/database/SPX42Database.hpp \
+    src/config/currBuildDef.hpp
 
 FORMS                   += \
     src/ui/Spx42ControlMainWin.ui \
@@ -108,8 +108,7 @@ FORMS                   += \
     src/ui/BtDiscoverDialog.ui
 
 RESOURCES               = \
-    src/res/Spx42ControlRes.qrc \
-    src/res/spx42ControlRes.qrc
+    src/res/Spx42ControlRes.qrc
 
 TRANSLATIONS            = \
     src/translations/Spx42Control_de_DE.ts

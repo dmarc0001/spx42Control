@@ -33,7 +33,7 @@ namespace spx
     // delete ui;
   }
 
-  void ConnectFragment::onOnlineStatusChangedSlot( bool isOnline )
+  void ConnectFragment::onOnlineStatusChangedSlot( bool )
   {
     // TODO: was machen
   }
@@ -92,4 +92,4 @@ namespace spx
   {
     lg->debug( QString( "ConnectFragment::currentIndexChangedSlot -> index changed to <%1>." ).arg( index, 2, 10, QChar( '0' ) ) );
   }
-}
+}  // namespace spx

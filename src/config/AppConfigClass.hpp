@@ -7,7 +7,7 @@
 #include <QStandardPaths>
 #include <QString>
 #include <QVector>
-#include "CurrBuildDef.hpp"
+#include "currBuildDef.hpp"
 
 namespace spx
 {
@@ -66,5 +66,5 @@ namespace spx
     void makeAppDefaultSettings( QSettings &settings );
     bool saveAppSettings( QSettings &settings );
   };
-}
+}  // namespace spx
 #endif  // LOGGERCLASS_HPP
