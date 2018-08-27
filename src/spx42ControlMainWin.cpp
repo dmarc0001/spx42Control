@@ -33,7 +33,16 @@ namespace spx
     lg->debug( QString( "SPX42ControlMainWin::SPX42ControlMainWin:" ).append( "Program build date:   " ).append( cf.getBuildDate() ) );
     lg->debug(
         QString( "SPX42ControlMainWin::SPX42ControlMainWin:" ).append( "Program build number: " ).append( cf.getBuildNumStr() ) );
+    //
+    // Datenbank öffnen oder initialisieren
+    //
     spx42Database = std::shared_ptr< SPX42Database >( new SPX42Database( lg, cf.getFullDatabaseLocation(), this ) );
+    QSqlError err = spx42Database->openDatabase( true );
+    if ( err.isValid() && err.type() != QSqlError::NoError )
+    {
+      QMessageBox::critical( this, tr( "CRITICAL" ), tr( "database can't open!" ) );
+      this->close();
+    }
     //
     // GUI initialisieren
     //
@@ -86,6 +95,7 @@ namespace spx
    */
   SPX42ControlMainWin::~SPX42ControlMainWin()
   {
+    lg->debug( "SPX42ControlMainWin::~SPX42ControlMainWin..." );
     try
     {
       if ( watchdog->isActive() )

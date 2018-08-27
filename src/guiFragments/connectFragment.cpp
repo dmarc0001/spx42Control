@@ -18,6 +18,11 @@ namespace spx
     ui->deviceComboBox->addItem( "ZWEI", 2 );
     ui->deviceComboBox->addItem( "DREI", 3 );
     ui->deviceComboBox->addItem( "VIER", 4 );
+    //
+    // geräte einlesen
+    //
+    devices = spx42Database->getDeviceAliasHash();
+    //
     onConfLicChangedSlot();
     connect( spxConfig.get(), &SPX42Config::licenseChangedSig, this, &ConnectFragment::onConfLicChangedSlot );
     connect( ui->connectButton, &QPushButton::clicked, this, &ConnectFragment::connectButtonSlot );

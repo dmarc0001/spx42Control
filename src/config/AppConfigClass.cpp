@@ -19,7 +19,8 @@ namespace spx
   const QString AppConfigClass::constAppThresholdKey{"loggingThreshold"};
   const qint8 AppConfigClass::defaultAppThreshold{4};
   const QString AppConfigClass::defaultDatabaseName{"spx42Database.db"};
-  const QString AppConfigClass::defaultDatabasePath{QStandardPaths::writableLocation( QStandardPaths::AppDataLocation )};
+  const QString AppConfigClass::defaultDatabasePath{
+      QStandardPaths::writableLocation( QStandardPaths::AppDataLocation ).append( "/spx42Control" )};
 
   /**
    * @brief LoggerClass::LoggerClass Der Konstruktor mit Name der Konfigdatei im Programmverzeichnis

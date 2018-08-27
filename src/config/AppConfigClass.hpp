@@ -1,6 +1,7 @@
 ﻿#ifndef LOGGERCLASS_HPP
 #define LOGGERCLASS_HPP
 
+#include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QSettings>

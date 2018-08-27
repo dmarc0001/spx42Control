@@ -21,6 +21,7 @@ namespace spx
     private:
     Q_OBJECT
     std::unique_ptr< Ui::connectForm > ui;  //! Zeiger auf die GUI Objekte
+    DeviceAliasHash devices;
 
     public:
     explicit ConnectFragment( QWidget *parent,
