@@ -1,6 +1,7 @@
 ﻿#ifndef CONNECTFORM_HPP
 #define CONNECTFORM_HPP
 
+#include <QPair>
 #include <QWidget>
 #include <memory>
 #include "IFragmentInterface.hpp"
@@ -29,6 +30,9 @@ namespace spx
                               std::shared_ptr< SPX42Database > spx42Database,
                               std::shared_ptr< SPX42Config > spxCfg );  //! Konstruktor
     ~ConnectFragment() override;                                        //! Destruktor, muss GUI säubern
+
+    private:
+    void fillDevicesList( void );  //! fülle die Liste mit den Geräten neu
 
     private slots:
     virtual void onOnlineStatusChangedSlot( bool isOnline ) override;  //! Wenn sich der Onlinestatus des SPX42 ändert

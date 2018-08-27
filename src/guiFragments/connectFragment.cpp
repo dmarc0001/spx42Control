@@ -12,16 +12,11 @@ namespace spx
     lg->debug( "ConnectFragment::ConnectFragment..." );
     ui->setupUi( this );
     ui->connectProgressBar->setVisible( false );
-    // FIXME: zur Ansicht einfach Elemente einfügen
     //
-    ui->deviceComboBox->addItem( "EINS", 1 );
-    ui->deviceComboBox->addItem( "ZWEI", 2 );
-    ui->deviceComboBox->addItem( "DREI", 3 );
-    ui->deviceComboBox->addItem( "VIER", 4 );
-    //
-    // geräte einlesen
+    // geräte einlesen und combo liste füllen
     //
     devices = spx42Database->getDeviceAliasHash();
+    fillDevicesList();
     //
     onConfLicChangedSlot();
     connect( spxConfig.get(), &SPX42Config::licenseChangedSig, this, &ConnectFragment::onConfLicChangedSlot );
@@ -34,7 +29,7 @@ namespace spx
 
   ConnectFragment::~ConnectFragment()
   {
-    lg->debug( "ConnectFragment::~ConnectForm..." );
+    lg->debug( "ConnectFragment::~ConnectFragment..." );
     // delete ui;
   }
 
@@ -95,6 +90,39 @@ namespace spx
 
   void ConnectFragment::currentIndexChangedSlot( int index )
   {
-    lg->debug( QString( "ConnectFragment::currentIndexChangedSlot -> index changed to <%1>." ).arg( index, 2, 10, QChar( '0' ) ) );
+    lg->debug( QString( "ConnectFragment::currentIndexChangedSlot -> index changed to <%1>. MAC: <%2>" )
+                   .arg( index, 2, 10, QChar( '0' ) )
+                   .arg( ui->deviceComboBox->itemData( index ).toString() ) );
   }
+
+  // ##########################################################################
+  // PRIVATE Funktionen
+  // ##########################################################################
+
+  void ConnectFragment::fillDevicesList( void )
+  {
+    //
+    // Die Gerätebox leeren
+    //
+    ui->deviceComboBox->clear();
+    //
+    // Liste der Schlüssel (die MAC)
+    //
+    QStringList dKeys = devices.keys();
+    //
+    // die Liste durch gehen
+    //
+    for ( QStringList::iterator keyMacIter = dKeys.begin(); keyMacIter != dKeys.end(); keyMacIter++ )
+    {
+      //
+      // die Elemente zu Titel zusammenfügen
+      //
+      QPair< QString, QString > nPair( devices.take( *keyMacIter ) );
+      QString title = QString( "%1(%2)" ).arg( nPair.second ).arg( nPair.first );
+      // lg->debug( QString( "ConnectFragment::fillDevicesList -> <%1> <%2> <%3>" ).arg( title ).arg( nPair.first ).arg( nPair.second )
+      // );
+      ui->deviceComboBox->addItem( title, *keyMacIter );
+    }
+  }
+
 }  // namespace spx

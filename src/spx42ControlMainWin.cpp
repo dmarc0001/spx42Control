@@ -399,7 +399,7 @@ namespace spx
     //
     QWidget *oldTab = ui->areaTabWidget->widget( idx );
     ui->areaTabWidget->removeTab( idx );
-    delete oldTab;
+    oldTab->deleteLater();
     //
     // Neuen Inhalt des Tabs aufbauen
     //
