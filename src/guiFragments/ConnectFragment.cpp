@@ -94,11 +94,7 @@ namespace spx
         return;
       }
       //
-      // TODO: was mache ich mit dem Gerät nun?
-      //
-
-      //
-      // dioe Geräteliste neu befüllen
+      // die Geräteliste neu befüllen
       //
       devices = database->getDeviceAliasHash();
       fillDevicesList();
@@ -112,6 +108,9 @@ namespace spx
       ui->deviceComboBox->addItem( title, devInfo.address().toString() );
       if ( ui->deviceComboBox->count() > 0 )
       {
+        //
+        // und wenn machbar die Auswahl gleich auf dieses Gerät setzten
+        //
         ui->deviceComboBox->setCurrentIndex( ui->deviceComboBox->count() - 1 );
       }
     }
