@@ -1,12 +1,16 @@
 ﻿#include "BtServiceDiscover.hpp"
 
+#include <utility>
+
+#include <memory>
+
 namespace spx
 {
   BtServiceDiscover::BtServiceDiscover( std::shared_ptr< Logger > logger,
                                         QBluetoothAddress &l_addr,
                                         QBluetoothAddress &r_addr,
                                         QObject *parent )
-      : QObject( parent ), lg( logger ), laddr( l_addr ), raddr( r_addr ), expression( ".*" )
+      : QObject( parent ), lg(std::move( logger )), laddr( l_addr ), raddr( r_addr ), servicesCount( 0 ), expression( ".*" )
   {
     //
     // default Bluetooth adapter
@@ -20,17 +24,18 @@ namespace spx
      * set which adapter will be used by providing MAC Address.
      * Example code:
      *
-     * QBluetoothAddress adapterAddress("XX:XX:XX:XX:XX:XX");
+     * QBlueto{}othAddress adapterAddress("XX:XX:XX:XX:XX:XX");
      * discoveryAgent = new QBluetoothServiceDiscoveryAgent(adapterAddress);
      */
-    discoveryAgent = std::unique_ptr< QBluetoothServiceDiscoveryAgent >( new QBluetoothServiceDiscoveryAgent( adapterAddress ) );
+    discoveryAgent = std::make_unique< QBluetoothServiceDiscoveryAgent >( adapterAddress );
     discoveryAgent->setRemoteAddress( raddr );
     //
     // signale mit Slots verbinden
     //
     connect( discoveryAgent.get(), &QBluetoothServiceDiscoveryAgent::serviceDiscovered, this,
-             &BtServiceDiscover::slotDiscoveredService );
-    connect( discoveryAgent.get(), &QBluetoothServiceDiscoveryAgent::finished, this, [=] { emit sigDiscoverScanFinished( raddr ); } );
+             &BtServiceDiscover::onDiscoveredServiceSlot );
+    connect( discoveryAgent.get(), &QBluetoothServiceDiscoveryAgent::finished, this,
+             [=] { emit onDiscoverScanFinishedSig( raddr ); } );
   }
 
   BtServiceDiscover::~BtServiceDiscover()
@@ -47,12 +52,12 @@ namespace spx
     return ( false );
   }
 
-  void BtServiceDiscover::resetServiceFilter( void )
+  void BtServiceDiscover::resetServiceFilter( )
   {
     expression.setPattern( ".*" );
   }
 
-  void BtServiceDiscover::start( void )
+  void BtServiceDiscover::start( )
   {
     //
     // starte das suchen nach Services
@@ -60,17 +65,22 @@ namespace spx
     discoveryAgent->start();
   }
 
-  int BtServiceDiscover::servicesDiscovered( void )
+  void BtServiceDiscover::cancelDiscover( )
+  {
+    discoveryAgent->stop();
+  }
+
+  int BtServiceDiscover::servicesDiscovered( )
   {
     return ( servicesCount );
   }
 
-  void BtServiceDiscover::slotDiscoveredService( const QBluetoothServiceInfo &info )
+  void BtServiceDiscover::onDiscoveredServiceSlot( const QBluetoothServiceInfo &info )
   {
     if ( info.serviceName().isEmpty() )
       return;
     QString line = info.serviceName();
-    lg->info( QString( "BtServiceDiscover::slotDiscoveredService: %1 on %2" ).arg( line ).arg( raddr.toString() ) );
+    lg->info( QString( "BtServiceDiscover::onDiscoveredServiceSlot: %1 on %2" ).arg( line ).arg( raddr.toString() ) );
     //
     // ist das ein gesuchter service
     //
@@ -78,7 +88,7 @@ namespace spx
     {
       if ( expression.indexIn( line ) < 0 )
       {
-        lg->debug( QString( "BtServiceDiscover::slotDiscoveredService: service %1 is not matching. ignore" ).arg( line ) );
+        lg->debug( QString( "BtServiceDiscover::onDiscoveredServiceSlot: service %1 is not matching. ignore" ).arg( line ) );
         return;
       }
     }
@@ -87,11 +97,12 @@ namespace spx
       line.append( " " + info.serviceDescription() );
     if ( !info.serviceProvider().isEmpty() )
       line.append( " " + info.serviceProvider() );
-    lg->info( QString( "BtServiceDiscover::slotDiscoveredService: %1 on %2 signal to list..." ).arg( line ).arg( raddr.toString() ) );
+    lg->info(
+        QString( "BtServiceDiscover::onDiscoveredServiceSlot: %1 on %2 signal to list..." ).arg( line ).arg( raddr.toString() ) );
     //
     // signalisiere dem interessierten dass ein Service gefunden wurde
     //
-    emit sigDiscoveredService( raddr, info );
+    emit onDiscoveredServiceSig( raddr, info );
     servicesCount++;
   }
 }

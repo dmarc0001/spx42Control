@@ -40,9 +40,9 @@ namespace spx
     //
     onConfLicChangedSlot();
     connect( spxConfig.get(), &SPX42Config::licenseChangedSig, this, &LogFragment::onConfLicChangedSlot );
-    connect( ui->readLogdirPushButton, &QPushButton::clicked, this, &LogFragment::readLogDirectorySlot );
-    connect( ui->readLogContentPushButton, &QPushButton::clicked, this, &LogFragment::readLogContentSlot );
-    connect( ui->logentryListView, &QAbstractItemView::clicked, this, &LogFragment::logListViewClickedSlot );
+    connect( ui->readLogdirPushButton, &QPushButton::clicked, this, &LogFragment::onReadLogDirectorySlot );
+    connect( ui->readLogContentPushButton, &QPushButton::clicked, this, &LogFragment::onReadLogContentSlot );
+    connect( ui->logentryListView, &QAbstractItemView::clicked, this, &LogFragment::onLogListViewClickedSlot );
   }
 
   /**
@@ -77,36 +77,36 @@ namespace spx
   /**
    * @brief Slot für das Signal von button zum Directory lesen
    */
-  void LogFragment::readLogDirectorySlot( void )
+  void LogFragment::onReadLogDirectorySlot( )
   {
-    lg->debug( "LogFragment::readLogDirectorySlot: ..." );
+    lg->debug( "LogFragment::onReadLogDirectorySlot: ..." );
     // DEBUG: erzeuge einfach Einträge bei Jedem Click
     static int entry = 0;
     QString newEntry = QString( "ENTRY: %1" ).arg( ++entry );
-    addLogdirEntrySlot( newEntry );
+    onAddLogdirEntrySlot( newEntry );
     //
   }
 
   /**
    * @brief Slot für das Signal vom button zum _Inhalt des Logs lesen
    */
-  void LogFragment::readLogContentSlot( void )
+  void LogFragment::onReadLogContentSlot( )
   {
-    lg->debug( "LogFragment::readLogContentSlot: ..." );
+    lg->debug( "LogFragment::onReadLogContentSlot: ..." );
     QModelIndexList indexList = ui->logentryListView->selectionModel()->selectedIndexes();
     if ( model->rowCount() == 0 )
     {
-      lg->warn( "LogFragment::readLogContentSlot: no log entrys!" );
+      lg->warn( "LogFragment::onReadLogContentSlot: no log entrys!" );
       return;
     }
     if ( indexList.isEmpty() )
     {
-      lg->warn( "LogFragment::readLogContentSlot: nothing selected, read all?" );
+      lg->warn( "LogFragment::onReadLogContentSlot: nothing selected, read all?" );
       // TODO: Messagebox aufpoppen und Nutzer fragen
     }
     else
     {
-      lg->debug( QString( "LogFragment::readLogContentSlot: read %1 logs from spx42..." ).arg( indexList.count() ) );
+      lg->debug( QString( "LogFragment::onReadLogContentSlot: read %1 logs from spx42..." ).arg( indexList.count() ) );
       // TODO: tatsächlich anfragen....
     }
   }
@@ -115,12 +115,12 @@ namespace spx
    * @brief Slot für das Signal wenn auf einen Log Directory Eintrag geklickt wird
    * @param index welcher Index war es?
    */
-  void LogFragment::logListViewClickedSlot( const QModelIndex &index )
+  void LogFragment::onLogListViewClickedSlot( const QModelIndex &index )
   {
     QString number = "-";
     QString date = "-";
     QString depth = "-";
-    lg->debug( QString( "LogFragment::logListViewClickedSlot: data: %1..." ).arg( index.data().toString() ) );
+    lg->debug( QString( "LogFragment::onLogListViewClickedSlot: data: %1..." ).arg( index.data().toString() ) );
     // TODO: aus dem Eintrag die Nummer lesen
     // TODO: TG in der Database -> Parameter auslesen und in die Labels eintragen
     ui->diveNumberLabel->setText( diveNumberStr.arg( number ) );
@@ -145,7 +145,7 @@ namespace spx
    * @brief Wird ein Log Verzeichniseintrag angeliefert....
    * @param entry Der Eintrag
    */
-  void LogFragment::addLogdirEntrySlot( const QString &entry )
+  void LogFragment::onAddLogdirEntrySlot( const QString &entry )
   {
     int row = model->rowCount();
     model->insertRows( row, 1 );
@@ -157,12 +157,12 @@ namespace spx
    * @brief Slot für ankommende Logdaten (für eine Logdatei)
    * @param line die Logzeile
    */
-  void LogFragment::addLogLineSlot( const QString &line )
+  void LogFragment::onAddLogLineSlot( const QString &line )
   {
-    lg->debug( QString( "LogFragment::addLogLineSlot: logline: <" ).append( line ).append( ">" ) );
+    lg->debug( QString( "LogFragment::onAddLogLineSlot: logline: <" ).append( line ).append( ">" ) );
   }
 
-  void LogFragment::prepareMiniChart( void )
+  void LogFragment::prepareMiniChart( )
   {
     chart->legend()->hide();  // Keine Legende in der Minivorschau
     // Chart Titel aufhübschen
@@ -199,7 +199,7 @@ namespace spx
     axisY->setShadesVisible( true );
     // Achsen Werte und Bereiche setzten
     axisY->setRange( 0, 30 );
-    QLineSeries *se = new QLineSeries();
+    auto *se = new QLineSeries();
     chart->setAxisY( axisY, se );
     chart->setMargins( QMargins( 0, 0, 0, 0 ) );
     // Hübsch malen
@@ -281,15 +281,15 @@ namespace spx
     // TODO: was machen
   }
 
-  void LogFragment::onConfLicChangedSlot( void )
+  void LogFragment::onConfLicChangedSlot( )
   {
-    lg->debug(
-        QString( "LogFragment::confLicChangedSlot -> set: %1" ).arg( static_cast< int >( spxConfig->getLicense().getLicType() ) ) );
+    lg->debug( QString( "LogFragment::onOnlineStatusChangedSlot -> set: %1" )
+                   .arg( static_cast< int >( spxConfig->getLicense().getLicType() ) ) );
     ui->tabHeaderLabel->setText(
         QString( tr( "LOGFILES SPX42 Serial [%1] Lic: %2" ).arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
   }
 
-  void LogFragment::onCloseDatabaseSlot( void )
+  void LogFragment::onCloseDatabaseSlot( )
   {
     // TODO: implementieren
   }

@@ -33,12 +33,12 @@ namespace spx
   /**
    * @brief Initialisiere das Fragment (GUI Aufbauen)
    */
-  void DeviceConfigFragment::initGuiWithConfig( void )
+  void DeviceConfigFragment::initGuiWithConfig( )
   {
     //
     // Initialisiere die GUI
     //
-    ui.get()->tabHeaderLabel->setText(
+    ui->tabHeaderLabel->setText(
         QString( tr( "SETTINGS SPX42 SERIAL [%1] LIC: %2" ).arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
     //
     // Dekompression
@@ -63,7 +63,7 @@ namespace spx
   /**
    * @brief GUI für Dekomprtession nach spxConfig einrichten
    */
-  void DeviceConfigFragment::setGuiForDecompression( void )
+  void DeviceConfigFragment::setGuiForDecompression( )
   {
     //
     // Signale trennen um Schleifen zu vermeiden
@@ -97,20 +97,20 @@ namespace spx
     }
     // Signale mit Slots verbinden
     connect( ui->conservatismComboBox, static_cast< void ( QComboBox::* )( int ) >( &QComboBox::currentIndexChanged ), this,
-             &DeviceConfigFragment::decoComboChangedSlot );
+             &DeviceConfigFragment::onDecoComboChangedSlot );
     connect( ui->gradientLowSpinBox, static_cast< void ( QSpinBox::* )( int ) >( &QSpinBox::valueChanged ), this,
-             &DeviceConfigFragment::decoGradientLowChangedSlot );
+             &DeviceConfigFragment::onDecoGradientLowChangedSlot );
     connect( ui->gradientHighSpinBox, static_cast< void ( QSpinBox::* )( int ) >( &QSpinBox::valueChanged ), this,
-             &DeviceConfigFragment::decoGradientHighChangedSlot );
+             &DeviceConfigFragment::onDecoGradientHighChangedSlot );
     connect( ui->dynamicGradientsOnCheckBox, &QCheckBox::stateChanged, this,
-             &DeviceConfigFragment::decoDynamicGradientStateChangedSlot );
-    connect( ui->deepStopOnCheckBox, &QCheckBox::stateChanged, this, &DeviceConfigFragment::decoDeepStopsEnableChangedSlot );
+             &DeviceConfigFragment::onDecoDynamicGradientStateChangedSlot );
+    connect( ui->deepStopOnCheckBox, &QCheckBox::stateChanged, this, &DeviceConfigFragment::onDecoDeepStopsEnableChangedSlot );
   }
 
   /**
    * @brief GUI für Display nach spxConfig einrichten
    */
-  void DeviceConfigFragment::setGuiForDisplay( void )
+  void DeviceConfigFragment::setGuiForDisplay( )
   {
     disconnect( ui->displayOrientationComboBox );
     disconnect( ui->displayBrightnessComboBox );
@@ -119,15 +119,15 @@ namespace spx
     ui->displayOrientationComboBox->setCurrentIndex( static_cast< int >( spxConfig->getDisplayOrientation() ) );
     //
     connect( ui->displayBrightnessComboBox, static_cast< void ( QComboBox::* )( int ) >( &QComboBox::currentIndexChanged ), this,
-             &DeviceConfigFragment::displayBrightnessChangedSlot );
+             &DeviceConfigFragment::onDisplayBrightnessChangedSlot );
     connect( ui->displayOrientationComboBox, static_cast< void ( QComboBox::* )( int ) >( &QComboBox::currentIndexChanged ), this,
-             &DeviceConfigFragment::displayOrientationChangedSlot );
+             &DeviceConfigFragment::onDisplayOrientationChangedSlot );
   }
 
   /**
    * @brief GUI für Einheiten nach spxConfig einrichten
    */
-  void DeviceConfigFragment::setGuiForUnits( void )
+  void DeviceConfigFragment::setGuiForUnits( )
   {
     disconnect( ui->unitsWaterTypeComboBox );
     disconnect( ui->unitsDeepComboBox );
@@ -138,17 +138,17 @@ namespace spx
     ui->unitsWaterTypeComboBox->setCurrentIndex( static_cast< int >( spxConfig->getUnitsWaterType() ) );
     //
     connect( ui->unitsTemperaturComboBox, static_cast< void ( QComboBox::* )( int ) >( &QComboBox::currentIndexChanged ), this,
-             &DeviceConfigFragment::unitsTemperatureChangedSlot );
+             &DeviceConfigFragment::onUnitsTemperatureChangedSlot );
     connect( ui->unitsDeepComboBox, static_cast< void ( QComboBox::* )( int ) >( &QComboBox::currentIndexChanged ), this,
-             &DeviceConfigFragment::unitsLengthChangedSlot );
+             &DeviceConfigFragment::onUnitsLengthChangedSlot );
     connect( ui->unitsWaterTypeComboBox, static_cast< void ( QComboBox::* )( int ) >( &QComboBox::currentIndexChanged ), this,
-             &DeviceConfigFragment::unitsWatertypeChangedSlot );
+             &DeviceConfigFragment::onUnitsWatertypeChangedSlot );
   }
 
   /**
    * @brief GUI für Setpoint nach spxConfig einrichten
    */
-  void DeviceConfigFragment::setGuiForSetpoint( void )
+  void DeviceConfigFragment::setGuiForSetpoint( )
   {
     disconnect( ui->setpointSetpointComboBox );
     disconnect( ui->setpointAutoOnComboBox );
@@ -157,15 +157,15 @@ namespace spx
     ui->setpointAutoOnComboBox->setCurrentIndex( static_cast< int >( spxConfig->getSetpointAuto() ) );
     //
     connect( ui->setpointAutoOnComboBox, static_cast< void ( QComboBox::* )( int ) >( &QComboBox::currentIndexChanged ), this,
-             &DeviceConfigFragment::setpointAutoChangedSlot );
+             &DeviceConfigFragment::onSetpointAutoChangedSlot );
     connect( ui->setpointSetpointComboBox, static_cast< void ( QComboBox::* )( int ) >( &QComboBox::currentIndexChanged ), this,
-             &DeviceConfigFragment::setpointValueChangedSlot );
+             &DeviceConfigFragment::onSetpointValueChangedSlot );
   }
 
   /**
    * @brief GUI für Lizenz nach spxConfig einrichten
    */
-  void DeviceConfigFragment::setGuiForLicense( void )
+  void DeviceConfigFragment::setGuiForLicense( )
   {
     SPX42License lic( spxConfig->getLicense() );
 
@@ -202,7 +202,7 @@ namespace spx
   /**
    * @brief GUI für Individual nach spxConfig einrichten
    */
-  void DeviceConfigFragment::setGuiForIndividual( void )
+  void DeviceConfigFragment::setGuiForIndividual( )
   {
     if ( spxConfig->getLicense().getLicInd() == IndividualLicense::LIC_INDIVIDUAL )
     {
@@ -240,22 +240,22 @@ namespace spx
       ui->individualLogIntervalComboBox->setCurrentIndex( static_cast< int >( spxConfig->getIndividualLogInterval() ) );
       //
       connect( ui->individualSeonsorsOnCheckBox, &QCheckBox::stateChanged, this,
-               &DeviceConfigFragment::individualSensorsOnChangedSlot );
+               &DeviceConfigFragment::onIndividualSensorsOnChangedSlot );
       connect( ui->individualPSCRModeOnCheckBox, &QCheckBox::stateChanged, this,
-               &DeviceConfigFragment::individualPscrModeChangedSlot );
+               &DeviceConfigFragment::onInIndividualPscrModeChangedSlot );
       connect( ui->individualSensorsCountComboBox, static_cast< void ( QComboBox::* )( int ) >( &QComboBox::currentIndexChanged ),
-               this, &DeviceConfigFragment::individualSensorsCountChangedSlot );
+               this, &DeviceConfigFragment::onIndividualSensorsCountChangedSlot );
       connect( ui->individualAcousticWarningsOnCheckBox, &QCheckBox::stateChanged, this,
-               &DeviceConfigFragment::individualAcousticChangedSlot );
+               &DeviceConfigFragment::onIndividualAcousticChangedSlot );
       connect( ui->individualLogIntervalComboBox, static_cast< void ( QComboBox::* )( int ) >( &QComboBox::currentIndexChanged ), this,
-               &DeviceConfigFragment::individualLogIntervalChangedSlot );
+               &DeviceConfigFragment::onIndividualLogIntervalChangedSlot );
     }
   }
 
   /**
    * @brief trenne Slots von Signalen
    */
-  void DeviceConfigFragment::disconnectSlots( void )
+  void DeviceConfigFragment::disconnectSlots( )
   {
     //
     // Alle Slots trennen
@@ -307,7 +307,7 @@ namespace spx
    * @brief Slot beim ändern der Lizenz
    * @param Lizenz ders SPX
    */
-  void DeviceConfigFragment::onConfLicChangedSlot( void )
+  void DeviceConfigFragment::onConfLicChangedSlot( )
   {
     setGuiForLicense();
   }
@@ -317,7 +317,7 @@ namespace spx
     // TODO: was machen
   }
 
-  void DeviceConfigFragment::onCloseDatabaseSlot( void )
+  void DeviceConfigFragment::onCloseDatabaseSlot( )
   {
     // TODO: implementieren
   }
@@ -326,7 +326,7 @@ namespace spx
    * @brief Dekompressionseinstellung geändert
    * @param der neue Index
    */
-  void DeviceConfigFragment::decoComboChangedSlot( int index )
+  void DeviceConfigFragment::onDecoComboChangedSlot( int index )
   {
     DecoGradient newGradient;
     //
@@ -337,7 +337,7 @@ namespace spx
     // QHash aus SPX42Config
     //
     newGradient = spxConfig->getPresetValues( static_cast< DecompressionPreset >( index ) );
-    lg->debug( QString( "DeviceConfigFragment::decoComboChangedSlot: combobox new index: %1, new gradients low: %2, high: %3 " )
+    lg->debug( QString( "DeviceConfigFragment::onDecoComboChangedSlot: combobox new index: %1, new gradients low: %2, high: %3 " )
                    .arg( index )
                    .arg( newGradient.first )
                    .arg( newGradient.second ) );
@@ -356,7 +356,7 @@ namespace spx
    * @brief der LOW Gradient wurde manuell geändert
    * @param der neue LOW Wert
    */
-  void DeviceConfigFragment::decoGradientLowChangedSlot( int low )
+  void DeviceConfigFragment::onDecoGradientLowChangedSlot( int low )
   {
     DecompressionPreset preset;
     // DecoGradient newGradient;
@@ -365,7 +365,7 @@ namespace spx
     if ( gradentSlotsIgnore )
       return;
     high = static_cast< qint8 >( ui->gradientHighSpinBox->value() );
-    lg->debug( QString( "DeviceConfigFragment::decoGradientLowChangedSlot: gradients changed to low: %1 high: %2" )
+    lg->debug( QString( "DeviceConfigFragment::onDecoGradientLowChangedSlot: gradients changed to low: %1 high: %2" )
                    .arg( static_cast< int >( low ) )
                    .arg( static_cast< int >( high ) ) );
     //
@@ -386,7 +386,7 @@ namespace spx
    * @brief der HIGH Gradient wurde manuell geändert
    * @param der neue HIGH Wert
    */
-  void DeviceConfigFragment::decoGradientHighChangedSlot( int high )
+  void DeviceConfigFragment::onDecoGradientHighChangedSlot( int high )
   {
     DecompressionPreset preset;
     // DecoGradient newGradient;
@@ -395,7 +395,7 @@ namespace spx
     if ( gradentSlotsIgnore )
       return;
     low = static_cast< qint8 >( ui->gradientLowSpinBox->value() );
-    lg->debug( QString( "DeviceConfigFragment::decoGradientHighChangedSlot: gradients changed to low: %1 high: %2" )
+    lg->debug( QString( "DeviceConfigFragment::onDecoGradientHighChangedSlot: gradients changed to low: %1 high: %2" )
                    .arg( static_cast< int >( low ) )
                    .arg( static_cast< int >( high ) ) );
     //
@@ -433,11 +433,11 @@ namespace spx
    * @brief Dynamiche gradienten ein/aus schalten
    * @param state neuer Status
    */
-  void DeviceConfigFragment::decoDynamicGradientStateChangedSlot( int state )
+  void DeviceConfigFragment::onDecoDynamicGradientStateChangedSlot( int state )
   {
     DecompressionDynamicGradient newState = DecompressionDynamicGradient::DYNAMIC_GRADIENT_OFF;
     //
-    lg->debug( QString( "DeviceConfigFragment::decoDynamicGradientStateChangedSlot: changed to %1" ).arg( state ) );
+    lg->debug( QString( "DeviceConfigFragment::onDecoDynamicGradientStateChangedSlot: changed to %1" ).arg( state ) );
     if ( state == static_cast< int >( Qt::CheckState::Checked ) )
       newState = DecompressionDynamicGradient::DYNAMIC_GRADIENT_ON;
     spxConfig->setIsDecoDynamicGradients( newState );
@@ -447,11 +447,11 @@ namespace spx
    * @brief Tiefe Deco-Stops ein/aus
    * @param state neuer Status
    */
-  void DeviceConfigFragment::decoDeepStopsEnableChangedSlot( int state )
+  void DeviceConfigFragment::onDecoDeepStopsEnableChangedSlot( int state )
   {
     DecompressionDeepstops newState = DecompressionDeepstops::DEEPSTOPS_DISABLED;
     //
-    lg->debug( QString( "DeviceConfigFragment::decoDeepStopsEnableChangedSlot: changed to %1" ).arg( state ) );
+    lg->debug( QString( "DeviceConfigFragment::onDecoDeepStopsEnableChangedSlot: changed to %1" ).arg( state ) );
     if ( state == static_cast< int >( Qt::CheckState::Checked ) )
       newState = DecompressionDeepstops::DEEPSTOPS_ENABLED;
     spxConfig->setIsDeepstopsEnabled( newState );
@@ -461,7 +461,7 @@ namespace spx
    * @brief Einstellung für Helligkeit des SPX42 Displays
    * @param index INdex der neuen Einstellung
    */
-  void DeviceConfigFragment::displayBrightnessChangedSlot( int index )
+  void DeviceConfigFragment::onDisplayBrightnessChangedSlot( int index )
   {
     //
     if ( lg->getThreshold() == LgThreshold::LG_DEBUG )
@@ -488,7 +488,7 @@ namespace spx
         default:
           brVal = 100;
       }
-      lg->debug( QString( "DeviceConfigFragment::displayBrightnessChangedSlot: set brightness to %1" ).arg( brVal ) );
+      lg->debug( QString( "DeviceConfigFragment::onDisplayBrightnessChangedSlot: set brightness to %1" ).arg( brVal ) );
     }
     //
     // setze im config-Objekt die Helligkeit
@@ -500,9 +500,9 @@ namespace spx
    * @brief Änderung der Ausrichtung des Displays
    * @param index der Displayorientierung
    */
-  void DeviceConfigFragment::displayOrientationChangedSlot( int index )
+  void DeviceConfigFragment::onDisplayOrientationChangedSlot( int index )
   {
-    DisplayOrientation orientation = static_cast< DisplayOrientation >( index );
+    auto orientation = static_cast< DisplayOrientation >( index );
     if ( lg->getThreshold() == LgThreshold::LG_DEBUG )
     {
       QString orString;
@@ -515,7 +515,7 @@ namespace spx
       {
         orString = "landscape 180°";
       }
-      lg->debug( QString( "DeviceConfigFragment::displayOrientationChangedSlot: orientation to %1" ).arg( orString ) );
+      lg->debug( QString( "DeviceConfigFragment::onDisplayOrientationChangedSlot: orientation to %1" ).arg( orString ) );
     }
     spxConfig->setDisplayOrientation( static_cast< DisplayOrientation >( index ) );
   }
@@ -524,9 +524,9 @@ namespace spx
    * @brief Änderung der Temperatureinheit
    * @param index neuer Index der Einheit
    */
-  void DeviceConfigFragment::unitsTemperatureChangedSlot( int index )
+  void DeviceConfigFragment::onUnitsTemperatureChangedSlot( int index )
   {
-    DeviceTemperaturUnit tUnit = static_cast< DeviceTemperaturUnit >( index );
+    auto tUnit = static_cast< DeviceTemperaturUnit >( index );
     if ( lg->getThreshold() == LgThreshold::LG_DEBUG )
     {
       QString tmpString;
@@ -539,7 +539,7 @@ namespace spx
       {
         tmpString = "fahrenheid";
       }
-      lg->debug( QString( "DeviceConfigFragment::unitsTemperatureChangedSlot: temperatur unit to %1" ).arg( tmpString ) );
+      lg->debug( QString( "DeviceConfigFragment::onUnitsTemperatureChangedSlot: temperatur unit to %1" ).arg( tmpString ) );
     }
     spxConfig->setUnitsTemperatur( tUnit );
   }
@@ -548,9 +548,9 @@ namespace spx
    * @brief Änderung der Längeneinheit
    * @param index neuer Index der Einheit
    */
-  void DeviceConfigFragment::unitsLengthChangedSlot( int index )
+  void DeviceConfigFragment::onUnitsLengthChangedSlot( int index )
   {
-    DeviceLenghtUnit lUnit = static_cast< DeviceLenghtUnit >( index );
+    auto lUnit = static_cast< DeviceLenghtUnit >( index );
     if ( lg->getThreshold() == LgThreshold::LG_DEBUG )
     {
       QString lenString;
@@ -563,7 +563,7 @@ namespace spx
       {
         lenString = "imperial";
       }
-      lg->debug( QString( "DeviceConfigFragment::unitsLengthChangedSlot: lengt unit to %1" ).arg( lenString ) );
+      lg->debug( QString( "DeviceConfigFragment::onUnitsLengthChangedSlot: lengt unit to %1" ).arg( lenString ) );
     }
     spxConfig->setUnitsLength( lUnit );
   }
@@ -572,9 +572,9 @@ namespace spx
    * @brief DeviceConfigFragment::unitsWatertypeChangedSlot
    * @param index
    */
-  void DeviceConfigFragment::unitsWatertypeChangedSlot( int index )
+  void DeviceConfigFragment::onUnitsWatertypeChangedSlot( int index )
   {
-    DeviceWaterType wUnit = static_cast< DeviceWaterType >( index );
+    auto wUnit = static_cast< DeviceWaterType >( index );
     if ( lg->getThreshold() == LgThreshold::LG_DEBUG )
     {
       QString typeString;
@@ -587,7 +587,7 @@ namespace spx
       {
         typeString = "saltwater";
       }
-      lg->debug( QString( "DeviceConfigFragment::unitsWatertypeChangedSlot: lengt unit to %1" ).arg( typeString ) );
+      lg->debug( QString( "DeviceConfigFragment::onUnitsWatertypeChangedSlot: lengt unit to %1" ).arg( typeString ) );
     }
     spxConfig->setUnitsWaterType( wUnit );
   }
@@ -596,10 +596,10 @@ namespace spx
    * @brief Änderung des Auto setpoints
    * @param index neuer index des Autosetpoints
    */
-  void DeviceConfigFragment::setpointAutoChangedSlot( int index )
+  void DeviceConfigFragment::onSetpointAutoChangedSlot( int index )
   {
     // TODO: imperiale Maße auch berücksichtigen
-    DeviceSetpointAuto autoSP = static_cast< DeviceSetpointAuto >( index );
+    auto autoSP = static_cast< DeviceSetpointAuto >( index );
     if ( lg->getThreshold() == LgThreshold::LG_DEBUG )
     {
       int autoDepth;
@@ -621,7 +621,7 @@ namespace spx
         default:
           autoDepth = 0;
       }
-      lg->debug( QString( "DeviceConfigFragment::setpointAutoChangedSlot: auto setpoint to %1" ).arg( autoDepth ) );
+      lg->debug( QString( "DeviceConfigFragment::onSetpointAutoChangedSlot: auto setpoint to %1" ).arg( autoDepth ) );
     }
     spxConfig->setSetpointAuto( autoSP );
   }
@@ -630,10 +630,10 @@ namespace spx
    * @brief Änderung des O2-Setpoints
    * @param index index des neuen Wertes für Setpoint
    */
-  void DeviceConfigFragment::setpointValueChangedSlot( int index )
+  void DeviceConfigFragment::onSetpointValueChangedSlot( int index )
   {
     // TODO: imperiale Maße auch berücksichtigen
-    DeviceSetpointValue setpointValue = static_cast< DeviceSetpointValue >( index );
+    auto setpointValue = static_cast< DeviceSetpointValue >( index );
     if ( lg->getThreshold() == LgThreshold::LG_DEBUG )
     {
       int setpoint;
@@ -655,7 +655,7 @@ namespace spx
         default:
           setpoint = 14;
       }
-      lg->debug( QString( "DeviceConfigFragment::setpointValueChangedSlot: setpoint (ppo2) to %1" ).arg( setpoint ) );
+      lg->debug( QString( "DeviceConfigFragment::onSetpointValueChangedSlot: setpoint (ppo2) to %1" ).arg( setpoint ) );
     }
     spxConfig->setSetpointValue( setpointValue );
   }
@@ -664,11 +664,11 @@ namespace spx
    * @brief Sensoren an/aus
    * @param state neuer Status
    */
-  void DeviceConfigFragment::individualSensorsOnChangedSlot( int state )
+  void DeviceConfigFragment::onIndividualSensorsOnChangedSlot( int state )
   {
     DeviceIndividualSensors newState = DeviceIndividualSensors::SENSORS_OFF;
     //
-    lg->debug( QString( "DeviceConfigFragment::individualSensorsOnChangedSlot: changed to %1" ).arg( state ) );
+    lg->debug( QString( "DeviceConfigFragment::onIndividualSensorsOnChangedSlot: changed to %1" ).arg( state ) );
     if ( state == static_cast< int >( Qt::CheckState::Checked ) )
       newState = DeviceIndividualSensors::SENSORS_ON;
     spxConfig->setIndividualSensorsOn( newState );
@@ -678,11 +678,11 @@ namespace spx
    * @brief Passiv Semiclosed Rebreather Mode ein/aus
    * @param state neuer Status
    */
-  void DeviceConfigFragment::individualPscrModeChangedSlot( int state )
+  void DeviceConfigFragment::onInIndividualPscrModeChangedSlot( int state )
   {
     DeviceIndividualPSCR newState = DeviceIndividualPSCR::PSCR_OFF;
     //
-    lg->debug( QString( "DeviceConfigFragment::individualSensorsOnChangedSlot: changed to %1" ).arg( state ) );
+    lg->debug( QString( "DeviceConfigFragment::onInIndividualPscrModeChangedSlot: changed to %1" ).arg( state ) );
     if ( state == static_cast< int >( Qt::CheckState::Checked ) )
       newState = DeviceIndividualPSCR::PSCR_ON;
     spxConfig->setIndividualPscrMode( newState );
@@ -692,9 +692,9 @@ namespace spx
    * @brief Änderung der Anzahl der genutzten Sensoren
    * @param index index der Anzahl der Sensoren
    */
-  void DeviceConfigFragment::individualSensorsCountChangedSlot( int index )
+  void DeviceConfigFragment::onIndividualSensorsCountChangedSlot( int index )
   {
-    DeviceIndividualSensorCount setpointValue = static_cast< DeviceIndividualSensorCount >( index );
+    auto setpointValue = static_cast< DeviceIndividualSensorCount >( index );
     if ( lg->getThreshold() == LgThreshold::LG_DEBUG )
     {
       int sensorCount;
@@ -710,7 +710,7 @@ namespace spx
         default:
           sensorCount = 3;
       }
-      lg->debug( QString( "DeviceConfigFragment::individualSensorsCountChangedSlot: count sensors to %1" ).arg( sensorCount ) );
+      lg->debug( QString( "DeviceConfigFragment::onIndividualSensorsCountChangedSlot: count sensors to %1" ).arg( sensorCount ) );
     }
     spxConfig->setIndividualSensorsCount( setpointValue );
   }
@@ -719,11 +719,11 @@ namespace spx
    * @brief Änderung der akustischen Meldungen an/aus
    * @param state neuer Status
    */
-  void DeviceConfigFragment::individualAcousticChangedSlot( int state )
+  void DeviceConfigFragment::onIndividualAcousticChangedSlot( int state )
   {
     DeviceIndividualAcoustic newState = DeviceIndividualAcoustic::ACOUSTIC_OFF;
     //
-    lg->debug( QString( "DeviceConfigFragment::individualAcousticChangedSlot: changed to %1" ).arg( state ) );
+    lg->debug( QString( "DeviceConfigFragment::onIndividualAcousticChangedSlot: changed to %1" ).arg( state ) );
     if ( state == static_cast< int >( Qt::CheckState::Checked ) )
       newState = DeviceIndividualAcoustic::ACOUSTIC_ON;
     spxConfig->setIndividualAcoustic( newState );
@@ -733,9 +733,9 @@ namespace spx
    * @brief Änderung des Log intervals
    * @param index index des neuen Wertes
    */
-  void DeviceConfigFragment::individualLogIntervalChangedSlot( int index )
+  void DeviceConfigFragment::onIndividualLogIntervalChangedSlot( int index )
   {
-    DeviceIndividualLogInterval logInterval = static_cast< DeviceIndividualLogInterval >( index );
+    auto logInterval = static_cast< DeviceIndividualLogInterval >( index );
     if ( lg->getThreshold() == LgThreshold::LG_DEBUG )
     {
       int logInterval;
@@ -751,7 +751,7 @@ namespace spx
         default:
           logInterval = 60;
       }
-      lg->debug( QString( "DeviceConfigFragment::individualLogIntervalChangedSlot: interrval to %1" ).arg( logInterval ) );
+      lg->debug( QString( "DeviceConfigFragment::onIndividualLogIntervalChangedSlot: interrval to %1" ).arg( logInterval ) );
     }
     spxConfig->setIndividualLogInterval( logInterval );
   }

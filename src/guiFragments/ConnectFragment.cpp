@@ -14,17 +14,18 @@ namespace spx
     ui->connectProgressBar->setVisible( false );
     //
     // geräte einlesen und combo liste füllen
+    // hashliste mac, <name,alias>
     //
-    devices = spx42Database->getDeviceAliasHash();
+    devices = database->getDeviceAliasHash();
     fillDevicesList();
     //
     onConfLicChangedSlot();
     connect( spxConfig.get(), &SPX42Config::licenseChangedSig, this, &ConnectFragment::onConfLicChangedSlot );
-    connect( ui->connectButton, &QPushButton::clicked, this, &ConnectFragment::connectButtonSlot );
-    connect( ui->propertyPushButton, &QPushButton::clicked, this, &ConnectFragment::propertyButtonSlot );
-    connect( ui->discoverPushButton, &QPushButton::clicked, this, &ConnectFragment::discoverButtonSlot );
+    connect( ui->connectButton, &QPushButton::clicked, this, &ConnectFragment::onConnectButtonSlot );
+    connect( ui->propertyPushButton, &QPushButton::clicked, this, &ConnectFragment::onPropertyButtonSlot );
+    connect( ui->discoverPushButton, &QPushButton::clicked, this, &ConnectFragment::onDiscoverButtonSlot );
     connect( ui->deviceComboBox, static_cast< void ( QComboBox::* )( int ) >( &QComboBox::currentIndexChanged ), this,
-             &ConnectFragment::currentIndexChangedSlot );
+             &ConnectFragment::onCurrentIndexChangedSlot );
   }
 
   ConnectFragment::~ConnectFragment()
@@ -38,59 +39,87 @@ namespace spx
     // TODO: was machen
   }
 
-  void ConnectFragment::onConfLicChangedSlot( void )
+  void ConnectFragment::onConfLicChangedSlot()
   {
     // TODO was machen
   }
 
-  void ConnectFragment::onCloseDatabaseSlot( void )
+  void ConnectFragment::onCloseDatabaseSlot()
   {
     // TODO: implementieren
   }
 
-  void ConnectFragment::connectButtonSlot( void )
+  void ConnectFragment::onConnectButtonSlot()
   {
-    lg->debug( "ConnectFragment::connectButtonSlot -> connect button clicked." );
+    lg->debug( "ConnectFragment::onConnectButtonSlot -> connect button clicked." );
+    // TODO: BT Verbinden!
+    // TODO: Button auf disconnect setzten
   }
 
-  void ConnectFragment::propertyButtonSlot( void )
+  void ConnectFragment::onPropertyButtonSlot()
   {
-    lg->debug( "ConnectFragment::propertyButtonSlot -> property button clicked." );
+    lg->debug( "ConnectFragment::onPropertyButtonSlot -> property button clicked." );
   }
 
-  void ConnectFragment::discoverButtonSlot( void )
+  void ConnectFragment::onDiscoverButtonSlot()
   {
-    lg->debug( "ConnectFragment::discoverButtonSlot -> discover button clicked." );
+    lg->debug( "ConnectFragment::onDiscoverButtonSlot -> discover button clicked." );
     //
     // den Dialog erzeugen
     //
     BtDiscoverDialog discoverDialog( lg, database );
+    //
+    // Dialog modal starten
+    //
     if ( QDialog::Accepted == discoverDialog.exec() )
     {
       //
       // Ergebnis übernehmen
       //
-      lg->debug( "ConnectFragment::discoverButtonSlot -> discovering dialog returned: accept result...." );
+      lg->debug( "ConnectFragment::onDiscoverButtonSlot -> discovering dialog returned: accept result...." );
       SPXDeviceList devList( discoverDialog.getSPX42Devices() );
-      lg->debug( QString( "ConnectFragment::discoverButtonSlot -> scanned %1 devices" ).arg( devList.count(), 2, 10, QChar( '0' ) ) );
+      lg->debug(
+          QString( "ConnectFragment::onDiscoverButtonSlot -> scanned %1 devices" ).arg( devList.count(), 2, 10, QChar( '0' ) ) );
       QBluetoothDeviceInfo devInfo( discoverDialog.getActivatedDevice() );
       //
       // ein Gerät gültig markiert?
       //
       if ( devInfo.isValid() )
       {
-        lg->debug( QString( "ConnectFragment::discoverButtonSlot -> selected device <%1>" ).arg( devInfo.address().toString() ) );
+        lg->debug( QString( "ConnectFragment::onDiscoverButtonSlot -> selected device <%1>" ).arg( devInfo.address().toString() ) );
       }
       else
       {
-        lg->debug( "ConnectFragment::discoverButtonSlot -> not an device selected..." );
+        lg->debug( "ConnectFragment::onDiscoverButtonSlot -> not an device selected..." );
+        return;
+      }
+      //
+      // TODO: was mache ich mit dem Gerät nun?
+      //
+
+      //
+      // dioe Geräteliste neu befüllen
+      //
+      devices = database->getDeviceAliasHash();
+      fillDevicesList();
+      // mac, <name,alias>
+      QPair< QString, QString > nPair( devInfo.address().toString(), devInfo.name() );
+      QString title = QString( "%1(%2)" ).arg( nPair.second ).arg( nPair.first );
+      lg->debug( QString( "ConnectFragment::onDiscoverButtonSlot -> title: <%1> name: <%2> addr: <%3>" )
+                     .arg( title )
+                     .arg( nPair.second )
+                     .arg( nPair.first ) );
+      ui->deviceComboBox->addItem( title, devInfo.address().toString() );
+      if ( ui->deviceComboBox->count() > 0 )
+      {
+        ui->deviceComboBox->setCurrentIndex( ui->deviceComboBox->count() - 1 );
       }
     }
   }
 
-  void ConnectFragment::currentIndexChangedSlot( int index )
+  void ConnectFragment::onCurrentIndexChangedSlot( int index )
   {
-    lg->debug( QString( "ConnectFragment::currentIndexChangedSlot -> index changed to <%1>. MAC: <%2>" )
+    lg->debug( QString( "ConnectFragment::onCurrentIndexChangedSlot -> index changed to <%1>. addr: <%2>" )
                    .arg( index, 2, 10, QChar( '0' ) )
                    .arg( ui->deviceComboBox->itemData( index ).toString() ) );
   }
@@ -99,7 +128,7 @@ namespace spx
   // PRIVATE Funktionen
   // ##########################################################################
 
-  void ConnectFragment::fillDevicesList( void )
+  void ConnectFragment::fillDevicesList()
   {
     //
     // Die Gerätebox leeren
@@ -112,16 +141,19 @@ namespace spx
     //
     // die Liste durch gehen
     //
-    for ( QStringList::iterator keyMacIter = dKeys.begin(); keyMacIter != dKeys.end(); keyMacIter++ )
+    // for ( QStringList::iterator keyMacIter = dKeys.begin(); keyMacIter != dKeys.end(); keyMacIter++ )
+    for ( auto &keyMac : dKeys )
     {
       //
       // die Elemente zu Titel zusammenfügen
       //
-      QPair< QString, QString > nPair( devices.take( *keyMacIter ) );
+      QPair< QString, QString > nPair( devices.take( keyMac ) );
       QString title = QString( "%1(%2)" ).arg( nPair.second ).arg( nPair.first );
-      // lg->debug( QString( "ConnectFragment::fillDevicesList -> <%1> <%2> <%3>" ).arg( title ).arg( nPair.first ).arg( nPair.second )
-      // );
-      ui->deviceComboBox->addItem( title, *keyMacIter );
+      lg->debug( QString( "ConnectFragment::fillDevicesList -> title: <%1> name: <%2> addr: <%3>" )
+                     .arg( title )
+                     .arg( nPair.second )
+                     .arg( nPair.first ) );
+      ui->deviceComboBox->addItem( title, keyMac );
     }
   }
 

@@ -25,11 +25,11 @@ namespace spx
     // discovering agent object
     //
     lg->debug( "SPX42BtDevices::SPX42BtDevices: connect signals..." );
-    connect( btDevicesManager.get(), &BtDevicesManager::sigDiscoveredDevice, this, &SPX42BtDevices::slotDiscoveredDevice );
-    connect( btDevicesManager.get(), &BtDevicesManager::sigDiscoverScanFinished, this, &SPX42BtDevices::slotDiscoverScanFinished );
-    connect( btDevicesManager.get(), &BtDevicesManager::sigDeviceHostModeStateChanged, this,
-             &SPX42BtDevices::slotDeviceHostModeStateChanged );
-    connect( btDevicesManager.get(), &BtDevicesManager::sigDevicePairingDone, this, &SPX42BtDevices::slotDevicePairingDone );
+    connect( btDevicesManager.get(), &BtDevicesManager::onDiscoveredDeviceSig, this, &SPX42BtDevices::onDiscoveredDeviceSlot );
+    connect( btDevicesManager.get(), &BtDevicesManager::onDiscoverScanFinishedSig, this, &SPX42BtDevices::onDiscoverScanFinishedSlot );
+    connect( btDevicesManager.get(), &BtDevicesManager::onDeviceHostModeStateChangedSig, this,
+             &SPX42BtDevices::onDeviceHostModeStateChangedSlot );
+    connect( btDevicesManager.get(), &BtDevicesManager::onDevicePairingDoneSig, this, &SPX42BtDevices::onDevicePairingDoneSlot );
     //
     lg->debug( "SPX42BtDevices::SPX42BtDevices: connect signals...OK" );
     //
@@ -43,7 +43,7 @@ namespace spx
     lg->debug( "SPX42BtDevices::~SPX42BtDevices" );
   }
 
-  void SPX42BtDevices::startDiscoverDevices( void )
+  void SPX42BtDevices::startDiscoverDevices()
   {
     lg->debug( "SPX42BtDevices::startDiscover..." );
     //
@@ -56,12 +56,24 @@ namespace spx
     btDevicesManager->startDiscoverDevices();
   }
 
-  SPXDeviceList SPX42BtDevices::getSPX42Devices( void ) const
+  /**
+   * @brief SPX42BtDevices::cancelDiscovering
+   */
+  void SPX42BtDevices::cancelDiscoverDevices()
+  {
+    //
+    // brich das ab
+    //
+    btDevicesManager->cancelDiscoverDevices();
+    btServicesAgent->cancelDiscover();
+  }
+
+  SPXDeviceList SPX42BtDevices::getSPX42Devices() const
   {
     return ( spx42Devices );
   }
 
-  QBluetoothLocalDevice::Pairing SPX42BtDevices::getPairingStatus( QBluetoothAddress addr )
+  QBluetoothLocalDevice::Pairing SPX42BtDevices::getPairingStatus( const QBluetoothAddress &addr )
   {
     return ( btDevicesManager->getLocalDevice()->pairingStatus( addr ) );
   }
@@ -81,12 +93,12 @@ namespace spx
     btDevicesManager->setHostPower( powered );
   }
 
-  void SPX42BtDevices::requestPairing( QBluetoothAddress address, QBluetoothLocalDevice::Pairing pairing )
+  void SPX42BtDevices::requestPairing( const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing )
   {
     btDevicesManager->requestPairing( address, pairing );
   }
 
-  void SPX42BtDevices::slotDiscoveredDevice( const QBluetoothDeviceInfo &info )
+  void SPX42BtDevices::onDiscoveredDeviceSlot( const QBluetoothDeviceInfo &info )
   {
     QString device( QString( "addr: <%1>, name: <%2>" ).arg( info.address().toString() ).arg( info.name() ) );
     //
@@ -94,15 +106,15 @@ namespace spx
     //
     if ( discoverdDevices.contains( info.address().toString() ) )
     {
-      lg->debug( QString( "SPX42BtDevices::slotDiscoveredDevice: device %1 always discovered. ignore." ).arg( device ) );
+      lg->debug( QString( "SPX42BtDevices::onDiscoveredDeviceSlot: device %1 always discovered. ignore." ).arg( device ) );
     }
     else if ( info.address().isNull() )
     {
-      lg->debug( "SPX42BtDevices::slotDiscoveredDevice: device has no address. Ignore." );
+      lg->debug( "SPX42BtDevices::onDiscoveredDeviceSlot: device has no address. Ignore." );
     }
     else
     {
-      lg->debug( QString( "SPX42BtDevices::slotDiscoveredDevice: device %1 in local list inserted." ).arg( device ) );
+      lg->debug( QString( "SPX42BtDevices::onDiscoveredDeviceSlot: device %1 in local list inserted." ).arg( device ) );
       // zufügen zu den gefundenen Geräten
       discoverdDevices.insert( info.address().toString(), info );
       // in die queue zum service finden
@@ -110,37 +122,37 @@ namespace spx
       // starte (auch verzögertes) discovering der Services
       startDiscoverServices();
       // signalisiere, dass Gerät gefunden wurde
-      emit sigDiscoveredDevice( info );
+      emit onDiscoveredDeviceSig( info );
     }
   }
 
-  void SPX42BtDevices::slotDevicePairingDone( const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing )
+  void SPX42BtDevices::onDevicePairingDoneSlot( const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing )
   {
-    lg->debug( QString( "SPX42BtDevices::slotDevicePairingDone: device: %1" ).arg( address.toString() ) );
+    lg->debug( QString( "SPX42BtDevices::onDevicePairingDoneSlot: device: %1" ).arg( address.toString() ) );
     lg->info( QString( "pairing done: device: %1" ).arg( address.toString() ) );
-    emit sigDevicePairingDone( address, pairing );
+    emit onDevicePairingDoneSig( address, pairing );
   }
 
-  void SPX42BtDevices::slotDiscoverScanFinished( void )
+  void SPX42BtDevices::onDiscoverScanFinishedSlot( )
   {
-    lg->debug( "SPX42BtDevices::slotDiscoverScanFinished..." );
+    lg->debug( "SPX42BtDevices::onDiscoverScanFinishedSlot..." );
     lg->info( "device discovering finished..." );
     deviceDiscoverFinished = true;
-    emit sigDiscoverScanFinished();
+    emit onDiscoverScanFinishedSig();
   }
 
-  void SPX42BtDevices::slotDeviceHostModeStateChanged( QBluetoothLocalDevice::HostMode hostMode )
+  void SPX42BtDevices::onDeviceHostModeStateChangedSlot( QBluetoothLocalDevice::HostMode hostMode )
   {
-    lg->debug( QString( "SPX42BtDevices::slotDeviceHostModeStateChanged to %1" ).arg( hostMode ) );
-    emit sigDeviceHostModeStateChanged( hostMode );
+    lg->debug( QString( "SPX42BtDevices::onDeviceHostModeStateChangedSlot to %1" ).arg( hostMode ) );
+    emit onDeviceHostModeStateChangedSig( hostMode );
   }
 
-  void SPX42BtDevices::startDiscoverServices( void )
+  void SPX42BtDevices::startDiscoverServices( )
   {
     lg->debug( "SPX42BtDevices::startDiscoverServices:..." );
     if ( devicesToDiscoverServices.isEmpty() && deviceDiscoverFinished )
     {
-      emit sigAllScansFinished();
+      emit onAllScansFinishedSig();
       return;
     }
     if ( currentServiceScanDevice.isNull() )
@@ -157,9 +169,9 @@ namespace spx
       lg->debug(
           QString( "SPX42BtDevices::startDiscoverServices: remote adapter addr: " ).append( currentServiceScanDevice.toString() ) );
       lg->debug( "SPX42BtDevices::startDiscoverServices: connect signals and slots..." );
-      connect( btServicesAgent.get(), &BtServiceDiscover::sigDiscoveredService, this, &SPX42BtDevices::slotDiscoveredService );
-      connect( btServicesAgent.get(), &BtServiceDiscover::sigDiscoverScanFinished, this,
-               &SPX42BtDevices::slotDiscoveryServicesFinished );
+      connect( btServicesAgent.get(), &BtServiceDiscover::onDiscoveredServiceSig, this, &SPX42BtDevices::onDiscoveredServiceSlot );
+      connect( btServicesAgent.get(), &BtServiceDiscover::onDiscoverScanFinishedSig, this,
+               &SPX42BtDevices::onDiscoveryServicesFinishedSlot );
       //
       // starte das suchen nach Services
       //
@@ -178,12 +190,12 @@ namespace spx
     }
   }
 
-  void SPX42BtDevices::slotDiscoveryServicesFinished( const QBluetoothAddress &remoteAddr )
+  void SPX42BtDevices::onDiscoveryServicesFinishedSlot( const QBluetoothAddress &remoteAddr )
   {
-    lg->debug( "SPX42BtDevices::slotDiscoveryServicesFinished..." );
+    lg->debug( "SPX42BtDevices::onDiscoveryServicesFinishedSlot..." );
     // freigeben für nächsten scan
     currentServiceScanDevice.clear();
-    emit sigDiscoveryServicesFinished( remoteAddr );
+    emit onDiscoveryServicesFinishedSig( remoteAddr );
     //
     // sind alle geräte gescannt und ist kein serviescan offen
     //
@@ -192,11 +204,11 @@ namespace spx
       //
       // sende das endgültige ENDe Signal
       //
-      emit sigAllScansFinished();
+      emit onAllScansFinishedSig();
     }
   }
 
-  void SPX42BtDevices::slotDiscoveredService( const QBluetoothAddress &raddr, const QBluetoothServiceInfo &info )
+  void SPX42BtDevices::onDiscoveredServiceSlot( const QBluetoothAddress &raddr, const QBluetoothServiceInfo &info )
   {
     //
     // ist das gefundene SPX42 Teil schon in der Liste?
@@ -205,7 +217,7 @@ namespace spx
     //
     if ( spx42Devices.contains( raddrStr ) )
     {
-      lg->debug( QString( "SPX42BtDevices::slotDiscoveryServicesFinished: device: %1, service: %2 always present. Ignore." )
+      lg->debug( QString( "SPX42BtDevices::onDiscoveredServiceSlot: device: %1, service: %2 always present. Ignore." )
                      .arg( raddr.toString() )
                      .arg( info.serviceName() ) );
     }
@@ -213,17 +225,16 @@ namespace spx
     {
       if ( discoverdDevices.contains( raddrStr ) )
       {
-        lg->info( QString( "SPX42BtDevices::slotDiscoveryServicesFinished: device: %1, service: %2 add..." )
+        lg->info( QString( "SPX42BtDevices::onDiscoveredServiceSlot: device: %1, service: %2 add..." )
                       .arg( raddr.toString() )
                       .arg( info.serviceName() ) );
         spx42Devices.insert( raddrStr, discoverdDevices.value( raddrStr ) );
       }
       else
       {
-        lg->crit(
-            QString( "SPX42BtDevices::slotDiscoveryServicesFinished: device: %1 not in discovered list..." ).arg( raddr.toString() ) );
+        lg->crit( QString( "SPX42BtDevices::onDiscoveredServiceSlot: device: %1 not in discovered list..." ).arg( raddr.toString() ) );
       }
     }
-    emit sigDiscoveredService( raddr, info );
+    emit onDiscoveredServiceSig( raddr, info );
   }
 }

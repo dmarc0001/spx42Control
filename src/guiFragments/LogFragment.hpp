@@ -61,13 +61,13 @@ namespace spx
     virtual void onOnlineStatusChangedSlot( bool isOnline ) override;  //! Wenn sich der Onlinestatus des SPX42 ändert
     virtual void onConfLicChangedSlot( void ) override;                //! Wenn sich die Lizenz ändert
     virtual void onCloseDatabaseSlot( void ) override;                 //! wenn die Datenbank geschlosen wird
-    void readLogDirectorySlot( void );
-    void readLogContentSlot( void );
-    void logListViewClickedSlot( const QModelIndex &index );
+    void onReadLogDirectorySlot( void );
+    void onReadLogContentSlot( void );
+    void onLogListViewClickedSlot( const QModelIndex &index );
 
     public slots:
-    void addLogdirEntrySlot( const QString &entry );
-    void addLogLineSlot( const QString &line );
+    void onAddLogdirEntrySlot( const QString &entry );
+    void onAddLogLineSlot( const QString &line );
   };
 }
 #endif  // LOGFORM_HPP

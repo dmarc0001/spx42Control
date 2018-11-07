@@ -4,15 +4,11 @@
 #############################################################################*/
 
 #include "Spx42Commands.hpp"
-#include <stdio.h>
 #include <QByteArray>
+#include <cstdio>
 
 namespace spx
 {
-  Spx42Commands::Spx42Commands()
-  {
-  }
-
   void Spx42Commands::makeSipleCommand( char commandChar )
   {
     QByteArray code;
@@ -24,43 +20,43 @@ namespace spx
     cmd.append( &SpxCommandDef::ETX, 1 );
   }
 
-  QByteArray &Spx42Commands::sendManufacturers( void )
+  QByteArray &Spx42Commands::sendManufacturers( )
   {
     makeSipleCommand( SpxCommandDef::SPX_MANUFACTURERS );
     return ( cmd );
   }
 
-  QByteArray &Spx42Commands::sendSerialNumber( void )
+  QByteArray &Spx42Commands::sendSerialNumber( )
   {
     makeSipleCommand( SpxCommandDef::SPX_SERIAL_NUMBER );
     return ( cmd );
   }
 
-  QByteArray &Spx42Commands::sendAliveSignal( void )
+  QByteArray &Spx42Commands::sendAliveSignal( )
   {
     makeSipleCommand( SpxCommandDef::SPX_ALIVE );
     return ( cmd );
   }
 
-  QByteArray &Spx42Commands::sendFirmwareVersion( void )
+  QByteArray &Spx42Commands::sendFirmwareVersion( )
   {
     makeSipleCommand( SpxCommandDef::SPX_APPLICATION_ID );
     return ( cmd );
   }
 
-  QByteArray &Spx42Commands::sendStartYModem( void )
+  QByteArray &Spx42Commands::sendStartYModem( )
   {
     makeSipleCommand( SpxCommandDef::SPX_START_YMODEM );
     return ( cmd );
   }
 
-  QByteArray &Spx42Commands::sendStartProgramming( void )
+  QByteArray &Spx42Commands::sendStartProgramming( )
   {
     makeSipleCommand( SpxCommandDef::SPX_START_FW_PROGRAMM );
     return ( cmd );
   }
 
-  QByteArray &Spx42Commands::shutdownSPX42( void )
+  QByteArray &Spx42Commands::shutdownSPX42( )
   {
     makeSipleCommand( SpxCommandDef::SPX_SHUTDOWN );
     return ( cmd );

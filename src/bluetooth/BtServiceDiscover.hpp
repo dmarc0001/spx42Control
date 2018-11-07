@@ -32,13 +32,14 @@ namespace spx
     void resetServiceFilter( void );
     int servicesDiscovered( void );
     void start( void );
+    void cancelDiscover( void );
 
     signals:
-    void sigDiscoveredService( const QBluetoothAddress &raddr, const QBluetoothServiceInfo &info );
-    void sigDiscoverScanFinished( const QBluetoothAddress &raddr );
+    void onDiscoveredServiceSig( const QBluetoothAddress &raddr, const QBluetoothServiceInfo &info );
+    void onDiscoverScanFinishedSig( const QBluetoothAddress &raddr );
 
     private slots:
-    void slotDiscoveredService( const QBluetoothServiceInfo &info );
+    void onDiscoveredServiceSlot( const QBluetoothServiceInfo &info );
   };
 }
 #endif  // BTSERVICEDISCOVER_HPP

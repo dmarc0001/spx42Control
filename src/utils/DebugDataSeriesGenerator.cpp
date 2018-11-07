@@ -8,10 +8,6 @@ namespace spx
   {
   }
 
-  DebugDataSeriesGenerator::~DebugDataSeriesGenerator()
-  {
-  }
-
   void DebugDataSeriesGenerator::setDeviceId( int deviceId )
   {
     this->deviceId = deviceId;
@@ -27,7 +23,7 @@ namespace spx
 
   QLineSeries *DebugDataSeriesGenerator::makeDepthSerie( int )
   {
-    QLineSeries *ser = new QLineSeries();
+    auto *ser = new QLineSeries();
     double ind = 0;
     double depth = 0;
     if ( !dataAvaivible )
@@ -48,31 +44,31 @@ namespace spx
 
   QLineSeries *DebugDataSeriesGenerator::makeTempSerie( int )
   {
-    QLineSeries *ser = new QLineSeries();
+    auto *ser = new QLineSeries();
     return ( ser );
   }
 
   QLineSeries *DebugDataSeriesGenerator::makePPOSerie( int )
   {
-    QLineSeries *ser = new QLineSeries();
+    auto *ser = new QLineSeries();
     return ( ser );
   }
 
   QLineSeries *DebugDataSeriesGenerator::makeSensor1Serie( int )
   {
-    QLineSeries *ser = new QLineSeries();
+    auto *ser = new QLineSeries();
     return ( ser );
   }
 
   QLineSeries *DebugDataSeriesGenerator::makeSensor2Serie( int )
   {
-    QLineSeries *ser = new QLineSeries();
+    auto *ser = new QLineSeries();
     return ( ser );
   }
 
   QLineSeries *DebugDataSeriesGenerator::makeSensor3Serie( int )
   {
-    QLineSeries *ser = new QLineSeries();
+    auto *ser = new QLineSeries();
     return ( ser );
   }
 }

@@ -13,6 +13,8 @@ namespace spx
       , watchdog( new QTimer( this ) )
       , spx42Config( new SPX42Config() )
       , currentStatus( ApplicationStat::STAT_OFFLINE )
+      , watchdogTimer( 0 )
+      , currentTab()
   {
     //
     // Hilfebutton ausblenden
@@ -86,7 +88,7 @@ namespace spx
     // Actions mit den richtigen Slots verbinden
     //
     ui->areaTabWidget->setCurrentIndex( 0 );
-    tabCurrentChangedSlot( 0 );
+    onTabCurrentChangedSlot( 0 );
     connectActions();
   }
 
@@ -103,7 +105,7 @@ namespace spx
         watchdog->stop();
       }
     }
-    catch ( std::exception ex )
+    catch ( std::exception &ex )
     {
       lg->crit( "SPX42ControlMainWin::~SPX42ControlMainWin -> watchdog stopping failed" );
     }
@@ -159,7 +161,7 @@ namespace spx
   /**
    * @brief Erzeuge die Titel für die Programmtabs
    */
-  void SPX42ControlMainWin::fillTabTitleArray( void )
+  void SPX42ControlMainWin::fillTabTitleArray()
   {
     tabTitle.clear();
     tabTitle << tr( "Connection" );    // CONNECT_TAB
@@ -173,7 +175,7 @@ namespace spx
    * @brief Setze die GUI entsprechend des aktuellen Status
    * @return erfolgreich?
    */
-  bool SPX42ControlMainWin::setActionStati( void )
+  bool SPX42ControlMainWin::setActionStati()
   {
     switch ( currentStatus )
     {
@@ -206,7 +208,7 @@ namespace spx
    * @brief Verbinde die Signale mit ihren Slots
    * @return  erfolgreich?
    */
-  bool SPX42ControlMainWin::connectActions( void )
+  bool SPX42ControlMainWin::connectActions()
   {
     try
     {
@@ -228,11 +230,11 @@ namespace spx
       //
       // TAB wurde gewechselt
       //
-      connect( ui->areaTabWidget, &QTabWidget::currentChanged, this, &SPX42ControlMainWin::tabCurrentChangedSlot );
+      connect( ui->areaTabWidget, &QTabWidget::currentChanged, this, &SPX42ControlMainWin::onTabCurrentChangedSlot );
       //
       // Lizenz wurde geändert
       //
-      connect( spx42Config.get(), &SPX42Config::licenseChangedSig, this, &SPX42ControlMainWin::licenseChangedSlot );
+      connect( spx42Config.get(), &SPX42Config::licenseChangedSig, this, &SPX42ControlMainWin::onLicenseChangedSlot );
 #ifdef DEBUG
       //
       // simuliert zu Nitrox lizenz geändert
@@ -278,7 +280,7 @@ namespace spx
       } );
 #endif
     }
-    catch ( std::exception ex )
+    catch ( std::exception &ex )
     {
       lg->crit( QString( "exception while connecting signals to slots (" ).append( ex.what() ).append( ")" ) );
       return ( false );
@@ -301,7 +303,7 @@ namespace spx
   /**
    * @brief Erzeuge die Programm-Tabs
    */
-  void SPX42ControlMainWin::createApplicationTabs( void )
+  void SPX42ControlMainWin::createApplicationTabs()
   {
     QWidget *wg;
     //
@@ -349,7 +351,7 @@ namespace spx
   /**
    * @brief Leere beim Debugging die Application Tabs
    */
-  void SPX42ControlMainWin::clearApplicationTabs( void )
+  void SPX42ControlMainWin::clearApplicationTabs()
   {
 #ifdef DEBUG
     for ( int i = 0; i < ui->areaTabWidget->count(); i++ )
@@ -373,7 +375,7 @@ namespace spx
    * @brief Erfrage den aktuellen aktiven Tab
    * @return aktiver Tab
    */
-  ApplicationTab SPX42ControlMainWin::getApplicationTab( void )
+  ApplicationTab SPX42ControlMainWin::getApplicationTab()
   {
     return ( currentTab );
   }
@@ -382,7 +384,7 @@ namespace spx
    * @brief Slot, welcher mit dem Tab-Wechsel-dich Signal verbunden wird
    * @param idx
    */
-  void SPX42ControlMainWin::tabCurrentChangedSlot( int idx )
+  void SPX42ControlMainWin::onTabCurrentChangedSlot( int idx )
   {
     static bool ignore = false;
     QWidget *currObj;
@@ -453,9 +455,9 @@ namespace spx
   /**
    * @brief Reaktion auf Lizenzänderung (Signal Lizenz Änderung)
    */
-  void SPX42ControlMainWin::licenseChangedSlot( void )
+  void SPX42ControlMainWin::onLicenseChangedSlot()
   {
-    lg->debug( QString( "SPX42ControlMainWin::licenseChanged -> set: %1" ).arg( spx42Config->getLicName() ) );
+    lg->debug( QString( "SPX42ControlMainWin::onLicenseChangedSlot -> set: %1" ).arg( spx42Config->getLicName() ) );
 //
 // das folgende wird nur kompiliert, wenn DEBUG konfiguriert ist
 //

@@ -24,7 +24,7 @@ QT                                     += bluetooth
 QT                                     += sql
 QT                                     += charts
 CONFIG                                 += stl
-CONFIG                                 += c++11
+CONFIG                                 += c++14
 INCLUDEPATH                            += src
 DESTDIR                                = out
 MOC_DIR                                = moc
@@ -34,10 +34,10 @@ UI_DIR                                 = ui
 
 # wenn debug in der config steht, die EXE auch so benennen
 build_pass:CONFIG(debug, debug|release) {
-  unix: TARGET = $$join(TARGET,,,_debug)
-  else: TARGET = $$join(TARGET,,,_D)
+  DEFINES                              += DEBUG
+  unix: TARGET                         = $$join(TARGET,,,_debug)
+  else: TARGET                         = $$join(TARGET,,,_D)
 }
-DEFINES                 += $$DEBUG
 
 SOURCES                 += \
     src/Spx42ControlMainWin.cpp \

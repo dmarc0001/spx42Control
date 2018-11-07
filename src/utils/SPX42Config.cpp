@@ -5,7 +5,27 @@ namespace spx
   /**
    * @brief Standartkonstruktor
    */
-  SPX42Config::SPX42Config() : QObject( Q_NULLPTR ), sendSignals( true )
+  SPX42Config::SPX42Config()
+      : QObject( Q_NULLPTR )
+      , sendSignals( true )
+      , isValid( false )
+      , serialNumber()
+      , currentPreset()
+      , decoDynamicGradient()
+      , decoDeepstopsEnabled()
+      , displayBrightness()
+      , displayOrientation()
+      , unitTemperature()
+      , unitLength()
+      , unitWaterType()
+      , setpointAuto()
+      , setpointValue()
+      , individualSensorsOn()
+      , individualPSCROn()
+      , individualSensorCount()
+      , individualAcustic()
+      , individualLogInterval()
+      , individualTempStick()
   {
     reset();
     // connect( &spxLicense, &SPX42License::licenseChangedPrivateSig, this, &SPX42Config::licenseChangedPrivateSlot );
@@ -103,7 +123,7 @@ namespace spx
   /**
    * @brief Setze das Objekt auf einen definierten Grundzustand
    */
-  void SPX42Config::reset( void )
+  void SPX42Config::reset()
   {
     isValid = false;
     spxLicense.setLicType( LicenseType::LIC_NITROX );
@@ -298,7 +318,7 @@ namespace spx
    * @brief gib aktuelle dynamische Gradienten zurück
    * @return Gradientenobjekt
    */
-  DecompressionDynamicGradient SPX42Config::getIsDecoDynamicGradients( void )
+  DecompressionDynamicGradient SPX42Config::getIsDecoDynamicGradients()
   {
     return ( decoDynamicGradient );
   }
@@ -323,7 +343,7 @@ namespace spx
    * @brief erfrage ob tiefe Dekostops erlaubt sind
    * @return sind Dekostops erlaubt?
    */
-  DecompressionDeepstops SPX42Config::getIstDeepstopsEnabled( void )
+  DecompressionDeepstops SPX42Config::getIstDeepstopsEnabled()
   {
     return ( decoDeepstopsEnabled );
   }
@@ -348,7 +368,7 @@ namespace spx
    * @brief Gib die einsgestellte Displayhelligkeit zurück
    * @return Helligkeit als Objekt
    */
-  DisplayBrightness SPX42Config::getDisplayBrightness( void )
+  DisplayBrightness SPX42Config::getDisplayBrightness()
   {
     return ( displayBrightness );
   }
@@ -373,7 +393,7 @@ namespace spx
    * @brief Gib die Helligkeit als Objekt zurück
    * @return Helligkeit als Objekt
    */
-  DisplayOrientation SPX42Config::getDisplayOrientation( void )
+  DisplayOrientation SPX42Config::getDisplayOrientation()
   {
     return ( displayOrientation );
   }
@@ -394,7 +414,7 @@ namespace spx
    * @brief gib die Temperatureinheit als Objekt zurück
    * @return Temperatureinheit als Objekt
    */
-  DeviceTemperaturUnit SPX42Config::getUnitsTemperatur( void )
+  DeviceTemperaturUnit SPX42Config::getUnitsTemperatur()
   {
     return ( unitTemperature );
   }
@@ -419,7 +439,7 @@ namespace spx
    * @brief Gib die Einheit der Länge zurück
    * @return Einheit der Länge als Objekt
    */
-  DeviceLenghtUnit SPX42Config::getUnitsLength( void )
+  DeviceLenghtUnit SPX42Config::getUnitsLength()
   {
     return ( unitLength );
   }
@@ -444,7 +464,7 @@ namespace spx
    * @brief Gib den Wassertyp zurück
    * @return Wassertyp als Objekt
    */
-  DeviceWaterType SPX42Config::getUnitsWaterType( void )
+  DeviceWaterType SPX42Config::getUnitsWaterType()
   {
     return ( unitWaterType );
   }
@@ -469,7 +489,7 @@ namespace spx
    * @brief Gib den Autosetpoint zurück
    * @return Autosetpoint als Obhekt
    */
-  DeviceSetpointAuto SPX42Config::getSetpointAuto( void )
+  DeviceSetpointAuto SPX42Config::getSetpointAuto()
   {
     return ( setpointAuto );
   }
@@ -494,7 +514,7 @@ namespace spx
    * @brief Gib den Setpoint zurück
    * @return der Setpoint als Obhekt
    */
-  DeviceSetpointValue SPX42Config::getSetpointValue( void )
+  DeviceSetpointValue SPX42Config::getSetpointValue()
   {
     return ( setpointValue );
   }
@@ -519,7 +539,7 @@ namespace spx
    * @brief gib die Einstellung Sensoren ein/aus zurück
    * @return Einstellung der Sensoren (ein/aus)
    */
-  DeviceIndividualSensors SPX42Config::getIndividualSensorsOn( void )
+  DeviceIndividualSensors SPX42Config::getIndividualSensorsOn()
   {
     return ( individualSensorsOn );
   }
@@ -544,7 +564,7 @@ namespace spx
    * @brief SPX42Config::getIndividualPscrMode
    * @return Wert der Einstellung als Objekt
    */
-  DeviceIndividualPSCR SPX42Config::getIndividualPscrMode( void )
+  DeviceIndividualPSCR SPX42Config::getIndividualPscrMode()
   {
     return ( individualPSCROn );
   }
@@ -568,7 +588,7 @@ namespace spx
    * @brief gib die Anzahl der Sensoren zurück
    * @return Anzahl der Sensoren als Objekt
    */
-  DeviceIndividualSensorCount SPX42Config::getIndividualSensorsCount( void )
+  DeviceIndividualSensorCount SPX42Config::getIndividualSensorsCount()
   {
     return ( individualSensorCount );
   }
@@ -592,7 +612,7 @@ namespace spx
    * @brief Gib die Einstellung für akustische Warnungen zurück
    * @return Einstellung für akustische Warnungen als Objekt
    */
-  DeviceIndividualAcoustic SPX42Config::getIndividualAcoustic( void )
+  DeviceIndividualAcoustic SPX42Config::getIndividualAcoustic()
   {
     return ( individualAcustic );
   }
@@ -617,7 +637,7 @@ namespace spx
    * @brief gib die Einstellung für das Loginterval zurück
    * @return Einstellung als Objekt
    */
-  DeviceIndividualLogInterval SPX42Config::getIndividualLogInterval( void )
+  DeviceIndividualLogInterval SPX42Config::getIndividualLogInterval()
   {
     return ( individualLogInterval );
   }
@@ -642,7 +662,7 @@ namespace spx
    * @brief Erfrage die Einstellungen für den Tempstick
    * @return Einstellung des Tempsticks
    */
-  DeviceIndividualTempstick SPX42Config::getIndividualTempStick( void )
+  DeviceIndividualTempstick SPX42Config::getIndividualTempStick()
   {
     return ( individualTempStick );
   }
