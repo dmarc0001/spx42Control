@@ -50,16 +50,17 @@ namespace spx
     void setMessage( const QString &msg );
 
     public slots:
-    void slotDiscoveredDevice( const QBluetoothDeviceInfo & );
-    void slotGuiDisplayPairingMenu( const QPoint &pos );
-    void slotDevicePairingDone( const QBluetoothAddress &, QBluetoothLocalDevice::Pairing );
+    void onDiscoveredDeviceSlot( const QBluetoothDeviceInfo & );
+    void onGuiDisplayPairingMenuSlot( const QPoint &pos );
+    void onDevicePairingDoneSlot( const QBluetoothAddress &, QBluetoothLocalDevice::Pairing );
 
     private slots:
-    void slotGuiStartScan();
-    void slotDiscoverScanFinished();
-    void itemClicked( QListWidgetItem *item );
-    void slotDeviceHostModeStateChanged( QBluetoothLocalDevice::HostMode );
-    void slotMessageTimer( void );
+    void onGuiStartScanSlot( void );
+    void onDiscoverScanFinishedSlot( void );
+    void onItemClickedSlot( QListWidgetItem *item );
+    void onOvertakeClickedSlot( void );
+    void onDeviceHostModeStateChangedSlot( QBluetoothLocalDevice::HostMode );
+    void onMessageTimerSlot( void );
   };
 }
 #endif  // MAINDAILOG_HPP

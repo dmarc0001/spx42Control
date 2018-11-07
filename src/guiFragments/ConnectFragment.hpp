@@ -38,10 +38,10 @@ namespace spx
     virtual void onOnlineStatusChangedSlot( bool isOnline ) override;  //! Wenn sich der Onlinestatus des SPX42 ändert
     virtual void onConfLicChangedSlot( void ) override;                //! Wenn sich die Lizenz ändert
     virtual void onCloseDatabaseSlot( void ) override;                 //! wenn die Datenbank geschlosen wird
-    void connectButtonSlot( void );                                    //! Wenn der Verbinde-Knopf gedrückt wurde
-    void propertyButtonSlot( void );                                   //! Verbindungs/Geräte eigenschaften
-    void discoverButtonSlot( void );                                   //! Suche nach BT Geräten
-    void currentIndexChangedSlot( int index );                         //! Dropdown box: Auswahl geändert
+    void onConnectButtonSlot( void );                                  //! Wenn der Verbinde-Knopf gedrückt wurde
+    void onPropertyButtonSlot( void );                                 //! Verbindungs/Geräte eigenschaften
+    void onDiscoverButtonSlot( void );                                 //! Suche nach BT Geräten
+    void onCurrentIndexChangedSlot( int index );                       //! Dropdown box: Auswahl geändert
   };
 }
 #endif  // CONNECTFORM_HPP

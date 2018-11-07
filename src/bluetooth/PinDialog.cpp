@@ -17,7 +17,7 @@ namespace spx
     ui.errorLabel->setVisible( false );
     ui.retryButton->setVisible( false );
     // Signal verbinden
-    connect( ui.lineEdit, &QLineEdit::textEdited, this, &PinDialog::pinEdited );
+    connect( ui.lineEdit, &QLineEdit::textEdited, this, &PinDialog::onPinEditedSlot );
     // Paletten vorbereiten
     palette_norm = ui.lineEdit->palette();
     palette_warn = ui.lineEdit->palette();
@@ -37,7 +37,7 @@ namespace spx
     ui.errorLabel->setVisible( false );
     ui.retryButton->setVisible( false );
     // Signal verbinden
-    connect( ui.lineEdit, &QLineEdit::textEdited, this, &PinDialog::pinEdited );
+    connect( ui.lineEdit, &QLineEdit::textEdited, this, &PinDialog::onPinEditedSlot );
     // Paletten vorbereiten
     palette_norm = ui.lineEdit->palette();
     palette_warn = ui.lineEdit->palette();
@@ -49,7 +49,7 @@ namespace spx
    * @brief PinDialog::pinEdited
    * @param text
    */
-  void PinDialog::pinEdited( const QString & )
+  void PinDialog::onPinEditedSlot( const QString & )
   {
     //
     // test, ob der Text aus vier Ziffern besteht
@@ -116,7 +116,7 @@ namespace spx
    * @brief PinDialog::getPin
    * @return
    */
-  QByteArray PinDialog::getPin( void )
+  QByteArray PinDialog::getPin( )
   {
     return ( pin.toUtf8() );
   }
@@ -126,11 +126,11 @@ namespace spx
     ui.retryButton->setVisible( showButton );
     if ( showButton )
     {
-      connect( ui.retryButton, &QPushButton::clicked, this, &PinDialog::retryButtonSlot );
+      connect( ui.retryButton, &QPushButton::clicked, this, &PinDialog::onRetryButtonSlot );
     }
   }
 
-  void PinDialog::retryButtonSlot( void )
+  void PinDialog::onRetryButtonSlot( )
   {
     done( QDialogButtonBox::Retry );
   }

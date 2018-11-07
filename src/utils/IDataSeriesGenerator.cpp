@@ -2,18 +2,9 @@
 
 namespace spx
 {
-  IDataSeriesGenerator::IDataSeriesGenerator( std::shared_ptr<Logger> logger, std::shared_ptr<SPX42Config> spxCfg) :
-    lg( logger ),
-    spxConfig( spxCfg ),
-    deviceId( -1 ),
-    dataAvaivible( false )
+  IDataSeriesGenerator::IDataSeriesGenerator( std::shared_ptr< Logger > logger, std::shared_ptr< SPX42Config > spxCfg )
+      : lg( logger ), spxConfig( spxCfg ), deviceId( -1 ), dataAvaivible( false )
   {
-
-  }
-
-  IDataSeriesGenerator::~IDataSeriesGenerator()
-  {
-
   }
 
   /**
@@ -24,5 +15,4 @@ namespace spx
   {
     this->deviceId = deviceId;
   }
-
 }

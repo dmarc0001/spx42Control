@@ -30,12 +30,13 @@ namespace spx
     static const qint16 databaseVersion;  //! aktuelle Version der Datenbank (für spätere Versionen wichtig)
 
     public:
-    explicit SPX42Database( std::shared_ptr< Logger > logger, const QString databaseName, QObject *parent = nullptr );
+    explicit SPX42Database( std::shared_ptr< Logger > logger, const QString &databaseName, QObject *parent = nullptr );
     ~SPX42Database();
     QSqlError openDatabase( bool createPath = false );  //! öffne die Datenbank, checke auf Vollständigkeit
-    QSqlError openDatabase( const QString databaseName, bool createPath = false );  //! öffne die Datenbank, checke auf Vollständigkeit
-    void closeDatabase( void );                                                     //! schliesse Datenbank
-    DeviceAliasHash getDeviceAliasHash( void );  //! gib einen hash mit einem hash (ALIAS <-> DEVICENAME) zurück
+    QSqlError openDatabase( const QString &databaseName,
+                            bool createPath = false );  //! öffne die Datenbank, checke auf Vollständigkeit
+    void closeDatabase( void );                         //! schliesse Datenbank
+    DeviceAliasHash getDeviceAliasHash( void );         //! gib einen hash mit einem hash (ALIAS <-> DEVICENAME) zurück
     bool addAlias( const QString &mac, const QString &name, const QString &alias );  //! erzeuge einen Alias Eintrag
     bool setAliasForMac( const QString &mac, const QString &alias );                 //! setzte einen Aliasnamen für MAC
     bool setAliasForName( const QString &name, const QString &alias );               //! setzte einen Aliasnamen für MAC

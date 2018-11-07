@@ -28,16 +28,16 @@ namespace spx
     // discovering agent
     //
     connect( discoveryAgent.get(), &QBluetoothDeviceDiscoveryAgent::deviceDiscovered, this,
-             [=]( const QBluetoothDeviceInfo &info ) { emit sigDiscoveredDevice( info ); } );
-    connect( discoveryAgent.get(), &QBluetoothDeviceDiscoveryAgent::finished, this, [=] { emit sigDiscoverScanFinished(); } );
+             [=]( const QBluetoothDeviceInfo &info ) { emit onDiscoveredDeviceSig( info ); } );
+    connect( discoveryAgent.get(), &QBluetoothDeviceDiscoveryAgent::finished, this, [=] { emit onDiscoverScanFinishedSig(); } );
     //
     // local device
     //
     connect( localDevice.get(), &QBluetoothLocalDevice::hostModeStateChanged, this,
-             [=]( QBluetoothLocalDevice::HostMode mode ) { emit sigDeviceHostModeStateChanged( mode ); } );
+             [=]( QBluetoothLocalDevice::HostMode mode ) { emit onDeviceHostModeStateChangedSig( mode ); } );
     connect(
         localDevice.get(), &QBluetoothLocalDevice::pairingFinished, this,
-        [=]( const QBluetoothAddress &addr, QBluetoothLocalDevice::Pairing pairing ) { emit sigDevicePairingDone( addr, pairing ); } );
+        [=]( const QBluetoothAddress &addr, QBluetoothLocalDevice::Pairing pairing ) { emit onDevicePairingDoneSig( addr, pairing ); } );
     //
     lg->debug( "BtDevices::BtDevices: connect signals...OK" );
   }
@@ -50,20 +50,25 @@ namespace spx
     lg->debug( "BtLocalDevicesManager::~BtLocalDevicesManager..." );
   }
 
-  void BtDevicesManager::init( void )
+  void BtDevicesManager::init( )
   {
     //
     // ereignis für hostmode einmal ausführen
     //
-    emit sigDeviceHostModeStateChanged( localDevice->hostMode() );
+    emit onDeviceHostModeStateChangedSig( localDevice->hostMode() );
   }
 
-  void BtDevicesManager::startDiscoverDevices( void )
+  void BtDevicesManager::startDiscoverDevices( )
   {
     discoveryAgent->start();
   }
 
-  const QBluetoothLocalDevice *BtDevicesManager::getLocalDevice( void )
+  void BtDevicesManager::cancelDiscoverDevices( )
+  {
+    discoveryAgent->stop();
+  }
+
+  const QBluetoothLocalDevice *BtDevicesManager::getLocalDevice( )
   {
     return ( localDevice.get() );
   }

@@ -51,27 +51,27 @@ namespace spx
     virtual void onConfLicChangedSlot( void ) override;                //! Wenn sich die Lizenz ändert
     virtual void onCloseDatabaseSlot( void ) override;                 //! wenn die Datenbank geschlosen wird
     // DEKOMPRESSIONSEINSTELLUNGEN
-    void decoComboChangedSlot( int index );                 //! ändert sich der Inhalt der Combobox für Dekompressionseinstellungen
-    void decoGradientLowChangedSlot( int low );             //! wenn der Gradient LOW geändert wurde
-    void decoGradientHighChangedSlot( int high );           //! wenn der Gradient HIGH geändert wurde
-    void decoDynamicGradientStateChangedSlot( int state );  //! wenn sich die Einstellung "dynamische Gradienten" ändert
-    void decoDeepStopsEnableChangedSlot( int state );       //! wenn sich die einstellung "deep stops enable" ändert
+    void onDecoComboChangedSlot( int index );                 //! ändert sich der Inhalt der Combobox für Dekompressionseinstellungen
+    void onDecoGradientLowChangedSlot( int low );             //! wenn der Gradient LOW geändert wurde
+    void onDecoGradientHighChangedSlot( int high );           //! wenn der Gradient HIGH geändert wurde
+    void onDecoDynamicGradientStateChangedSlot( int state );  //! wenn sich die Einstellung "dynamische Gradienten" ändert
+    void onDecoDeepStopsEnableChangedSlot( int state );       //! wenn sich die einstellung "deep stops enable" ändert
     // DISPLAYEINSTELLUNGEN
-    void displayBrightnessChangedSlot( int index );   //! wenn sich die Einstellung Helligkeit des Display verändert
-    void displayOrientationChangedSlot( int index );  //! wenn sich die Orientierung verändert
+    void onDisplayBrightnessChangedSlot( int index );   //! wenn sich die Einstellung Helligkeit des Display verändert
+    void onDisplayOrientationChangedSlot( int index );  //! wenn sich die Orientierung verändert
     // EINHEITENSYSTEM
-    void unitsTemperatureChangedSlot( int index );  //! wenn sich die Einstellung für die Einheit (Celsius/Fahrenheid) ändert
-    void unitsLengthChangedSlot( int index );       //! wenn sich die Einstellung für die Einheit (Fuß/Meter) ändert
-    void unitsWatertypeChangedSlot( int index );    //! wenn sich die Einstellung für den Wassertyp ändert
+    void onUnitsTemperatureChangedSlot( int index );  //! wenn sich die Einstellung für die Einheit (Celsius/Fahrenheid) ändert
+    void onUnitsLengthChangedSlot( int index );       //! wenn sich die Einstellung für die Einheit (Fuß/Meter) ändert
+    void onUnitsWatertypeChangedSlot( int index );    //! wenn sich die Einstellung für den Wassertyp ändert
     // SETPOINTS
-    void setpointAutoChangedSlot( int index );   //! wenn sich die Einstellung für Autosetpoiunt ändert
-    void setpointValueChangedSlot( int index );  //! wenn sich der Wert des Autosetpoints verändert
+    void onSetpointAutoChangedSlot( int index );   //! wenn sich die Einstellung für Autosetpoiunt ändert
+    void onSetpointValueChangedSlot( int index );  //! wenn sich der Wert des Autosetpoints verändert
     // INDIVIDUAL
-    void individualSensorsOnChangedSlot( int state );     //! wenn sich die Einstellung Sensoren on/off ändert
-    void individualPscrModeChangedSlot( int state );      //! wenn sich die Einstellung für den PSCR Mode ändert
-    void individualSensorsCountChangedSlot( int index );  //! wenn sich die Einstellung für die Anzahl der Sensoren ändert
-    void individualAcousticChangedSlot( int state );      //! wenn sich ide Einstellung der Akustischen Warnung ändert
-    void individualLogIntervalChangedSlot( int state );   //! wenn sich die Einstellung des Logintervals ändert
+    void onIndividualSensorsOnChangedSlot( int state );     //! wenn sich die Einstellung Sensoren on/off ändert
+    void onInIndividualPscrModeChangedSlot( int state );    //! wenn sich die Einstellung für den PSCR Mode ändert
+    void onIndividualSensorsCountChangedSlot( int index );  //! wenn sich die Einstellung für die Anzahl der Sensoren ändert
+    void onIndividualAcousticChangedSlot( int state );      //! wenn sich ide Einstellung der Akustischen Warnung ändert
+    void onIndividualLogIntervalChangedSlot( int state );   //! wenn sich die Einstellung des Logintervals ändert
   };
 }
 #endif  // DEVICECONFIG_HPP

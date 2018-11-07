@@ -14,7 +14,7 @@ namespace spx
    * @param databaseName
    * @param parent
    */
-  SPX42Database::SPX42Database( std::shared_ptr< Logger > logger, const QString databaseName, QObject *parent )
+  SPX42Database::SPX42Database( std::shared_ptr< Logger > logger, const QString &databaseName, QObject *parent )
       : QObject( parent ), lg( logger ), dbName( databaseName )
   {
     // dbName default: spx42Database.db
@@ -34,7 +34,7 @@ namespace spx
   /**
    * @brief SPX42Database::openDatabase
    * @param createPath
-   * @return
+   * &@return
    */
   QSqlError SPX42Database::openDatabase( bool createPath )
   {
@@ -114,7 +114,7 @@ namespace spx
    * @param createPath
    * @return
    */
-  QSqlError SPX42Database::openDatabase( const QString databaseName, bool createPath )
+  QSqlError SPX42Database::openDatabase( const QString &databaseName, bool createPath )
   {
     dbName = databaseName;
     return ( openDatabase( createPath ) );
@@ -123,7 +123,7 @@ namespace spx
   /**
    * @brief SPX42Database::closeDatabase
    */
-  void SPX42Database::closeDatabase( void )
+  void SPX42Database::closeDatabase()
   {
     lg->debug( "SPX42Database::closeDatabase..." );
     QSqlDatabase::database( currentConnectionName, false ).close();
@@ -136,7 +136,7 @@ namespace spx
    * @brief SPX42Database::getDeviceAliasHash
    * @return
    */
-  DeviceAliasHash SPX42Database::getDeviceAliasHash( void )
+  DeviceAliasHash SPX42Database::getDeviceAliasHash()
   {
     lg->debug( "SPX42Database::getDeviceAliasHash..." );
     DeviceAliasHash aliase;
@@ -321,7 +321,7 @@ namespace spx
    * @brief SPX42Database::getDatabaseVersion
    * @return
    */
-  qint16 SPX42Database::getDatabaseVersion( void )
+  qint16 SPX42Database::getDatabaseVersion()
   {
     qint16 version = -1;
     //
@@ -338,7 +338,7 @@ namespace spx
    * @brief SPX42Database::createVersionTable
    * @return
    */
-  bool SPX42Database::createVersionTable( void )
+  bool SPX42Database::createVersionTable()
   {
     lg->debug( "SPX42Database::createVersionTable..." );
     QSqlQuery query( QString( "drop table if exist %1" ).arg( SPX42Database::versionTableName ), db );
@@ -366,7 +366,7 @@ namespace spx
    * @brief SPX42Database::checkOrCreateTables
    * @return
    */
-  bool SPX42Database::checkOrCreateTables( void )
+  bool SPX42Database::checkOrCreateTables()
   {
     //
     // Datenbank ist offen, finde zuerst die Versionsnummer
@@ -405,7 +405,7 @@ namespace spx
    * @brief SPX42Database::createAllTables
    * @return
    */
-  bool SPX42Database::createAllTables( void )
+  bool SPX42Database::createAllTables()
   {
     if ( !createVersionTable() )
     {
@@ -422,7 +422,7 @@ namespace spx
    * @brief SPX42Database::createAliasTable
    * @return
    */
-  bool SPX42Database::createAliasTable( void )
+  bool SPX42Database::createAliasTable()
   {
     QString sql;
     QSqlQuery query( QString( "drop table if exist %1" ).arg( SPX42Database::deviceTableName ), db );

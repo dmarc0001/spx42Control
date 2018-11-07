@@ -37,9 +37,9 @@ namespace spx
     Logger();           //! Konstruktor mit Zeiger auf das Konfig-Objekt
     virtual ~Logger();  //! Destruktor
     int startLogging( LgThreshold th = LG_DEBUG,
-                      QString fn = "logging.log" );  //! Loggen beginnen
-    void setThreshold( LgThreshold th );             //! Setzte Loggingstufe
-    LgThreshold getThreshold( void );                //! lese Loggingstufe
+                      const QString &fn = "logging.log" );  //! Loggen beginnen
+    void setThreshold( LgThreshold th );                    //! Setzte Loggingstufe
+    LgThreshold getThreshold( void );                       //! lese Loggingstufe
     //
     void info( const QString &msg );      //! INFO Ausgaben
     void info( const std::string &msg );  //! INFO Ausgaben

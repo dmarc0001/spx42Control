@@ -24,7 +24,7 @@ namespace spx
 
     public:
     explicit DebugDataSeriesGenerator( std::shared_ptr< Logger > logger, std::shared_ptr< SPX42Config > spxCfg );
-    virtual ~DebugDataSeriesGenerator();
+    virtual ~DebugDataSeriesGenerator() = default;
     virtual void setDeviceId( int deviceId );
     virtual QtCharts::QLineSeries *makeDepthSerie( int diveNum );
     virtual QtCharts::QLineSeries *makeTempSerie( int diveNum );

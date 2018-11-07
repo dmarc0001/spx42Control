@@ -36,34 +36,35 @@ namespace spx
 
     public:
     explicit SPX42BtDevices( std::shared_ptr< Logger > logger, QObject *parent = nullptr );
-    ~SPX42BtDevices();                                                                         //! Der Destruktor
-    void startDiscoverDevices( void );                                                         //! Geräte suchen
-    SPXDeviceList getSPX42Devices( void ) const;                                               //! gefundene Geräte zurückgeben
-    QBluetoothLocalDevice::Pairing getPairingStatus( QBluetoothAddress addr );                 //! pairing für remote gerät
-    void setInquiryGeneralUnlimited( bool inquiry );                                           //! set scan mode
-    void setHostDiscoverable( bool discoverable );                                             //! Host ist zu finden/nicht zu finden
-    void setHostPower( bool powered );                                                         //! host power on/off
-    void requestPairing( QBluetoothAddress address, QBluetoothLocalDevice::Pairing pairing );  //! pairing anfordern
+    ~SPX42BtDevices();                                                                 //! Der Destruktor
+    void startDiscoverDevices( void );                                                 //! Geräte suchen
+    void cancelDiscoverDevices( void );                                                //! Discovering abbrechen
+    SPXDeviceList getSPX42Devices( void ) const;                                       //! gefundene Geräte zurückgeben
+    QBluetoothLocalDevice::Pairing getPairingStatus( const QBluetoothAddress &addr );  //! pairing für remote gerät
+    void setInquiryGeneralUnlimited( bool inquiry );                                   //! set scan mode
+    void setHostDiscoverable( bool discoverable );                                     //! Host ist zu finden/nicht zu finden
+    void setHostPower( bool powered );                                                 //! host power on/off
+    void requestPairing( const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing );  //! pairing anfordern
 
     private:
     void startDiscoverServices( void );  //! starte discovering, warte ggf bis ein laufender Prozess abgelaufen ist
 
     signals:
-    void sigDiscoveredDevice( const QBluetoothDeviceInfo &info );
-    void sigDevicePairingDone( const QBluetoothAddress &remoteAddr, QBluetoothLocalDevice::Pairing pairing );
-    void sigDiscoverScanFinished( void );
-    void sigDeviceHostModeStateChanged( QBluetoothLocalDevice::HostMode hostMode );
-    void sigDiscoveryServicesFinished( const QBluetoothAddress &remoteAddr );
-    void sigDiscoveredService( const QBluetoothAddress &raddr, const QBluetoothServiceInfo &info );
-    void sigAllScansFinished( void );
+    void onDiscoveredDeviceSig( const QBluetoothDeviceInfo &info );
+    void onDevicePairingDoneSig( const QBluetoothAddress &remoteAddr, QBluetoothLocalDevice::Pairing pairing );
+    void onDiscoverScanFinishedSig( void );
+    void onDeviceHostModeStateChangedSig( QBluetoothLocalDevice::HostMode hostMode );
+    void onDiscoveryServicesFinishedSig( const QBluetoothAddress &remoteAddr );
+    void onDiscoveredServiceSig( const QBluetoothAddress &raddr, const QBluetoothServiceInfo &info );
+    void onAllScansFinishedSig( void );
 
     private slots:
-    void slotDiscoveredDevice( const QBluetoothDeviceInfo &info );
-    void slotDevicePairingDone( const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing );
-    void slotDiscoverScanFinished( void );
-    void slotDeviceHostModeStateChanged( QBluetoothLocalDevice::HostMode hostMode );
-    void slotDiscoveryServicesFinished( const QBluetoothAddress &remoteAddr );
-    void slotDiscoveredService( const QBluetoothAddress &raddr, const QBluetoothServiceInfo &info );
+    void onDiscoveredDeviceSlot( const QBluetoothDeviceInfo &info );
+    void onDevicePairingDoneSlot( const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing );
+    void onDiscoverScanFinishedSlot( void );
+    void onDeviceHostModeStateChangedSlot( QBluetoothLocalDevice::HostMode hostMode );
+    void onDiscoveryServicesFinishedSlot( const QBluetoothAddress &remoteAddr );
+    void onDiscoveredServiceSlot( const QBluetoothAddress &raddr, const QBluetoothServiceInfo &info );
   };
 }
 #endif  // BTDEVICES_HPP

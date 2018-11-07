@@ -26,15 +26,15 @@ namespace spx
     // TODO: was machen
   }
 
-  void ChartsFragment::onConfLicChangedSlot( void )
+  void ChartsFragment::onConfLicChangedSlot( )
   {
-    lg->debug(
-        QString( "ChartsFragment::confLicChangedSlot -> set: %1" ).arg( static_cast< int >( spxConfig->getLicense().getLicType() ) ) );
+    lg->debug( QString( "ChartsFragment::onConfLicChangedSlot -> set: %1" )
+                   .arg( static_cast< int >( spxConfig->getLicense().getLicType() ) ) );
     ui->tabHeaderLabel->setText(
         QString( tr( "LOGCHARTS SPX42 Serial [%1] Lic: %2" ).arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
   }
 
-  void ChartsFragment::onCloseDatabaseSlot( void )
+  void ChartsFragment::onCloseDatabaseSlot( )
   {
     // TODO: implementieren
   }

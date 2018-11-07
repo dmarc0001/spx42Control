@@ -17,7 +17,7 @@ namespace spx
     void makeSipleCommand( char commandChar );
 
     public:
-    Spx42Commands();
+    Spx42Commands() = default;
     // Kommandos an den SPX zusammenstellen
     QByteArray &sendManufacturers( void );     //! Hersteller anfragen 0x01
     QByteArray &sendSerialNumber( void );      //! Noch nicht ganz klar, was das ist (Daniel fragen) 0x02

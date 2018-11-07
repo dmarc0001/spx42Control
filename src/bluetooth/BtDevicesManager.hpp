@@ -24,6 +24,7 @@ namespace spx
     ~BtDevicesManager();
     void init( void );
     void startDiscoverDevices( void );
+    void cancelDiscoverDevices( void );
     const QBluetoothLocalDevice *getLocalDevice( void );
     void setInquiryGeneralUnlimited( bool unlimited );
     void setHostDiscoverable( bool discoverable );
@@ -31,10 +32,10 @@ namespace spx
     void requestPairing( const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing );
 
     signals:
-    void sigDiscoveredDevice( const QBluetoothDeviceInfo &info );
-    void sigDevicePairingDone( const QBluetoothAddress &addr, QBluetoothLocalDevice::Pairing paring );
-    void sigDiscoverScanFinished( void );
-    void sigDeviceHostModeStateChanged( QBluetoothLocalDevice::HostMode mode );
+    void onDiscoveredDeviceSig( const QBluetoothDeviceInfo &info );
+    void onDevicePairingDoneSig( const QBluetoothAddress &addr, QBluetoothLocalDevice::Pairing paring );
+    void onDiscoverScanFinishedSig( void );
+    void onDeviceHostModeStateChangedSig( QBluetoothLocalDevice::HostMode mode );
   };
 }
 #endif  // BTDEVICES_HPP

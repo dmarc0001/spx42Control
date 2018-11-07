@@ -23,7 +23,7 @@ namespace spx
     shutdown();
   }
 
-  int Logger::startLogging( LgThreshold th, QString fn )
+  int Logger::startLogging( LgThreshold th, const QString &fn )
   {
     threshold = th;
     //
@@ -66,7 +66,7 @@ namespace spx
    * @brief Logger::getThreshold
    * @return
    */
-  LgThreshold Logger::getThreshold( void )
+  LgThreshold Logger::getThreshold()
   {
     return ( threshold );
   }

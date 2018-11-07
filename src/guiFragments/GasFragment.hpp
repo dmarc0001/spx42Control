@@ -8,6 +8,7 @@
 #include <QRegExp>
 #include <QSpinBox>
 #include <QWidget>
+#include <array>
 #include <memory>
 #include "IFragmentInterface.hpp"
 #include "config/ProjectConst.hpp"
@@ -42,16 +43,17 @@ namespace spx
                                 QCheckBox *dil1,
                                 QCheckBox *dil2,
                                 QCheckBox *ba );
-    ~GasFragmentGuiRef();
+    ~GasFragmentGuiRef() = default;
   };
 
   class GasFragment : public QWidget, IFragmentInterface
   {
     private:
     Q_OBJECT
-    std::unique_ptr< Ui::GasForm > ui;               //! Zeiger auf GUI-Objekte
-    bool areSlotsConnected;                          //! Ich merke mir, ob die Slots verbunden sind
-    std::unique_ptr< GasFragmentGuiRef > gRef[ 8 ];  //! Referenzen für acht GUI-Objekte
+    std::unique_ptr< Ui::GasForm > ui;                           //! Zeiger auf GUI-Objekte
+    bool areSlotsConnected;                                      //! Ich merke mir, ob die Slots verbunden sind
+    std::array< std::unique_ptr< GasFragmentGuiRef >, 8 > gRef;  //! Referenzen für acht GUI-Objekte
+    // std::unique_ptr< GasFragmentGuiRef > gRef[ 8 ];  //! Referenzen für acht GUI-Objekte TODO: std::array machen
 
     public:
     explicit GasFragment( QWidget *parent,
@@ -68,13 +70,13 @@ namespace spx
     void checkGases( void );         //! Alle Gase nach Lizenzwechsel testen
 
     private slots:
-    virtual void onOnlineStatusChangedSlot( bool isOnline ) override;     //! Wenn sich der Onlinestatus des SPX42 ändert
-    virtual void onConfLicChangedSlot( void ) override;                   //! Wenn sich die Lizenz ändert
-    virtual void onCloseDatabaseSlot( void ) override;                    //! wenn die Datenbank geschlosen wird
-    void spinO2ValueChangedSlot( int index, int o2Val );                  //! O2 Wert eines Gases hat sich verändert
-    void spinHeValueChangedSlot( int index, int heVal );                  //! HE Wert eines Gases hat sich verändert
-    void gasUseTypChangeSlot( int index, DiluentType which, int state );  //! wenn sich das Diluent ändert
-    void baCheckChangeSlot( int index, int state );                       //! wenn sich das Bailout ändert
+    virtual void onOnlineStatusChangedSlot( bool isOnline ) override;       //! Wenn sich der Onlinestatus des SPX42 ändert
+    virtual void onConfLicChangedSlot( void ) override;                     //! Wenn sich die Lizenz ändert
+    virtual void onCloseDatabaseSlot( void ) override;                      //! wenn die Datenbank geschlosen wird
+    void onSpinO2ValueChangedSlot( int index, int o2Val );                  //! O2 Wert eines Gases hat sich verändert
+    void onSpinHeValueChangedSlot( int index, int heVal );                  //! HE Wert eines Gases hat sich verändert
+    void onGasUseTypChangeSlot( int index, DiluentType which, int state );  //! wenn sich das Diluent ändert
+    void onBaCheckChangeSlot( int index, int state );                       //! wenn sich das Bailout ändert
   };
 }
 #endif  // GASFORM_HPP

@@ -66,29 +66,9 @@ namespace spx
     ApplicationTab getApplicationTab( void );          //! Welcher Tab war noch aktiv?
 
     private slots:
-    void tabCurrentChangedSlot( int idx );  //! TAB Index gewechselt
-    void licenseChangedSlot( void );        //! Lizenztyp getriggert
-
-    // Blutooth Slots vom BTDevice
-    /*
-    void btConnectingSlot( void );                            //! Signal, wenn eine Verbindung aufgebaut wird
-    void btConnectedSlot( const QByteArray& dAddr );          //! Signal, wenn eine Verbindung zustande gekommen ist
-    void btDisconnectSlot( void );                            //! Signal, wenn eine Verbindung beendet/unterbrochen wurde
-    void btConnectErrorSlot( int errnr );                     //! Signal, wenn es Fehler beim Verbinden gab
-    void btDataRecivedSlot();                                 //! Signal, wenn Daten kamen
-    void btPairingPinRequestSlot(void);                       //! Signal, wenn Pairing gefordert wird
-    */
+    void onTabCurrentChangedSlot( int idx );  //! TAB Index gewechselt
+    void onLicenseChangedSlot( void );        //! Lizenztyp getriggert
   };
 }  // namespace spx42
 
-/*
-      ==BtDevice....==
-      void btConnectingSig( void );                               //! Signal, wenn eine Verbindung aufgebaut wird
-      void btConnectedSig( const QByteArray& dAddr );             //! Signal, wenn eine Verbindung zustande gekommen ist
-      void btDisconnectSig( void );                               //! Signal, wenn eine Verbindung beendet/unterbrochen wurde
-      void btConnectErrorSig( int errnr );                        //! Signal, wenn es Fehler beim Verbinden gab
-      void btDataRecivedSig();                                    //! Signal, wenn Daten kamen
-      void btPairingPinRequestSig(void);                          //! Signal, wenn Pairing gefordert wird
-
- */
 #endif  // SPX42CONTROLMAINWIN_HPP
