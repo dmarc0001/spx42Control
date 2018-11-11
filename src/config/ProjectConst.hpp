@@ -19,6 +19,11 @@ namespace spx
     enum class IndicatorStati;
 
     //###########################################################################
+    //#### Stringkonstanten ohne Lokalisierung
+    //###########################################################################
+    static const QString MAIN_TITLE;  //! der Fenstertitel
+
+    //###########################################################################
     //#### Einfache Konstanten                                               ####
     //###########################################################################
     static constexpr int BUFFER_LEN = 1200;     //! Empfangspufferlänge

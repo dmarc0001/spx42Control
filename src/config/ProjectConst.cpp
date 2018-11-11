@@ -3,6 +3,11 @@
 namespace spx
 {
   //
+  // Der Programmtitel
+  //
+  const QString ProjectConst::MAIN_TITLE{"SPX42 BT-Controller"};
+
+  //
   // Einfache Konstanten
   //
   const QString ProjectConst::RFCommUUID{"00001101-0000-1000-8000-00805f9b34fb"};
