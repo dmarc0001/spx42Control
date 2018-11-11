@@ -9,7 +9,7 @@ namespace spx
    */
   SPX42ControlMainWin::SPX42ControlMainWin( QWidget *parent )
       : QMainWindow( parent )
-      , ui( new Ui::SPX42ControlMainWin )
+      , ui( new Ui::SPX42ControlMainWin() )
       , watchdog( new QTimer( this ) )
       , spx42Config( new SPX42Config() )
       , currentStatus( ApplicationStat::STAT_OFFLINE )

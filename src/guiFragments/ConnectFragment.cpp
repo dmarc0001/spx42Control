@@ -25,7 +25,9 @@ namespace spx
     devices = database->getDeviceAliasHash();
     //
     onConfLicChangedSlot();
+    //
     // GUI Signale
+    //
     connect( spxConfig.get(), &SPX42Config::licenseChangedSig, this, &ConnectFragment::onConfLicChangedSlot );
     connect( ui->connectButton, &QPushButton::clicked, this, &ConnectFragment::onConnectButtonSlot );
     connect( ui->propertyPushButton, &QPushButton::clicked, this, &ConnectFragment::onPropertyButtonSlot );
@@ -38,7 +40,9 @@ namespace spx
     // Signalisierung vom verbundenen SPX
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onStateChangedSig, this, &ConnectFragment::onOnlineStatusChangedSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onSocketErrorSig, this, &ConnectFragment::onSocketErrorSlot );
+    //
     // setzte den Connectionsstatus
+    //
     setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
     // nach 200 ms discover starten
     QTimer::singleShot( 200, this, [=]() { this->onDiscoverButtonSlot(); } );
@@ -132,8 +136,10 @@ namespace spx
       //
       // jetzt das remote objekt arbeiten lassen
       //
-      remoteSPX42->startConnection( spx42Devices.take( remoteMac ) );
-      // remoteSPX42->startConnection( remoteMac );
+      // remoteSPX42->startConnection( spx42Devices.take( remoteMac ) );
+      discoverObj->stopDiscover();
+      remoteSPX42->endConnection();
+      remoteSPX42->startConnection( remoteMac );
     }
   }
 
@@ -154,6 +160,7 @@ namespace spx
     //
     // das Discovering starten
     //
+    // discoverObj->stopDiscover();
     discoverObj->startDiscover();
   }
 

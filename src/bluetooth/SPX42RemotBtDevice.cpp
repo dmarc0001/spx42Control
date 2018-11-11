@@ -105,6 +105,10 @@ namespace spx
       lg->info( "close bluethooth connection" );
       socket->close();
     }
+    if ( socket->state() != QBluetoothSocket::UnconnectedState )
+    {
+      socket->abort();
+    }
   }
 
   /**
