@@ -3,6 +3,7 @@
 
 #include <memory>
 
+#include "bluetooth/SPX42RemotBtDevice.hpp"
 #include "config/SPX42Defs.hpp"
 #include "database/SPX42Database.hpp"
 #include "logging/Logger.hpp"
@@ -13,14 +14,15 @@ namespace spx
   class IFragmentInterface
   {
     protected:
-    std::shared_ptr< Logger > lg;               //! Zeiger auf das Log-Objekt
-    std::shared_ptr< SPX42Database > database;  //! Zeiger auf die Datenbank
-    std::shared_ptr< SPX42Config > spxConfig;   //! Zeiger auf das SPX42 Config Objekt
-
+    std::shared_ptr< Logger > lg;                       //! Zeiger auf das Log-Objekt
+    std::shared_ptr< SPX42Database > database;          //! Zeiger auf die Datenbank
+    std::shared_ptr< SPX42Config > spxConfig;           //! Zeiger auf das SPX42 Config Objekt
+    std::shared_ptr< SPX42RemotBtDevice > remoteSPX42;  // Zeiger auf das VErbindungsobjekt zum SPX42
     public:
     explicit IFragmentInterface( std::shared_ptr< Logger > logger,
                                  std::shared_ptr< SPX42Database > spx42Database,
-                                 std::shared_ptr< SPX42Config > spxCfg );  //! Standartkonstruktor
+                                 std::shared_ptr< SPX42Config > spxCfg,
+                                 std::shared_ptr< SPX42RemotBtDevice > remSPX42 );  //! Standartkonstruktor
     virtual ~IFragmentInterface( void )
     {
     }  //! Destruktor

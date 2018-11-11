@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <memory>
 #include "IFragmentInterface.hpp"
+#include "bluetooth/SPX42RemotBtDevice.hpp"
 #include "database/SPX42Database.hpp"
 #include "logging/Logger.hpp"
 #include "utils/SPX42Config.hpp"
@@ -29,9 +30,10 @@ namespace spx
     explicit DeviceConfigFragment( QWidget *parent,
                                    std::shared_ptr< Logger > logger,
                                    std::shared_ptr< SPX42Database > spx42Database,
-                                   std::shared_ptr< SPX42Config > spxCfg );  //! Konstruktor
-    ~DeviceConfigFragment() override;                                        //! Destruktor
-    void initGuiWithConfig( void );                                          //! Initialisiere die GUI mit Werten aus der Config
+                                   std::shared_ptr< SPX42Config > spxCfg,
+                                   std::shared_ptr< SPX42RemotBtDevice > remSPX42 );  //! Konstruktor
+    ~DeviceConfigFragment() override;                                                 //! Destruktor
+    void initGuiWithConfig( void );  //! Initialisiere die GUI mit Werten aus der Config
 
     protected:
     void changeEvent( QEvent *e ) override;  //! Globele Veränderungen

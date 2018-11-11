@@ -6,8 +6,9 @@ namespace spx
   ChartsFragment::ChartsFragment( QWidget *parent,
                                   std::shared_ptr< Logger > logger,
                                   std::shared_ptr< SPX42Database > spx42Database,
-                                  std::shared_ptr< SPX42Config > spxCfg )
-      : QWidget( parent ), IFragmentInterface( logger, spx42Database, spxCfg ), ui( new Ui::ChartsFragment )
+                                  std::shared_ptr< SPX42Config > spxCfg,
+                                  std::shared_ptr< SPX42RemotBtDevice > remSPX42 )
+      : QWidget( parent ), IFragmentInterface( logger, spx42Database, spxCfg, remSPX42 ), ui( new Ui::ChartsFragment )
   {
     lg->debug( "ChartsFragment::ChartsFragment..." );
     ui->setupUi( this );
@@ -26,7 +27,7 @@ namespace spx
     // TODO: was machen
   }
 
-  void ChartsFragment::onConfLicChangedSlot( )
+  void ChartsFragment::onConfLicChangedSlot()
   {
     lg->debug( QString( "ChartsFragment::onConfLicChangedSlot -> set: %1" )
                    .arg( static_cast< int >( spxConfig->getLicense().getLicType() ) ) );
@@ -34,7 +35,7 @@ namespace spx
         QString( tr( "LOGCHARTS SPX42 Serial [%1] Lic: %2" ).arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
   }
 
-  void ChartsFragment::onCloseDatabaseSlot( )
+  void ChartsFragment::onCloseDatabaseSlot()
   {
     // TODO: implementieren
   }

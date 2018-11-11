@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <memory>
 #include "IFragmentInterface.hpp"
+#include "bluetooth/SPX42RemotBtDevice.hpp"
 #include "database/SPX42Database.hpp"
 #include "logging/Logger.hpp"
 #include "utils/SPX42Config.hpp"
@@ -25,8 +26,9 @@ namespace spx
     explicit ChartsFragment( QWidget *parent,
                              std::shared_ptr< Logger > logger,
                              std::shared_ptr< SPX42Database > spx42Database,
-                             std::shared_ptr< SPX42Config > spxCfg );  //! Konstruktor
-    ~ChartsFragment() override;                                        //! Destruktor, muss GUI säubern
+                             std::shared_ptr< SPX42Config > spxCfg,
+                             std::shared_ptr< SPX42RemotBtDevice > remSPX42 );  //! Konstruktor
+    ~ChartsFragment() override;                                                 //! Destruktor, muss GUI säubern
 
     private slots:
     virtual void onOnlineStatusChangedSlot( bool isOnline ) override;  //! Wenn sich der Onlinestatus des SPX42 ändert

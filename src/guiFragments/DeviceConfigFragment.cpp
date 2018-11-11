@@ -12,8 +12,12 @@ namespace spx
   DeviceConfigFragment::DeviceConfigFragment( QWidget *parent,
                                               std::shared_ptr< Logger > logger,
                                               std::shared_ptr< SPX42Database > spx42Database,
-                                              std::shared_ptr< SPX42Config > spxCfg )
-      : QWidget( parent ), IFragmentInterface( logger, spx42Database, spxCfg ), ui( new Ui::DeviceConfig ), gradentSlotsIgnore( false )
+                                              std::shared_ptr< SPX42Config > spxCfg,
+                                              std::shared_ptr< SPX42RemotBtDevice > remSPX42 )
+      : QWidget( parent )
+      , IFragmentInterface( logger, spx42Database, spxCfg, remSPX42 )
+      , ui( new Ui::DeviceConfig )
+      , gradentSlotsIgnore( false )
   {
     lg->debug( "DeviceConfigFragment::DeviceConfigFragment..." );
     ui->setupUi( this );
@@ -33,7 +37,7 @@ namespace spx
   /**
    * @brief Initialisiere das Fragment (GUI Aufbauen)
    */
-  void DeviceConfigFragment::initGuiWithConfig( )
+  void DeviceConfigFragment::initGuiWithConfig()
   {
     //
     // Initialisiere die GUI
@@ -63,7 +67,7 @@ namespace spx
   /**
    * @brief GUI für Dekomprtession nach spxConfig einrichten
    */
-  void DeviceConfigFragment::setGuiForDecompression( )
+  void DeviceConfigFragment::setGuiForDecompression()
   {
     //
     // Signale trennen um Schleifen zu vermeiden
@@ -110,7 +114,7 @@ namespace spx
   /**
    * @brief GUI für Display nach spxConfig einrichten
    */
-  void DeviceConfigFragment::setGuiForDisplay( )
+  void DeviceConfigFragment::setGuiForDisplay()
   {
     disconnect( ui->displayOrientationComboBox );
     disconnect( ui->displayBrightnessComboBox );
@@ -127,7 +131,7 @@ namespace spx
   /**
    * @brief GUI für Einheiten nach spxConfig einrichten
    */
-  void DeviceConfigFragment::setGuiForUnits( )
+  void DeviceConfigFragment::setGuiForUnits()
   {
     disconnect( ui->unitsWaterTypeComboBox );
     disconnect( ui->unitsDeepComboBox );
@@ -148,7 +152,7 @@ namespace spx
   /**
    * @brief GUI für Setpoint nach spxConfig einrichten
    */
-  void DeviceConfigFragment::setGuiForSetpoint( )
+  void DeviceConfigFragment::setGuiForSetpoint()
   {
     disconnect( ui->setpointSetpointComboBox );
     disconnect( ui->setpointAutoOnComboBox );
@@ -165,7 +169,7 @@ namespace spx
   /**
    * @brief GUI für Lizenz nach spxConfig einrichten
    */
-  void DeviceConfigFragment::setGuiForLicense( )
+  void DeviceConfigFragment::setGuiForLicense()
   {
     SPX42License lic( spxConfig->getLicense() );
 
@@ -202,7 +206,7 @@ namespace spx
   /**
    * @brief GUI für Individual nach spxConfig einrichten
    */
-  void DeviceConfigFragment::setGuiForIndividual( )
+  void DeviceConfigFragment::setGuiForIndividual()
   {
     if ( spxConfig->getLicense().getLicInd() == IndividualLicense::LIC_INDIVIDUAL )
     {
@@ -255,7 +259,7 @@ namespace spx
   /**
    * @brief trenne Slots von Signalen
    */
-  void DeviceConfigFragment::disconnectSlots( )
+  void DeviceConfigFragment::disconnectSlots()
   {
     //
     // Alle Slots trennen
@@ -307,7 +311,7 @@ namespace spx
    * @brief Slot beim ändern der Lizenz
    * @param Lizenz ders SPX
    */
-  void DeviceConfigFragment::onConfLicChangedSlot( )
+  void DeviceConfigFragment::onConfLicChangedSlot()
   {
     setGuiForLicense();
   }
@@ -317,7 +321,7 @@ namespace spx
     // TODO: was machen
   }
 
-  void DeviceConfigFragment::onCloseDatabaseSlot( )
+  void DeviceConfigFragment::onCloseDatabaseSlot()
   {
     // TODO: implementieren
   }

@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <memory>
 #include "IFragmentInterface.hpp"
+#include "bluetooth/SPX42RemotBtDevice.hpp"
 #include "config/ProjectConst.hpp"
 #include "config/SPX42Defs.hpp"
 #include "database/SPX42Database.hpp"
@@ -45,7 +46,8 @@ namespace spx
     explicit LogFragment( QWidget *parent,
                           std::shared_ptr< Logger > logger,
                           std::shared_ptr< SPX42Database > spx42Database,
-                          std::shared_ptr< SPX42Config > spxCfg );  //! Konstruktor
+                          std::shared_ptr< SPX42Config > spxCfg,
+                          std::shared_ptr< SPX42RemotBtDevice > remSPX42 );  //! Konstruktor
     ~LogFragment() override;
 
     protected:

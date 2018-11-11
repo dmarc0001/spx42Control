@@ -6,8 +6,9 @@ namespace spx
   ConnectFragment::ConnectFragment( QWidget *parent,
                                     std::shared_ptr< Logger > logger,
                                     std::shared_ptr< SPX42Database > spx42Database,
-                                    std::shared_ptr< SPX42Config > spxCfg )
-      : QWidget( parent ), IFragmentInterface( logger, spx42Database, spxCfg ), ui( new Ui::connectForm )
+                                    std::shared_ptr< SPX42Config > spxCfg,
+                                    std::shared_ptr< SPX42RemotBtDevice > remSPX42 )
+      : QWidget( parent ), IFragmentInterface( logger, spx42Database, spxCfg, remSPX42 ), ui( new Ui::connectForm )
   {
     lg->debug( "ConnectFragment::ConnectFragment..." );
     ui->setupUi( this );
