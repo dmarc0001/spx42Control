@@ -2,10 +2,11 @@
 #define CONNECTFORM_HPP
 
 #include <QPair>
+#include <QTimer>
 #include <QWidget>
 #include <memory>
 #include "IFragmentInterface.hpp"
-#include "bluetooth/BtDiscoverDialog.hpp"
+#include "bluetooth/BtDiscoverObject.hpp"
 #include "bluetooth/SPX42RemotBtDevice.hpp"
 #include "database/SPX42Database.hpp"
 #include "logging/Logger.hpp"
@@ -23,9 +24,11 @@ namespace spx
     private:
     Q_OBJECT
     Q_INTERFACES( spx::IFragmentInterface )
-    std::unique_ptr< Ui::connectForm > ui;  //! Zeiger auf die GUI Objekte
-    DeviceAliasHash devices;                //! gehashte Liste der verfügbaren Geräte
-    QString errMsg;                         //! Fehlermeldungen BT Connection
+    std::unique_ptr< Ui::connectForm > ui;            //! Zeiger auf die GUI Objekte
+    DeviceAliasHash devices;                          //! gehashte Liste der verfügbaren Geräte
+    QString errMsg;                                   //! Fehlermeldungen BT Connection
+    std::unique_ptr< BtDiscoverObject > discoverObj;  //! Objekt zum Discovern der Geräte
+    SPXDeviceList spx42Devices;                       //! Liste mit gefundenen SPX42
 
     public:
     explicit ConnectFragment( QWidget *parent,
@@ -37,7 +40,6 @@ namespace spx
     virtual void deactivateTab( void ) override;                                 //! deaktiviere eventuelle signale
 
     private:
-    void fillDevicesList( void );              //! fülle die Liste mit den Geräten neu
     void setGuiConnected( bool isConnected );  //! Stati in der GUI setzten
 
     signals:
@@ -51,10 +53,12 @@ namespace spx
     virtual void onCloseDatabaseSlot( void ) override;                               //! wenn die Datenbank geschlosen wird
 
     private slots:
-    void onConnectButtonSlot( void );             //! Wenn der Verbinde-Knopf gedrückt wurde
-    void onPropertyButtonSlot( void );            //! Verbindungs/Geräte eigenschaften
-    void onDiscoverButtonSlot( void );            //! Suche nach BT Geräten
-    void onCurrentIndexChangedSlot( int index );  //! Dropdown box: Auswahl geändert
+    void onConnectButtonSlot( void );                                 //! Wenn der Verbinde-Knopf gedrückt wurde
+    void onPropertyButtonSlot( void );                                //! Verbindungs/Geräte eigenschaften
+    void onDiscoverButtonSlot( void );                                //! Suche nach BT Geräten
+    void onCurrentIndexChangedSlot( int index );                      //! Dropdown box: Auswahl geändert
+    void onDiscoveredDeviceSlot( const SPXDeviceDescr &deviceInfo );  //! wurde ein neues gerät gefunden...
+    void onDiscoverScanFinishedSlot( void );                          //! wenn das discovering abgeschlossen ist
   };
 }
 #endif  // CONNECTFORM_HPP

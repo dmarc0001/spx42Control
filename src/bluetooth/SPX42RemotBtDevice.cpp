@@ -40,6 +40,23 @@ namespace spx
     disconnect( socket.get(), nullptr, nullptr, nullptr );
   }
 
+  void SPX42RemotBtDevice::startConnection( const SPXDeviceDescr &remDevice )
+  {
+    lg->debug( "SPX42RemotBtDevice::startConnection -> check for remote addr..." );
+    if ( remDevice.deviceInfo.address().isNull() )
+    {
+      lg->warn( "SPX42RemotBtDevice::startConnection -> remote addr is not set!" );
+      return;
+    }
+    lg->debug( "SPX42RemotBtDevice::startConnection -> check for remote addr..." );
+    if ( remDevice.serviceInfo.isValid() && remDevice.serviceInfo.isComplete() )
+    {
+      socket->connectToService( remDevice.deviceInfo.address(), remDevice.serviceInfo.serviceUuid() );
+    }
+    else
+      lg->warn( "SPX42RemotBtDevice::startConnection -> remote addr is not set!" );
+  }
+
   /**
    * @brief SPX42RemotBtDevice::startConnection
    * @param remService

@@ -17,8 +17,20 @@ namespace spx
   //
   // ein paar Typendefinitionen, um die Sache lesbar zu machen
   //
-  using SPXDeviceList = QHash< QString, QBluetoothDeviceInfo >;  //! device Addr, device Info
+  class SPXDeviceDescr;
+
+  using SPXDeviceList = QHash< QString, SPXDeviceDescr >;  //! device Addr, device Info, Service Info
   using ToScannedDevicesQueue = QQueue< QBluetoothAddress >;
+
+  class SPXDeviceDescr
+  {
+    public:
+    SPXDeviceDescr() = default;
+    SPXDeviceDescr( const QBluetoothDeviceInfo &dInfo );
+    SPXDeviceDescr( const QBluetoothDeviceInfo &dInfo, const QBluetoothServiceInfo &sInfo );
+    QBluetoothDeviceInfo deviceInfo;
+    QBluetoothServiceInfo serviceInfo;
+  };
 
   class SPX42BtDevices : public QObject
   {
@@ -50,12 +62,11 @@ namespace spx
     void startDiscoverServices( void );  //! starte discovering, warte ggf bis ein laufender Prozess abgelaufen ist
 
     signals:
-    void onDiscoveredDeviceSig( const QBluetoothDeviceInfo &info );
+    void onDiscoveredDeviceSig( const SPXDeviceDescr &info );
     void onDevicePairingDoneSig( const QBluetoothAddress &remoteAddr, QBluetoothLocalDevice::Pairing pairing );
     void onDiscoverScanFinishedSig( void );
     void onDeviceHostModeStateChangedSig( QBluetoothLocalDevice::HostMode hostMode );
     void onDiscoveryServicesFinishedSig( const QBluetoothAddress &remoteAddr );
-    void onDiscoveredServiceSig( const QBluetoothAddress &raddr, const QBluetoothServiceInfo &info );
     void onAllScansFinishedSig( void );
 
     private slots:

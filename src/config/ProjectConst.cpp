@@ -11,6 +11,7 @@ namespace spx
   // Einfache Konstanten
   //
   const QString ProjectConst::RFCommUUID{"00001101-0000-1000-8000-00805f9b34fb"};
+  const QBluetoothUuid ProjectConst::SPX42ServiceUuid( ProjectConst::RFCommUUID );
   const QString ProjectConst::searchedServiceRegex{"SPX42|SPP"};
 
   //
