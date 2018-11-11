@@ -68,8 +68,10 @@ namespace spx
     ApplicationTab getApplicationTab( void );          //! Welcher Tab war noch aktiv?
 
     private slots:
-    void onTabCurrentChangedSlot( int idx );  //! TAB Index gewechselt
-    void onLicenseChangedSlot( void );        //! Lizenztyp getriggert
+    void onTabCurrentChangedSlot( int idx );                                //! TAB Index gewechselt
+    void onLicenseChangedSlot( void );                                      //! Lizenztyp getriggert
+    void onWarningMessageSlot( const QString &msg, bool asPopup = false );  //! eine Warnmeldung soll das Main darstellen
+    void onErrorgMessageSlot( const QString &msg, bool asPopup = false );   //! eine Warnmeldung soll das Main darstellen
   };
 }  // namespace spx42
 

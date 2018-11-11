@@ -31,7 +31,13 @@ namespace spx
   DeviceConfigFragment::~DeviceConfigFragment()
   {
     lg->debug( "DeviceConfigFragment::~DeviceConfigFragment..." );
+    deactivateTab();
     // delete ui;
+  }
+
+  void DeviceConfigFragment::deactivateTab( void )
+  {
+    // signale trennen...
   }
 
   /**
@@ -319,6 +325,11 @@ namespace spx
   void DeviceConfigFragment::onOnlineStatusChangedSlot( bool )
   {
     // TODO: was machen
+  }
+
+  void DeviceConfigFragment::onSocketErrorSlot( QBluetoothSocket::SocketError )
+  {
+    // TODO: implementieren
   }
 
   void DeviceConfigFragment::onCloseDatabaseSlot()

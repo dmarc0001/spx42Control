@@ -391,7 +391,8 @@ namespace spx
   void SPX42ControlMainWin::onTabCurrentChangedSlot( int idx )
   {
     static bool ignore = false;
-    QWidget *currObj;
+    QWidget *currObj = nullptr;
+    IFragmentInterface *oldFragment = nullptr;
 
     if ( ignore )
     {
@@ -403,9 +404,15 @@ namespace spx
     //
     // alten Inhalt entfernen
     //
-    QWidget *oldTab = ui->areaTabWidget->widget( idx );
+    if ( nullptr != ( oldFragment = dynamic_cast< IFragmentInterface * >( ui->areaTabWidget->widget( idx ) ) ) )
+    {
+      // wenn das ein Fragment ist deaktiviere signale
+      oldFragment->deactivateTab();
+      // und als QWidget die löschung verfügen, sobald das möglich ist
+      ui->areaTabWidget->widget( idx )->deleteLater();
+    }
+    // aus dem Tab entfernen
     ui->areaTabWidget->removeTab( idx );
-    oldTab->deleteLater();
     //
     // Neuen Inhalt des Tabs aufbauen
     //
@@ -418,6 +425,8 @@ namespace spx
         currObj->setObjectName( "spx42Connect" );
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::CONNECT_TAB ) ) );
         currentTab = ApplicationTab::CONNECT_TAB;
+        connect( static_cast< ConnectFragment * >( currObj ), &ConnectFragment::onWarningMessageSig, this,
+                 &SPX42ControlMainWin::onWarningMessageSlot );
         break;
 
       case static_cast< int >( ApplicationTab::CONFIG_TAB ):
@@ -490,5 +499,43 @@ namespace spx
         break;
     }
 #endif
+  }
+
+  /**
+   * @brief SPX42ControlMainWin::onWarningMessageSlot
+   * @param msg
+   * @param asPopup
+   */
+  void SPX42ControlMainWin::onWarningMessageSlot( const QString &msg, bool asPopup )
+  {
+    if ( !asPopup )
+    {
+      // TODO: Messagebox !
+      lg->warn( QString( "SPX42ControlMainWin::onWarningMessageSlot -> as POPUP: <%1>" ).arg( msg ) );
+    }
+    else
+    {
+      // TODO: statusline
+      lg->warn( QString( "SPX42ControlMainWin::onWarningMessageSlot -> as msgline: <%1>" ).arg( msg ) );
+    }
+  }
+
+  /**
+   * @brief SPX42ControlMainWin::onErrorgMessageSlot
+   * @param msg
+   * @param asPopup
+   */
+  void SPX42ControlMainWin::onErrorgMessageSlot( const QString &msg, bool asPopup )
+  {
+    if ( !asPopup )
+    {
+      // TODO: Messagebox !
+      lg->warn( QString( "SPX42ControlMainWin::onErrorMessageSlot -> as POPUP: <%1>" ).arg( msg ) );
+    }
+    else
+    {
+      // TODO: statusline
+      lg->warn( QString( "SPX42ControlMainWin::onErrorMessageSlot -> as msgline: <%1>" ).arg( msg ) );
+    }
   }
 }

@@ -48,12 +48,19 @@ namespace spx
     initGuiWithConfig();
     onConfLicChangedSlot();
     connectSlots();
+    connect( spxConfig.get(), &SPX42Config::licenseChangedSig, this, &GasFragment::onConfLicChangedSlot );
   }
 
   GasFragment::~GasFragment()
   {
     lg->debug( "GasFragment::~GasFragment..." );
+    deactivateTab();
     // delete ui;
+  }
+
+  void GasFragment::deactivateTab( void )
+  {
+    disconnect( spxConfig.get(), nullptr, this, nullptr );
   }
 
   void GasFragment::fillReferences()
@@ -136,7 +143,6 @@ namespace spx
       connect( gRef.at( i )->baCheckBox, &QCheckBox::stateChanged, this,
                [=]( int state ) { onBaCheckChangeSlot( static_cast< int >( i ), state ); } );
     }
-    connect( spxConfig.get(), &SPX42Config::licenseChangedSig, this, &GasFragment::onConfLicChangedSlot );
   }
 
   void GasFragment::disconnectSlots()
@@ -149,7 +155,6 @@ namespace spx
       disconnect( i->heSpin );
       disconnect( i->o2Spin );
     }
-    disconnect( spxConfig.get() );
   }
 
   void GasFragment::onSpinO2ValueChangedSlot( int index, int o2Val )
@@ -320,6 +325,11 @@ namespace spx
   void GasFragment::onOnlineStatusChangedSlot( bool )
   {
     // TODO: was machen
+  }
+
+  void GasFragment::onSocketErrorSlot( QBluetoothSocket::SocketError )
+  {
+    // TODO: implementieren
   }
 
   void GasFragment::onCloseDatabaseSlot()

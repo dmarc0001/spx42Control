@@ -56,6 +56,12 @@ namespace spx
     // uniqe_ptr die Objekte im ChartView entsorgen
     chartView->setChart( dummyChart );
     ui->logentryListView->setModel( Q_NULLPTR );
+    deactivateTab();
+  }
+
+  void LogFragment::deactivateTab( void )
+  {
+    disconnect( spxConfig.get(), nullptr, this, nullptr );
   }
 
   /**
@@ -280,6 +286,11 @@ namespace spx
   void LogFragment::onOnlineStatusChangedSlot( bool )
   {
     // TODO: was machen
+  }
+
+  void LogFragment::onSocketErrorSlot( QBluetoothSocket::SocketError )
+  {
+    // TODO: implementieren
   }
 
   void LogFragment::onConfLicChangedSlot()
