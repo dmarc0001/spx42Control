@@ -4,6 +4,7 @@
 #include <QBluetoothSocket>
 #include <QByteArray>
 #include <memory>
+#include "bluetooth/SPX42BtDevices.hpp"
 #include "config/ProjectConst.hpp"
 #include "logging/Logger.hpp"
 
@@ -32,6 +33,7 @@ namespace spx
     explicit SPX42RemotBtDevice( std::shared_ptr< Logger > logger, QObject *parent = nullptr );
     ~SPX42RemotBtDevice();
     void startConnection( const QString &mac );
+    void startConnection( const SPXDeviceDescr &remDevice );
     void startConnection( void );
     void endConnection( void );
     SPX42ConnectStatus getConnectionStatus( void );

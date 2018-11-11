@@ -1,6 +1,7 @@
 ﻿#ifndef PROJECTCONST_HPP
 #define PROJECTCONST_HPP
 
+#include <QBluetoothUuid>
 #include <QColor>
 #include <QRegExp>
 #include <iostream>
@@ -26,12 +27,13 @@ namespace spx
     //###########################################################################
     //#### Einfache Konstanten                                               ####
     //###########################################################################
-    static constexpr int BUFFER_LEN = 1200;     //! Empfangspufferlänge
-    static constexpr int CXN_SUCCESS = 0;       //! Winsock OK Value
-    static constexpr int CXN_ERROR = 1;         //! Winsock ERROR Value
-    static constexpr int SOCK_BUFFLEN = 128;    //! WINSOCK Pufferlänge (fuer BT)
-    static const QString RFCommUUID;            //! RFComm UUID bei den SPX-Services
-    static const QString searchedServiceRegex;  //! Suchausdruck für SPX42 Service
+    static constexpr int BUFFER_LEN = 1200;        //! Empfangspufferlänge
+    static constexpr int CXN_SUCCESS = 0;          //! Winsock OK Value
+    static constexpr int CXN_ERROR = 1;            //! Winsock ERROR Value
+    static constexpr int SOCK_BUFFLEN = 128;       //! WINSOCK Pufferlänge (fuer BT)
+    static const QString RFCommUUID;               //! RFComm UUID bei den SPX-Services
+    static const QBluetoothUuid SPX42ServiceUuid;  //! die SPX42 Service UUID
+    static const QString searchedServiceRegex;     //! Suchausdruck für SPX42 Service
 
     //###########################################################################
     // Defaults für DEKOMPRESSIONS Einstellungen                             ####

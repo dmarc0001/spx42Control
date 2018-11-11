@@ -56,7 +56,9 @@ int main( int argc, char *argv[] )
   //
   // den eventloop starten
   //
-  return app.exec();
+  int retcode = app.exec();
+  qDebug() << "app ends with returncode <" << retcode << ">";
+  return ( retcode );
 }
 
 bool readStylesheetFromFile( QApplication *app, QString &file )
