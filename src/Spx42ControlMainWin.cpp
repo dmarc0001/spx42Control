@@ -94,6 +94,7 @@ namespace spx
     ui->areaTabWidget->setCurrentIndex( 0 );
     onTabCurrentChangedSlot( 0 );
     connectActions();
+    setTitleMessage();
   }
 
   /**
@@ -239,6 +240,10 @@ namespace spx
       // Lizenz wurde geändert
       //
       connect( spx42Config.get(), &SPX42Config::licenseChangedSig, this, &SPX42ControlMainWin::onLicenseChangedSlot );
+      //
+      // onölinestatus wurde geändert
+      //
+      connect( remoteSPX42.get(), &SPX42RemotBtDevice::onStateChangedSig, this, &SPX42ControlMainWin::onOnlineStatusChangedSlot );
 #ifdef DEBUG
       //
       // simuliert zu Nitrox lizenz geändert
@@ -384,6 +389,29 @@ namespace spx
     return ( currentTab );
   }
 
+  void SPX42ControlMainWin::setTitleMessage( const QString &msg )
+  {
+    QString online;
+    // ist die Kiste verbunden?
+    if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
+    {
+      online = tr( "online" );
+    }
+    else
+    {
+      online = tr( "offline" );
+    }
+    // und, ist eine Meldung vorhanden?
+    if ( !msg.isEmpty() )
+    {
+      setWindowTitle( QString( "%1 - %2 - " ).arg( ProjectConst::MAIN_TITLE ).arg( online ).arg( msg ) );
+    }
+    else
+    {
+      setWindowTitle( QString( "%1 - %2 -" ).arg( ProjectConst::MAIN_TITLE ).arg( online ) );
+    }
+  }
+
   /**
    * @brief Slot, welcher mit dem Tab-Wechsel-dich Signal verbunden wird
    * @param idx
@@ -499,6 +527,15 @@ namespace spx
         break;
     }
 #endif
+  }
+
+  /**
+   * @brief SPX42ControlMainWin::onOnlineStatusChangedSlot
+   */
+  void SPX42ControlMainWin::onOnlineStatusChangedSlot( bool )
+  {
+    lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot" );
+    setTitleMessage();
   }
 
   /**

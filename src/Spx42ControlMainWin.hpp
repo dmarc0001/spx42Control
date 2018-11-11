@@ -66,10 +66,12 @@ namespace spx
     void clearApplicationTabs( void );                 //! Leere die Tabs
     void simulateLicenseChanged( LicenseType lType );  //! Simuliere lizenzwechsel
     ApplicationTab getApplicationTab( void );          //! Welcher Tab war noch aktiv?
+    void setTitleMessage( const QString &msg = "" );   //! setze eine Meldung in den Fenstertitel
 
     private slots:
     void onTabCurrentChangedSlot( int idx );                                //! TAB Index gewechselt
     void onLicenseChangedSlot( void );                                      //! Lizenztyp getriggert
+    void onOnlineStatusChangedSlot( bool isOnline );                        //! Wenn sich der Onlinestatus des SPX42 ändert
     void onWarningMessageSlot( const QString &msg, bool asPopup = false );  //! eine Warnmeldung soll das Main darstellen
     void onErrorgMessageSlot( const QString &msg, bool asPopup = false );   //! eine Warnmeldung soll das Main darstellen
   };
