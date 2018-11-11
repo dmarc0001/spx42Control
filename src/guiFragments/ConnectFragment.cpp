@@ -27,17 +27,33 @@ namespace spx
     connect( ui->discoverPushButton, &QPushButton::clicked, this, &ConnectFragment::onDiscoverButtonSlot );
     connect( ui->deviceComboBox, static_cast< void ( QComboBox::* )( int ) >( &QComboBox::currentIndexChanged ), this,
              &ConnectFragment::onCurrentIndexChangedSlot );
+    connect( remoteSPX42.get(), &SPX42RemotBtDevice::onStateChangedSig, this, &ConnectFragment::onOnlineStatusChangedSlot );
+    connect( remoteSPX42.get(), &SPX42RemotBtDevice::onSocketErrorSig, this, &ConnectFragment::onSocketErrorSlot );
   }
 
   ConnectFragment::~ConnectFragment()
   {
     lg->debug( "ConnectFragment::~ConnectFragment..." );
-    // delete ui;
+    deactivateTab();
+  }
+
+  void ConnectFragment::deactivateTab( void )
+  {
+    //
+    // deaktiviere signale für reciver
+    //
+    disconnect( spxConfig.get(), nullptr, this, nullptr );
+    disconnect( remoteSPX42.get(), nullptr, this, nullptr );
   }
 
   void ConnectFragment::onOnlineStatusChangedSlot( bool )
   {
     // TODO: was machen
+  }
+
+  void ConnectFragment::onSocketErrorSlot( QBluetoothSocket::SocketError )
+  {
+    // TODO: implementieren
   }
 
   void ConnectFragment::onConfLicChangedSlot()
@@ -53,6 +69,21 @@ namespace spx
   void ConnectFragment::onConnectButtonSlot()
   {
     lg->debug( "ConnectFragment::onConnectButtonSlot -> connect button clicked." );
+    //
+    // stelle sicher, dass ein Eintrag ausgewählt ist
+    //
+    if ( ui->deviceComboBox->currentIndex() < 0 )
+    {
+      lg->warn( "ConnectFragment::onConnectButtonSlot -> not an device delected!" );
+      emit onWarningMessageSig( tr( "NOT SELECTED A DEVICE TO CONNECT" ), true );
+    }
+    QString remoteMac = ui->deviceComboBox->itemData( ui->deviceComboBox->currentIndex() ).toString();
+    lg->debug( QString( "ConnectFragment::onConnectButtonSlot -> connect to device <%1>" ).arg( remoteMac ) );
+    //
+    // jetzt das remote objekt arbeiten lassen
+    //
+    remoteSPX42->startConnection( remoteMac );
+
     // TODO: BT Verbinden!
     // TODO: Button auf disconnect setzten
   }
