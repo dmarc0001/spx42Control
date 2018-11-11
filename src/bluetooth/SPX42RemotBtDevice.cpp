@@ -11,14 +11,16 @@ namespace spx
       : QObject( parent )
       , lg( logger )
       , socket( std::unique_ptr< QBluetoothSocket >( new QBluetoothSocket( QBluetoothServiceInfo::RfcommProtocol ) ) )
-      , remoteService()
+      , btUuiid( QBluetoothUuid::Rfcomm )
+      , remoteAddr()
   {
     //
     // Signale des BT Sockets mit slots verbinden
     //
     lg->debug( "SPX42RemotBtDevice::SPX42RemotBtDevice -> connecting bt socket sigs..." );
-    connect( socket.get(), &QBluetoothSocket::connected, this, &SPX42RemotBtDevice::onConnectSlot );
-    connect( socket.get(), &QBluetoothSocket::disconnected, this, &SPX42RemotBtDevice::onDisconnectSlot );
+    connect( socket.get(), QOverload< QBluetoothSocket::SocketError >::of( &QBluetoothSocket::error ), this,
+             &SPX42RemotBtDevice::onSocketErrorSlot );
+    connect( socket.get(), &QBluetoothSocket::stateChanged, this, &SPX42RemotBtDevice::onStateChangedSlot );
     connect( socket.get(), &QBluetoothSocket::readyRead, this, &SPX42RemotBtDevice::onReadSocketSlot );
     lg->debug( "SPX42RemotBtDevice::SPX42RemotBtDevice -> connecting bt socket sigs...OK" );
   }
@@ -42,12 +44,12 @@ namespace spx
    * @brief SPX42RemotBtDevice::startConnection
    * @param remService
    */
-  void SPX42RemotBtDevice::startConnection( const QBluetoothServiceInfo &remService )
+  void SPX42RemotBtDevice::startConnection( const QString &mac )
   {
     // TODO: wenn verbunden, trennen oder was?
 
     // merken der Daten
-    remoteService = remService;
+    remoteAddr = QBluetoothAddress( mac );
     // Connect to service
     startConnection();
   }
@@ -60,27 +62,18 @@ namespace spx
     //
     // zunächst prüfen, ob ein gültiger Service vorhanden ist
     //
-    lg->debug( "SPX42RemotBtDevice::startConnection -> check for remote service..." );
-    if ( !remoteService.isValid() )
+    lg->debug( "SPX42RemotBtDevice::startConnection -> check for remote addr..." );
+    //
+    if ( !remoteAddr.isNull() )
     {
-      lg->warn( "SPX42RemotBtDevice::startConnection -> remote service description is not valid!" );
+      lg->warn( "SPX42RemotBtDevice::startConnection -> remote addr is not set!" );
       return;
     }
-    if ( !remoteService.isRegistered() )
-    {
-      lg->warn( "SPX42RemotBtDevice::startConnection -> remote service description is not register in SDP implementation!" );
-      return;
-    }
-    if ( !remoteService.isComplete() )
-    {
-      lg->warn( "SPX42RemotBtDevice::startConnection -> remote service description is not complete!" );
-      return;
-    }
-    lg->debug( "SPX42RemotBtDevice::startConnection -> check for remote service...OK" );
+    lg->debug( "SPX42RemotBtDevice::startConnection -> check for remote addr...OK" );
+    //
     lg->debug( "SPX42RemotBtDevice::startConnection -> connect remote SPX42..." );
-
-    socket->connectToService( remoteService );
-    lg->info( "SPX42RemotBtDevice::startConnection -> connect to service..." );
+    socket->connectToService( remoteAddr, btUuiid );
+    lg->info( "SPX42RemotBtDevice::startConnection -> connecting to remote SPX42..." );
   }
 
   /**
@@ -119,6 +112,55 @@ namespace spx
     }
   }
 
+  void SPX42RemotBtDevice::onSocketErrorSlot( QBluetoothSocket::SocketError error )
+  {
+    //
+    // ein Fehler beim SOCKET trat auf
+    // TODO: Fehler behandeln
+    //
+    lg->warn( "SPX42RemotBtDevice::onSocketErrorSlot -> error while processing bt socket..." );
+    switch ( error )
+    {
+      case QBluetoothSocket::UnknownSocketError:
+      case QBluetoothSocket::NoSocketError:
+      case QBluetoothSocket::HostNotFoundError:
+      case QBluetoothSocket::ServiceNotFoundError:
+      case QBluetoothSocket::NetworkError:
+      case QBluetoothSocket::UnsupportedProtocolError:
+      case QBluetoothSocket::OperationError:
+      case QBluetoothSocket::RemoteHostClosedError:
+        lg->crit( "SPX42RemotBtDevice::onSocketErrorSlot -> no error handdling implemented yet..." );
+        break;
+    }
+  }
+
+  void SPX42RemotBtDevice::onStateChangedSlot( QBluetoothSocket::SocketState state )
+  {
+    // TODO: drum kümmern
+    lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth onlinestatus has changed..." );
+    switch ( state )
+    {
+      case QBluetoothSocket::UnconnectedState:
+        lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <UnconnectedState>" );
+        break;
+      case QBluetoothSocket::ClosingState:
+        lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <ClosingState>" );
+        break;
+      case QBluetoothSocket::ConnectingState:
+        lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <ConnectingState>" );
+        break;
+      case QBluetoothSocket::ConnectedState:
+        lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <ConnectedState>" );
+        break;
+      default:
+        lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <ErrorState/undefined>" );
+    }
+    //
+    // Melde das weiter!
+    //
+    emit onStateChangedSig( state );
+  }
+
   /**
    * @brief SPX42RemotBtDevice::onReadSocketSlot daten können vom BT gelesen werden
    */
@@ -126,20 +168,6 @@ namespace spx
   {
     //
     // lese Daten vom Socket...
-    //
-  }
-
-  void SPX42RemotBtDevice::onConnectSlot( void )
-  {
-    //
-    // Wenn der BT Socket verbunden wurde, diesen Slot aufrufen
-    //
-  }
-
-  void SPX42RemotBtDevice::onDisconnectSlot( void )
-  {
-    //
-    // Wenn der BT Socket geschlossen wurde, diesen Slot aufrufen
     //
   }
 }
