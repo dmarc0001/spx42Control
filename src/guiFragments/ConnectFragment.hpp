@@ -24,7 +24,8 @@ namespace spx
     Q_OBJECT
     Q_INTERFACES( spx::IFragmentInterface )
     std::unique_ptr< Ui::connectForm > ui;  //! Zeiger auf die GUI Objekte
-    DeviceAliasHash devices;
+    DeviceAliasHash devices;                //! gehashte Liste der verfügbaren Geräte
+    QString errMsg;                         //! Fehlermeldungen BT Connection
 
     public:
     explicit ConnectFragment( QWidget *parent,
@@ -36,7 +37,8 @@ namespace spx
     virtual void deactivateTab( void ) override;                                 //! deaktiviere eventuelle signale
 
     private:
-    void fillDevicesList( void );  //! fülle die Liste mit den Geräten neu
+    void fillDevicesList( void );              //! fülle die Liste mit den Geräten neu
+    void setGuiConnected( bool isConnected );  //! Stati in der GUI setzten
 
     signals:
     void onWarningMessageSig( const QString &msg, bool asPopup = false ) override;  //! eine Warnmeldung soll das Main darstellen

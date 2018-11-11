@@ -8,7 +8,10 @@ namespace spx
                                     std::shared_ptr< SPX42Database > spx42Database,
                                     std::shared_ptr< SPX42Config > spxCfg,
                                     std::shared_ptr< SPX42RemotBtDevice > remSPX42 )
-      : QWidget( parent ), IFragmentInterface( logger, spx42Database, spxCfg, remSPX42 ), ui( new Ui::connectForm )
+      : QWidget( parent )
+      , IFragmentInterface( logger, spx42Database, spxCfg, remSPX42 )
+      , ui( new Ui::connectForm )
+      , errMsg( tr( "CONNECTION BLUETHOOTH ERROR: %1" ) )
   {
     lg->debug( "ConnectFragment::ConnectFragment..." );
     ui->setupUi( this );
@@ -29,6 +32,8 @@ namespace spx
              &ConnectFragment::onCurrentIndexChangedSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onStateChangedSig, this, &ConnectFragment::onOnlineStatusChangedSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onSocketErrorSig, this, &ConnectFragment::onSocketErrorSlot );
+    // setzte den Connectionsstatus
+    setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
   }
 
   ConnectFragment::~ConnectFragment()
@@ -48,12 +53,34 @@ namespace spx
 
   void ConnectFragment::onOnlineStatusChangedSlot( bool )
   {
-    // TODO: was machen
+    setGuiConnected( ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED ) ||
+                     remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTING );
+    // TODO: evtl mehr machen
   }
 
-  void ConnectFragment::onSocketErrorSlot( QBluetoothSocket::SocketError )
+  void ConnectFragment::onSocketErrorSlot( QBluetoothSocket::SocketError btErr )
   {
-    // TODO: implementieren
+    QString sendMsg;
+
+    switch ( btErr )
+    {
+      case QBluetoothSocket::UnknownSocketError:
+        sendMsg = errMsg.arg( tr( "UNKNOWN ERROR" ) );
+        break;
+      case QBluetoothSocket::NoSocketError:
+        sendMsg = errMsg.arg( tr( "NO BT SOCKET FOUND" ) );
+        break;
+      case QBluetoothSocket::HostNotFoundError:
+        sendMsg = errMsg.arg( tr( "REMOTE HOST NOT FOUND" ) );
+        break;
+      case QBluetoothSocket::RemoteHostClosedError:
+        sendMsg = errMsg.arg( tr( "REMOTE HOST CLOSED CONNECTION" ) );
+        break;
+      default:
+        sendMsg = errMsg.arg( tr( "COMMUNICATION ERROR" ) );
+    }
+    lg->debug( QString( "ConnectFragment::onSocketErrorSlot -> send error message <%1> to main window..." ).arg( sendMsg ) );
+    emit onErrorgMessageSig( sendMsg, true );
   }
 
   void ConnectFragment::onConfLicChangedSlot()
@@ -68,24 +95,37 @@ namespace spx
 
   void ConnectFragment::onConnectButtonSlot()
   {
-    lg->debug( "ConnectFragment::onConnectButtonSlot -> connect button clicked." );
+    bool isConnected = remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED;
     //
-    // stelle sicher, dass ein Eintrag ausgewählt ist
+    lg->debug( "ConnectFragment::onConnectButtonSlot -> connect/disconnect button clicked." );
     //
-    if ( ui->deviceComboBox->currentIndex() < 0 )
+    // je nachdem ob das gerät verbunden oder getrennt ist
+    //
+    if ( isConnected )
     {
-      lg->warn( "ConnectFragment::onConnectButtonSlot -> not an device delected!" );
-      emit onWarningMessageSig( tr( "NOT SELECTED A DEVICE TO CONNECT" ), true );
+      lg->debug( "ConnectFragment::onConnectButtonSlot -> disconnect current connection" );
+      remoteSPX42->endConnection();
     }
-    QString remoteMac = ui->deviceComboBox->itemData( ui->deviceComboBox->currentIndex() ).toString();
-    lg->debug( QString( "ConnectFragment::onConnectButtonSlot -> connect to device <%1>" ).arg( remoteMac ) );
-    //
-    // jetzt das remote objekt arbeiten lassen
-    //
-    remoteSPX42->startConnection( remoteMac );
-
-    // TODO: BT Verbinden!
-    // TODO: Button auf disconnect setzten
+    else
+    {
+      //
+      // stelle sicher, dass ein Eintrag ausgewählt ist
+      //
+      if ( ui->deviceComboBox->currentIndex() < 0 )
+      {
+        lg->warn( "ConnectFragment::onConnectButtonSlot -> not an device delected!" );
+        emit onWarningMessageSig( tr( "NOT SELECTED A DEVICE TO CONNECT" ), true );
+      }
+      QString remoteMac = ui->deviceComboBox->itemData( ui->deviceComboBox->currentIndex() ).toString();
+      lg->debug( QString( "ConnectFragment::onConnectButtonSlot -> connect to device <%1>" ).arg( remoteMac ) );
+      //
+      // blockiere mal die GUI solange
+      // setGuiConnected( true );
+      //
+      // jetzt das remote objekt arbeiten lassen
+      //
+      remoteSPX42->startConnection( remoteMac );
+    }
   }
 
   void ConnectFragment::onPropertyButtonSlot()
@@ -188,4 +228,14 @@ namespace spx
     }
   }
 
+  void ConnectFragment::setGuiConnected( bool isConnected )
+  {
+    //
+    // setzte die GUI Elemente entsprechend des Online Status
+    //
+    isConnected ? ui->connectButton->setText( tr( "DISCONNECT DEVICE" ) ) : ui->connectButton->setText( tr( "CONNECT DEVICE" ) );
+    ui->deviceComboBox->setEnabled( !isConnected );
+    ui->propertyPushButton->setEnabled( !isConnected );
+    ui->discoverPushButton->setEnabled( !isConnected );
+  }
 }  // namespace spx
