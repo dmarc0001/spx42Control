@@ -3,6 +3,15 @@
 
 namespace spx
 {
+  SPXDeviceDescr::SPXDeviceDescr( const QBluetoothDeviceInfo &dInfo ) : deviceInfo( dInfo ), serviceInfo()
+  {
+  }
+
+  SPXDeviceDescr::SPXDeviceDescr( const QBluetoothDeviceInfo &dInfo, const QBluetoothServiceInfo &sInfo )
+      : deviceInfo( dInfo ), serviceInfo( sInfo )
+  {
+  }
+
   SPX42BtDevices::SPX42BtDevices( std::shared_ptr< Logger > logger, QObject *parent )
       : QObject( parent ), lg( logger ), deviceDiscoverFinished( true )
   {
@@ -116,13 +125,11 @@ namespace spx
     {
       lg->debug( QString( "SPX42BtDevices::onDiscoveredDeviceSlot: device %1 in local list inserted." ).arg( device ) );
       // zufügen zu den gefundenen Geräten
-      discoverdDevices.insert( info.address().toString(), info );
+      discoverdDevices.insert( info.address().toString(), SPXDeviceDescr( info ) );
       // in die queue zum service finden
       devicesToDiscoverServices.enqueue( info.address() );
       // starte (auch verzögertes) discovering der Services
       startDiscoverServices();
-      // signalisiere, dass Gerät gefunden wurde
-      emit onDiscoveredDeviceSig( info );
     }
   }
 
@@ -133,7 +140,7 @@ namespace spx
     emit onDevicePairingDoneSig( address, pairing );
   }
 
-  void SPX42BtDevices::onDiscoverScanFinishedSlot( )
+  void SPX42BtDevices::onDiscoverScanFinishedSlot()
   {
     lg->debug( "SPX42BtDevices::onDiscoverScanFinishedSlot..." );
     lg->info( "device discovering finished..." );
@@ -147,7 +154,7 @@ namespace spx
     emit onDeviceHostModeStateChangedSig( hostMode );
   }
 
-  void SPX42BtDevices::startDiscoverServices( )
+  void SPX42BtDevices::startDiscoverServices()
   {
     lg->debug( "SPX42BtDevices::startDiscoverServices:..." );
     if ( devicesToDiscoverServices.isEmpty() && deviceDiscoverFinished )
@@ -181,7 +188,7 @@ namespace spx
     {
       //
       // starte einen Timer, der nachher noch einmal versucht die Services zu erkunden
-      // das sollte soll ange wiederholt werden, bis das Objekt vernichtet oder
+      // das sollte soll solange wiederholt werden, bis das Objekt vernichtet oder
       // di Queue leer ist
       //
       lg->debug( QString( "SPX42BtDevices::startDiscoverServices: service for device <%1> is in progress, wait for ending..." )
@@ -215,26 +222,50 @@ namespace spx
     //
     QString raddrStr = raddr.toString();
     //
-    if ( spx42Devices.contains( raddrStr ) )
+    if ( ProjectConst::SPX42ServiceUuid == info.serviceUuid() )
     {
-      lg->debug( QString( "SPX42BtDevices::onDiscoveredServiceSlot: device: %1, service: %2 always present. Ignore." )
-                     .arg( raddr.toString() )
-                     .arg( info.serviceName() ) );
-    }
-    else
-    {
-      if ( discoverdDevices.contains( raddrStr ) )
+      //
+      // also erst mal ist das Gerät schon mal mit dem passenden Service vorhanden
+      //
+      lg->info( QString( "SPX42BtDevices::onDiscoveredServiceSlot: device: %1, with submatix spx42 service discovered" )
+                    .arg( raddr.toString() ) );
+      //
+      // mal schauen ob das Gerät schon in der Liste der bereits erforschten Geräte ist
+      //
+      if ( spx42Devices.contains( raddrStr ) )
       {
-        lg->info( QString( "SPX42BtDevices::onDiscoveredServiceSlot: device: %1, service: %2 add..." )
-                      .arg( raddr.toString() )
-                      .arg( info.serviceName() ) );
-        spx42Devices.insert( raddrStr, discoverdDevices.value( raddrStr ) );
+        //
+        // Das Gerät ist bereits vorhanden, dann ignoriere es
+        //
+        lg->debug( QString( "SPX42BtDevices::onDiscoveredServiceSlot: device: %1, service: %2 always present. Ignore." )
+                       .arg( raddr.toString() )
+                       .arg( info.serviceName() ) );
       }
       else
       {
-        lg->crit( QString( "SPX42BtDevices::onDiscoveredServiceSlot: device: %1 not in discovered list..." ).arg( raddr.toString() ) );
+        //
+        // ist das Gerät schon gefunden aber der Service noch nicht?
+        //
+        if ( discoverdDevices.contains( raddrStr ) )
+        {
+          lg->info( QString( "SPX42BtDevices::onDiscoveredServiceSlot: device: %1, service: %2 add..." )
+                        .arg( raddr.toString() )
+                        .arg( info.serviceName() ) );
+          SPXDeviceDescr newDevice( discoverdDevices.take( raddrStr ).deviceInfo, info );
+          spx42Devices.insert( raddrStr, newDevice );
+          //
+          // das neue SPX42 Device melden!
+          //
+          emit onDiscoveredDeviceSig( newDevice );
+        }
+        else
+        {
+          //
+          // das sollte nicht passieren, das gerät sollte in der Liste der gefundenen Geräte vorhanden sien :-(
+          lg->crit(
+              QString( "SPX42BtDevices::onDiscoveredServiceSlot: device: %1 not in discovered list..." ).arg( raddr.toString() ) );
+        }
       }
     }
-    emit onDiscoveredServiceSig( raddr, info );
   }
 }

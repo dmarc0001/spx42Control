@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <memory>
 #include "IFragmentInterface.hpp"
+#include "bluetooth/SPX42RemotBtDevice.hpp"
 #include "database/SPX42Database.hpp"
 #include "logging/Logger.hpp"
 #include "utils/SPX42Config.hpp"
@@ -22,6 +23,7 @@ namespace spx
   {
     private:
     Q_OBJECT
+    Q_INTERFACES( spx::IFragmentInterface )
     std::unique_ptr< Ui::DeviceConfig > ui;  //! Smart-Zeiger für das UI Objekt (automatische Speicherverwaltung)
     bool volatile gradentSlotsIgnore;        //! Um Schleifen zu vermeiden kontrolliert Callbacks ignorieren
 
@@ -29,9 +31,11 @@ namespace spx
     explicit DeviceConfigFragment( QWidget *parent,
                                    std::shared_ptr< Logger > logger,
                                    std::shared_ptr< SPX42Database > spx42Database,
-                                   std::shared_ptr< SPX42Config > spxCfg );  //! Konstruktor
-    ~DeviceConfigFragment() override;                                        //! Destruktor
-    void initGuiWithConfig( void );                                          //! Initialisiere die GUI mit Werten aus der Config
+                                   std::shared_ptr< SPX42Config > spxCfg,
+                                   std::shared_ptr< SPX42RemotBtDevice > remSPX42 );  //! Konstruktor
+    ~DeviceConfigFragment() override;                                                 //! Destruktor
+    virtual void deactivateTab( void ) override;                                      //! deaktiviere eventuelle signale
+    void initGuiWithConfig( void );  //! Initialisiere die GUI mit Werten aus der Config
 
     protected:
     void changeEvent( QEvent *e ) override;  //! Globele Veränderungen
@@ -46,10 +50,15 @@ namespace spx
     void disconnectSlots( void );                                         //! Trenne die Verbindung von Signalen und Slots
     void setGradientPresetWithoutCallback( DecompressionPreset preset );  //! Gradienten-Combobox setzten ohne Callback auszuführen
 
+    signals:
+    void onWarningMessageSig( const QString &msg, bool asPopup = false ) override;  //! eine Warnmeldung soll das Main darstellen
+    void onErrorgMessageSig( const QString &msg, bool asPopup = false ) override;   //! eine Warnmeldung soll das Main darstellen
+
     private slots:
-    virtual void onOnlineStatusChangedSlot( bool isOnline ) override;  //! Wenn sich der Onlinestatus des SPX42 ändert
-    virtual void onConfLicChangedSlot( void ) override;                //! Wenn sich die Lizenz ändert
-    virtual void onCloseDatabaseSlot( void ) override;                 //! wenn die Datenbank geschlosen wird
+    virtual void onOnlineStatusChangedSlot( bool isOnline ) override;                //! Wenn sich der Onlinestatus des SPX42 ändert
+    virtual void onSocketErrorSlot( QBluetoothSocket::SocketError error ) override;  //! ein Fehler bei der BT Verbindung
+    virtual void onConfLicChangedSlot( void ) override;                              //! Wenn sich die Lizenz ändert
+    virtual void onCloseDatabaseSlot( void ) override;                               //! wenn die Datenbank geschlosen wird
     // DEKOMPRESSIONSEINSTELLUNGEN
     void onDecoComboChangedSlot( int index );                 //! ändert sich der Inhalt der Combobox für Dekompressionseinstellungen
     void onDecoGradientLowChangedSlot( int low );             //! wenn der Gradient LOW geändert wurde

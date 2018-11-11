@@ -13,6 +13,7 @@
 #include <QTabWidget>
 #include <QTimer>
 
+#include "bluetooth/SPX42RemotBtDevice.hpp"
 #include "config/AppConfigClass.hpp"
 #include "config/ProjectConst.hpp"
 #include "database/SPX42Database.hpp"
@@ -40,15 +41,16 @@ namespace spx
     private:
     Q_OBJECT
     std::unique_ptr< Ui::SPX42ControlMainWin > ui;
-    std::shared_ptr< Logger > lg;                      //! Loggerobjekt für Logs
-    const std::unique_ptr< QTimer > watchdog;          //! Wachhund für Timeouts
-    const std::shared_ptr< SPX42Config > spx42Config;  //! Konfiguration des verbundenen SPX42
-    ApplicationStat currentStatus;                     //! welchen Status hat die App?
-    std::shared_ptr< SPX42Database > spx42Database;    //! Datenbankobjekt zur Speicherung der SPX Daten/Einstellungen
-    int watchdogTimer;                                 //! Zeitspanne zum Timeout
-    AppConfigClass cf;                                 //! Konfiguration aus Datei
-    ApplicationTab currentTab;                         //! welcher Tab ist aktiv?
-    QStringList tabTitle;                              //! Tab Titel (nicht statisch, das Objekt gibts eh nur einmal)
+    std::shared_ptr< Logger > lg;                       //! Loggerobjekt für Logs
+    const std::unique_ptr< QTimer > watchdog;           //! Wachhund für Timeouts
+    const std::shared_ptr< SPX42Config > spx42Config;   //! Konfiguration des verbundenen SPX42
+    std::shared_ptr< SPX42RemotBtDevice > remoteSPX42;  //! Objekt des entfernten SPX42 (verbunden oder nicht verbunden)
+    ApplicationStat currentStatus;                      //! welchen Status hat die App?
+    std::shared_ptr< SPX42Database > spx42Database;     //! Datenbankobjekt zur Speicherung der SPX Daten/Einstellungen
+    int watchdogTimer;                                  //! Zeitspanne zum Timeout
+    AppConfigClass cf;                                  //! Konfiguration aus Datei
+    ApplicationTab currentTab;                          //! welcher Tab ist aktiv?
+    QStringList tabTitle;                               //! Tab Titel (nicht statisch, das Objekt gibts eh nur einmal)
 
     public:
     explicit SPX42ControlMainWin( QWidget *parent = nullptr );
@@ -64,10 +66,14 @@ namespace spx
     void clearApplicationTabs( void );                 //! Leere die Tabs
     void simulateLicenseChanged( LicenseType lType );  //! Simuliere lizenzwechsel
     ApplicationTab getApplicationTab( void );          //! Welcher Tab war noch aktiv?
+    void setTitleMessage( const QString &msg = "" );   //! setze eine Meldung in den Fenstertitel
 
     private slots:
-    void onTabCurrentChangedSlot( int idx );  //! TAB Index gewechselt
-    void onLicenseChangedSlot( void );        //! Lizenztyp getriggert
+    void onTabCurrentChangedSlot( int idx );                                //! TAB Index gewechselt
+    void onLicenseChangedSlot( void );                                      //! Lizenztyp getriggert
+    void onOnlineStatusChangedSlot( bool isOnline );                        //! Wenn sich der Onlinestatus des SPX42 ändert
+    void onWarningMessageSlot( const QString &msg, bool asPopup = false );  //! eine Warnmeldung soll das Main darstellen
+    void onErrorgMessageSlot( const QString &msg, bool asPopup = false );   //! eine Warnmeldung soll das Main darstellen
   };
 }  // namespace spx42
 

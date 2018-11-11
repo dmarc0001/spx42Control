@@ -36,6 +36,10 @@ namespace spx
     lg->debug(
         QString( "SPX42ControlMainWin::SPX42ControlMainWin:" ).append( "Program build number: " ).append( cf.getBuildNumStr() ) );
     //
+    // erzeuge ein Objekt für den entfernten SPX42
+    //
+    remoteSPX42 = std::shared_ptr< SPX42RemotBtDevice >( new SPX42RemotBtDevice( lg, this ) );
+    //
     // Datenbank öffnen oder initialisieren
     //
     spx42Database = std::shared_ptr< SPX42Database >( new SPX42Database( lg, cf.getFullDatabaseLocation(), this ) );
@@ -90,6 +94,7 @@ namespace spx
     ui->areaTabWidget->setCurrentIndex( 0 );
     onTabCurrentChangedSlot( 0 );
     connectActions();
+    setTitleMessage();
   }
 
   /**
@@ -107,7 +112,7 @@ namespace spx
     }
     catch ( std::exception &ex )
     {
-      lg->crit( "SPX42ControlMainWin::~SPX42ControlMainWin -> watchdog stopping failed" );
+      lg->crit( QString( "SPX42ControlMainWin::~SPX42ControlMainWin -> watchdog stopping failed (%1)" ).arg( ex.what() ) );
     }
   }
 
@@ -235,6 +240,10 @@ namespace spx
       // Lizenz wurde geändert
       //
       connect( spx42Config.get(), &SPX42Config::licenseChangedSig, this, &SPX42ControlMainWin::onLicenseChangedSlot );
+      //
+      // onölinestatus wurde geändert
+      //
+      connect( remoteSPX42.get(), &SPX42RemotBtDevice::onStateChangedSig, this, &SPX42ControlMainWin::onOnlineStatusChangedSlot );
 #ifdef DEBUG
       //
       // simuliert zu Nitrox lizenz geändert
@@ -380,6 +389,29 @@ namespace spx
     return ( currentTab );
   }
 
+  void SPX42ControlMainWin::setTitleMessage( const QString &msg )
+  {
+    QString online;
+    // ist die Kiste verbunden?
+    if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
+    {
+      online = tr( "online" );
+    }
+    else
+    {
+      online = tr( "offline" );
+    }
+    // und, ist eine Meldung vorhanden?
+    if ( !msg.isEmpty() )
+    {
+      setWindowTitle( QString( "%1 - %2 - " ).arg( ProjectConst::MAIN_TITLE ).arg( online ).arg( msg ) );
+    }
+    else
+    {
+      setWindowTitle( QString( "%1 - %2 -" ).arg( ProjectConst::MAIN_TITLE ).arg( online ) );
+    }
+  }
+
   /**
    * @brief Slot, welcher mit dem Tab-Wechsel-dich Signal verbunden wird
    * @param idx
@@ -387,7 +419,8 @@ namespace spx
   void SPX42ControlMainWin::onTabCurrentChangedSlot( int idx )
   {
     static bool ignore = false;
-    QWidget *currObj;
+    QWidget *currObj = nullptr;
+    IFragmentInterface *oldFragment = nullptr;
 
     if ( ignore )
     {
@@ -399,9 +432,15 @@ namespace spx
     //
     // alten Inhalt entfernen
     //
-    QWidget *oldTab = ui->areaTabWidget->widget( idx );
+    if ( nullptr != ( oldFragment = dynamic_cast< IFragmentInterface * >( ui->areaTabWidget->widget( idx ) ) ) )
+    {
+      // wenn das ein Fragment ist deaktiviere signale
+      oldFragment->deactivateTab();
+      // und als QWidget die löschung verfügen, sobald das möglich ist
+      ui->areaTabWidget->widget( idx )->deleteLater();
+    }
+    // aus dem Tab entfernen
     ui->areaTabWidget->removeTab( idx );
-    oldTab->deleteLater();
     //
     // Neuen Inhalt des Tabs aufbauen
     //
@@ -410,15 +449,17 @@ namespace spx
       // default:
       case static_cast< int >( ApplicationTab::CONNECT_TAB ):
         lg->debug( "SPX42ControlMainWin::setApplicationTab -> CONNECT TAB..." );
-        currObj = new ConnectFragment( Q_NULLPTR, lg, spx42Database, spx42Config );
+        currObj = new ConnectFragment( Q_NULLPTR, lg, spx42Database, spx42Config, remoteSPX42 );
         currObj->setObjectName( "spx42Connect" );
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::CONNECT_TAB ) ) );
         currentTab = ApplicationTab::CONNECT_TAB;
+        connect( static_cast< ConnectFragment * >( currObj ), &ConnectFragment::onWarningMessageSig, this,
+                 &SPX42ControlMainWin::onWarningMessageSlot );
         break;
 
       case static_cast< int >( ApplicationTab::CONFIG_TAB ):
         lg->debug( "SPX42ControlMainWin::setApplicationTab -> CONFIG TAB..." );
-        currObj = new DeviceConfigFragment( Q_NULLPTR, lg, spx42Database, spx42Config );
+        currObj = new DeviceConfigFragment( Q_NULLPTR, lg, spx42Database, spx42Config, remoteSPX42 );
         currObj->setObjectName( "spx42Config" );
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::CONFIG_TAB ) ) );
         currentTab = ApplicationTab::CONFIG_TAB;
@@ -426,7 +467,7 @@ namespace spx
 
       case static_cast< int >( ApplicationTab::GAS_TAB ):
         lg->debug( "SPX42ControlMainWin::setApplicationTab -> GAS TAB..." );
-        currObj = new GasFragment( Q_NULLPTR, lg, spx42Database, spx42Config );
+        currObj = new GasFragment( Q_NULLPTR, lg, spx42Database, spx42Config, remoteSPX42 );
         currObj->setObjectName( "spx42Gas" );
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::GAS_TAB ) ) );
         currentTab = ApplicationTab::GAS_TAB;
@@ -434,7 +475,7 @@ namespace spx
 
       case static_cast< int >( ApplicationTab::LOG_TAB ):
         lg->debug( "SPX42ControlMainWin::setApplicationTab -> LOG TAB..." );
-        currObj = new LogFragment( Q_NULLPTR, lg, spx42Database, spx42Config );
+        currObj = new LogFragment( Q_NULLPTR, lg, spx42Database, spx42Config, remoteSPX42 );
         currObj->setObjectName( "spx42log" );
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::LOG_TAB ) ) );
         currentTab = ApplicationTab::LOG_TAB;
@@ -442,7 +483,7 @@ namespace spx
 
       case static_cast< int >( ApplicationTab::CHART_TAB ):
         lg->debug( "SPX42ControlMainWin::setApplicationTab -> CHART TAB..." );
-        currObj = new ChartsFragment( Q_NULLPTR, lg, spx42Database, spx42Config );
+        currObj = new ChartsFragment( Q_NULLPTR, lg, spx42Database, spx42Config, remoteSPX42 );
         currObj->setObjectName( "spx42charts" );
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::CHART_TAB ) ) );
         currentTab = ApplicationTab::CHART_TAB;
@@ -486,5 +527,52 @@ namespace spx
         break;
     }
 #endif
+  }
+
+  /**
+   * @brief SPX42ControlMainWin::onOnlineStatusChangedSlot
+   */
+  void SPX42ControlMainWin::onOnlineStatusChangedSlot( bool )
+  {
+    lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot" );
+    setTitleMessage();
+  }
+
+  /**
+   * @brief SPX42ControlMainWin::onWarningMessageSlot
+   * @param msg
+   * @param asPopup
+   */
+  void SPX42ControlMainWin::onWarningMessageSlot( const QString &msg, bool asPopup )
+  {
+    if ( !asPopup )
+    {
+      // TODO: Messagebox !
+      lg->warn( QString( "SPX42ControlMainWin::onWarningMessageSlot -> as POPUP: <%1>" ).arg( msg ) );
+    }
+    else
+    {
+      // TODO: statusline
+      lg->warn( QString( "SPX42ControlMainWin::onWarningMessageSlot -> as msgline: <%1>" ).arg( msg ) );
+    }
+  }
+
+  /**
+   * @brief SPX42ControlMainWin::onErrorgMessageSlot
+   * @param msg
+   * @param asPopup
+   */
+  void SPX42ControlMainWin::onErrorgMessageSlot( const QString &msg, bool asPopup )
+  {
+    if ( !asPopup )
+    {
+      // TODO: Messagebox !
+      lg->warn( QString( "SPX42ControlMainWin::onErrorMessageSlot -> as POPUP: <%1>" ).arg( msg ) );
+    }
+    else
+    {
+      // TODO: statusline
+      lg->warn( QString( "SPX42ControlMainWin::onErrorMessageSlot -> as msgline: <%1>" ).arg( msg ) );
+    }
   }
 }

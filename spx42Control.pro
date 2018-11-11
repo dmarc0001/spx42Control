@@ -31,6 +31,7 @@ MOC_DIR                                = moc
 RCC_DIR                                = rcc
 UI_DIR                                 = ui
 
+# %{CurrentProject:NativePath}\%{CurrentKit:FileSystemName}\%{CurrentBuild:Name}
 
 # wenn debug in der config steht, die EXE auch so benennen
 build_pass:CONFIG(debug, debug|release) {
@@ -58,14 +59,14 @@ SOURCES                 += \
     src/utils/DebugDataSeriesGenerator.cpp \
     src/utils/DiveDataSeriesGenerator.cpp \
     src/guiFragments/ChartsFragment.cpp \
-    src/bluetooth/PinDialog.cpp \
     src/spx42/Spx42Commands.cpp \
     src/spx42/SpxCommandDef.cpp \
     src/bluetooth/BtDevicesManager.cpp \
     src/bluetooth/BtServiceDiscover.cpp \
     src/bluetooth/SPX42BtDevices.cpp \
-    src/bluetooth/BtDiscoverDialog.cpp \
-    src/database/SPX42Database.cpp
+    src/database/SPX42Database.cpp \
+    src/bluetooth/SPX42RemotBtDevice.cpp \
+    src/bluetooth/BtDiscoverObject.cpp
 
 HEADERS                 += \
     src/Spx42ControlMainWin.hpp \
@@ -86,15 +87,15 @@ HEADERS                 += \
     src/utils/DebugDataSeriesGenerator.hpp \
     src/utils/DiveDataSeriesGenerator.hpp \
     src/guiFragments/ChartsFragment.hpp \
-    src/bluetooth/PinDialog.hpp \
     src/spx42/Spx42Commands.hpp \
     src/spx42/SpxCommandDef.hpp \
     src/bluetooth/BtDevicesManager.hpp \
     src/bluetooth/BtServiceDiscover.hpp \
     src/bluetooth/SPX42BtDevices.hpp \
-    src/bluetooth/BtDiscoverDialog.hpp \
     src/database/SPX42Database.hpp \
-    src/config/currBuildDef.hpp
+    src/config/currBuildDef.hpp \
+    src/bluetooth/SPX42RemotBtDevice.hpp \
+    src/bluetooth/BtDiscoverObject.hpp
 
 FORMS                   += \
     src/ui/Spx42ControlMainWin.ui \
@@ -104,8 +105,7 @@ FORMS                   += \
     src/ui/LogFragment.ui \
     src/ui/DeviceConfigFragment.ui \
     src/ui/ChartsFragment.ui \
-    src/ui/PinDialog.ui \
-    src/ui/BtDiscoverDialog.ui
+    src/ui/ConnectFragment.ui
 
 RESOURCES               = \
     src/res/Spx42ControlRes.qrc

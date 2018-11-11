@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <memory>
 #include "IFragmentInterface.hpp"
+#include "bluetooth/SPX42RemotBtDevice.hpp"
 #include "config/ProjectConst.hpp"
 #include "config/SPX42Defs.hpp"
 #include "database/SPX42Database.hpp"
@@ -31,6 +32,7 @@ namespace spx
   {
     private:
     Q_OBJECT
+    Q_INTERFACES( spx::IFragmentInterface )
     std::unique_ptr< Ui::LogFragment > ui;      //! Zeiger auf GUI-Objekte
     std::unique_ptr< QStringListModel > model;  //! Zeiger auf Strionglist Model
     std::unique_ptr< QtCharts::QChart > chart;  //! Zeiger auf das Chart
@@ -45,8 +47,10 @@ namespace spx
     explicit LogFragment( QWidget *parent,
                           std::shared_ptr< Logger > logger,
                           std::shared_ptr< SPX42Database > spx42Database,
-                          std::shared_ptr< SPX42Config > spxCfg );  //! Konstruktor
-    ~LogFragment() override;
+                          std::shared_ptr< SPX42Config > spxCfg,
+                          std::shared_ptr< SPX42RemotBtDevice > remSPX42 );  //! Konstruktor
+    ~LogFragment() override;                                                 //! Destruktor
+    virtual void deactivateTab( void ) override;                             //! deaktiviere eventuelle signale
 
     protected:
     void changeEvent( QEvent *e ) override;
@@ -57,10 +61,15 @@ namespace spx
     float getMinYValue( const QLineSeries *series );
     float getMaxYValue( const QLineSeries *series );
 
+    signals:
+    void onWarningMessageSig( const QString &msg, bool asPopup = false ) override;  //! eine Warnmeldung soll das Main darstellen
+    void onErrorgMessageSig( const QString &msg, bool asPopup = false ) override;   //! eine Warnmeldung soll das Main darstellen
+
     private slots:
-    virtual void onOnlineStatusChangedSlot( bool isOnline ) override;  //! Wenn sich der Onlinestatus des SPX42 ändert
-    virtual void onConfLicChangedSlot( void ) override;                //! Wenn sich die Lizenz ändert
-    virtual void onCloseDatabaseSlot( void ) override;                 //! wenn die Datenbank geschlosen wird
+    virtual void onOnlineStatusChangedSlot( bool isOnline ) override;                //! Wenn sich der Onlinestatus des SPX42 ändert
+    virtual void onSocketErrorSlot( QBluetoothSocket::SocketError error ) override;  //! wenn fehler in der BT VERbindung auftauchen
+    virtual void onConfLicChangedSlot( void ) override;                              //! Wenn sich die Lizenz ändert
+    virtual void onCloseDatabaseSlot( void ) override;                               //! wenn die Datenbank geschlosen wird
     void onReadLogDirectorySlot( void );
     void onReadLogContentSlot( void );
     void onLogListViewClickedSlot( const QModelIndex &index );

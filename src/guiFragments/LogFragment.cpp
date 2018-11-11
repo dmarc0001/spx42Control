@@ -12,9 +12,10 @@ namespace spx
   LogFragment::LogFragment( QWidget *parent,
                             std::shared_ptr< Logger > logger,
                             std::shared_ptr< SPX42Database > spx42Database,
-                            std::shared_ptr< SPX42Config > spxCfg )
+                            std::shared_ptr< SPX42Config > spxCfg,
+                            std::shared_ptr< SPX42RemotBtDevice > remSPX42 )
       : QWidget( parent )
-      , IFragmentInterface( logger, spx42Database, spxCfg )
+      , IFragmentInterface( logger, spx42Database, spxCfg, remSPX42 )
       , ui( new Ui::LogFragment() )
       , model( new QStringListModel() )
       , chart( new QtCharts::QChart() )
@@ -55,6 +56,12 @@ namespace spx
     // uniqe_ptr die Objekte im ChartView entsorgen
     chartView->setChart( dummyChart );
     ui->logentryListView->setModel( Q_NULLPTR );
+    deactivateTab();
+  }
+
+  void LogFragment::deactivateTab( void )
+  {
+    disconnect( spxConfig.get(), nullptr, this, nullptr );
   }
 
   /**
@@ -77,7 +84,7 @@ namespace spx
   /**
    * @brief Slot für das Signal von button zum Directory lesen
    */
-  void LogFragment::onReadLogDirectorySlot( )
+  void LogFragment::onReadLogDirectorySlot()
   {
     lg->debug( "LogFragment::onReadLogDirectorySlot: ..." );
     // DEBUG: erzeuge einfach Einträge bei Jedem Click
@@ -90,7 +97,7 @@ namespace spx
   /**
    * @brief Slot für das Signal vom button zum _Inhalt des Logs lesen
    */
-  void LogFragment::onReadLogContentSlot( )
+  void LogFragment::onReadLogContentSlot()
   {
     lg->debug( "LogFragment::onReadLogContentSlot: ..." );
     QModelIndexList indexList = ui->logentryListView->selectionModel()->selectedIndexes();
@@ -162,7 +169,7 @@ namespace spx
     lg->debug( QString( "LogFragment::onAddLogLineSlot: logline: <" ).append( line ).append( ">" ) );
   }
 
-  void LogFragment::prepareMiniChart( )
+  void LogFragment::prepareMiniChart()
   {
     chart->legend()->hide();  // Keine Legende in der Minivorschau
     // Chart Titel aufhübschen
@@ -281,7 +288,12 @@ namespace spx
     // TODO: was machen
   }
 
-  void LogFragment::onConfLicChangedSlot( )
+  void LogFragment::onSocketErrorSlot( QBluetoothSocket::SocketError )
+  {
+    // TODO: implementieren
+  }
+
+  void LogFragment::onConfLicChangedSlot()
   {
     lg->debug( QString( "LogFragment::onOnlineStatusChangedSlot -> set: %1" )
                    .arg( static_cast< int >( spxConfig->getLicense().getLicType() ) ) );
@@ -289,7 +301,7 @@ namespace spx
         QString( tr( "LOGFILES SPX42 Serial [%1] Lic: %2" ).arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
   }
 
-  void LogFragment::onCloseDatabaseSlot( )
+  void LogFragment::onCloseDatabaseSlot()
   {
     // TODO: implementieren
   }
