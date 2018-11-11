@@ -20,6 +20,7 @@ namespace spx
   {
     private:
     Q_OBJECT
+    Q_INTERFACES( spx::IFragmentInterface )
     std::unique_ptr< Ui::ChartsFragment > ui;  //! Zeiger auf die GUI Objekte
 
     public:
@@ -29,11 +30,17 @@ namespace spx
                              std::shared_ptr< SPX42Config > spxCfg,
                              std::shared_ptr< SPX42RemotBtDevice > remSPX42 );  //! Konstruktor
     ~ChartsFragment() override;                                                 //! Destruktor, muss GUI säubern
+    virtual void deactivateTab( void ) override;                                //! deaktiviere eventuelle signale
+
+    signals:
+    void onWarningMessageSig( const QString &msg, bool asPopup = false ) override;  //! eine Warnmeldung soll das Main darstellen
+    void onErrorgMessageSig( const QString &msg, bool asPopup = false ) override;   //! eine Warnmeldung soll das Main darstellen
 
     private slots:
-    virtual void onOnlineStatusChangedSlot( bool isOnline ) override;  //! Wenn sich der Onlinestatus des SPX42 ändert
-    virtual void onConfLicChangedSlot( void ) override;                //! Wenn sich die Lizenz ändert
-    virtual void onCloseDatabaseSlot( void ) override;                 //! wenn die Datenbank geschlosen wird
+    virtual void onOnlineStatusChangedSlot( bool isOnline ) override;                //! Wenn sich der Onlinestatus des SPX42 ändert
+    virtual void onSocketErrorSlot( QBluetoothSocket::SocketError error ) override;  //! wenn bei einer Verbindung ein Fehler auftritt
+    virtual void onConfLicChangedSlot( void ) override;                              //! Wenn sich die Lizenz ändert
+    virtual void onCloseDatabaseSlot( void ) override;                               //! wenn die Datenbank geschlosen wird
   };
 }
 #endif  // CHARTSFRAGMENT_HPP

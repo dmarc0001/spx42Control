@@ -20,11 +20,22 @@ namespace spx
   ChartsFragment::~ChartsFragment()
   {
     lg->debug( "ConnectFragment::~ConnectFragment..." );
+    deactivateTab();
+  }
+
+  void ChartsFragment::deactivateTab( void )
+  {
+    disconnect( spxConfig.get(), nullptr, this, nullptr );
   }
 
   void ChartsFragment::onOnlineStatusChangedSlot( bool )
   {
     // TODO: was machen
+  }
+
+  void ChartsFragment::onSocketErrorSlot( QBluetoothSocket::SocketError )
+  {
+    // TODO: implementieren
   }
 
   void ChartsFragment::onConfLicChangedSlot()
