@@ -133,7 +133,7 @@ namespace spx
     emit onDevicePairingDoneSig( address, pairing );
   }
 
-  void SPX42BtDevices::onDiscoverScanFinishedSlot( )
+  void SPX42BtDevices::onDiscoverScanFinishedSlot()
   {
     lg->debug( "SPX42BtDevices::onDiscoverScanFinishedSlot..." );
     lg->info( "device discovering finished..." );
@@ -147,7 +147,7 @@ namespace spx
     emit onDeviceHostModeStateChangedSig( hostMode );
   }
 
-  void SPX42BtDevices::startDiscoverServices( )
+  void SPX42BtDevices::startDiscoverServices()
   {
     lg->debug( "SPX42BtDevices::startDiscoverServices:..." );
     if ( devicesToDiscoverServices.isEmpty() && deviceDiscoverFinished )
@@ -214,6 +214,10 @@ namespace spx
     // ist das gefundene SPX42 Teil schon in der Liste?
     //
     QString raddrStr = raddr.toString();
+    //
+    lg->debug( QString( "SPX42BtDevices::onDiscoveredServiceSlot: device: %1, service uuid: <%2>" )
+                   .arg( raddr.toString() )
+                   .arg( info.serviceUuid().toString() ) );
     //
     if ( spx42Devices.contains( raddrStr ) )
     {
