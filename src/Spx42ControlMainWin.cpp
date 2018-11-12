@@ -134,10 +134,10 @@ namespace spx
       lg->debug( "SPX42ControlMainWin::closeEvent -> ignore close application..." );
       return;
     }
-    event->accept();
     lg->debug( "SPX42ControlMainWin::closeEvent -> close application..." );
     // TODO: Aufräumen Connection beenden
     spx42Database->closeDatabase();
+    event->accept();
     QMainWindow::closeEvent( event );
   }
 
