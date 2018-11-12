@@ -62,6 +62,7 @@ namespace spx
     void fillTabTitleArray( void );                    //! Fülle das Titelarray lokalisiert
     bool setActionStati( void );                       //! setze Actions entsprchend des Status
     bool connectActions( void );                       //! Verbinde Actions mit Slots
+    bool disconnectActions( void );                    //! alle slots freigeben
     void createApplicationTabs( void );                //! Erzeuge die (noch leeren) Tabs
     void clearApplicationTabs( void );                 //! Leere die Tabs
     void simulateLicenseChanged( LicenseType lType );  //! Simuliere lizenzwechsel

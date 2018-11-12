@@ -114,6 +114,8 @@ namespace spx
     {
       lg->crit( QString( "SPX42ControlMainWin::~SPX42ControlMainWin -> watchdog stopping failed (%1)" ).arg( ex.what() ) );
     }
+    clearApplicationTabs();
+    spx42Database->closeDatabase();
   }
 
   /**
@@ -135,9 +137,8 @@ namespace spx
       return;
     }
     lg->debug( "SPX42ControlMainWin::closeEvent -> close application..." );
-    // TODO: Aufräumen Connection beenden
-    spx42Database->closeDatabase();
     event->accept();
+    disconnectActions();
     QMainWindow::closeEvent( event );
   }
 
@@ -298,6 +299,31 @@ namespace spx
   }
 
   /**
+   * @brief SPX42ControlMainWin::disconnectActions
+   * @return
+   */
+  bool SPX42ControlMainWin::disconnectActions()
+  {
+    try
+    {
+      disconnect( ui->actionAbout, nullptr, nullptr, nullptr );
+      disconnect( ui->areaTabWidget, nullptr, nullptr, nullptr );
+      disconnect( spx42Config.get(), nullptr, this, nullptr );
+      disconnect( ui->actionNitrox, nullptr, nullptr, nullptr );
+      disconnect( ui->actionNormoxic_TMX, nullptr, nullptr, nullptr );
+      disconnect( ui->actionFull_TMX, nullptr, nullptr, nullptr );
+      disconnect( ui->actionMilitary, nullptr, nullptr, nullptr );
+      disconnect( ui->actionINDIVIDUAL_LIC, nullptr, nullptr, nullptr );
+    }
+    catch ( std::exception &ex )
+    {
+      lg->crit( QString( "exception while disconnecting signals from slots (" ).append( ex.what() ).append( ")" ) );
+      return ( false );
+    }
+    return ( true );
+  }
+
+  /**
    * @brief Simuliere Lizenzwechsel (debugging)
    * @param lType Neuer Lizenztyp
    */
@@ -358,18 +384,32 @@ namespace spx
   }
 
   /**
-   * @brief Leere beim Debugging die Application Tabs
+   * @brief Leere die Application Tabs
    */
   void SPX42ControlMainWin::clearApplicationTabs()
   {
-#ifdef DEBUG
     for ( int i = 0; i < ui->areaTabWidget->count(); i++ )
     {
       QWidget *currObj = ui->areaTabWidget->widget( i );
       if ( !QString( currObj->metaObject()->className() ).startsWith( "QWidget" ) )
       {
         lg->debug( QString( "SPX42ControlMainWin::clearApplicationTabs -> <%1> should delete" ).arg( currObj->objectName() ) );
+#ifdef DEBUG
         QString title = ui->areaTabWidget->tabText( i ).append( "-D" );
+#endif
+        IFragmentInterface *oldFragment = reinterpret_cast< IFragmentInterface * >( currObj );
+        if ( nullptr != oldFragment )
+        {
+          lg->debug( "SPX42ControlMainWin::clearApplicationTabs -> deactivate..." );
+          // wenn das ein Fragment ist deaktiviere signale
+          oldFragment->deactivateTab();
+          // und als QWidget die löschung verfügen, sobald das möglich ist
+          lg->debug( "SPX42ControlMainWin::clearApplicationTabs -> deactivate...OK" );
+        }
+        else
+        {
+          lg->debug( "SPX42ControlMainWin::clearApplicationTabs -> not deactivated..." );
+        }
         ui->areaTabWidget->removeTab( i );
         delete currObj;
         currObj = new QWidget();
@@ -377,7 +417,6 @@ namespace spx
         ui->areaTabWidget->insertTab( i, currObj, title );
       }
     }
-#endif
   }
 
   /**
@@ -420,7 +459,6 @@ namespace spx
   {
     static bool ignore = false;
     QWidget *currObj = nullptr;
-    IFragmentInterface *oldFragment = nullptr;
 
     if ( ignore )
     {
@@ -428,19 +466,12 @@ namespace spx
     }
     ignore = true;
     lg->debug( QString( "SPX42ControlMainWin::tabCurrentChanged -> new index <%1>" ).arg( idx, 2, 10, QChar( '0' ) ) );
-    clearApplicationTabs();  // DEBUG:
-    //
-    // alten Inhalt entfernen
-    //
-    if ( nullptr != ( oldFragment = dynamic_cast< IFragmentInterface * >( ui->areaTabWidget->widget( idx ) ) ) )
-    {
-      // wenn das ein Fragment ist deaktiviere signale
-      oldFragment->deactivateTab();
-      // und als QWidget die löschung verfügen, sobald das möglich ist
-      ui->areaTabWidget->widget( idx )->deleteLater();
-    }
-    // aus dem Tab entfernen
+    clearApplicationTabs();
+    // altes widget aus dem Tab entfernen
+    currObj = ui->areaTabWidget->widget( idx );
     ui->areaTabWidget->removeTab( idx );
+    delete currObj;
+    currObj = nullptr;
     //
     // Neuen Inhalt des Tabs aufbauen
     //
