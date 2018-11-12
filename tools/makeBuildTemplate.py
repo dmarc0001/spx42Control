@@ -27,6 +27,7 @@ def main():
                             description='increment build number and set build date',
                             epilog="from Dirk Marciniak\n");
     parser.add_argument("--srcdir", type=str, help="source directory")
+    parser.add_argument("--build", type=str, help="type of build")
     args = parser.parse_args()
     if args.srcdir:
         source_dir = args.srcdir
@@ -39,10 +40,15 @@ def main():
     else:
         print("error: not an argument for source directory given...")
         exit(-1)
+    if args.build:
+        build_type = args.build
+    else:
+        build_type = ""
     #
     # hier erst mal das aktuelle Datum festlegen
     #
-    today_str = datetime.datetime.now().strftime("#define SPX_BUILDTIME \"%Y-%m-%d %H:%M:%S\"")
+    today_str = datetime.datetime.now().strftime("  constexpr char SPX_BUILDTIME[]{\"%Y-%m-%d %H:%M:%S\"};");
+    print("build type: {}".format(build_type))
     print("today date: " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     #
     # jetzt buildnummer einlesen
@@ -54,7 +60,11 @@ def main():
     # Nummer ausgelesen, formatieren
     #
     print("buildcount: {:08} -> {:08}".format(build_num, build_num+1))
-    build_str = "#define SPX_BUILDCOUNT \"{:08}\"".format(build_num+1)
+    build_str = "  constexpr char SPX_BUILDCOUNT[]{}\"{:08}\"{};".format("{", build_num+1, "}");
+    #
+    # buildtyp formatieren
+    #
+    build_type_str = "  constexpr char SPX_BUILDTYPE[]{}\"{}\"{};".format("{", build_type, "}");
     #
     # buildnummer schreiben
     #
@@ -68,8 +78,14 @@ def main():
     config_file.write("#ifndef CURRBUILDDEF_HPP\n")
     config_file.write("#define CURRBUILDDEF_HPP\n")
     config_file.write("\n")
+    # namespace einbringen
+    config_file.write("namespace spx\n")
+    config_file.write("{\n")
     config_file.write(today_str + "\n")
     config_file.write(build_str + "\n")
+    config_file.write(build_type_str + "\n")
+    # ende namespace
+    config_file.write("}\n")
     config_file.write("\n")
     config_file.write("#endif\n")
     config_file.close()
