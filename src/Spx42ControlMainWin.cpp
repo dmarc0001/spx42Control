@@ -304,6 +304,10 @@ namespace spx
    */
   bool SPX42ControlMainWin::disconnectActions()
   {
+    //
+    // vor dem Beenden die sig von den slot trennen, sonst werden tabs
+    // beim beenden erzeugt, was zum absturz führt
+    //
     try
     {
       disconnect( ui->actionAbout, nullptr, nullptr, nullptr );
