@@ -9,10 +9,10 @@
 #include <QFontDatabase>
 #include <QMainWindow>
 #include <QMessageBox>
+#include <QPalette>
 #include <QStringList>
 #include <QTabWidget>
 #include <QTimer>
-
 #include "bluetooth/SPX42RemotBtDevice.hpp"
 #include "config/AppConfigClass.hpp"
 #include "config/ProjectConst.hpp"
@@ -51,6 +51,9 @@ namespace spx
     AppConfigClass cf;                                  //! Konfiguration aus Datei
     ApplicationTab currentTab;                          //! welcher Tab ist aktiv?
     QStringList tabTitle;                               //! Tab Titel (nicht statisch, das Objekt gibts eh nur einmal)
+    std::unique_ptr< QLabel > onlineLabel;              //! Label signalisiert online oder offline
+    QPalette offlinePalette;                            //! Pallette für offline Schrift
+    QPalette onlinePalette;                             //! Pallette für offline Schrift
 
     public:
     explicit SPX42ControlMainWin( QWidget *parent = nullptr );
@@ -58,16 +61,16 @@ namespace spx
     void closeEvent( QCloseEvent *event );  //! Das Beenden-Ereignis
 
     private:
-    bool createLogger();                               //! Erzeuge den Logger
-    void fillTabTitleArray( void );                    //! Fülle das Titelarray lokalisiert
-    bool setActionStati( void );                       //! setze Actions entsprchend des Status
-    bool connectActions( void );                       //! Verbinde Actions mit Slots
-    bool disconnectActions( void );                    //! alle slots freigeben
-    void createApplicationTabs( void );                //! Erzeuge die (noch leeren) Tabs
-    void clearApplicationTabs( void );                 //! Leere die Tabs
-    void simulateLicenseChanged( LicenseType lType );  //! Simuliere lizenzwechsel
-    ApplicationTab getApplicationTab( void );          //! Welcher Tab war noch aktiv?
-    void setTitleMessage( const QString &msg = "" );   //! setze eine Meldung in den Fenstertitel
+    bool createLogger();                                     //! Erzeuge den Logger
+    void fillTabTitleArray( void );                          //! Fülle das Titelarray lokalisiert
+    bool setActionStati( void );                             //! setze Actions entsprchend des Status
+    bool connectActions( void );                             //! Verbinde Actions mit Slots
+    bool disconnectActions( void );                          //! alle slots freigeben
+    void createApplicationTabs( void );                      //! Erzeuge die (noch leeren) Tabs
+    void clearApplicationTabs( void );                       //! Leere die Tabs
+    void simulateLicenseChanged( LicenseType lType );        //! Simuliere lizenzwechsel
+    ApplicationTab getApplicationTab( void );                //! Welcher Tab war noch aktiv?
+    void setOnlineStatusMessage( const QString &msg = "" );  //! setze eine Meldung in den Fenstertitel
 
     private slots:
     void onTabCurrentChangedSlot( int idx );                                //! TAB Index gewechselt

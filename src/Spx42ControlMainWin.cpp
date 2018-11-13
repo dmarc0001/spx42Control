@@ -15,6 +15,9 @@ namespace spx
       , currentStatus( ApplicationStat::STAT_OFFLINE )
       , watchdogTimer( 0 )
       , currentTab()
+      , onlineLabel( std::unique_ptr< QLabel >( new QLabel( "  SPX42 OFFLINE" ) ) )
+      , offlinePalette( onlineLabel->palette() )
+      , onlinePalette( onlineLabel->palette() )
   {
     //
     // Hilfebutton ausblenden
@@ -79,6 +82,14 @@ namespace spx
     delete ( ui->menuDEBUGGING );
 #endif
     //
+    // einen onlineindikator in die Statusleiste bauen
+    //
+    onlinePalette.setColor( onlineLabel->foregroundRole(), Qt::green );
+    offlinePalette.setColor( onlineLabel->foregroundRole(), Qt::red );
+    onlineLabel->setIndent( 25 );
+    this->statusBar()->addWidget( onlineLabel.get(), 250 );
+    onlineLabel->setPalette( offlinePalette );
+    //
     fillTabTitleArray();
     //
     // setze Action Stati
@@ -94,7 +105,8 @@ namespace spx
     ui->areaTabWidget->setCurrentIndex( 0 );
     onTabCurrentChangedSlot( 0 );
     connectActions();
-    setTitleMessage();
+    setWindowTitle( ProjectConst::MAIN_TITLE );
+    setOnlineStatusMessage();
   }
 
   /**
@@ -434,26 +446,41 @@ namespace spx
     return ( currentTab );
   }
 
-  void SPX42ControlMainWin::setTitleMessage( const QString &msg )
+  void SPX42ControlMainWin::setOnlineStatusMessage( const QString &msg )
   {
     QString online;
     // ist die Kiste verbunden?
+    QFont font = onlineLabel->font();
     if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
     {
-      online = tr( "online" );
+      //
+      // verbunden darstellen
+      //
+      online = tr( "SPX42 ONLINE" );
+      onlineLabel->setText( tr( "SPX42 ONLINE" ) );
+      onlineLabel->setPalette( onlinePalette );
+      font.setBold( true );
+      onlineLabel->setFont( font );
     }
     else
     {
-      online = tr( "offline" );
+      //
+      // nicht verbunden darstellen
+      //
+      online = tr( "SPX42 OFFLINE" );
+      onlineLabel->setText( tr( "SPX42 OFFINE" ) );
+      onlineLabel->setPalette( offlinePalette );
+      font.setBold( false );
+      onlineLabel->setFont( font );
     }
     // und, ist eine Meldung vorhanden?
     if ( !msg.isEmpty() )
     {
-      setWindowTitle( QString( "%1 - %2 - " ).arg( ProjectConst::MAIN_TITLE ).arg( online ).arg( msg ) );
+      onlineLabel->setText( QString( "%1 - %2" ).arg( online ).arg( msg ) );
     }
     else
     {
-      setWindowTitle( QString( "%1 - %2 -" ).arg( ProjectConst::MAIN_TITLE ).arg( online ) );
+      onlineLabel->setText( QString( "%1" ).arg( online ) );
     }
   }
 
@@ -572,7 +599,7 @@ namespace spx
   void SPX42ControlMainWin::onOnlineStatusChangedSlot( bool )
   {
     lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot" );
-    setTitleMessage();
+    setOnlineStatusMessage();
   }
 
   /**
