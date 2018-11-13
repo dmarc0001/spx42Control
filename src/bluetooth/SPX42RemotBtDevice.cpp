@@ -18,16 +18,15 @@ namespace spx
   SPX42RemotBtDevice::~SPX42RemotBtDevice()
   {
     lg->debug( "SPX42RemotBtDevice::~SPX42RemotBtDevice() -> check if close bluethooth connection nessesary..." );
-    if ( socket->state() != QBluetoothSocket::UnconnectedState )
-    {
-      lg->info( "abort bluethooth connection" );
-      socket->abort();
-    }
-    lg->debug( "SPX42RemotBtDevice::~SPX42RemotBtDevice() -> disconnect all bt socket signals..." );
-    // für alle Fälle
-    endConnection();
     if ( socket != nullptr )
     {
+      if ( socket->state() != QBluetoothSocket::UnconnectedState )
+      {
+        lg->info( "abort bluethooth connection" );
+        socket->abort();
+      }
+      lg->debug( "SPX42RemotBtDevice::~SPX42RemotBtDevice() -> disconnect all bt socket signals..." );
+      endConnection();
       disconnect( socket, nullptr, nullptr, nullptr );
       delete socket;
     }
