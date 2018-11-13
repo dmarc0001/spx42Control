@@ -126,10 +126,16 @@ namespace spx
   void SPX42Database::closeDatabase()
   {
     lg->debug( "SPX42Database::closeDatabase..." );
+    if ( db.open() )
+      db.commit();
     QSqlDatabase::database( currentConnectionName, false ).close();
+    //
+    // Neue db ==> das alte db objekt damit der Vernichtung anheimgeben
+    //
+    db = QSqlDatabase();
     QSqlDatabase::removeDatabase( currentConnectionName );
     currentConnectionName.clear();
-    db = QSqlDatabase();
+    lg->debug( "SPX42Database::closeDatabase...OK" );
   }
 
   /**
