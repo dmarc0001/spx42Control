@@ -7,6 +7,7 @@
 #include <memory>
 #include "IFragmentInterface.hpp"
 #include "bluetooth/BtDiscoverObject.hpp"
+#include "bluetooth/BtTypes.hpp"
 #include "bluetooth/SPX42RemotBtDevice.hpp"
 #include "database/SPX42Database.hpp"
 #include "logging/Logger.hpp"

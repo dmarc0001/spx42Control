@@ -24,17 +24,16 @@ namespace spx
     };
 
     private:
-    std::shared_ptr< Logger > lg;                //! Zeiger auf Loggerobjekt
-    std::unique_ptr< QBluetoothSocket > socket;  //! Zeiger auf einen Socket
-    const QBluetoothUuid btUuiid;                //! die Bluethooth UUID für RFCOMM
-    QBluetoothAddress remoteAddr;                //! die MAC des gegenübers
+    std::shared_ptr< Logger > lg;  //! Zeiger auf Loggerobjekt
+    // std::unique_ptr< QBluetoothSocket > socket;  //! Zeiger auf einen Socket
+    QBluetoothSocket *socket;      //! Zeiger auf einen Socket
+    const QBluetoothUuid btUuiid;  //! die Bluethooth UUID für RFCOMM
+    QBluetoothAddress remoteAddr;  //! die MAC des gegenübers
 
     public:
     explicit SPX42RemotBtDevice( std::shared_ptr< Logger > logger, QObject *parent = nullptr );
     ~SPX42RemotBtDevice();
     void startConnection( const QString &mac );
-    void startConnection( const SPXDeviceDescr &remDevice );
-    void startConnection( void );
     void endConnection( void );
     SPX42ConnectStatus getConnectionStatus( void );
 

@@ -418,7 +418,9 @@ namespace spx
         delete currObj;
         currObj = new QWidget();
         currObj->setObjectName( "DUMMY" );
+#ifdef DEBUG
         ui->areaTabWidget->insertTab( i, currObj, title );
+#endif
       }
     }
   }

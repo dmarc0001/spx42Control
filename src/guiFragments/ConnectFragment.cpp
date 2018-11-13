@@ -172,7 +172,7 @@ namespace spx
     // dabei gehe ich davon aus das die discoverroutine auf doppelte Geräte schon
     // geprüft hat
     //
-    QString addr = deviceInfo.deviceInfo.address().toString();
+    QString addr = deviceInfo.first;
     spx42Devices.insert( addr, deviceInfo );
     //
     // und nun eine vernünftige Anzeige machen und die MAC als Schlüssel lassen
@@ -184,12 +184,16 @@ namespace spx
       //
       // ein alias ist vorhanden!
       // hash: <MAC<NAME,ALIAS>>
+      //
       auto alp = devices.take( addr );
       title = QString( "%1 (%2)" ).arg( alp.second ).arg( alp.first );
     }
     else
     {
-      title = QString( "%1 (%2)" ).arg( deviceInfo.deviceInfo.name() ).arg( addr );
+      //
+      // es gibt (noch) keinen Alias, baue den Eintrag aus Name und MAC
+      //
+      title = QString( "%1 (%2)" ).arg( deviceInfo.second ).arg( addr );
     }
     ui->deviceComboBox->addItem( title, addr );
   }

@@ -8,21 +8,8 @@ namespace spx
    * @param parent
    */
   SPX42RemotBtDevice::SPX42RemotBtDevice( std::shared_ptr< Logger > logger, QObject *parent )
-      : QObject( parent )
-      , lg( logger )
-      , socket( std::unique_ptr< QBluetoothSocket >( new QBluetoothSocket( QBluetoothServiceInfo::RfcommProtocol ) ) )
-      , btUuiid( ProjectConst::RFCommUUID )
-      , remoteAddr()
+      : QObject( parent ), lg( logger ), socket( nullptr ), btUuiid( ProjectConst::RFCommUUID ), remoteAddr()
   {
-    //
-    // Signale des BT Sockets mit slots verbinden
-    //
-    lg->debug( "SPX42RemotBtDevice::SPX42RemotBtDevice -> connecting bt socket sigs..." );
-    connect( socket.get(), QOverload< QBluetoothSocket::SocketError >::of( &QBluetoothSocket::error ), this,
-             &SPX42RemotBtDevice::onSocketErrorSlot );
-    connect( socket.get(), &QBluetoothSocket::stateChanged, this, &SPX42RemotBtDevice::onStateChangedSlot );
-    connect( socket.get(), &QBluetoothSocket::readyRead, this, &SPX42RemotBtDevice::onReadSocketSlot );
-    lg->debug( "SPX42RemotBtDevice::SPX42RemotBtDevice -> connecting bt socket sigs...OK" );
   }
 
   /**
@@ -37,24 +24,13 @@ namespace spx
       socket->abort();
     }
     lg->debug( "SPX42RemotBtDevice::~SPX42RemotBtDevice() -> disconnect all bt socket signals..." );
-    disconnect( socket.get(), nullptr, nullptr, nullptr );
-  }
-
-  void SPX42RemotBtDevice::startConnection( const SPXDeviceDescr &remDevice )
-  {
-    lg->debug( "SPX42RemotBtDevice::startConnection -> check for remote addr..." );
-    if ( remDevice.deviceInfo.address().isNull() )
+    // für alle Fälle
+    endConnection();
+    if ( socket != nullptr )
     {
-      lg->warn( "SPX42RemotBtDevice::startConnection -> remote addr is not set!" );
-      return;
+      disconnect( socket, nullptr, nullptr, nullptr );
+      delete socket;
     }
-    lg->debug( "SPX42RemotBtDevice::startConnection -> check for remote addr..." );
-    if ( remDevice.serviceInfo.isValid() && remDevice.serviceInfo.isComplete() )
-    {
-      socket->connectToService( remDevice.deviceInfo.address(), remDevice.serviceInfo.serviceUuid() );
-    }
-    else
-      lg->warn( "SPX42RemotBtDevice::startConnection -> remote addr is not set!" );
   }
 
   /**
@@ -64,34 +40,41 @@ namespace spx
   void SPX42RemotBtDevice::startConnection( const QString &mac )
   {
     // TODO: wenn verbunden, trennen oder was?
-
+    if ( socket != nullptr )
+    {
+      endConnection();
+      delete socket;
+      socket = nullptr;
+    }
     // merken der Daten
     remoteAddr = QBluetoothAddress( mac );
-    // Connect to service
-    startConnection();
-  }
-
-  /**
-   * @brief startConnection
-   */
-  void SPX42RemotBtDevice::startConnection()
-  {
     //
     // zunächst prüfen, ob ein gültiger Service vorhanden ist
     //
-    lg->debug( "SPX42RemotBtDevice::startConnection -> check for remote addr..." );
     //
     if ( remoteAddr.isNull() )
     {
       lg->warn( "SPX42RemotBtDevice::startConnection -> remote addr is not set!" );
       return;
     }
-    lg->debug( "SPX42RemotBtDevice::startConnection -> check for remote addr...OK" );
+    //
+    // Signale des BT Sockets mit slots verbinden
+    //
+    lg->debug( "SPX42RemotBtDevice::startConnection -> connecting bt socket sigs..." );
+    socket = new QBluetoothSocket( QBluetoothServiceInfo::RfcommProtocol );
+    connect( socket, QOverload< QBluetoothSocket::SocketError >::of( &QBluetoothSocket::error ), this,
+             &SPX42RemotBtDevice::onSocketErrorSlot );
+    connect( socket, &QBluetoothSocket::stateChanged, this, &SPX42RemotBtDevice::onStateChangedSlot );
+    connect( socket, &QBluetoothSocket::readyRead, this, &SPX42RemotBtDevice::onReadSocketSlot );
+    lg->debug( "SPX42RemotBtDevice::startConnection -> connecting bt socket sigs...OK" );
+    //
+    // versuche zu verbinden
     //
     lg->debug( "SPX42RemotBtDevice::startConnection -> connect remote SPX42..." );
+    lg->info( "SPX42RemotBtDevice::startConnection -> connecting to remote SPX42..." );
     // Verbinden!
     socket->connectToService( remoteAddr, btUuiid );
-    lg->info( "SPX42RemotBtDevice::startConnection -> connecting to remote SPX42..." );
+    lg->debug( "SPX42RemotBtDevice::startConnection -> connect remote SPX42...OK" );
   }
 
   /**
@@ -100,14 +83,17 @@ namespace spx
   void SPX42RemotBtDevice::endConnection( void )
   {
     lg->debug( "SPX42RemotBtDevice::endConnection -> try to disconnect bluethoot connection..." );
-    if ( socket->state() != QBluetoothSocket::UnconnectedState )
+    if ( socket != nullptr )
     {
-      lg->info( "close bluethooth connection" );
-      socket->close();
-    }
-    if ( socket->state() != QBluetoothSocket::UnconnectedState )
-    {
-      socket->abort();
+      if ( socket->state() != QBluetoothSocket::UnconnectedState )
+      {
+        lg->info( "close bluethooth connection" );
+        socket->close();
+      }
+      if ( socket->state() != QBluetoothSocket::UnconnectedState )
+      {
+        socket->abort();
+      }
     }
   }
 
@@ -117,6 +103,9 @@ namespace spx
    */
   SPX42RemotBtDevice::SPX42ConnectStatus SPX42RemotBtDevice::getConnectionStatus()
   {
+    if ( socket == nullptr )
+      return ( SPX42RemotBtDevice::SPX42_DISCONNECTED );
+
     switch ( socket->state() )
     {
       case QBluetoothSocket::UnconnectedState:
@@ -163,39 +152,35 @@ namespace spx
   void SPX42RemotBtDevice::onStateChangedSlot( QBluetoothSocket::SocketState state )
   {
     // TODO: drum kümmern
-    lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth onlinestatus has changed..." );
+    // lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth onlinestatus has changed..." );
     switch ( state )
     {
       case QBluetoothSocket::UnconnectedState:
-        lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <UnconnectedState>" );
         emit onStateChangedSig( state );
+        lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <UnconnectedState>" );
         break;
       case QBluetoothSocket::ServiceLookupState:
         lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <ServiceLookupState>" );
         break;
       case QBluetoothSocket::ConnectingState:
-        lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <ConnectingState>" );
         emit onStateChangedSig( state );
+        lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <ConnectingState>" );
         break;
       case QBluetoothSocket::ConnectedState:
-        lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <ConnectedState>" );
         emit onStateChangedSig( state );
+        lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <ConnectedState>" );
         break;
       case QBluetoothSocket::BoundState:
         lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <BoundState>" );
         break;
       case QBluetoothSocket::ClosingState:
-        lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <ClosingState>" );
         emit onStateChangedSig( state );
+        lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <ClosingState>" );
         break;
       case QBluetoothSocket::ListeningState:
         lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <ListeningState>" );
         break;
     }
-    //
-    // Melde das weiter!
-    //
-    // emit onStateChangedSig( state );
   }
 
   /**

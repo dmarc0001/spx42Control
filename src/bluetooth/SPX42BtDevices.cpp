@@ -3,15 +3,6 @@
 
 namespace spx
 {
-  SPXDeviceDescr::SPXDeviceDescr( const QBluetoothDeviceInfo &dInfo ) : deviceInfo( dInfo ), serviceInfo()
-  {
-  }
-
-  SPXDeviceDescr::SPXDeviceDescr( const QBluetoothDeviceInfo &dInfo, const QBluetoothServiceInfo &sInfo )
-      : deviceInfo( dInfo ), serviceInfo( sInfo )
-  {
-  }
-
   SPX42BtDevices::SPX42BtDevices( std::shared_ptr< Logger > logger, QObject *parent )
       : QObject( parent ), lg( logger ), deviceDiscoverFinished( true )
   {
@@ -125,7 +116,7 @@ namespace spx
     {
       lg->debug( QString( "SPX42BtDevices::onDiscoveredDeviceSlot: device %1 in local list inserted." ).arg( device ) );
       // zufügen zu den gefundenen Geräten
-      discoverdDevices.insert( info.address().toString(), SPXDeviceDescr( info ) );
+      discoverdDevices.insert( info.address().toString(), SPXDeviceDescr( info.address().toString(), info.name() ) );
       // in die queue zum service finden
       devicesToDiscoverServices.enqueue( info.address() );
       // starte (auch verzögertes) discovering der Services
@@ -248,10 +239,8 @@ namespace spx
         //
         if ( discoverdDevices.contains( raddrStr ) )
         {
-          lg->info( QString( "SPX42BtDevices::onDiscoveredServiceSlot: device: %1, service: %2 add..." )
-                        .arg( raddr.toString() )
-                        .arg( info.serviceName() ) );
-          SPXDeviceDescr newDevice( discoverdDevices.take( raddrStr ).deviceInfo, info );
+          SPXDeviceDescr newDevice( discoverdDevices.take( raddrStr ) );
+          lg->info( QString( "SPX42BtDevices::onDiscoveredServiceSlot: device: %1 add..." ).arg( raddrStr ) );
           spx42Devices.insert( raddrStr, newDevice );
           //
           // das neue SPX42 Device melden!
