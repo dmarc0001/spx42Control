@@ -9,29 +9,12 @@
 #include <memory>
 #include "BtDevicesManager.hpp"
 #include "BtServiceDiscover.hpp"
+#include "BtTypes.hpp"
 #include "config/ProjectConst.hpp"
 #include "logging/Logger.hpp"
 
 namespace spx
 {
-  //
-  // ein paar Typendefinitionen, um die Sache lesbar zu machen
-  //
-  class SPXDeviceDescr;
-
-  using SPXDeviceList = QHash< QString, SPXDeviceDescr >;  //! device Addr, device Info, Service Info
-  using ToScannedDevicesQueue = QQueue< QBluetoothAddress >;
-
-  class SPXDeviceDescr
-  {
-    public:
-    SPXDeviceDescr() = default;
-    SPXDeviceDescr( const QBluetoothDeviceInfo &dInfo );
-    SPXDeviceDescr( const QBluetoothDeviceInfo &dInfo, const QBluetoothServiceInfo &sInfo );
-    QBluetoothDeviceInfo deviceInfo;
-    QBluetoothServiceInfo serviceInfo;
-  };
-
   class SPX42BtDevices : public QObject
   {
     Q_OBJECT

@@ -103,7 +103,8 @@ HEADERS                 += \
     src/database/SPX42Database.hpp \
     src/config/currBuildDef.hpp \
     src/bluetooth/SPX42RemotBtDevice.hpp \
-    src/bluetooth/BtDiscoverObject.hpp
+    src/bluetooth/BtDiscoverObject.hpp \
+    src/bluetooth/BtTypes.hpp
 
 FORMS                   += \
     src/ui/Spx42ControlMainWin.ui \
