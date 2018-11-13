@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QPair>
 #include <QQueue>
+#include <QRegExp>
 #include <QVector>
 #include <memory>
 #include "BtDevicesManager.hpp"
@@ -28,6 +29,7 @@ namespace spx
     SPXDeviceList spx42Devices;
     SPXDeviceList discoverdDevices;
     ToScannedDevicesQueue devicesToDiscoverServices;
+    QRegExp exp;
 
     public:
     explicit SPX42BtDevices( std::shared_ptr< Logger > logger, QObject *parent = nullptr );
