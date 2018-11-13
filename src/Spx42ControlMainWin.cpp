@@ -9,12 +9,15 @@ namespace spx
    */
   SPX42ControlMainWin::SPX42ControlMainWin( QWidget *parent )
       : QMainWindow( parent )
-      , ui( new Ui::SPX42ControlMainWin )
+      , ui( new Ui::SPX42ControlMainWin() )
       , watchdog( new QTimer( this ) )
       , spx42Config( new SPX42Config() )
       , currentStatus( ApplicationStat::STAT_OFFLINE )
       , watchdogTimer( 0 )
       , currentTab()
+      , onlineLabel( std::unique_ptr< QLabel >( new QLabel( "  SPX42 OFFLINE" ) ) )
+      , offlinePalette( onlineLabel->palette() )
+      , onlinePalette( onlineLabel->palette() )
   {
     //
     // Hilfebutton ausblenden
@@ -79,6 +82,14 @@ namespace spx
     delete ( ui->menuDEBUGGING );
 #endif
     //
+    // einen onlineindikator in die Statusleiste bauen
+    //
+    onlinePalette.setColor( onlineLabel->foregroundRole(), Qt::green );
+    offlinePalette.setColor( onlineLabel->foregroundRole(), Qt::red );
+    onlineLabel->setIndent( 25 );
+    this->statusBar()->addWidget( onlineLabel.get(), 250 );
+    onlineLabel->setPalette( offlinePalette );
+    //
     fillTabTitleArray();
     //
     // setze Action Stati
@@ -94,7 +105,8 @@ namespace spx
     ui->areaTabWidget->setCurrentIndex( 0 );
     onTabCurrentChangedSlot( 0 );
     connectActions();
-    setTitleMessage();
+    setWindowTitle( ProjectConst::MAIN_TITLE );
+    setOnlineStatusMessage();
   }
 
   /**
@@ -114,6 +126,8 @@ namespace spx
     {
       lg->crit( QString( "SPX42ControlMainWin::~SPX42ControlMainWin -> watchdog stopping failed (%1)" ).arg( ex.what() ) );
     }
+    clearApplicationTabs();
+    spx42Database->closeDatabase();
   }
 
   /**
@@ -134,10 +148,9 @@ namespace spx
       lg->debug( "SPX42ControlMainWin::closeEvent -> ignore close application..." );
       return;
     }
-    event->accept();
     lg->debug( "SPX42ControlMainWin::closeEvent -> close application..." );
-    // TODO: Aufräumen Connection beenden
-    spx42Database->closeDatabase();
+    event->accept();
+    disconnectActions();
     QMainWindow::closeEvent( event );
   }
 
@@ -298,6 +311,35 @@ namespace spx
   }
 
   /**
+   * @brief SPX42ControlMainWin::disconnectActions
+   * @return
+   */
+  bool SPX42ControlMainWin::disconnectActions()
+  {
+    //
+    // vor dem Beenden die sig von den slot trennen, sonst werden tabs
+    // beim beenden erzeugt, was zum absturz führt
+    //
+    try
+    {
+      disconnect( ui->actionAbout, nullptr, nullptr, nullptr );
+      disconnect( ui->areaTabWidget, nullptr, nullptr, nullptr );
+      disconnect( spx42Config.get(), nullptr, this, nullptr );
+      disconnect( ui->actionNitrox, nullptr, nullptr, nullptr );
+      disconnect( ui->actionNormoxic_TMX, nullptr, nullptr, nullptr );
+      disconnect( ui->actionFull_TMX, nullptr, nullptr, nullptr );
+      disconnect( ui->actionMilitary, nullptr, nullptr, nullptr );
+      disconnect( ui->actionINDIVIDUAL_LIC, nullptr, nullptr, nullptr );
+    }
+    catch ( std::exception &ex )
+    {
+      lg->crit( QString( "exception while disconnecting signals from slots (" ).append( ex.what() ).append( ")" ) );
+      return ( false );
+    }
+    return ( true );
+  }
+
+  /**
    * @brief Simuliere Lizenzwechsel (debugging)
    * @param lType Neuer Lizenztyp
    */
@@ -358,26 +400,41 @@ namespace spx
   }
 
   /**
-   * @brief Leere beim Debugging die Application Tabs
+   * @brief Leere die Application Tabs
    */
   void SPX42ControlMainWin::clearApplicationTabs()
   {
-#ifdef DEBUG
     for ( int i = 0; i < ui->areaTabWidget->count(); i++ )
     {
       QWidget *currObj = ui->areaTabWidget->widget( i );
       if ( !QString( currObj->metaObject()->className() ).startsWith( "QWidget" ) )
       {
         lg->debug( QString( "SPX42ControlMainWin::clearApplicationTabs -> <%1> should delete" ).arg( currObj->objectName() ) );
+#ifdef DEBUG
         QString title = ui->areaTabWidget->tabText( i ).append( "-D" );
+#endif
+        IFragmentInterface *oldFragment = reinterpret_cast< IFragmentInterface * >( currObj );
+        if ( nullptr != oldFragment )
+        {
+          lg->debug( "SPX42ControlMainWin::clearApplicationTabs -> deactivate..." );
+          // wenn das ein Fragment ist deaktiviere signale
+          oldFragment->deactivateTab();
+          // und als QWidget die löschung verfügen, sobald das möglich ist
+          lg->debug( "SPX42ControlMainWin::clearApplicationTabs -> deactivate...OK" );
+        }
+        else
+        {
+          lg->debug( "SPX42ControlMainWin::clearApplicationTabs -> not deactivated..." );
+        }
         ui->areaTabWidget->removeTab( i );
         delete currObj;
         currObj = new QWidget();
         currObj->setObjectName( "DUMMY" );
+#ifdef DEBUG
         ui->areaTabWidget->insertTab( i, currObj, title );
+#endif
       }
     }
-#endif
   }
 
   /**
@@ -389,26 +446,41 @@ namespace spx
     return ( currentTab );
   }
 
-  void SPX42ControlMainWin::setTitleMessage( const QString &msg )
+  void SPX42ControlMainWin::setOnlineStatusMessage( const QString &msg )
   {
     QString online;
     // ist die Kiste verbunden?
+    QFont font = onlineLabel->font();
     if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
     {
-      online = tr( "online" );
+      //
+      // verbunden darstellen
+      //
+      online = tr( "SPX42 ONLINE" );
+      onlineLabel->setText( tr( "SPX42 ONLINE" ) );
+      onlineLabel->setPalette( onlinePalette );
+      font.setBold( true );
+      onlineLabel->setFont( font );
     }
     else
     {
-      online = tr( "offline" );
+      //
+      // nicht verbunden darstellen
+      //
+      online = tr( "SPX42 OFFLINE" );
+      onlineLabel->setText( tr( "SPX42 OFFINE" ) );
+      onlineLabel->setPalette( offlinePalette );
+      font.setBold( false );
+      onlineLabel->setFont( font );
     }
     // und, ist eine Meldung vorhanden?
     if ( !msg.isEmpty() )
     {
-      setWindowTitle( QString( "%1 - %2 - " ).arg( ProjectConst::MAIN_TITLE ).arg( online ).arg( msg ) );
+      onlineLabel->setText( QString( "%1 - %2" ).arg( online ).arg( msg ) );
     }
     else
     {
-      setWindowTitle( QString( "%1 - %2 -" ).arg( ProjectConst::MAIN_TITLE ).arg( online ) );
+      onlineLabel->setText( QString( "%1" ).arg( online ) );
     }
   }
 
@@ -420,7 +492,6 @@ namespace spx
   {
     static bool ignore = false;
     QWidget *currObj = nullptr;
-    IFragmentInterface *oldFragment = nullptr;
 
     if ( ignore )
     {
@@ -428,19 +499,12 @@ namespace spx
     }
     ignore = true;
     lg->debug( QString( "SPX42ControlMainWin::tabCurrentChanged -> new index <%1>" ).arg( idx, 2, 10, QChar( '0' ) ) );
-    clearApplicationTabs();  // DEBUG:
-    //
-    // alten Inhalt entfernen
-    //
-    if ( nullptr != ( oldFragment = dynamic_cast< IFragmentInterface * >( ui->areaTabWidget->widget( idx ) ) ) )
-    {
-      // wenn das ein Fragment ist deaktiviere signale
-      oldFragment->deactivateTab();
-      // und als QWidget die löschung verfügen, sobald das möglich ist
-      ui->areaTabWidget->widget( idx )->deleteLater();
-    }
-    // aus dem Tab entfernen
+    clearApplicationTabs();
+    // altes widget aus dem Tab entfernen
+    currObj = ui->areaTabWidget->widget( idx );
     ui->areaTabWidget->removeTab( idx );
+    delete currObj;
+    currObj = nullptr;
     //
     // Neuen Inhalt des Tabs aufbauen
     //
@@ -535,7 +599,7 @@ namespace spx
   void SPX42ControlMainWin::onOnlineStatusChangedSlot( bool )
   {
     lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot" );
-    setTitleMessage();
+    setOnlineStatusMessage();
   }
 
   /**

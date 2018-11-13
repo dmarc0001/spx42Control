@@ -8,7 +8,6 @@
 #include <QStandardPaths>
 #include <QString>
 #include <QVector>
-#include "currBuildDef.hpp"
 
 namespace spx
 {

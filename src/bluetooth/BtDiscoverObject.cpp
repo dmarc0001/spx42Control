@@ -24,7 +24,7 @@ namespace spx
     lg->debug( "BtDiscoverObject::~BtDiscoverObject..." );
   }
 
-  void BtDiscoverObject::startDiscover( void )
+  void BtDiscoverObject::startDiscover()
   {
     lg->debug( "BtDiscoverObject::onGuiStartScanSlot..." );
     btDevices->setHostDiscoverable( true );
@@ -32,6 +32,13 @@ namespace spx
     btDevices->setInquiryGeneralUnlimited( true );
     btDevices->startDiscoverDevices();
     lg->debug( "BtDiscoverObject::onGuiStartScanSlot...OK" );
+  }
+
+  void BtDiscoverObject::stopDiscover()
+  {
+    lg->debug( "BtDiscoverObject::stopDiscover..." );
+    btDevices->cancelDiscoverDevices();
+    lg->debug( "BtDiscoverObject::stopDiscover...OK" );
   }
 
   SPXDeviceList BtDiscoverObject::getSPX42Devices() const

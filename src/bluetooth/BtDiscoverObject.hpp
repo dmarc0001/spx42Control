@@ -21,6 +21,7 @@ namespace spx
     explicit BtDiscoverObject( std::shared_ptr< Logger > logger, QObject *parent = nullptr );
     ~BtDiscoverObject();  //! Destruktor
     void startDiscover( void );
+    void stopDiscover( void );
     SPXDeviceList getSPX42Devices( void ) const;  //! Liste aller gefundenen Geräte
 
     signals:

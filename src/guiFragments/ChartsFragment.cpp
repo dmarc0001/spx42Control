@@ -19,7 +19,7 @@ namespace spx
 
   ChartsFragment::~ChartsFragment()
   {
-    lg->debug( "ConnectFragment::~ConnectFragment..." );
+    lg->debug( "ChartsFragment::~ChartsFragment..." );
     deactivateTab();
   }
 

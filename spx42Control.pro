@@ -31,13 +31,21 @@ MOC_DIR                                = moc
 RCC_DIR                                = rcc
 UI_DIR                                 = ui
 
-# %{CurrentProject:NativePath}\%{CurrentKit:FileSystemName}\%{CurrentBuild:Name}
+# %{CurrentProject:NativePath}/%{CurrentKit:FileSystemName}/%{CurrentBuild:Name}
 
 # wenn debug in der config steht, die EXE auch so benennen
 build_pass:CONFIG(debug, debug|release) {
   DEFINES                              += DEBUG
   unix: TARGET                         = $$join(TARGET,,,_debug)
   else: TARGET                         = $$join(TARGET,,,_D)
+}
+
+*msvc* {
+  #
+  # visual studio spec filter
+  # then you not need -j8
+  #
+  QMAKE_CXXFLAGS += -MP
 }
 
 SOURCES                 += \
@@ -95,7 +103,8 @@ HEADERS                 += \
     src/database/SPX42Database.hpp \
     src/config/currBuildDef.hpp \
     src/bluetooth/SPX42RemotBtDevice.hpp \
-    src/bluetooth/BtDiscoverObject.hpp
+    src/bluetooth/BtDiscoverObject.hpp \
+    src/bluetooth/BtTypes.hpp
 
 FORMS                   += \
     src/ui/Spx42ControlMainWin.ui \
