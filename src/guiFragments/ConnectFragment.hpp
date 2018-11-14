@@ -60,6 +60,7 @@ namespace spx
     void onCurrentIndexChangedSlot( int index );                      //! Dropdown box: Auswahl geändert
     void onDiscoveredDeviceSlot( const SPXDeviceDescr &deviceInfo );  //! wurde ein neues gerät gefunden...
     void onDiscoverScanFinishedSlot( void );                          //! wenn das discovering abgeschlossen ist
+    void onDatagramRecivedSlot( void );                               // wenn ein Datentelegramm empfangen wurde
   };
 }
 #endif  // CONNECTFORM_HPP

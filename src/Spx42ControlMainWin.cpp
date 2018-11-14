@@ -10,12 +10,14 @@ namespace spx
   SPX42ControlMainWin::SPX42ControlMainWin( QWidget *parent )
       : QMainWindow( parent )
       , ui( new Ui::SPX42ControlMainWin() )
-      , watchdog( new QTimer( this ) )
       , spx42Config( new SPX42Config() )
+      , onlineLabel( std::unique_ptr< QLabel >( new QLabel( tr( "  SPX42 OFFLINE" ) ) ) )
+      , watchdog()
+      , spx42Commands()
       , currentStatus( ApplicationStat::STAT_OFFLINE )
-      , watchdogTimer( 0 )
+      , watchdogCounter( 0 )
+      , zyclusCounter( 0 )
       , currentTab()
-      , onlineLabel( std::unique_ptr< QLabel >( new QLabel( "  SPX42 OFFLINE" ) ) )
       , offlinePalette( onlineLabel->palette() )
       , onlinePalette( onlineLabel->palette() )
   {
@@ -35,9 +37,12 @@ namespace spx
       exit( -1 );
     }
     lg->debug( QString( "SPX42ControlMainWin::SPX42ControlMainWin:" ).append( "Program start..." ) );
-    lg->debug( QString( "SPX42ControlMainWin::SPX42ControlMainWin:" ).append( "Program build date:   " ).append( cf.getBuildDate() ) );
-    lg->debug(
-        QString( "SPX42ControlMainWin::SPX42ControlMainWin:" ).append( "Program build number: " ).append( cf.getBuildNumStr() ) );
+    lg->debug( QString( "SPX42ControlMainWin::SPX42ControlMainWin:" )
+                   .append( "Program build date:   " )
+                   .append( AppConfigClass::getBuildDate() ) );
+    lg->debug( QString( "SPX42ControlMainWin::SPX42ControlMainWin:" )
+                   .append( "Program build number: " )
+                   .append( AppConfigClass::getBuildNumStr() ) );
     //
     // erzeuge ein Objekt für den entfernten SPX42
     //
@@ -107,6 +112,8 @@ namespace spx
     connectActions();
     setWindowTitle( ProjectConst::MAIN_TITLE );
     setOnlineStatusMessage();
+    connect( &watchdog, &QTimer::timeout, this, &SPX42ControlMainWin::onWatchdogTimerSlot );
+    watchdog.start( 1000 );
   }
 
   /**
@@ -117,9 +124,9 @@ namespace spx
     lg->debug( "SPX42ControlMainWin::~SPX42ControlMainWin..." );
     try
     {
-      if ( watchdog->isActive() )
+      if ( watchdog.isActive() )
       {
-        watchdog->stop();
+        watchdog.stop();
       }
     }
     catch ( std::exception &ex )
@@ -485,6 +492,37 @@ namespace spx
   }
 
   /**
+   * @brief SPX42ControlMainWin::onWatchdogTimerSlot
+   */
+  void SPX42ControlMainWin::onWatchdogTimerSlot()
+  {
+    //
+    // Falls der Wachhunf aktiv ist
+    //
+    if ( watchdogCounter > 0 )
+    {
+      if ( --watchdogCounter == 0 )
+      {
+        lg->warn( "SPX42ControlMainWin::onWatchdogTimerSlot -> watchdog alert!" );
+      }
+    }
+    //
+    // wenn der SPX Online ist...
+    //
+    if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
+    {
+      if ( --zyclusCounter < 0 )
+      {
+        zyclusCounter = 6;
+        QByteArray sendCommand = spx42Commands.sendAliveSignal();
+        lg->debug( "SPX42ControlMainWin::onWatchdogTimerSlot -> send cmd alive..." );
+        remoteSPX42->sendCommand( sendCommand );
+        lg->debug( "SPX42ControlMainWin::onWatchdogTimerSlot -> send cmd alive...OK" );
+      }
+    }
+  }
+
+  /**
    * @brief Slot, welcher mit dem Tab-Wechsel-dich Signal verbunden wird
    * @param idx
    */
@@ -600,6 +638,34 @@ namespace spx
   {
     lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot" );
     setOnlineStatusMessage();
+    //
+    // so, wenn der SPX onlöine ist immer als erstes ein paar Kommandos
+    // zum SPX42 schicken um ihn zu identifizieren
+    //
+    if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
+    {
+      //
+      // Frage nach dem Hersteller
+      //
+      QByteArray sendCommand = spx42Commands.sendManufacturers();
+      lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd manufacturer..." );
+      remoteSPX42->sendCommand( sendCommand );
+      lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd manufacturer...OK" );
+      //
+      // gleich danach Frage nach der Seriennummer
+      //
+      sendCommand = spx42Commands.sendSerialNumber();
+      lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd serialnumber..." );
+      remoteSPX42->sendCommand( sendCommand );
+      lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd serialnumber...OK" );
+      //
+      // und dann noch Frage nach der Firmwareversion
+      //
+      sendCommand = spx42Commands.sendFirmwareVersion();
+      lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd firmwareversion..." );
+      remoteSPX42->sendCommand( sendCommand );
+      lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd firmwareversion...OK" );
+    }
   }
 
   /**

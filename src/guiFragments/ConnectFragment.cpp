@@ -40,6 +40,7 @@ namespace spx
     // Signalisierung vom verbundenen SPX
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onStateChangedSig, this, &ConnectFragment::onOnlineStatusChangedSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onSocketErrorSig, this, &ConnectFragment::onSocketErrorSlot );
+    connect( remoteSPX42.get(), &SPX42RemotBtDevice::onDatagramRecivedSig, this, &ConnectFragment::onDatagramRecivedSlot );
     //
     // setzte den Connectionsstatus
     //
@@ -210,6 +211,11 @@ namespace spx
     lg->debug( QString( "ConnectFragment::onCurrentIndexChangedSlot -> index changed to <%1>. addr: <%2>" )
                    .arg( index, 2, 10, QChar( '0' ) )
                    .arg( ui->deviceComboBox->itemData( index ).toString() ) );
+  }
+
+  void ConnectFragment::onDatagramRecivedSlot()
+  {
+    lg->debug( "ConnectFragment::onDatagramRecivedSlot..." );
   }
 
   // ##########################################################################

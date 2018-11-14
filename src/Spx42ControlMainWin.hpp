@@ -23,6 +23,7 @@
 #include "guiFragments/GasFragment.hpp"
 #include "guiFragments/LogFragment.hpp"
 #include "logging/Logger.hpp"
+#include "spx42/Spx42Commands.hpp"
 #include "utils/AboutDialog.hpp"
 #include "utils/SPX42Config.hpp"
 
@@ -40,18 +41,20 @@ namespace spx
   {
     private:
     Q_OBJECT
-    std::unique_ptr< Ui::SPX42ControlMainWin > ui;
+    std::unique_ptr< Ui::SPX42ControlMainWin > ui;      //! das GUI Objekt
     std::shared_ptr< Logger > lg;                       //! Loggerobjekt für Logs
-    const std::unique_ptr< QTimer > watchdog;           //! Wachhund für Timeouts
     const std::shared_ptr< SPX42Config > spx42Config;   //! Konfiguration des verbundenen SPX42
     std::shared_ptr< SPX42RemotBtDevice > remoteSPX42;  //! Objekt des entfernten SPX42 (verbunden oder nicht verbunden)
-    ApplicationStat currentStatus;                      //! welchen Status hat die App?
     std::shared_ptr< SPX42Database > spx42Database;     //! Datenbankobjekt zur Speicherung der SPX Daten/Einstellungen
-    int watchdogTimer;                                  //! Zeitspanne zum Timeout
-    AppConfigClass cf;                                  //! Konfiguration aus Datei
-    ApplicationTab currentTab;                          //! welcher Tab ist aktiv?
-    QStringList tabTitle;                               //! Tab Titel (nicht statisch, das Objekt gibts eh nur einmal)
     std::unique_ptr< QLabel > onlineLabel;              //! Label signalisiert online oder offline
+    QStringList tabTitle;                               //! Tab Titel (nicht statisch, das Objekt gibts eh nur einmal)
+    AppConfigClass cf;                                  //! Konfiguration aus Datei
+    QTimer watchdog;                                    //! Wachhund für Timeouts
+    Spx42Commands spx42Commands;                        //! erzeugen von Kommandotelegrams für den SPX42
+    ApplicationStat currentStatus;                      //! welchen Status hat die App?
+    qint16 watchdogCounter;                             //! Zeitspanne zum Timeout
+    qint16 zyclusCounter;                               //! zählt die Timerzyklen
+    ApplicationTab currentTab;                          //! welcher Tab ist aktiv?
     QPalette offlinePalette;                            //! Pallette für offline Schrift
     QPalette onlinePalette;                             //! Pallette für offline Schrift
 
@@ -73,6 +76,7 @@ namespace spx
     void setOnlineStatusMessage( const QString &msg = "" );  //! setze eine Meldung in den Fenstertitel
 
     private slots:
+    void onWatchdogTimerSlot( void );                                       //! timer für zyklische Sachen, watchdog...
     void onTabCurrentChangedSlot( int idx );                                //! TAB Index gewechselt
     void onLicenseChangedSlot( void );                                      //! Lizenztyp getriggert
     void onOnlineStatusChangedSlot( bool isOnline );                        //! Wenn sich der Onlinestatus des SPX42 ändert

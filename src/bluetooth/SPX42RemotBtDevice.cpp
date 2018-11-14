@@ -8,8 +8,21 @@ namespace spx
    * @param parent
    */
   SPX42RemotBtDevice::SPX42RemotBtDevice( std::shared_ptr< Logger > logger, QObject *parent )
-      : QObject( parent ), lg( logger ), socket( nullptr ), btUuiid( ProjectConst::RFCommUUID ), remoteAddr()
+      : QObject( parent )
+      , lg( logger )
+      , sendTimer( parent )
+      , sendQueue()
+      , recQueue()
+      , socket( nullptr )
+      , btUuiid( ProjectConst::RFCommUUID )
+      , remoteAddr()
   {
+    // das interval des Teimer auf 80 ms setzten
+    sendTimer.setInterval( 80 );
+    //
+    // verbinde das Timerevent mit der Senderoutine
+    //
+    connect( &sendTimer, &QTimer::timeout, this, &SPX42RemotBtDevice::onSendSocketTimerSlot );
   }
 
   /**
@@ -18,16 +31,17 @@ namespace spx
   SPX42RemotBtDevice::~SPX42RemotBtDevice()
   {
     lg->debug( "SPX42RemotBtDevice::~SPX42RemotBtDevice() -> check if close bluethooth connection nessesary..." );
+    sendTimer.stop();
+    disconnect( &sendTimer, nullptr, nullptr, nullptr );
     if ( socket != nullptr )
     {
+      disconnect( socket, nullptr, nullptr, nullptr );
       if ( socket->state() != QBluetoothSocket::UnconnectedState )
       {
         lg->info( "abort bluethooth connection" );
         socket->abort();
       }
       lg->debug( "SPX42RemotBtDevice::~SPX42RemotBtDevice() -> disconnect all bt socket signals..." );
-      endConnection();
-      disconnect( socket, nullptr, nullptr, nullptr );
       delete socket;
     }
   }
@@ -97,6 +111,18 @@ namespace spx
   }
 
   /**
+   * @brief SPX42RemotBtDevice::sendCommand
+   * @param telegram
+   */
+  void SPX42RemotBtDevice::sendCommand( const QByteArray &telegram )
+  {
+    //
+    // in die sendequeue packen
+    //
+    sendQueue.enqueue( telegram );
+  }
+
+  /**
    * @brief SPX42RemotBtDevice::getConnectionStatus
    * @return
    */
@@ -148,6 +174,10 @@ namespace spx
     }
   }
 
+  /**
+   * @brief SPX42RemotBtDevice::onStateChangedSlot
+   * @param state
+   */
   void SPX42RemotBtDevice::onStateChangedSlot( QBluetoothSocket::SocketState state )
   {
     // TODO: drum kümmern
@@ -166,6 +196,12 @@ namespace spx
         lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <ConnectingState>" );
         break;
       case QBluetoothSocket::ConnectedState:
+        //
+        // den Timer für die Sendequeue starten
+        //
+        sendQueue.clear();
+        recQueue.clear();
+        sendTimer.start();
         emit onStateChangedSig( state );
         lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <ConnectedState>" );
         break;
@@ -180,6 +216,11 @@ namespace spx
         lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <ListeningState>" );
         break;
     }
+    if ( state != QBluetoothSocket::ConnectedState )
+    {
+      // den Timer für die sendeque stoppen
+      sendTimer.stop();
+    }
   }
 
   /**
@@ -190,5 +231,95 @@ namespace spx
     //
     // lese Daten vom Socket...
     //
+    auto canRead = socket->bytesAvailable();
+    // lg->debug( QString( "SPX42RemotBtDevice::onReadSocketSlot -> %1 bytes availible..." ).arg( canRead ) );
+    if ( canRead > 0 )
+    {
+      //
+      // alles lesen und an den Puffer anhängen
+      //
+      recBuffer.append( socket->readAll() );
+      //
+      // Datagramme suchen und extraieren...
+      //
+      int idxOfETX = -1;
+      int idxOfSTX = recBuffer.indexOf( SpxCommandDef::STX );
+      //
+      // solange ein Anfang signalisiert ist, Datagramme extraieren
+      //
+      while ( idxOfSTX > -1 )
+      {
+        // Start ist schon mal vorhanden
+        if ( idxOfSTX > 0 )
+        {
+          // da ist noch etwas davor, abschnippeln...
+          // ab Stelle 0, länge idxOfSTX
+          recBuffer.remove( 0, idxOfSTX );
+        }
+        // jetzt ist STX das erste Zeichen
+        idxOfSTX = 0;
+        // gibt es das Ende?
+        idxOfETX = recBuffer.indexOf( SpxCommandDef::ETX );
+        if ( idxOfETX > -1 )
+        {
+          //
+          // Start und Ende eines Datagramms gefunden
+          // wenn ein Fehler passiert (der Fundort kann eigentlich nur >= 2 sein, Vorsorge Treffen
+          //
+          if ( idxOfETX < 2 )
+          {
+            lg->warn( QString( "SPX42RemotBtDevice::onReadSocketSlot -> idxOfETX: <%1>" ).arg( idxOfETX, 3, 10, QChar( '0' ) ) );
+            idxOfETX = -1;
+            idxOfSTX = -1;
+            break;
+          }
+          // in die Empfangsqueue
+          recQueue.enqueue( recBuffer.mid( 1, idxOfETX - 2 ) );
+#ifdef DEBUG
+          lg->debug( QString( "SPX42RemotBtDevice::onReadSocketSlot -> datagram:: <%1>" )
+                         .arg( QString( recBuffer.mid( 1, idxOfETX - 2 ) ) ) );
+#endif
+          // aus dem Empfangspuffer entfernen
+          recBuffer.remove( 0, idxOfETX );
+          // Sende Signal an den der es wissen will
+          emit onDatagramRecivedSig();
+          //
+          // neue Suche nach einem Anfang
+          //
+          idxOfSTX = recBuffer.indexOf( SpxCommandDef::STX );
+        }
+        else
+        {
+          //
+          // Das Ende ist nicht gefunden, schleife abbrechen
+          // bis zum nächsten Datenempfang
+          //
+          idxOfSTX = -1;
+        }
+      }
+      //
+      // Puffer auf überlauf prüfen und ggt reagieren
+      //
+      if ( recBuffer.size() > 2048 )
+      {
+        lg->crit( "buffer (recive buffer) overflow... data will lost..." );
+        recBuffer.clear();
+      }
+    }
+  }
+
+  /**
+   * @brief SPX42RemotBtDevice::onSendSocketTimerSlot on timer routine, wenn online senden an gerät
+   */
+  void SPX42RemotBtDevice::onSendSocketTimerSlot()
+  {
+    if ( ( socket != nullptr ) && ( socket->state() == QBluetoothSocket::ConnectedState ) && !sendQueue.isEmpty() )
+    {
+      QByteArray telegram( sendQueue.dequeue() );
+#ifdef DEBUG
+      lg->debug( QString( "SPX42RemotBtDevice::onSendSocketTimerSlot -> send telegram <%1>..." ).arg( QString( telegram ) ) );
+#endif
+      socket->write( telegram );
+    }
   }
 }
