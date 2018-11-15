@@ -190,6 +190,50 @@ namespace spx
     }
   }
 
+  void SPX42Config::setLicense( const QByteArray &lic, const QByteArray &ind )
+  {
+    // Kommando SPX_LICENSE_STATE
+    // komplett: <~45:LS:CE>
+    // übergeben LS,CE
+    // LS : License State 0=Nitrox,1=Normoxic Trimix,2=Full Trimix
+    // CE : Custom Enabled 0= disabled, 1=enabled
+    qint8 licVal = static_cast< qint8 >( lic.toInt() );
+    qint8 indVal = -1;
+    if ( ind != nullptr && !ind.isEmpty() && !ind.isNull() )
+    {
+      // wurde eine Individuallizenz erwähnt?
+      indVal = static_cast< qint8 >( ind.toInt() );
+      switch ( indVal )
+      {
+        default:
+        case 0:
+          setLicense( IndividualLicense::LIC_NONE );
+          break;
+        case 1:
+          setLicense( IndividualLicense::LIC_INDIVIDUAL );
+      }
+    }
+    //
+    // lizenz eintragen
+    //
+    switch ( licVal )
+    {
+      default:
+      case 0:
+        setLicense( LicenseType::LIC_NITROX );
+        break;
+      case 1:
+        setLicense( LicenseType::LIC_NORMOXIX );
+        break;
+      case 2:
+        setLicense( LicenseType::LIC_FULLTMX );
+        break;
+      case 3:
+        setLicense( LicenseType::LIC_MIL );
+        break;
+    }
+  }
+
   /**
    * @brief gib den Lizenznamen als Sting zurück
    * @return

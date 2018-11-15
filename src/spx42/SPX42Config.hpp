@@ -48,15 +48,16 @@ namespace spx
     bool isSixMetersAutoSetpoint;                       //! Autosetpoint bei 5 oder 6 Meter
 
     public:
-    SPX42Config();                                     //! Der Konstruktor
-    SPX42License &getLicense( void );                  //! Lizenz des aktuellen SPX42
-    void setLicense( const LicenseType value );        //! Lizenz des aktuellen SPX42 merken
-    void setLicense( const IndividualLicense value );  //! Lizenz des aktuellen SPX42 merken
-    QString getLicName( void ) const;                  //! Textliche Darstellung der Lizenz
-    SPX42Gas &getGasAt( int num );                     //! Gib ein Gas mit der Nummer num vom SPX42 zurück
-    void reset( void );                                //! Resetiere das Objekt
-    QString getSerialNumber( void ) const;             //! Seriennummer des aktuellen SPX42 zurückgeben
-    void setSerialNumber( const QString &serial );     //! Seriennumemr des aktuellen SPX42 speichern
+    SPX42Config();                                                    //! Der Konstruktor
+    SPX42License &getLicense( void );                                 //! Lizenz des aktuellen SPX42
+    void setLicense( const LicenseType value );                       //! Lizenz des aktuellen SPX42 merken
+    void setLicense( const IndividualLicense value );                 //! Lizenz des aktuellen SPX42 merken
+    void setLicense( const QByteArray &lic, const QByteArray &ind );  //! Lizenz aus dem Kommando vom SPX lesen
+    QString getLicName( void ) const;                                 //! Textliche Darstellung der Lizenz
+    SPX42Gas &getGasAt( int num );                                    //! Gib ein Gas mit der Nummer num vom SPX42 zurück
+    void reset( void );                                               //! Resetiere das Objekt
+    QString getSerialNumber( void ) const;                            //! Seriennummer des aktuellen SPX42 zurückgeben
+    void setSerialNumber( const QString &serial );                    //! Seriennumemr des aktuellen SPX42 speichern
     void setCurrentPreset( DecompressionPreset presetType,
                            qint8 low = 0,
                            qint8 high = 0 );  //! Aktuelle Gradienteneinstellungen merken

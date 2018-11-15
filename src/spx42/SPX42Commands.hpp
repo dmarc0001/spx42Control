@@ -23,6 +23,7 @@ namespace spx
     QByteArray &sendSerialNumber( void );      //! Noch nicht ganz klar, was das ist (Daniel fragen) 0x02
     QByteArray &sendAliveSignal( void );       //! Sende ein Lebenszeichen 0x03
     QByteArray &sendFirmwareVersion( void );   //! Firmwareversion erfragen 0x04
+    QByteArray &sendLicenseState( void );      //! erfrage Lizenzstatus 0x46
     QByteArray &sendStartYModem( void );       //! Schalte SPX auf YMODEM-Betrieb!
     QByteArray &sendStartProgramming( void );  //! sag dem SPX42, er soll die Firmware flashen
     QByteArray &shutdownSPX42( void );         //! fahre den SPX42 runter

@@ -234,6 +234,14 @@ namespace spx
       switch ( kdo )
       {
         case SPX42CommandDef::SPX_SERIAL_NUMBER:
+          spxConfig->setSerialNumber( spxCommands->getParameter( 1 ) );
+          setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
+          break;
+        case SPX42CommandDef::SPX_LICENSE_STATE:
+          lg->debug(
+              QString( "################# LIC: %1 ###########################" ).arg( QString( spxCommands->getParameter( 1 ) ) ) );
+          spxConfig->setLicense( spxCommands->getParameter( 1 ), spxCommands->getParameter( 2 ) );
+          setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
           break;
       }
       //
@@ -261,6 +269,6 @@ namespace spx
     ui->propertyPushButton->setEnabled( !isConnected );
     ui->discoverPushButton->setEnabled( !isConnected );
 
-    ui->tabHeaderLabel->setText( fragmentTitlePattern.arg( spxConfig->getSerialNumber() ).arg( "?" ) );
+    ui->tabHeaderLabel->setText( fragmentTitlePattern.arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) );
   }
 }  // namespace spx

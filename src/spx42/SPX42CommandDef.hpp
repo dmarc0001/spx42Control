@@ -42,9 +42,7 @@ namespace spx
     constexpr char SPX_GET_LOG_NUMBER{0x42};             //! Logbuch senden
     constexpr char SPX_GET_LOG_NUMBER_SE{0x43};          //! Logbuch senden START/ENDE
     constexpr char SPX_GET_DEVICE_OFF{0x44};             //! Flag ob Device aus den Syncmode gegangen ist
-    constexpr char SPX_SEND_FILE{0x45};                  //! Sende ein File
     constexpr char SPX_LICENSE_STATE{0x45};              //! Lizenz Status zurückgeben!
-    constexpr char SPX_GET_LIC_STATUS{0x46};             //! Lizenzstatus senden
     constexpr char SPX_GET_LOG_NUMBER_DETAIL{0x47};      //! Logdatei senden
     constexpr char SPX_GET_LOG_NUMBER_DETAIL_OK{0x48};   //! Logdatei senden OK/ENDE
     constexpr char SPX_SHUTDOWN{0x66};                   //! Schaltet den SPX nach UPLOAD aus *upload*

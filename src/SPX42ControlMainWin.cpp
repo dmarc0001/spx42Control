@@ -703,6 +703,13 @@ namespace spx
         lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd firmwareversion..." );
         remoteSPX42->sendCommand( sendCommand );
         lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd firmwareversion...OK" );
+        //
+        // und lizenz nicht vergessen
+        //
+        sendCommand = spx42Commands->sendLicenseState();
+        lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd license status..." );
+        remoteSPX42->sendCommand( sendCommand );
+        lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd license status...OK" );
         break;
     }
   }

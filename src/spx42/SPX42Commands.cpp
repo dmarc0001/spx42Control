@@ -44,6 +44,12 @@ namespace spx
     return ( cmd );
   }
 
+  QByteArray &SPX42Commands::sendLicenseState()
+  {
+    makeSipleCommand( SPX42CommandDef::SPX_LICENSE_STATE );
+    return ( cmd );
+  }
+
   QByteArray &SPX42Commands::sendStartYModem()
   {
     makeSipleCommand( SPX42CommandDef::SPX_START_YMODEM );
