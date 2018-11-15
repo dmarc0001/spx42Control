@@ -89,8 +89,10 @@ namespace spx
     //
     // einen onlineindikator in die Statusleiste bauen
     //
-    onlinePalette.setColor( onlineLabel->foregroundRole(), Qt::green );
-    offlinePalette.setColor( onlineLabel->foregroundRole(), Qt::red );
+    // onlinePalette.setColor( onlineLabel->foregroundRole(), Qt::green );
+    // offlinePalette.setColor( onlineLabel->foregroundRole(), Qt::red );
+    onlinePalette.setColor( onlineLabel->foregroundRole(), ProjectConst::onlineColor );
+    offlinePalette.setColor( onlineLabel->foregroundRole(), ProjectConst::offlineColor );
     onlineLabel->setIndent( 25 );
     this->statusBar()->addWidget( onlineLabel.get(), 250 );
     onlineLabel->setPalette( offlinePalette );
@@ -261,7 +263,7 @@ namespace spx
       //
       connect( spx42Config.get(), &SPX42Config::licenseChangedSig, this, &SPX42ControlMainWin::onLicenseChangedSlot );
       //
-      // onölinestatus wurde geändert
+      // onlinestatus wurde geändert
       //
       connect( remoteSPX42.get(), &SPX42RemotBtDevice::onStateChangedSig, this, &SPX42ControlMainWin::onOnlineStatusChangedSlot );
 #ifdef DEBUG

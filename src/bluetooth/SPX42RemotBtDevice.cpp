@@ -201,7 +201,8 @@ namespace spx
         //
         sendQueue.clear();
         recQueue.clear();
-        sendTimer.start();
+        if ( !sendTimer.isActive() )
+          sendTimer.start();
         emit onStateChangedSig( state );
         lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <ConnectedState>" );
         break;
