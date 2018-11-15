@@ -237,30 +237,9 @@ namespace spx
       {
         case SPX42CommandDef::SPX_APPLICATION_ID:
           lg->debug( "ConnectFragment::onDatagramRecivedSlot -> firmwareversion..." );
-          //
-          // DEBUG:
-          //
-          value = spxCommands->getParameter( 1 );
-          if ( ProjectConst::FIRMWARE_2_6x.exactMatch( value ) )
-            lg->debug( "ConnectFragment::onDatagramRecivedSlot -> firmware 2.6.x" );
-          // jetzt die 2.7er Versionen
-          else if ( ProjectConst::FIRMWARE_2_7_V_R83x.exactMatch( value ) )
-            lg->debug( "ConnectFragment::onDatagramRecivedSlot -> firmware 2.7_V R83x" );
-          // exakt die 2.7.Hr83
-          else if ( ProjectConst::FIRMWARE_2_7_H_r83x.exactMatch( value ) )
-            lg->debug( "ConnectFragment::onDatagramRecivedSlot -> firmware 2.7_H R83x" );
-          // oder unbestimmte 2.7H
-          else if ( ProjectConst::FIRMWARE_2_7_Hx.exactMatch( value ) )
-            lg->debug( "ConnectFragment::onDatagramRecivedSlot -> firmware 2.7_Hx" );
-          // oder allgemein eine 2.7x Version
-          else if ( ProjectConst::FIRMWARE_2_7x.exactMatch( value ) )
-            lg->debug( "ConnectFragment::onDatagramRecivedSlot -> firmware 2.7x" );
-          else
-            lg->debug( "ConnectFragment::onDatagramRecivedSlot -> firmware UNKNOWN" );
-          //
-          // DEBUG:
-          //
-          spxConfig->setSpxFirmwareVersion( datagram );
+          // Setzte die Version in die Config
+          spxConfig->setSpxFirmwareVersion( spxCommands->getParameter( 1 ) );
+          // Geht das Datum zu setzen?
           if ( spxConfig->getCanSetDate() )
           {
             // ja der kann das Datum online setzten

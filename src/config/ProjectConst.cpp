@@ -11,7 +11,7 @@ namespace spx
   const QRegExp ProjectConst::FIRMWARE_2_7x{"V2\\.7_V.*"};
   const QRegExp ProjectConst::FIRMWARE_2_7_V_R83x{"V2\\.7_V r83.*"};
   const QRegExp ProjectConst::FIRMWARE_2_7_Hx{"V2\\.7_?H.*"};
-  const QRegExp ProjectConst::FIRMWARE_2_7_H_r83x{"V2\\.7_?H r83.*"};
+  const QRegExp ProjectConst::FIRMWARE_2_7_H_R83x{"V2\\.7_?H r83.*"};
 
   //
   // Einfache Konstanten

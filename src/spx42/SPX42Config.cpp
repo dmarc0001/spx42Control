@@ -75,6 +75,9 @@ namespace spx
     isOldParamSorting = false;
     isNewerDisplayBrightness = false;
     isSixMetersAutoSetpoint = false;
+    //
+    // jetzt unterscheiden wer was kann
+    //
     switch ( static_cast< qint8 >( value ) )
     {
       case static_cast< qint8 >( SPX42FirmwareVersions::FIRMWARE_UNKNOWN ):
@@ -82,7 +85,6 @@ namespace spx
         break;
       case static_cast< qint8 >( SPX42FirmwareVersions::FIRMWARE_2_6x ):
         // eine Firmware 2.6x -> gaaaanz alt
-
         isFirmwareSupported = true;
         hasFahrenheidBug = true;
         isOldParamSorting = true;
@@ -108,7 +110,7 @@ namespace spx
         hasFahrenheidBug = false;
         canSetDate = false;
         break;
-      case static_cast< qint8 >( SPX42FirmwareVersions::FIRMWARE_2_7_H_r83 ):
+      case static_cast< qint8 >( SPX42FirmwareVersions::FIRMWARE_2_7_H_R83x ):
         // Build 197
         isFirmwareSupported = true;
         hasFahrenheidBug = false;
@@ -135,11 +137,12 @@ namespace spx
     if ( ProjectConst::FIRMWARE_2_6x.exactMatch( value ) )
       setSpxFirmwareVersion( SPX42FirmwareVersions::FIRMWARE_2_6x );
     // jetzt die 2.7er Versionen
+    // exakt die 2.7.H,r83
+    else if ( ProjectConst::FIRMWARE_2_7_H_R83x.exactMatch( value ) )
+      setSpxFirmwareVersion( SPX42FirmwareVersions::FIRMWARE_2_7_H_R83x );
+    // oder 2.7.V.r83
     else if ( ProjectConst::FIRMWARE_2_7_V_R83x.exactMatch( value ) )
       setSpxFirmwareVersion( SPX42FirmwareVersions::FIRMWARE_2_7_V_R83x );
-    // exakt die 2.7.Hr83
-    else if ( ProjectConst::FIRMWARE_2_7_H_r83x.exactMatch( value ) )
-      setSpxFirmwareVersion( SPX42FirmwareVersions::FIRMWARE_2_7_H_r83 );
     // oder unbestimmte 2.7H
     else if ( ProjectConst::FIRMWARE_2_7_Hx.exactMatch( value ) )
       setSpxFirmwareVersion( SPX42FirmwareVersions::FIRMWARE_2_7_Hx );

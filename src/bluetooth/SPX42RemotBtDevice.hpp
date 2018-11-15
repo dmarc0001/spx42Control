@@ -14,6 +14,8 @@
 
 namespace spx
 {
+  constexpr int SEND_TIMERVAL = 90;
+
   class SPX42RemotBtDevice : public QObject
   {
     Q_OBJECT

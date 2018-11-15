@@ -61,7 +61,7 @@ namespace spx
     cmd.append( "~" );
     code.append( &SPX42CommandDef::SPX_DATETIME, 1 );
     cmd.append( code.toHex() );
-    cmd.append( nowDateTime.toString( ":hh:mm:dd:MM:YY" ).toLatin1() );
+    cmd.append( nowDateTime.toString( ":hh:mm:dd:MM:yy" ).toLatin1() );
     cmd.append( &SPX42CommandDef::ETX, 1 );
     return ( cmd );
   }

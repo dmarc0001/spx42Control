@@ -28,7 +28,7 @@ namespace spx
     static const QRegExp FIRMWARE_2_7x;
     static const QRegExp FIRMWARE_2_7_V_R83x;
     static const QRegExp FIRMWARE_2_7_Hx;
-    static const QRegExp FIRMWARE_2_7_H_r83x;
+    static const QRegExp FIRMWARE_2_7_H_R83x;
 
     //###########################################################################
     //#### Einfache Konstanten                                               ####
