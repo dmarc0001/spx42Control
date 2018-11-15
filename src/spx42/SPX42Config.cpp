@@ -9,6 +9,7 @@ namespace spx
       : QObject( Q_NULLPTR )
       , sendSignals( true )
       , isValid( false )
+      , spxFirmwareVersion( SPX42FirmwareVersions::FIRMWARE_UNKNOWN )
       , serialNumber()
       , currentPreset()
       , decoDynamicGradient()
@@ -26,6 +27,13 @@ namespace spx
       , individualAcustic()
       , individualLogInterval()
       , individualTempStick()
+      , hasFahrenheidBug( true )
+      , canSetDate( false )
+      , hasSixValuesIndividual( false )
+      , isFirmwareSupported( false )
+      , isOldParamSorting( false )
+      , isNewerDisplayBrightness( false )
+      , isSixMetersAutoSetpoint( false )
   {
     reset();
     // connect( &spxLicense, &SPX42License::licenseChangedPrivateSig, this, &SPX42Config::licenseChangedPrivateSlot );
@@ -38,6 +46,107 @@ namespace spx
     decoPresets.insert( static_cast< int >( DecompressionPreset::DECO_KEY_AGRESSIVE ), ProjectConst::DECO_VAL_AGRESSIVE );
     decoPresets.insert( static_cast< int >( DecompressionPreset::DECO_KEY_V_AGRESSIVE ), ProjectConst::DECO_VAL_V_AGRESSIVE );
     decoPresets.insert( static_cast< int >( DecompressionPreset::DECO_KEY_CUSTOM ), ProjectConst::DECO_VAL_CUSTOM );
+  }
+
+  /**
+   * @brief SPX42Config::getSpxFirmwareVersion
+   * @return
+   */
+  SPX42FirmwareVersions SPX42Config::getSpxFirmwareVersion() const
+  {
+    return spxFirmwareVersion;
+  }
+
+  /**
+   * @brief SPX42Config::setSpxFirmwareVersion
+   * @param value
+   */
+  void SPX42Config::setSpxFirmwareVersion( SPX42FirmwareVersions value )
+  {
+    //
+    // setzte den Versionswert und setzte Kompatibilitätswerte
+    //
+    spxFirmwareVersion = value;
+    // Voreinstellung für den schlimmsten Fall
+    isFirmwareSupported = false;
+    hasFahrenheidBug = true;
+    canSetDate = false;
+    hasSixValuesIndividual = false;
+    isOldParamSorting = false;
+    isNewerDisplayBrightness = false;
+    isSixMetersAutoSetpoint = false;
+    switch ( static_cast< qint8 >( value ) )
+    {
+      case static_cast< qint8 >( SPX42FirmwareVersions::FIRMWARE_UNKNOWN ):
+        // der schlimmste Fall :-(
+        break;
+      case static_cast< qint8 >( SPX42FirmwareVersions::FIRMWARE_2_6x ):
+        // eine Firmware 2.6x -> gaaaanz alt
+        isFirmwareSupported = true;
+        hasFahrenheidBug = true;
+        isOldParamSorting = true;
+        break;
+      case static_cast< qint8 >( SPX42FirmwareVersions::FIRMWARE_2_7x ):
+        // unbestimmte Firmware 2.7xxxx
+        isFirmwareSupported = true;
+        hasFahrenheidBug = false;
+        canSetDate = false;
+        hasSixValuesIndividual = false;
+        break;
+      case static_cast< qint8 >( SPX42FirmwareVersions::FIRMWARE_2_7_V_R83x ):
+        isFirmwareSupported = true;
+        // Build 198
+        hasFahrenheidBug = false;
+        canSetDate = true;
+        hasSixValuesIndividual = true;
+        isNewerDisplayBrightness = true;
+        isSixMetersAutoSetpoint = true;
+        break;
+      case static_cast< qint8 >( SPX42FirmwareVersions::FIRMWARE_2_7_Hx ):
+        isFirmwareSupported = true;
+        hasFahrenheidBug = false;
+        canSetDate = false;
+        break;
+      case static_cast< qint8 >( SPX42FirmwareVersions::FIRMWARE_2_7_H_r83 ):
+        // Build 197
+        isFirmwareSupported = true;
+        hasFahrenheidBug = false;
+        canSetDate = true;
+        hasSixValuesIndividual = true;
+        isNewerDisplayBrightness = true;
+        isSixMetersAutoSetpoint = true;
+        break;
+    }
+  }
+
+  /**
+   * @brief SPX42Config::setSpxFirmwareVersion
+   * @param value
+   * TODO: neue Firmwareversionen hier einfügen
+   */
+  void SPX42Config::setSpxFirmwareVersion( const QString &value )
+  {
+    //
+    // vergleiche die im Programm unterstützten Versionen und setzte
+    // dann alle Kompatibilitätswerte
+    // Reihenfolge ist wichtig, da Suche vom Speziellen zum Allgmeinen läuft
+    //
+    if ( ProjectConst::FIRMWARE_2_6x.exactMatch( value ) )
+      setSpxFirmwareVersion( SPX42FirmwareVersions::FIRMWARE_2_6x );
+    // jetzt die 2.7er Versionen
+    else if ( ProjectConst::FIRMWARE_2_7_V_R83x.exactMatch( value ) )
+      setSpxFirmwareVersion( SPX42FirmwareVersions::FIRMWARE_2_7_V_R83x );
+    // exakt die 2.7.Hr83
+    else if ( ProjectConst::FIRMWARE_2_7_H_r83.exactMatch( value ) )
+      setSpxFirmwareVersion( SPX42FirmwareVersions::FIRMWARE_2_7_H_r83 );
+    // oder unbestimmte 2.7H
+    else if ( ProjectConst::FIRMWARE_2_7_Hx.exactMatch( value ) )
+      setSpxFirmwareVersion( SPX42FirmwareVersions::FIRMWARE_2_7_Hx );
+    // oder allgemein eine 2.7x Version
+    else if ( ProjectConst::FIRMWARE_2_7x.exactMatch( value ) )
+      setSpxFirmwareVersion( SPX42FirmwareVersions::FIRMWARE_2_7x );
+    else
+      setSpxFirmwareVersion( SPX42FirmwareVersions::FIRMWARE_UNKNOWN );
   }
 
   /**
@@ -681,6 +790,69 @@ namespace spx
         emit individualTempstickChangedSig( individualTempStick );
       }
     }
+  }
+
+  /**
+   * @brief SPX42Config::getHasFahrenheidBug
+   * @return
+   */
+  bool SPX42Config::getHasFahrenheidBug() const
+  {
+    return hasFahrenheidBug;
+  }
+
+  /**
+   * @brief SPX42Config::getCanSetDate
+   * @return
+   */
+  bool SPX42Config::getCanSetDate() const
+  {
+    return canSetDate;
+  }
+
+  /**
+   * @brief SPX42Config::getHasSixValuesIndividual
+   * @return
+   */
+  bool SPX42Config::getHasSixValuesIndividual() const
+  {
+    return hasSixValuesIndividual;
+  }
+
+  /**
+   * @brief SPX42Config::getIsFirmwareSupported
+   * @return
+   */
+  bool SPX42Config::getIsFirmwareSupported() const
+  {
+    return isFirmwareSupported;
+  }
+
+  /**
+   * @brief SPX42Config::getIsOldParamSorting
+   * @return
+   */
+  bool SPX42Config::getIsOldParamSorting() const
+  {
+    return isOldParamSorting;
+  }
+
+  /**
+   * @brief SPX42Config::getIsNewerDisplayBrightness
+   * @return
+   */
+  bool SPX42Config::getIsNewerDisplayBrightness() const
+  {
+    return isNewerDisplayBrightness;
+  }
+
+  /**
+   * @brief SPX42Config::getIsSixMetersAutoSetpoint
+   * @return
+   */
+  bool SPX42Config::getIsSixMetersAutoSetpoint() const
+  {
+    return isSixMetersAutoSetpoint;
   }
 
 }  // namespace spx

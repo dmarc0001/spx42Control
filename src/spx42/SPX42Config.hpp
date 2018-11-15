@@ -6,9 +6,9 @@
 #include <QString>
 #include <QtGlobal>
 
-#include "../config/ProjectConst.hpp"
-#include "../config/SPX42Defs.hpp"
 #include "SPX42Gas.hpp"
+#include "config/ProjectConst.hpp"
+#include "spx42/SPX42Defs.hpp"
 
 namespace spx
 {
@@ -16,33 +16,36 @@ namespace spx
   {
     private:
     Q_OBJECT
-    volatile bool sendSignals;  //! sollen beim stzen von Eigenschaften Signale gesendet werden?
-    bool isValid;               //! Ist das Objekt gültig?
-    SPX42License spxLicense;    //! SPX42 Lizenz
-    QString serialNumber;       //! Seriennummer des aktuellen SPX42
-    SPX42Gas gasList[ 8 ];      //! Gasliste des aktuellen SPX42
-    // DEKOMPRESSIONSEINSTELLUNGEN
-    DecompressionPreset currentPreset;                 //! Aktueller Typ der Dekompressionsgradienten
-    DecoGradientHash decoPresets;                      //! Hashliste der DECO-Presets (incl. CUSTOM == variabel)
-    DecompressionDynamicGradient decoDynamicGradient;  //! dynamische Gradienten erlaubt
-    DecompressionDeepstops decoDeepstopsEnabled;       //! sind deepstops erlaubt/an
-    // DISPLAYEINSTELLUNGEN
-    DisplayBrightness displayBrightness;    //! Display Helligkeit
-    DisplayOrientation displayOrientation;  //! Ausrichtung des Displays
-    // EINHEITEN
-    DeviceTemperaturUnit unitTemperature;  //! Einheit der Tempteratur
-    DeviceLenghtUnit unitLength;           //! Einheit der Länge (metrisch/imperial)
-    DeviceWaterType unitWaterType;         //! Typ des Wassers des SPX42
-    // SETPOINT
-    DeviceSetpointAuto setpointAuto;    //! in welcher Tiefe soll der Setpoint eingestellt werden
-    DeviceSetpointValue setpointValue;  //! welcher PPO2 soll eingestellt sein
-    // INDIVIDUAL
+    volatile bool sendSignals;                          //! sollen beim stzen von Eigenschaften Signale gesendet werden?
+    bool isValid;                                       //! Ist das Objekt gültig?
+    SPX42FirmwareVersions spxFirmwareVersion;           //! welche Firmwareversion?
+    SPX42License spxLicense;                            //! SPX42 Lizenz
+    QString serialNumber;                               //! Seriennummer des aktuellen SPX42
+    SPX42Gas gasList[ 8 ];                              //! Gasliste des aktuellen SPX42
+    DecompressionPreset currentPreset;                  //! Aktueller Typ der Dekompressionsgradienten
+    DecoGradientHash decoPresets;                       //! Hashliste der DECO-Presets (incl. CUSTOM == variabel)
+    DecompressionDynamicGradient decoDynamicGradient;   //! dynamische Gradienten erlaubt
+    DecompressionDeepstops decoDeepstopsEnabled;        //! sind deepstops erlaubt/an
+    DisplayBrightness displayBrightness;                //! Display Helligkeit
+    DisplayOrientation displayOrientation;              //! Ausrichtung des Displays
+    DeviceTemperaturUnit unitTemperature;               //! Einheit der Tempteratur
+    DeviceLenghtUnit unitLength;                        //! Einheit der Länge (metrisch/imperial)
+    DeviceWaterType unitWaterType;                      //! Typ des Wassers des SPX42
+    DeviceSetpointAuto setpointAuto;                    //! in welcher Tiefe soll der Setpoint eingestellt werden
+    DeviceSetpointValue setpointValue;                  //! welcher PPO2 soll eingestellt sein
     DeviceIndividualSensors individualSensorsOn;        //! sind die Sensoren generell AN/AUS
     DeviceIndividualPSCR individualPSCROn;              //! Ist der SPX im PSCR Mode?
     DeviceIndividualSensorCount individualSensorCount;  //! wie viele Sensoren im SPX42 aktiv
     DeviceIndividualAcoustic individualAcustic;         //! sollen akustische Warnunge ausggeben werden
     DeviceIndividualLogInterval individualLogInterval;  //! welches Interval zum loggen
     DeviceIndividualTempstick individualTempStick;      //! welcher Tempstick wird genutzt?
+    bool hasFahrenheidBug;                              //! bug bei der darstellung
+    bool canSetDate;                                    //! kann diese Version das Datum setzten?
+    bool hasSixValuesIndividual;                        //! beiindividual anzehl der Werte
+    bool isFirmwareSupported;                           //! wird diese Firmware von der Software unterstützt
+    bool isOldParamSorting;                             //! alte Versionen haben andre Reihenfolge der Parameter
+    bool isNewerDisplayBrightness;                      //! neue Version Helligkeit
+    bool isSixMetersAutoSetpoint;                       //! Autosetpoint bei 5 oder 6 Meter
 
     public:
     SPX42Config();                                     //! Der Konstruktor
@@ -54,7 +57,6 @@ namespace spx
     void reset( void );                                //! Resetiere das Objekt
     QString getSerialNumber( void ) const;             //! Seriennummer des aktuellen SPX42 zurückgeben
     void setSerialNumber( const QString &serial );     //! Seriennumemr des aktuellen SPX42 speichern
-    // DEKOMPRESSIONSEINSTELLUNGEN
     void setCurrentPreset( DecompressionPreset presetType,
                            qint8 low = 0,
                            qint8 high = 0 );  //! Aktuelle Gradienteneinstellungen merken
@@ -68,24 +70,20 @@ namespace spx
     void setIsDecoDynamicGradients( DecompressionDynamicGradient isEnabled );  //! setze dynamische Gradienten an/aus
     DecompressionDeepstops getIstDeepstopsEnabled( void );                     //! gibt die Einstellung für deep stops zurück
     void setIsDeepstopsEnabled( DecompressionDeepstops isEnabled );            //! setze deppstop enabled an/aus
-    // DISPLAYEINSTELLUNGEN
-    DisplayBrightness getDisplayBrightness( void );                //! Wie hell ist das Display?
-    void setDisplayBrightness( DisplayBrightness brightness );     //! Setze die Displayhelligkeit
-    DisplayOrientation getDisplayOrientation( void );              //! wie ist die Display Ausrichtung?
-    void setDisplayOrientation( DisplayOrientation orientation );  //! Setzte die Displayausrichtung
-    // EINHEITEN
-    DeviceTemperaturUnit getUnitsTemperatur( void );        //! Welche Temperatureinheit dat das Gerät
-    void setUnitsTemperatur( DeviceTemperaturUnit tUnit );  //! Setzte die Temperatureinheit des SPX42
-    DeviceLenghtUnit getUnitsLength( void );                //! Welche Längeneinheit nutzt das Gerät
-    void setUnitsLength( DeviceLenghtUnit lUnit );          //! Setzte die Temperatureinheit
-    DeviceWaterType getUnitsWaterType( void );              //! Welchen Wassertyp hat das Gerät eingestellt
-    void setUnitsWaterType( DeviceWaterType wUnit );        //! Setzte den Wassertyp
-    // SETPOINT
-    DeviceSetpointAuto getSetpointAuto( void );            //! Welchen Autosetpoint nutz das Gerät (Tiefe)
-    void setSetpointAuto( DeviceSetpointAuto aSetpoint );  //! setzte den Autosetpoint
-    DeviceSetpointValue getSetpointValue( void );          //! Welchen PPO2 benutzt der SPX42
-    void setSetpointValue( DeviceSetpointValue ppo2 );     //! setzte den Setpoint
-    // INDIVIDUAL
+    DisplayBrightness getDisplayBrightness( void );                            //! Wie hell ist das Display?
+    void setDisplayBrightness( DisplayBrightness brightness );                 //! Setze die Displayhelligkeit
+    DisplayOrientation getDisplayOrientation( void );                          //! wie ist die Display Ausrichtung?
+    void setDisplayOrientation( DisplayOrientation orientation );              //! Setzte die Displayausrichtung
+    DeviceTemperaturUnit getUnitsTemperatur( void );                           //! Welche Temperatureinheit dat das Gerät
+    void setUnitsTemperatur( DeviceTemperaturUnit tUnit );                     //! Setzte die Temperatureinheit des SPX42
+    DeviceLenghtUnit getUnitsLength( void );                                   //! Welche Längeneinheit nutzt das Gerät
+    void setUnitsLength( DeviceLenghtUnit lUnit );                             //! Setzte die Temperatureinheit
+    DeviceWaterType getUnitsWaterType( void );                                 //! Welchen Wassertyp hat das Gerät eingestellt
+    void setUnitsWaterType( DeviceWaterType wUnit );                           //! Setzte den Wassertyp
+    DeviceSetpointAuto getSetpointAuto( void );                                //! Welchen Autosetpoint nutz das Gerät (Tiefe)
+    void setSetpointAuto( DeviceSetpointAuto aSetpoint );                      //! setzte den Autosetpoint
+    DeviceSetpointValue getSetpointValue( void );                              //! Welchen PPO2 benutzt der SPX42
+    void setSetpointValue( DeviceSetpointValue ppo2 );                         //! setzte den Setpoint
     DeviceIndividualSensors getIndividualSensorsOn( void );                    //! Sind die Sensoren an?
     void setIndividualSensorsOn( DeviceIndividualSensors onOff );              //! Setze Sensoren an/aus
     DeviceIndividualPSCR getIndividualPscrMode( void );                        //! ist der SPX im PSCR Modus
@@ -98,6 +96,24 @@ namespace spx
     void setIndividualLogInterval( DeviceIndividualLogInterval logInterval );  //! setze das Log interval
     DeviceIndividualTempstick getIndividualTempStick( void );                  //! welcher Temperatur Stick ist eingebaut?
     void setIndividualTempStick( DeviceIndividualTempstick tStick );           //! setze den eingebauten TemperaturStick
+    SPX42FirmwareVersions getSpxFirmwareVersion() const;                       //! gibt die Version der Firmware als enum zurück
+    void setSpxFirmwareVersion( SPX42FirmwareVersions value );                 //! setzt die Firmwareversion
+    void setSpxFirmwareVersion( const QString &value );                        //! setzt die Firmwareversion
+
+    bool getHasFahrenheidBug() const;
+
+    bool getCanSetDate() const;
+
+    bool getHasSixValuesIndividual() const;
+
+    bool getIsFirmwareSupported() const;
+
+    bool getIsOldParamSorting() const;
+
+    bool getIsNewerDisplayBrightness() const;
+
+    bool getIsSixMetersAutoSetpoint() const;
+
     private slots:
     // void licenseChangedPrivateSlot( SPX42License& lic );
 
