@@ -110,7 +110,6 @@ FORMS                   += \
     src/ui/Spx42ControlMainWin.ui \
     src/ui/AboutDialog.ui \
     src/ui/GasFragment.ui \
-    src/ui/ConnectFragment.ui \
     src/ui/LogFragment.ui \
     src/ui/DeviceConfigFragment.ui \
     src/ui/ChartsFragment.ui \

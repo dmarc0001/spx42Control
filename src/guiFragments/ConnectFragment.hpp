@@ -30,6 +30,7 @@ namespace spx
     QString errMsg;                                   //! Fehlermeldungen BT Connection
     std::unique_ptr< BtDiscoverObject > discoverObj;  //! Objekt zum Discovern der Geräte
     SPXDeviceList spx42Devices;                       //! Liste mit gefundenen SPX42
+    QString fragmentTitlePattern;                     //! das Muster (lokalisierungsfähig) für Fragmentüberschrift
 
     public:
     explicit ConnectFragment( QWidget *parent,
@@ -60,6 +61,7 @@ namespace spx
     void onCurrentIndexChangedSlot( int index );                      //! Dropdown box: Auswahl geändert
     void onDiscoveredDeviceSlot( const SPXDeviceDescr &deviceInfo );  //! wurde ein neues gerät gefunden...
     void onDiscoverScanFinishedSlot( void );                          //! wenn das discovering abgeschlossen ist
+    void onDatagramRecivedSlot( void );                               // wenn ein Datentelegramm empfangen wurde
   };
 }
 #endif  // CONNECTFORM_HPP

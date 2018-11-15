@@ -40,12 +40,20 @@ namespace spx
     // Signalisierung vom verbundenen SPX
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onStateChangedSig, this, &ConnectFragment::onOnlineStatusChangedSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onSocketErrorSig, this, &ConnectFragment::onSocketErrorSlot );
+    connect( remoteSPX42.get(), &SPX42RemotBtDevice::onDatagramRecivedSig, this, &ConnectFragment::onDatagramRecivedSlot );
     //
     // setzte den Connectionsstatus
     //
     setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
     // nach 200 ms discover starten
     QTimer::singleShot( 200, this, [=]() { this->onDiscoverButtonSlot(); } );
+    //
+    // Fragmenttitel Musterstring erzeugen
+    //
+    fragmentTitlePattern = tr( "CONNECTSTATE SPX42 Serial [%1] LIC: %1" );
+    //
+    // und sogleich den Titel setzen
+    ui->tabHeaderLabel->setText( fragmentTitlePattern.arg( "-" ).arg( "?" ) );
   }
 
   ConnectFragment::~ConnectFragment()
@@ -210,6 +218,11 @@ namespace spx
     lg->debug( QString( "ConnectFragment::onCurrentIndexChangedSlot -> index changed to <%1>. addr: <%2>" )
                    .arg( index, 2, 10, QChar( '0' ) )
                    .arg( ui->deviceComboBox->itemData( index ).toString() ) );
+  }
+
+  void ConnectFragment::onDatagramRecivedSlot()
+  {
+    lg->debug( "ConnectFragment::onDatagramRecivedSlot..." );
   }
 
   // ##########################################################################

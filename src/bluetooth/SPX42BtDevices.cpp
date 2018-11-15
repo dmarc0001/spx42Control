@@ -4,7 +4,7 @@
 namespace spx
 {
   SPX42BtDevices::SPX42BtDevices( std::shared_ptr< Logger > logger, QObject *parent )
-      : QObject( parent ), lg( logger ), deviceDiscoverFinished( true )
+      : QObject( parent ), lg( logger ), deviceDiscoverFinished( true ), exp( ProjectConst::searchedServiceRegex )
   {
     lg->debug( "SPX42BtDevices::SPX42BtDevices..." );
     currentServiceScanDevice.clear();
@@ -213,7 +213,8 @@ namespace spx
     //
     QString raddrStr = raddr.toString();
     //
-    if ( ProjectConst::SPX42ServiceUuid == info.serviceUuid() )
+
+    if ( ProjectConst::SPX42ServiceUuid == info.serviceUuid() || ( exp.indexIn( info.serviceName() ) > -1 ) )
     {
       //
       // also erst mal ist das Gerät schon mal mit dem passenden Service vorhanden
@@ -228,9 +229,7 @@ namespace spx
         //
         // Das Gerät ist bereits vorhanden, dann ignoriere es
         //
-        lg->debug( QString( "SPX42BtDevices::onDiscoveredServiceSlot: device: %1, service: %2 always present. Ignore." )
-                       .arg( raddr.toString() )
-                       .arg( info.serviceName() ) );
+        lg->debug( QString( "SPX42BtDevices::onDiscoveredServiceSlot: device: %1 always present. Ignore." ).arg( raddr.toString() ) );
       }
       else
       {

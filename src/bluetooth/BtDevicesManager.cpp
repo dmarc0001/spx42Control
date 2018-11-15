@@ -35,9 +35,10 @@ namespace spx
     //
     connect( localDevice.get(), &QBluetoothLocalDevice::hostModeStateChanged, this,
              [=]( QBluetoothLocalDevice::HostMode mode ) { emit onDeviceHostModeStateChangedSig( mode ); } );
-    connect(
-        localDevice.get(), &QBluetoothLocalDevice::pairingFinished, this,
-        [=]( const QBluetoothAddress &addr, QBluetoothLocalDevice::Pairing pairing ) { emit onDevicePairingDoneSig( addr, pairing ); } );
+    connect( localDevice.get(), &QBluetoothLocalDevice::pairingFinished, this,
+             [=]( const QBluetoothAddress &addr, QBluetoothLocalDevice::Pairing pairing ) {
+               emit onDevicePairingDoneSig( addr, pairing );
+             } );
     //
     lg->debug( "BtDevices::BtDevices: connect signals...OK" );
   }
@@ -48,9 +49,12 @@ namespace spx
   BtDevicesManager::~BtDevicesManager()
   {
     lg->debug( "BtLocalDevicesManager::~BtLocalDevicesManager..." );
+    // lösche Signale
+    disconnect( discoveryAgent.get(), nullptr, nullptr, nullptr );
+    disconnect( localDevice.get(), nullptr, this, nullptr );
   }
 
-  void BtDevicesManager::init( )
+  void BtDevicesManager::init()
   {
     //
     // ereignis für hostmode einmal ausführen
@@ -58,17 +62,17 @@ namespace spx
     emit onDeviceHostModeStateChangedSig( localDevice->hostMode() );
   }
 
-  void BtDevicesManager::startDiscoverDevices( )
+  void BtDevicesManager::startDiscoverDevices()
   {
     discoveryAgent->start();
   }
 
-  void BtDevicesManager::cancelDiscoverDevices( )
+  void BtDevicesManager::cancelDiscoverDevices()
   {
     discoveryAgent->stop();
   }
 
-  const QBluetoothLocalDevice *BtDevicesManager::getLocalDevice( )
+  const QBluetoothLocalDevice *BtDevicesManager::getLocalDevice()
   {
     return ( localDevice.get() );
   }

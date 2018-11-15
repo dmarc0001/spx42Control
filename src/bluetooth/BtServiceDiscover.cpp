@@ -10,7 +10,7 @@ namespace spx
                                         QBluetoothAddress &l_addr,
                                         QBluetoothAddress &r_addr,
                                         QObject *parent )
-      : QObject( parent ), lg(std::move( logger )), laddr( l_addr ), raddr( r_addr ), servicesCount( 0 ), expression( ".*" )
+      : QObject( parent ), lg( std::move( logger ) ), laddr( l_addr ), raddr( r_addr ), servicesCount( 0 ), expression( ".*" )
   {
     //
     // default Bluetooth adapter
@@ -41,6 +41,8 @@ namespace spx
   BtServiceDiscover::~BtServiceDiscover()
   {
     lg->debug( "BtServiceDiscover::~BtServiceDiscover..." );
+    // sämtliche Verbindungen kappen...
+    disconnect( discoveryAgent.get(), nullptr, nullptr, nullptr );
   }
 
   bool BtServiceDiscover::setServiceFilter( const QString &expr )
@@ -52,12 +54,12 @@ namespace spx
     return ( false );
   }
 
-  void BtServiceDiscover::resetServiceFilter( )
+  void BtServiceDiscover::resetServiceFilter()
   {
     expression.setPattern( ".*" );
   }
 
-  void BtServiceDiscover::start( )
+  void BtServiceDiscover::start()
   {
     //
     // starte das suchen nach Services
@@ -65,12 +67,12 @@ namespace spx
     discoveryAgent->start();
   }
 
-  void BtServiceDiscover::cancelDiscover( )
+  void BtServiceDiscover::cancelDiscover()
   {
     discoveryAgent->stop();
   }
 
-  int BtServiceDiscover::servicesDiscovered( )
+  int BtServiceDiscover::servicesDiscovered()
   {
     return ( servicesCount );
   }
