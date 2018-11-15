@@ -100,19 +100,13 @@ namespace spx
     SPX42FirmwareVersions getSpxFirmwareVersion() const;                       //! gibt die Version der Firmware als enum zurück
     void setSpxFirmwareVersion( SPX42FirmwareVersions value );                 //! setzt die Firmwareversion
     void setSpxFirmwareVersion( const QString &value );                        //! setzt die Firmwareversion
-
+    void setSpxFirmwareVersion( const QByteArray &value );                     //! setzt die Firmwareversion
     bool getHasFahrenheidBug() const;
-
     bool getCanSetDate() const;
-
     bool getHasSixValuesIndividual() const;
-
     bool getIsFirmwareSupported() const;
-
     bool getIsOldParamSorting() const;
-
     bool getIsNewerDisplayBrightness() const;
-
     bool getIsSixMetersAutoSetpoint() const;
 
     private slots:

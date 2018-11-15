@@ -1,6 +1,7 @@
 ﻿#ifndef CONNECTFORM_HPP
 #define CONNECTFORM_HPP
 
+#include <QDateTime>
 #include <QPair>
 #include <QTimer>
 #include <QWidget>

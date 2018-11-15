@@ -82,6 +82,7 @@ namespace spx
         break;
       case static_cast< qint8 >( SPX42FirmwareVersions::FIRMWARE_2_6x ):
         // eine Firmware 2.6x -> gaaaanz alt
+
         isFirmwareSupported = true;
         hasFahrenheidBug = true;
         isOldParamSorting = true;
@@ -137,7 +138,7 @@ namespace spx
     else if ( ProjectConst::FIRMWARE_2_7_V_R83x.exactMatch( value ) )
       setSpxFirmwareVersion( SPX42FirmwareVersions::FIRMWARE_2_7_V_R83x );
     // exakt die 2.7.Hr83
-    else if ( ProjectConst::FIRMWARE_2_7_H_r83.exactMatch( value ) )
+    else if ( ProjectConst::FIRMWARE_2_7_H_r83x.exactMatch( value ) )
       setSpxFirmwareVersion( SPX42FirmwareVersions::FIRMWARE_2_7_H_r83 );
     // oder unbestimmte 2.7H
     else if ( ProjectConst::FIRMWARE_2_7_Hx.exactMatch( value ) )
@@ -147,6 +148,16 @@ namespace spx
       setSpxFirmwareVersion( SPX42FirmwareVersions::FIRMWARE_2_7x );
     else
       setSpxFirmwareVersion( SPX42FirmwareVersions::FIRMWARE_UNKNOWN );
+  }
+
+  /**
+   * @brief SPX42Config::setSpxFirmwareVersion
+   * @param value
+   */
+  void SPX42Config::setSpxFirmwareVersion( const QByteArray &value )
+  {
+    QString versionString( value );
+    setSpxFirmwareVersion( versionString );
   }
 
   /**
@@ -190,6 +201,11 @@ namespace spx
     }
   }
 
+  /**
+   * @brief SPX42Config::setLicense
+   * @param lic
+   * @param ind
+   */
   void SPX42Config::setLicense( const QByteArray &lic, const QByteArray &ind )
   {
     // Kommando SPX_LICENSE_STATE

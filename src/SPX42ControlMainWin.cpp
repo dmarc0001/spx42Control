@@ -537,7 +537,7 @@ namespace spx
       if ( --zyclusCounter < 0 )
       {
         zyclusCounter = 6;
-        QByteArray sendCommand = spx42Commands->sendAliveSignal();
+        QByteArray sendCommand = spx42Commands->aksForAliveSignal();
 #ifdef DEBUG
         lg->debug( "SPX42ControlMainWin::onWatchdogTimerSlot -> send cmd alive..." );
 #endif
@@ -685,28 +685,28 @@ namespace spx
         //
         // Frage nach dem Hersteller
         //
-        QByteArray sendCommand = spx42Commands->sendManufacturers();
+        QByteArray sendCommand = spx42Commands->askForManufacturers();
         lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd manufacturer..." );
         remoteSPX42->sendCommand( sendCommand );
         lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd manufacturer...OK" );
         //
         // gleich danach Frage nach der Seriennummer
         //
-        sendCommand = spx42Commands->sendSerialNumber();
+        sendCommand = spx42Commands->askForSerialNumber();
         lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd serialnumber..." );
         remoteSPX42->sendCommand( sendCommand );
         lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd serialnumber...OK" );
         //
         // und dann noch Frage nach der Firmwareversion
         //
-        sendCommand = spx42Commands->sendFirmwareVersion();
+        sendCommand = spx42Commands->askForFirmwareVersion();
         lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd firmwareversion..." );
         remoteSPX42->sendCommand( sendCommand );
         lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd firmwareversion...OK" );
         //
         // und lizenz nicht vergessen
         //
-        sendCommand = spx42Commands->sendLicenseState();
+        sendCommand = spx42Commands->askForLicenseState();
         lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd license status..." );
         remoteSPX42->sendCommand( sendCommand );
         lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd license status...OK" );

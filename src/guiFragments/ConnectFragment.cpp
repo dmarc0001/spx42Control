@@ -222,6 +222,8 @@ namespace spx
   {
     QByteArray datagram;
     char kdo;
+    QDateTime nowDateTime;
+    QByteArray value;
     //
     lg->debug( "ConnectFragment::onDatagramRecivedSlot..." );
     //
@@ -233,13 +235,47 @@ namespace spx
       kdo = spxCommands->decodeCommand( datagram );
       switch ( kdo )
       {
+        case SPX42CommandDef::SPX_APPLICATION_ID:
+          lg->debug( "ConnectFragment::onDatagramRecivedSlot -> firmwareversion..." );
+          //
+          // DEBUG:
+          //
+          value = spxCommands->getParameter( 1 );
+          if ( ProjectConst::FIRMWARE_2_6x.exactMatch( value ) )
+            lg->debug( "ConnectFragment::onDatagramRecivedSlot -> firmware 2.6.x" );
+          // jetzt die 2.7er Versionen
+          else if ( ProjectConst::FIRMWARE_2_7_V_R83x.exactMatch( value ) )
+            lg->debug( "ConnectFragment::onDatagramRecivedSlot -> firmware 2.7_V R83x" );
+          // exakt die 2.7.Hr83
+          else if ( ProjectConst::FIRMWARE_2_7_H_r83x.exactMatch( value ) )
+            lg->debug( "ConnectFragment::onDatagramRecivedSlot -> firmware 2.7_H R83x" );
+          // oder unbestimmte 2.7H
+          else if ( ProjectConst::FIRMWARE_2_7_Hx.exactMatch( value ) )
+            lg->debug( "ConnectFragment::onDatagramRecivedSlot -> firmware 2.7_Hx" );
+          // oder allgemein eine 2.7x Version
+          else if ( ProjectConst::FIRMWARE_2_7x.exactMatch( value ) )
+            lg->debug( "ConnectFragment::onDatagramRecivedSlot -> firmware 2.7x" );
+          else
+            lg->debug( "ConnectFragment::onDatagramRecivedSlot -> firmware UNKNOWN" );
+          //
+          // DEBUG:
+          //
+          spxConfig->setSpxFirmwareVersion( datagram );
+          if ( spxConfig->getCanSetDate() )
+          {
+            // ja der kann das Datum online setzten
+            nowDateTime = QDateTime::currentDateTime();
+            // sende das Datum an den SPX
+            remoteSPX42->sendCommand( spxCommands->setDateTime( nowDateTime ) );
+          }
+          break;
         case SPX42CommandDef::SPX_SERIAL_NUMBER:
+          lg->debug( "ConnectFragment::onDatagramRecivedSlot -> serialnumber..." );
           spxConfig->setSerialNumber( spxCommands->getParameter( 1 ) );
           setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
           break;
         case SPX42CommandDef::SPX_LICENSE_STATE:
-          lg->debug(
-              QString( "################# LIC: %1 ###########################" ).arg( QString( spxCommands->getParameter( 1 ) ) ) );
+          lg->debug( "ConnectFragment::onDatagramRecivedSlot -> license state..." );
           spxConfig->setLicense( spxCommands->getParameter( 1 ), spxCommands->getParameter( 2 ) );
           setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
           break;
@@ -249,10 +285,6 @@ namespace spx
       //
       QCoreApplication::processEvents();
     }
-
-    //
-    // auf welche will ich reagieren?
-    //
   }
 
   // ##########################################################################

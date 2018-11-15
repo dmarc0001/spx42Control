@@ -20,33 +20,49 @@ namespace spx
     cmd.append( &SPX42CommandDef::ETX, 1 );
   }
 
-  QByteArray &SPX42Commands::sendManufacturers()
+  QByteArray &SPX42Commands::askForManufacturers()
   {
     makeSipleCommand( SPX42CommandDef::SPX_MANUFACTURERS );
     return ( cmd );
   }
 
-  QByteArray &SPX42Commands::sendSerialNumber()
+  QByteArray &SPX42Commands::askForSerialNumber()
   {
     makeSipleCommand( SPX42CommandDef::SPX_SERIAL_NUMBER );
     return ( cmd );
   }
 
-  QByteArray &SPX42Commands::sendAliveSignal()
+  QByteArray &SPX42Commands::aksForAliveSignal()
   {
     makeSipleCommand( SPX42CommandDef::SPX_ALIVE );
     return ( cmd );
   }
 
-  QByteArray &SPX42Commands::sendFirmwareVersion()
+  QByteArray &SPX42Commands::askForFirmwareVersion()
   {
     makeSipleCommand( SPX42CommandDef::SPX_APPLICATION_ID );
     return ( cmd );
   }
 
-  QByteArray &SPX42Commands::sendLicenseState()
+  QByteArray &SPX42Commands::askForLicenseState()
   {
     makeSipleCommand( SPX42CommandDef::SPX_LICENSE_STATE );
+    return ( cmd );
+  }
+
+  QByteArray &SPX42Commands::setDateTime( const QDateTime &nowDateTime )
+  {
+    //
+    // kann der SPX das überhaupt? Das klärt der Caller!
+    //
+    QByteArray code;
+    cmd.clear();
+    cmd.append( &SPX42CommandDef::STX, 1 );
+    cmd.append( "~" );
+    code.append( &SPX42CommandDef::SPX_DATETIME, 1 );
+    cmd.append( code.toHex() );
+    cmd.append( nowDateTime.toString( ":hh:mm:dd:MM:YY" ).toLatin1() );
+    cmd.append( &SPX42CommandDef::ETX, 1 );
     return ( cmd );
   }
 
