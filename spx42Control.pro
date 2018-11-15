@@ -49,7 +49,7 @@ build_pass:CONFIG(debug, debug|release) {
 }
 
 SOURCES                 += \
-    src/Spx42ControlMainWin.cpp \
+    src/SPX42ControlMainWin.cpp \
     src/ControlMain.cpp \
     src/config/AppConfigClass.cpp \
     src/config/ProjectConst.cpp \
@@ -57,36 +57,36 @@ SOURCES                 += \
     src/utils/AboutDialog.cpp \
     src/guiFragments/ConnectFragment.cpp \
     src/guiFragments/GasFragment.cpp \
-    src/utils/SPX42Config.cpp \
-    src/utils/SPX42Gas.cpp \
+    src/spx42/SPX42Config.cpp \
+    src/spx42/SPX42Gas.cpp \
     src/guiFragments/IFragmentInterface.cpp \
     src/guiFragments/DeviceConfigFragment.cpp \
-    src/config/SPX42Defs.cpp \
+    src/spx42/SPX42Defs.cpp \
     src/guiFragments/LogFragment.cpp \
     src/utils/IDataSeriesGenerator.cpp \
     src/utils/DebugDataSeriesGenerator.cpp \
     src/utils/DiveDataSeriesGenerator.cpp \
     src/guiFragments/ChartsFragment.cpp \
-    src/spx42/Spx42Commands.cpp \
-    src/spx42/SpxCommandDef.cpp \
     src/bluetooth/BtDevicesManager.cpp \
     src/bluetooth/BtServiceDiscover.cpp \
     src/bluetooth/SPX42BtDevices.cpp \
     src/database/SPX42Database.cpp \
     src/bluetooth/SPX42RemotBtDevice.cpp \
-    src/bluetooth/BtDiscoverObject.cpp
+    src/bluetooth/BtDiscoverObject.cpp \
+    src/spx42/SPX42Commands.cpp \
+    src/spx42/SPXCommandDef.cpp
 
 HEADERS                 += \
-    src/Spx42ControlMainWin.hpp \
+    src/SPX42ControlMainWin.hpp \
     src/config/AppConfigClass.hpp \
     src/config/ProjectConst.hpp \
     src/logging/Logger.hpp \
     src/utils/AboutDialog.hpp \
     src/guiFragments/ConnectFragment.hpp \
     src/guiFragments/GasFragment.hpp \
-    src/utils/SPX42Config.hpp \
-    src/utils/SPX42Gas.hpp \
-    src/config/SPX42Defs.hpp \
+    src/spx42/SPX42Config.hpp \
+    src/spx42/SPX42Gas.hpp \
+    src/spx42/SPX42Defs.hpp \
     src/guiFragments/IFragmentInterface.hpp \
     src/guiFragments/DeviceConfigFragment.hpp \
     src/guiFragments/LogFragment.hpp \
@@ -95,8 +95,7 @@ HEADERS                 += \
     src/utils/DebugDataSeriesGenerator.hpp \
     src/utils/DiveDataSeriesGenerator.hpp \
     src/guiFragments/ChartsFragment.hpp \
-    src/spx42/Spx42Commands.hpp \
-    src/spx42/SpxCommandDef.hpp \
+    src/spx42/SPX42Commands.hpp \
     src/bluetooth/BtDevicesManager.hpp \
     src/bluetooth/BtServiceDiscover.hpp \
     src/bluetooth/SPX42BtDevices.hpp \
@@ -104,10 +103,11 @@ HEADERS                 += \
     src/config/currBuildDef.hpp \
     src/bluetooth/SPX42RemotBtDevice.hpp \
     src/bluetooth/BtDiscoverObject.hpp \
-    src/bluetooth/BtTypes.hpp
+    src/bluetooth/BtTypes.hpp \
+    src/spx42/SPX42CommandDef.hpp
 
 FORMS                   += \
-    src/ui/Spx42ControlMainWin.ui \
+    src/ui/SPX42ControlMainWin.ui \
     src/ui/AboutDialog.ui \
     src/ui/GasFragment.ui \
     src/ui/LogFragment.ui \
@@ -116,10 +116,10 @@ FORMS                   += \
     src/ui/ConnectFragment.ui
 
 RESOURCES               = \
-    src/res/Spx42ControlRes.qrc
+    src/res/SPX42ControlRes.qrc
 
 TRANSLATIONS            = \
-    src/translations/Spx42Control_de_DE.ts
+    src/translations/SPX42Control_de_DE.ts
 
 DISTFILES               += \
     src/res/spx42Control.css \
