@@ -3,64 +3,57 @@
 
 namespace spx
 {
-  struct SPX42CommandDef
+  namespace SPX42CommandDef
   {
-    //
-    // Kommunikation mit SPX42
-    // Frame Kapselung
-    //
-    static const char STX;  //! Beginn einer PDU
-    static const char ETX;  //! Ende einer PDU
-    static const char CR;   //! CR -> 0d
-    static const char LF;   //! CR -> 0a
-    //
-    // Kommandonummern für SPX-Kommandos
-    //
-    static const char SPX_MANUFACTURERS;              //! Gerätekennung *uploader*
-    static const char SPX_FACTORY_NUMBER;             //! ??
-    static const char SPX_ALIVE;                      //! Akkuspannung und Alive *uploader*
-    static const char SPX_APPLICATION_ID;             //! Firmwareversion des SPX *uploader*
-    static const char SPX_DEV_IDENTIFIER;             //!?
-    static const char SPX_DEVSOFTVERSION;             //! ???
-    static const char SPX_SERIAL_NUMBER;              //! Seriennummer des SPX *uploader*
-    static const char SPX_SER1_FROM_SER0;             //! ???
-    static const char SPX_DATETIME;                   //! Datum und Zeit setzen...
-    static const char SPX_DATE_OSOLETE;               //! erledigt
-    static const char SPX_TEMPSTICK;                  //! TEMPSTICK Version
-    static const char SPX_HUD;                        //! HUD Status senden
-    static const char SPX_UBAT;                       //! UBAT anfordern auswerten
-    static const char SPX_IO_STATUS;                  //! ???
-    static const char SPX_CAL_CO2;                    //! CO2 Kalibrierung
-    static const char SPX_CAL_CO2_IS_CALIBRATED;      //! CO2 Flag ob kalibriert wurde
-    static const char SPX_DEBUG_DEPTH;                //! ??
-    static const char SPX_SET_SETUP_DEKO;             //! setzen der Dekodaten
-    static const char SPX_SET_SETUP_SETPOINT;         //! Einstellung des Setpoints
-    static const char SPX_SET_SETUP_DISPLAYSETTINGS;  //! Displayeinstellungen setzen
-    static const char SPX_SET_SETUP_UNITS;            //! Einheiten setzen
-    static const char SPX_SET_SETUP_INDIVIDUAL;       //! Individualsettings
-    static const char SPX_GET_SETUP_DEKO;             //! Dekodaten senden
-    static const char SPX_GET_SETUP_SETPOINT;         //! Setpointdaten senden
-    static const char SPX_GET_SETUP_DISPLAYSETTINGS;  //! Displayeinstellungen senden
-    static const char SPX_GET_SETUP_UNITS;            //! Einheiten senden
-    static const char SPX_GET_SETUP_INDIVIDUAL;       //! Individualeinstellungen senden
-    static const char SPX_GET_SETUP_GASLIST;          //! Gasliste senden
-    static const char SPX_SET_SETUP_GASLIST;          //! Gasliste setzen
-    static const char SPX_GET_LOG_INDEX;              //! Logbuch index senden
-    static const char SPX_GET_LOG_NUMBER;             //! Logbuch senden
-    static const char SPX_GET_LOG_NUMBER_SE;          //! Logbuch senden START/ENDE
-    static const char SPX_GET_DEVICE_OFF;             //! Flag ob Device aus den Syncmode gegangen ist
-    static const char SPX_SEND_FILE;                  //! Sende ein File
-    static const char SPX_LICENSE_STATE;              //! Lizenz Status zurückgeben!
-    static const char SPX_GET_LIC_STATUS;             //! Lizenzstatus senden
-    static const char SPX_GET_LOG_NUMBER_DETAIL;      //! Logdatei senden
-    static const char SPX_GET_LOG_NUMBER_DETAIL_OK;   //! Logdatei senden OK/ENDE
-    static const char SPX_SHUTDOWN;                   //! Schaltet den SPX nach UPLOAD aus *upload*
-    static const char SPX_START_YMODEM;               //! starte YMODEM *upload*
-    static const char SPX_START_FW_PROGRAMM;          //! programmieren starten *upload*
-    static const char SPX_START_EXEC_ADDR;            //! startet ab angegebener Addr *upload*
-    static const char SPX_SET_UPDATE_ADDR;            //! setzt die Addr, ab wlcher das Update geschrieben wird *upload*
-    static const char SPX_CHECK_UPLOADED_FILE;        //! gibt die übertragene Datei als Hexdump aus *upload*
-  };
+    constexpr char STX{0x02};                            //! Start Char
+    constexpr char ETX{0x03};                            //! Ende Char
+    constexpr char CR{0x0d};                             //! Cardridge return
+    constexpr char LF{0x0a};                             //! Line Feed
+    constexpr char SPX_MANUFACTURERS{0x01};              //! Gerätekennung *uploader*
+    constexpr char SPX_FACTORY_NUMBER{0x02};             //! ?
+    constexpr char SPX_ALIVE{0x03};                      //! Akkuspannung und Alive *uploader*
+    constexpr char SPX_APPLICATION_ID{0x04};             //! Firmwareversion des SPX *uploader*
+    constexpr char SPX_DEV_IDENTIFIER{0x05};             //! ?
+    constexpr char SPX_DEVSOFTVERSION{0x06};             //! ?
+    constexpr char SPX_SERIAL_NUMBER{0x07};              //! Seriennummer des SPX *uploader*
+    constexpr char SPX_SER1_FROM_SER0{0x08};             //! ?
+    constexpr char SPX_DATETIME{0x20};                   //! Datum und Zeit setzen...
+    constexpr char SPX_DATE_OSOLETE{0x21};               //! erledigt
+    constexpr char SPX_TEMPSTICK{0x22};                  //! ?
+    constexpr char SPX_HUD{0x23};                        //! HUD Status senden
+    constexpr char SPX_UBAT{0x24};                       //! UBAT anfordern auswerten
+    constexpr char SPX_IO_STATUS{0x25};                  //! ?
+    constexpr char SPX_CAL_CO2{0x25};                    //! CO2 Kalibrierung
+    constexpr char SPX_CAL_CO2_IS_CALIBRATED{0x27};      //! CO2 Flag ob kalibriert wurde
+    constexpr char SPX_DEBUG_DEPTH{0x28};                //! ?
+    constexpr char SPX_SET_SETUP_DEKO{0x29};             //! Bluetoothkommunikation, setzen der Dekodaten
+    constexpr char SPX_SET_SETUP_SETPOINT{0x30};         //! Einstellung des Setpoints
+    constexpr char SPX_SET_SETUP_DISPLAYSETTINGS{0x31};  //! Displayeinstellungen setzen
+    constexpr char SPX_SET_SETUP_UNITS{0x32};            //! Einheiten setzen
+    constexpr char SPX_SET_SETUP_INDIVIDUAL{0x33};       //! Individualsettings
+    constexpr char SPX_GET_SETUP_DEKO{0x34};             //! Dekodaten senden
+    constexpr char SPX_GET_SETUP_SETPOINT{0x35};         //! Setpointdaten senden
+    constexpr char SPX_GET_SETUP_DISPLAYSETTINGS{0x36};  //! Displayeinstellungen senden
+    constexpr char SPX_GET_SETUP_UNITS{0x37};            //! Einheiten senden
+    constexpr char SPX_GET_SETUP_INDIVIDUAL{0x38};       //! Individualeinstellungen senden
+    constexpr char SPX_GET_SETUP_GASLIST{0x39};          //! Gasliste senden
+    constexpr char SPX_SET_SETUP_GASLIST{0x40};          //! Gasliste setzen
+    constexpr char SPX_GET_LOG_INDEX{0x41};              //! Logbuch index senden
+    constexpr char SPX_GET_LOG_NUMBER{0x42};             //! Logbuch senden
+    constexpr char SPX_GET_LOG_NUMBER_SE{0x43};          //! Logbuch senden START/ENDE
+    constexpr char SPX_GET_DEVICE_OFF{0x44};             //! Flag ob Device aus den Syncmode gegangen ist
+    constexpr char SPX_SEND_FILE{0x45};                  //! Sende ein File
+    constexpr char SPX_LICENSE_STATE{0x45};              //! Lizenz Status zurückgeben!
+    constexpr char SPX_GET_LIC_STATUS{0x46};             //! Lizenzstatus senden
+    constexpr char SPX_GET_LOG_NUMBER_DETAIL{0x47};      //! Logdatei senden
+    constexpr char SPX_GET_LOG_NUMBER_DETAIL_OK{0x48};   //! Logdatei senden OK/ENDE
+    constexpr char SPX_SHUTDOWN{0x66};                   //! Schaltet den SPX nach UPLOAD aus *upload*
+    constexpr char SPX_START_YMODEM{0x67};               //! starte YMODEM *upload*
+    constexpr char SPX_START_FW_PROGRAMM{0x68};          //! programmieren starten *upload*
+    constexpr char SPX_START_EXEC_ADDR{0x69};            //! startet ab angegebener Addr *upload*
+    constexpr char SPX_SET_UPDATE_ADDR{0x6a};            //! setzt die Addr, ab wlcher das Update geschrieben wird *upload*
+    constexpr char SPX_CHECK_UPLOADED_FILE{0x6b};        //! gibt die übertragene Datei als Hexdump aus *upload*
+  }
 }
 
 #endif  // SPXCOMMANDDEF_HPP
