@@ -15,9 +15,10 @@ namespace spx
       , btUuiid( ProjectConst::RFCommUUID )
       , remoteAddr()
       , wasSocketError( false )
+      , ignoreTimer( false )
   {
     // das interval des Teimer auf 80 ms setzten
-    sendTimer.setInterval( 80 );
+    sendTimer.setInterval( SEND_TIMERVAL );
     //
     // verbinde das Timerevent mit der Senderoutine
     //
@@ -334,13 +335,19 @@ namespace spx
    */
   void SPX42RemotBtDevice::onSendSocketTimerSlot()
   {
+    if ( ignoreTimer )
+      return;
     if ( ( socket != nullptr ) && ( socket->state() == QBluetoothSocket::ConnectedState ) && !sendQueue.isEmpty() )
     {
+      ignoreTimer = true;
       QByteArray telegram( sendQueue.dequeue() );
 #ifdef DEBUG
       lg->debug( QString( "SPX42RemotBtDevice::onSendSocketTimerSlot -> send telegram <%1>..." ).arg( QString( telegram ) ) );
 #endif
       socket->write( telegram );
+      // Wartezeit startet neu
+      sendTimer.start();
+      ignoreTimer = false;
     }
   }
 }

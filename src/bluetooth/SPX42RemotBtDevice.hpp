@@ -37,6 +37,7 @@ namespace spx
     QBluetoothAddress remoteAddr;    //! die MAC des gegenübers
     QByteArray recBuffer;            //! empfangspuffer für Telegramme
     bool wasSocketError;             //! gab es einen Socketfehler?
+    bool ignoreTimer;                //! während des Sendens ignorieren
 
     public:
     explicit SPX42RemotBtDevice( std::shared_ptr< Logger > logger, QObject *parent = nullptr );
