@@ -8,14 +8,7 @@ namespace spx
    * @param parent
    */
   SPX42RemotBtDevice::SPX42RemotBtDevice( std::shared_ptr< Logger > logger, QObject *parent )
-      : QObject( parent )
-      , lg( logger )
-      , sendTimer( parent )
-      , sendQueue()
-      , recQueue()
-      , socket( nullptr )
-      , btUuiid( ProjectConst::RFCommUUID )
-      , remoteAddr()
+      : QObject( parent ), lg( logger ), sendTimer( parent ), socket( nullptr ), btUuiid( ProjectConst::RFCommUUID ), remoteAddr()
   {
     // das interval des Teimer auf 80 ms setzten
     sendTimer.setInterval( 80 );
@@ -93,7 +86,7 @@ namespace spx
   /**
    * @brief SPX42RemotBtDevice::endConnection
    */
-  void SPX42RemotBtDevice::endConnection( void )
+  void SPX42RemotBtDevice::endConnection()
   {
     lg->debug( "SPX42RemotBtDevice::endConnection -> try to disconnect bluethoot connection..." );
     if ( socket != nullptr )
@@ -146,6 +139,22 @@ namespace spx
       default:
         return ( SPX42RemotBtDevice::SPX42_ERROR );
     }
+  }
+
+  /**
+   * @brief SPX42RemotBtDevice::getNextDatagram
+   * @param array
+   * @return  dequeue erfolgreich?
+   */
+  bool SPX42RemotBtDevice::getNextDatagram( QByteArray &array )
+  {
+    array.clear();
+    // ist was zum zurückschicken da?
+    if ( recQueue.isEmpty() )
+      return ( false );
+    // ja es gibt da was, gib das zurück!
+    array.append( recQueue.dequeue() );
+    return ( true );
   }
 
   void SPX42RemotBtDevice::onSocketErrorSlot( QBluetoothSocket::SocketError error )
@@ -244,7 +253,7 @@ namespace spx
       // Datagramme suchen und extraieren...
       //
       int idxOfETX = -1;
-      int idxOfSTX = recBuffer.indexOf( SpxCommandDef::STX );
+      int idxOfSTX = recBuffer.indexOf( SPX42CommandDef::STX );
       //
       // solange ein Anfang signalisiert ist, Datagramme extraieren
       //
@@ -260,7 +269,7 @@ namespace spx
         // jetzt ist STX das erste Zeichen
         idxOfSTX = 0;
         // gibt es das Ende?
-        idxOfETX = recBuffer.indexOf( SpxCommandDef::ETX );
+        idxOfETX = recBuffer.indexOf( SPX42CommandDef::ETX );
         if ( idxOfETX > -1 )
         {
           //
@@ -287,7 +296,7 @@ namespace spx
           //
           // neue Suche nach einem Anfang
           //
-          idxOfSTX = recBuffer.indexOf( SpxCommandDef::STX );
+          idxOfSTX = recBuffer.indexOf( SPX42CommandDef::STX );
         }
         else
         {

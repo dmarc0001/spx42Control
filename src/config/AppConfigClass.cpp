@@ -7,8 +7,8 @@
 
 namespace spx
 {
-  const QString AppConfigClass::constBuildDate{SPX_BUILDTIME};
-  const QString AppConfigClass::constBuildNumStr{SPX_BUILDCOUNT};
+  const QString AppConfigClass::constBuildDate{static_cast< const char * >( &SPX_BUILDTIME[ 0 ] )};
+  const QString AppConfigClass::constBuildNumStr{static_cast< const char * >( &SPX_BUILDCOUNT[ 0 ] )};
   const QString AppConfigClass::constLogGroupName{"logger"};
   const QString AppConfigClass::constLogFileKey{"logFileName"};
   const QString AppConfigClass::constNoData{"-"};
@@ -27,11 +27,15 @@ namespace spx
    * @brief LoggerClass::LoggerClass Der Konstruktor mit Name der Konfigdatei im Programmverzeichnis
    * @param cfg
    */
-  AppConfigClass::AppConfigClass( void ) : configFile( QApplication::applicationName() + ".ini" ), databasePath( defaultDatabasePath )
+  AppConfigClass::AppConfigClass()
+      : configFile( QApplication::applicationName() + ".ini" )
+      , watchdogTimer( 0 )
+      , logThreshold( 0 )
+      , databasePath( defaultDatabasePath )
   {
   }
 
-  AppConfigClass::~AppConfigClass( void )
+  AppConfigClass::~AppConfigClass()
   {
     qDebug().noquote() << "AppConfigClass::~AppConfigClass()";
     saveSettings();
@@ -41,7 +45,7 @@ namespace spx
    * @brief AppConfigClass::getConfigFile Gibt das konfigurierte CONFIG File zurück (aus loadSettings)
    * @return
    */
-  QString AppConfigClass::getConfigFile( void ) const
+  QString AppConfigClass::getConfigFile() const
   {
     return ( configFile );
   }
@@ -50,7 +54,7 @@ namespace spx
    * @brief LoggerClass::loadSettings Lade Einstellungen aus der Datei
    * @return
    */
-  bool AppConfigClass::loadSettings( void )
+  bool AppConfigClass::loadSettings()
   {
     qDebug().noquote() << "AppConfigClass::loadSettings(void) CONFIG: <" + configFile + ">";
     QSettings settings( configFile, QSettings::IniFormat );
@@ -90,7 +94,7 @@ namespace spx
    * @brief LoggerClass::saveSettings sichere Einstellunge in Datei
    * @return
    */
-  bool AppConfigClass::saveSettings( void )
+  bool AppConfigClass::saveSettings()
   {
     qDebug().noquote() << "AppConfigClass::saveSettings()";
     bool retVal = true;
@@ -121,7 +125,7 @@ namespace spx
    * @brief AppConfigClass::getLogfileName Gib den Namen der LOGDATEI zurück
    * @return
    */
-  QString AppConfigClass::getLogfileName( void ) const
+  QString AppConfigClass::getLogfileName() const
   {
     return logfileName;
   }
@@ -217,7 +221,7 @@ namespace spx
    ############################################################################
   ###########################################################################*/
 
-  int AppConfigClass::getWatchdogTime( void )
+  int AppConfigClass::getWatchdogTime()
   {
     return ( watchdogTimer );
   }
@@ -226,7 +230,7 @@ namespace spx
     logThreshold = th;
   }
 
-  qint8 AppConfigClass::getLogTreshold( void )
+  qint8 AppConfigClass::getLogTreshold()
   {
     return ( logThreshold );
   }
@@ -351,7 +355,7 @@ namespace spx
     databasePath = value;
   }
 
-  QString AppConfigClass::getFullDatabaseLocation( void ) const
+  QString AppConfigClass::getFullDatabaseLocation() const
   {
     // um korrekte Pfade zu erzeugen ein QFileobjekt
     QFile dbFile( QString().append( databasePath ).append( "/" ).append( databaseName ) );

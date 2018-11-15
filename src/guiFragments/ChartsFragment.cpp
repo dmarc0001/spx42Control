@@ -7,8 +7,9 @@ namespace spx
                                   std::shared_ptr< Logger > logger,
                                   std::shared_ptr< SPX42Database > spx42Database,
                                   std::shared_ptr< SPX42Config > spxCfg,
-                                  std::shared_ptr< SPX42RemotBtDevice > remSPX42 )
-      : QWidget( parent ), IFragmentInterface( logger, spx42Database, spxCfg, remSPX42 ), ui( new Ui::ChartsFragment )
+                                  std::shared_ptr< SPX42RemotBtDevice > remSPX42,
+                                  std::shared_ptr< SPX42Commands > spxCmds )
+      : QWidget( parent ), IFragmentInterface( logger, spx42Database, spxCfg, remSPX42, spxCmds ), ui( new Ui::ChartsFragment )
   {
     lg->debug( "ChartsFragment::ChartsFragment..." );
     ui->setupUi( this );
@@ -23,7 +24,7 @@ namespace spx
     deactivateTab();
   }
 
-  void ChartsFragment::deactivateTab( void )
+  void ChartsFragment::deactivateTab( )
   {
     disconnect( spxConfig.get(), nullptr, this, nullptr );
   }

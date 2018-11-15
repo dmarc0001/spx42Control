@@ -23,8 +23,8 @@
 #include "guiFragments/GasFragment.hpp"
 #include "guiFragments/LogFragment.hpp"
 #include "logging/Logger.hpp"
+#include "spx42/SPX42Commands.hpp"
 #include "spx42/SPX42Config.hpp"
-#include "spx42/Spx42Commands.hpp"
 #include "utils/AboutDialog.hpp"
 
 namespace Ui
@@ -46,11 +46,11 @@ namespace spx
     const std::shared_ptr< SPX42Config > spx42Config;   //! Konfiguration des verbundenen SPX42
     std::shared_ptr< SPX42RemotBtDevice > remoteSPX42;  //! Objekt des entfernten SPX42 (verbunden oder nicht verbunden)
     std::shared_ptr< SPX42Database > spx42Database;     //! Datenbankobjekt zur Speicherung der SPX Daten/Einstellungen
+    std::shared_ptr< SPX42Commands > spx42Commands;     //! erzeugen von Kommandotelegrams für den SPX42
     std::unique_ptr< QLabel > onlineLabel;              //! Label signalisiert online oder offline
     QStringList tabTitle;                               //! Tab Titel (nicht statisch, das Objekt gibts eh nur einmal)
     AppConfigClass cf;                                  //! Konfiguration aus Datei
     QTimer watchdog;                                    //! Wachhund für Timeouts
-    Spx42Commands spx42Commands;                        //! erzeugen von Kommandotelegrams für den SPX42
     ApplicationStat currentStatus;                      //! welchen Status hat die App?
     qint16 watchdogCounter;                             //! Zeitspanne zum Timeout
     qint16 zyclusCounter;                               //! zählt die Timerzyklen

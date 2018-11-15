@@ -28,9 +28,10 @@ namespace spx
                              std::shared_ptr< Logger > logger,
                              std::shared_ptr< SPX42Database > spx42Database,
                              std::shared_ptr< SPX42Config > spxCfg,
-                             std::shared_ptr< SPX42RemotBtDevice > remSPX42 );  //! Konstruktor
-    ~ChartsFragment() override;                                                 //! Destruktor, muss GUI säubern
-    virtual void deactivateTab( void ) override;                                //! deaktiviere eventuelle signale
+                             std::shared_ptr< SPX42RemotBtDevice > remSPX42,
+                             std::shared_ptr< SPX42Commands > spxCmds );  //! Konstruktor
+    ~ChartsFragment() override;                                           //! Destruktor, muss GUI säubern
+    virtual void deactivateTab( void ) override;                          //! deaktiviere eventuelle signale
 
     signals:
     void onWarningMessageSig( const QString &msg, bool asPopup = false ) override;  //! eine Warnmeldung soll das Main darstellen

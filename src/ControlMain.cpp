@@ -19,7 +19,7 @@ int main( int argc, char *argv[] )
   qDebug() << "searchFile: " << destPath + fileName + prefix + QLocale::system().name() + suffix;
   qDebug() << "Translation load: " << qtTranslator.load( QLocale::system().name(), fileName, prefix, destPath, suffix );
   qDebug() << "Tanslator isEmpty: " << qtTranslator.isEmpty();
-  app.installTranslator( &qtTranslator );
+  QApplication::installTranslator( &qtTranslator );
   //
   // Stylesheet laden, wenn vorhanden
   //
@@ -56,7 +56,7 @@ int main( int argc, char *argv[] )
   //
   // den eventloop starten
   //
-  int retcode = app.exec();
+  int retcode = QApplication::exec();
   qDebug() << "app ends with returncode <" << retcode << ">";
   return ( retcode );
 }

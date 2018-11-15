@@ -10,7 +10,7 @@
 #include "bluetooth/SPX42BtDevices.hpp"
 #include "config/ProjectConst.hpp"
 #include "logging/Logger.hpp"
-#include "spx42/SpxCommandDef.hpp"
+#include "spx42/SPX42CommandDef.hpp"
 
 namespace spx
 {
@@ -40,10 +40,11 @@ namespace spx
     public:
     explicit SPX42RemotBtDevice( std::shared_ptr< Logger > logger, QObject *parent = nullptr );
     ~SPX42RemotBtDevice();
-    void startConnection( const QString &mac );
-    void endConnection( void );
-    void sendCommand( const QByteArray &telegram );
-    SPX42ConnectStatus getConnectionStatus( void );
+    void startConnection( const QString &mac );      //! starte eine BT Verbindung
+    void endConnection( void );                      //! trenne die BT Verbindung
+    void sendCommand( const QByteArray &telegram );  //! sende ein Datagramm zum SPX42
+    SPX42ConnectStatus getConnectionStatus( void );  //! verbindungsstatus erfragen
+    bool getNextDatagram( QByteArray &array );       //! hole ein empfangenes Datagramm ab (oder leer)
 
     signals:
     void onStateChangedSig( QBluetoothSocket::SocketState state );  //! Signal, wenn Onlinestatus sich ändert

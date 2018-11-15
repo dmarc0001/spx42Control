@@ -2,17 +2,17 @@
 #define CONTROLMAIN_HPP
 
 #include <QApplication>
-#include <QTranslator>
-#include <QLibraryInfo>
-#include <QLocale>
 #include <QDebug>
 #include <QDir>
+#include <QLibraryInfo>
+#include <QLocale>
 #include <QRegularExpression>
+#include <QTranslator>
 
-#include "Spx42ControlMainWin.hpp"
+#include "SPX42ControlMainWin.hpp"
 
-int main(int argc, char *argv[]);
+int main( int argc, char *argv[] );
 
-bool readStylesheetFromFile(QApplication *app, QString& file );
+bool readStylesheetFromFile( QApplication *app, QString &file );
 
-#endif // CONTROLMAIN_HPP
+#endif  // CONTROLMAIN_HPP
