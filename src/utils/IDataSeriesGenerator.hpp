@@ -3,9 +3,9 @@
 
 #include <memory>
 
-#include "../config/SPX42Defs.hpp"
-#include "../logging/Logger.hpp"
-#include "../utils/SPX42Config.hpp"
+#include "config/SPX42Defs.hpp"
+#include "logging/Logger.hpp"
+#include "spx42/SPX42Config.hpp"
 
 #include <QtCharts>
 

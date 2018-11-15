@@ -57,8 +57,8 @@ SOURCES                 += \
     src/utils/AboutDialog.cpp \
     src/guiFragments/ConnectFragment.cpp \
     src/guiFragments/GasFragment.cpp \
-    src/utils/SPX42Config.cpp \
-    src/utils/SPX42Gas.cpp \
+    src/spx42/SPX42Config.cpp \
+    src/spx42/SPX42Gas.cpp \
     src/guiFragments/IFragmentInterface.cpp \
     src/guiFragments/DeviceConfigFragment.cpp \
     src/config/SPX42Defs.cpp \
@@ -84,8 +84,8 @@ HEADERS                 += \
     src/utils/AboutDialog.hpp \
     src/guiFragments/ConnectFragment.hpp \
     src/guiFragments/GasFragment.hpp \
-    src/utils/SPX42Config.hpp \
-    src/utils/SPX42Gas.hpp \
+    src/spx42/SPX42Config.hpp \
+    src/spx42/SPX42Gas.hpp \
     src/config/SPX42Defs.hpp \
     src/guiFragments/IFragmentInterface.hpp \
     src/guiFragments/DeviceConfigFragment.hpp \

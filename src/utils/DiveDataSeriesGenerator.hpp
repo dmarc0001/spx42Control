@@ -5,11 +5,11 @@
 
 #include <QtCharts>
 
-#include "../config/ProjectConst.hpp"
-#include "../config/SPX42Defs.hpp"
-#include "../logging/Logger.hpp"
-#include "../utils/SPX42Config.hpp"
 #include "IDataSeriesGenerator.hpp"
+#include "config/ProjectConst.hpp"
+#include "config/SPX42Defs.hpp"
+#include "logging/Logger.hpp"
+#include "spx42/SPX42Config.hpp"
 
 namespace spx
 {

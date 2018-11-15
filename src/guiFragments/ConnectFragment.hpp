@@ -11,7 +11,7 @@
 #include "bluetooth/SPX42RemotBtDevice.hpp"
 #include "database/SPX42Database.hpp"
 #include "logging/Logger.hpp"
-#include "utils/SPX42Config.hpp"
+#include "spx42/SPX42Config.hpp"
 
 namespace Ui
 {

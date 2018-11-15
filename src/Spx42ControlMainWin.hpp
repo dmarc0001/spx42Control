@@ -23,9 +23,9 @@
 #include "guiFragments/GasFragment.hpp"
 #include "guiFragments/LogFragment.hpp"
 #include "logging/Logger.hpp"
+#include "spx42/SPX42Config.hpp"
 #include "spx42/Spx42Commands.hpp"
 #include "utils/AboutDialog.hpp"
-#include "utils/SPX42Config.hpp"
 
 namespace Ui
 {

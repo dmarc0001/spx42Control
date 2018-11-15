@@ -15,11 +15,11 @@
 #include "config/SPX42Defs.hpp"
 #include "database/SPX42Database.hpp"
 #include "logging/Logger.hpp"
+#include "spx42/SPX42Config.hpp"
 #include "ui_LogFragment.h"
 #include "utils/DebugDataSeriesGenerator.hpp"
 #include "utils/DiveDataSeriesGenerator.hpp"
 #include "utils/IDataSeriesGenerator.hpp"
-#include "utils/SPX42Config.hpp"
 
 namespace Ui
 {
