@@ -57,6 +57,9 @@ namespace spx
     ApplicationTab currentTab;                          //! welcher Tab ist aktiv?
     QPalette offlinePalette;                            //! Pallette für offline Schrift
     QPalette onlinePalette;                             //! Pallette für offline Schrift
+    QPalette busyPalette;                               //! Pallette für "offline Schrift"ist beschäftigt"
+    QPalette connectingPalette;                         //! Pallette für verbinden
+    QPalette errorPalette;                              //! Pallette für den Fehlerfall
 
     public:
     explicit SPX42ControlMainWin( QWidget *parent = nullptr );

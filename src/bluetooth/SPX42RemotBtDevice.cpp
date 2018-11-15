@@ -8,7 +8,13 @@ namespace spx
    * @param parent
    */
   SPX42RemotBtDevice::SPX42RemotBtDevice( std::shared_ptr< Logger > logger, QObject *parent )
-      : QObject( parent ), lg( logger ), sendTimer( parent ), socket( nullptr ), btUuiid( ProjectConst::RFCommUUID ), remoteAddr()
+      : QObject( parent )
+      , lg( logger )
+      , sendTimer( parent )
+      , socket( nullptr )
+      , btUuiid( ProjectConst::RFCommUUID )
+      , remoteAddr()
+      , wasSocketError( false )
   {
     // das interval des Teimer auf 80 ms setzten
     sendTimer.setInterval( 80 );
@@ -128,6 +134,8 @@ namespace spx
     {
       case QBluetoothSocket::UnconnectedState:
       case QBluetoothSocket::ClosingState:
+        if ( wasSocketError )
+          return ( SPX42RemotBtDevice::SPX42_ERROR );
         return ( SPX42RemotBtDevice::SPX42_DISCONNECTED );
 
       case QBluetoothSocket::ConnectingState:
@@ -163,6 +171,7 @@ namespace spx
     // ein Fehler beim SOCKET trat auf
     //
     lg->warn( "SPX42RemotBtDevice::onSocketErrorSlot -> error while processing bt socket..." );
+    wasSocketError = true;
     emit onSocketErrorSig( error );
     //
     // debug...
@@ -207,7 +216,9 @@ namespace spx
       case QBluetoothSocket::ConnectedState:
         //
         // den Timer für die Sendequeue starten
+        // Voreinstellungen machen
         //
+        wasSocketError = false;
         sendQueue.clear();
         recQueue.clear();
         if ( !sendTimer.isActive() )

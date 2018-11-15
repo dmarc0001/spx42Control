@@ -19,6 +19,9 @@ namespace spx
       , currentTab()
       , offlinePalette( onlineLabel->palette() )
       , onlinePalette( onlineLabel->palette() )
+      , busyPalette( onlineLabel->palette() )
+      , connectingPalette( onlineLabel->palette() )
+      , errorPalette( onlineLabel->palette() )
   {
     //
     // Hilfebutton ausblenden
@@ -77,9 +80,9 @@ namespace spx
       setFont( QFont( "DejaVu Sans Mono", 12 ) );
 #endif
     }
-    //
-    // das folgende wird nur kompiliert, wenn DEBUG NICHT konfiguriert ist
-    //
+      //
+      // das folgende wird nur kompiliert, wenn DEBUG NICHT konfiguriert ist
+      //
 #ifndef DEBUG
     ui->menuDEBUGGING->clear();
     ui->menuDEBUGGING->setParent( Q_NULLPTR );
@@ -90,8 +93,11 @@ namespace spx
     //
     // onlinePalette.setColor( onlineLabel->foregroundRole(), Qt::green );
     // offlinePalette.setColor( onlineLabel->foregroundRole(), Qt::red );
-    onlinePalette.setColor( onlineLabel->foregroundRole(), ProjectConst::onlineColor );
-    offlinePalette.setColor( onlineLabel->foregroundRole(), ProjectConst::offlineColor );
+    onlinePalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_ONLINE );
+    busyPalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_BUSY );
+    offlinePalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_OFFLINE );
+    connectingPalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_CONNECTING );
+    errorPalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_ERROR );
     onlineLabel->setIndent( 25 );
     this->statusBar()->addWidget( onlineLabel.get(), 250 );
     onlineLabel->setPalette( offlinePalette );
@@ -459,29 +465,45 @@ namespace spx
     QString online;
     // ist die Kiste verbunden?
     QFont font = onlineLabel->font();
-    if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
+    //
+    // welcher Fall?
+    //
+    switch ( remoteSPX42->getConnectionStatus() )
     {
-      //
-      // verbunden darstellen
-      //
-      online = tr( "SPX42 ONLINE" );
-      onlineLabel->setText( tr( "SPX42 ONLINE" ) );
-      onlineLabel->setPalette( onlinePalette );
-      font.setBold( true );
-      onlineLabel->setFont( font );
+      case SPX42RemotBtDevice::SPX42_DISCONNECTED:
+      case SPX42RemotBtDevice::SPX42_DISCONNECTING:
+        //
+        // nicht verbunden darstellen
+        //
+        online = tr( "SPX42 OFFLINE" );
+        onlineLabel->setPalette( offlinePalette );
+        break;
+      case SPX42RemotBtDevice::SPX42_CONNECTED:
+        //
+        // verbunden darstellen
+        //
+        online = tr( "SPX42 ONLINE" );
+        onlineLabel->setPalette( onlinePalette );
+        break;
+      case SPX42RemotBtDevice::SPX42_CONNECTING:
+        //
+        // verbinden... darstellen
+        //
+        online = tr( "SPX42 CONNECTING" );
+        onlineLabel->setPalette( connectingPalette );
+        break;
+      case SPX42RemotBtDevice::SPX42_ERROR:
+        //
+        // FEHLER darstellen
+        //
+        online = tr( "SPX42 OFFLINE/ERROR" );
+        onlineLabel->setPalette( errorPalette );
+        break;
     }
-    else
-    {
-      //
-      // nicht verbunden darstellen
-      //
-      online = tr( "SPX42 OFFLINE" );
-      onlineLabel->setText( tr( "SPX42 OFFINE" ) );
-      onlineLabel->setPalette( offlinePalette );
-      font.setBold( false );
-      onlineLabel->setFont( font );
-    }
+    onlineLabel->setFont( font );
+    //
     // und, ist eine Meldung vorhanden?
+    //
     if ( !msg.isEmpty() )
     {
       onlineLabel->setText( QString( "%1 - %2" ).arg( online ).arg( msg ) );
@@ -641,32 +663,47 @@ namespace spx
     lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot" );
     setOnlineStatusMessage();
     //
-    // so, wenn der SPX onlöine ist immer als erstes ein paar Kommandos
-    // zum SPX42 schicken um ihn zu identifizieren
+    // was soll immer passieren
     //
-    if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
+    switch ( remoteSPX42->getConnectionStatus() )
     {
-      //
-      // Frage nach dem Hersteller
-      //
-      QByteArray sendCommand = spx42Commands->sendManufacturers();
-      lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd manufacturer..." );
-      remoteSPX42->sendCommand( sendCommand );
-      lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd manufacturer...OK" );
-      //
-      // gleich danach Frage nach der Seriennummer
-      //
-      sendCommand = spx42Commands->sendSerialNumber();
-      lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd serialnumber..." );
-      remoteSPX42->sendCommand( sendCommand );
-      lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd serialnumber...OK" );
-      //
-      // und dann noch Frage nach der Firmwareversion
-      //
-      sendCommand = spx42Commands->sendFirmwareVersion();
-      lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd firmwareversion..." );
-      remoteSPX42->sendCommand( sendCommand );
-      lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd firmwareversion...OK" );
+      case SPX42RemotBtDevice::SPX42_DISCONNECTED:
+      case SPX42RemotBtDevice::SPX42_DISCONNECTING:
+      case SPX42RemotBtDevice::SPX42_ERROR:
+        //
+        // config leeren
+        //
+        spx42Config->reset();
+        break;
+      case SPX42RemotBtDevice::SPX42_CONNECTING:
+        break;
+      case SPX42RemotBtDevice::SPX42_CONNECTED:
+        //
+        // so, wenn der SPX online ist immer als erstes ein paar Kommandos
+        // zum SPX42 schicken um ihn zu identifizieren
+        //
+        //
+        // Frage nach dem Hersteller
+        //
+        QByteArray sendCommand = spx42Commands->sendManufacturers();
+        lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd manufacturer..." );
+        remoteSPX42->sendCommand( sendCommand );
+        lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd manufacturer...OK" );
+        //
+        // gleich danach Frage nach der Seriennummer
+        //
+        sendCommand = spx42Commands->sendSerialNumber();
+        lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd serialnumber..." );
+        remoteSPX42->sendCommand( sendCommand );
+        lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd serialnumber...OK" );
+        //
+        // und dann noch Frage nach der Firmwareversion
+        //
+        sendCommand = spx42Commands->sendFirmwareVersion();
+        lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd firmwareversion..." );
+        remoteSPX42->sendCommand( sendCommand );
+        lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd firmwareversion...OK" );
+        break;
     }
   }
 

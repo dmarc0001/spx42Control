@@ -73,8 +73,7 @@ SOURCES                 += \
     src/database/SPX42Database.cpp \
     src/bluetooth/SPX42RemotBtDevice.cpp \
     src/bluetooth/BtDiscoverObject.cpp \
-    src/spx42/SPX42Commands.cpp \
-    src/spx42/SPXCommandDef.cpp
+    src/spx42/SPX42Commands.cpp
 
 HEADERS                 += \
     src/SPX42ControlMainWin.hpp \

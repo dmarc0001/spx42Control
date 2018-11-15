@@ -36,6 +36,7 @@ namespace spx
     const QBluetoothUuid btUuiid;    //! die Bluethooth UUID für RFCOMM
     QBluetoothAddress remoteAddr;    //! die MAC des gegenübers
     QByteArray recBuffer;            //! empfangspuffer für Telegramme
+    bool wasSocketError;             //! gab es einen Socketfehler?
 
     public:
     explicit SPX42RemotBtDevice( std::shared_ptr< Logger > logger, QObject *parent = nullptr );

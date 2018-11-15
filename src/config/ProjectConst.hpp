@@ -55,11 +55,11 @@ namespace spx
     //###########################################################################
     //#### member-Variable/Konstante                                         ####
     //###########################################################################
-    static const QColor offlineColor;
-    static const QColor onlineColor;
-    static const QColor connectingColor;
-    static const QColor workingColor;
-    static const QColor errorColor;
+    static const QColor COLOR_OFFLINE;
+    static const QColor COLOR_ONLINE;
+    static const QColor COLOR_CONNECTING;
+    static const QColor COLOR_BUSY;
+    static const QColor COLOR_ERROR;
   };
 
   //

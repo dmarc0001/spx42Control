@@ -43,18 +43,15 @@ namespace spx
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onSocketErrorSig, this, &ConnectFragment::onSocketErrorSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onDatagramRecivedSig, this, &ConnectFragment::onDatagramRecivedSlot );
     //
+    // Fragmenttitel Musterstring erzeugen
+    //
+    fragmentTitlePattern = tr( "CONNECTSTATE SPX42 Serial [%1] LIC: %2" );
+    //
     // setzte den Connectionsstatus
     //
     setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
     // nach 200 ms discover starten
     QTimer::singleShot( 200, this, [=]() { this->onDiscoverButtonSlot(); } );
-    //
-    // Fragmenttitel Musterstring erzeugen
-    //
-    fragmentTitlePattern = tr( "CONNECTSTATE SPX42 Serial [%1] LIC: %1" );
-    //
-    // und sogleich den Titel setzen
-    ui->tabHeaderLabel->setText( fragmentTitlePattern.arg( "-" ).arg( "?" ) );
   }
 
   ConnectFragment::~ConnectFragment()
@@ -63,7 +60,7 @@ namespace spx
     deactivateTab();
   }
 
-  void ConnectFragment::deactivateTab( )
+  void ConnectFragment::deactivateTab()
   {
     //
     // deaktiviere signale für reciver
@@ -106,7 +103,7 @@ namespace spx
 
   void ConnectFragment::onConfLicChangedSlot()
   {
-    // TODO was machen
+    setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
   }
 
   void ConnectFragment::onCloseDatabaseSlot()
@@ -207,7 +204,7 @@ namespace spx
     ui->deviceComboBox->addItem( title, addr );
   }
 
-  void ConnectFragment::onDiscoverScanFinishedSlot( )
+  void ConnectFragment::onDiscoverScanFinishedSlot()
   {
     lg->debug( "ConnectFragment::onDiscoverScanFinishedSlot-> discovering finished..." );
     ui->discoverPushButton->setEnabled( true );
@@ -224,6 +221,8 @@ namespace spx
   void ConnectFragment::onDatagramRecivedSlot()
   {
     QByteArray datagram;
+    char kdo;
+    //
     lg->debug( "ConnectFragment::onDatagramRecivedSlot..." );
     //
     // alle abholen...
@@ -231,7 +230,12 @@ namespace spx
     while ( remoteSPX42->getNextDatagram( datagram ) )
     {
       // ja, es gab ein Datagram zum abholen
-
+      kdo = spxCommands->decodeCommand( datagram );
+      switch ( kdo )
+      {
+        case SPX42CommandDef::SPX_SERIAL_NUMBER:
+          break;
+      }
       //
       // falls es mehr gibt, lass dem Rest der App auch eine Chance
       //
@@ -256,5 +260,7 @@ namespace spx
     ui->deviceComboBox->setEnabled( !isConnected );
     ui->propertyPushButton->setEnabled( !isConnected );
     ui->discoverPushButton->setEnabled( !isConnected );
+
+    ui->tabHeaderLabel->setText( fragmentTitlePattern.arg( spxConfig->getSerialNumber() ).arg( "?" ) );
   }
 }  // namespace spx
