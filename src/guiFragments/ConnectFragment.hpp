@@ -30,6 +30,7 @@ namespace spx
     QString errMsg;                                   //! Fehlermeldungen BT Connection
     std::unique_ptr< BtDiscoverObject > discoverObj;  //! Objekt zum Discovern der Geräte
     SPXDeviceList spx42Devices;                       //! Liste mit gefundenen SPX42
+    QString fragmentTitlePattern;                     //! das Muster (lokalisierungsfähig) für Fragmentüberschrift
 
     public:
     explicit ConnectFragment( QWidget *parent,

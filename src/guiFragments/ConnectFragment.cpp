@@ -47,6 +47,13 @@ namespace spx
     setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
     // nach 200 ms discover starten
     QTimer::singleShot( 200, this, [=]() { this->onDiscoverButtonSlot(); } );
+    //
+    // Fragmenttitel Musterstring erzeugen
+    //
+    fragmentTitlePattern = tr( "CONNECTSTATE SPX42 Serial [%1] LIC: %1" );
+    //
+    // und sogleich den Titel setzen
+    ui->tabHeaderLabel->setText( fragmentTitlePattern.arg( "-" ).arg( "?" ) );
   }
 
   ConnectFragment::~ConnectFragment()
