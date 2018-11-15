@@ -33,6 +33,7 @@ UI_DIR                                 = ui
 
 # %{CurrentProject:NativePath}/%{CurrentKit:FileSystemName}/%{CurrentBuild:Name}
 
+DEFINES += DEBUG
 # wenn debug in der config steht, die EXE auch so benennen
 build_pass:CONFIG(debug, debug|release) {
   DEFINES                              += DEBUG
