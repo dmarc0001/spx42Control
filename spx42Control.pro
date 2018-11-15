@@ -61,7 +61,7 @@ SOURCES                 += \
     src/spx42/SPX42Gas.cpp \
     src/guiFragments/IFragmentInterface.cpp \
     src/guiFragments/DeviceConfigFragment.cpp \
-    src/config/SPX42Defs.cpp \
+    src/spx42/SPX42Defs.cpp \
     src/guiFragments/LogFragment.cpp \
     src/utils/IDataSeriesGenerator.cpp \
     src/utils/DebugDataSeriesGenerator.cpp \
@@ -86,7 +86,7 @@ HEADERS                 += \
     src/guiFragments/GasFragment.hpp \
     src/spx42/SPX42Config.hpp \
     src/spx42/SPX42Gas.hpp \
-    src/config/SPX42Defs.hpp \
+    src/spx42/SPX42Defs.hpp \
     src/guiFragments/IFragmentInterface.hpp \
     src/guiFragments/DeviceConfigFragment.hpp \
     src/guiFragments/LogFragment.hpp \

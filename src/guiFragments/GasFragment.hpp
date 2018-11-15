@@ -13,10 +13,10 @@
 #include "IFragmentInterface.hpp"
 #include "bluetooth/SPX42RemotBtDevice.hpp"
 #include "config/ProjectConst.hpp"
-#include "config/SPX42Defs.hpp"
 #include "database/SPX42Database.hpp"
 #include "logging/Logger.hpp"
 #include "spx42/SPX42Config.hpp"
+#include "spx42/SPX42Defs.hpp"
 
 namespace Ui
 {

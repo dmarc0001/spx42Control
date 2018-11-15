@@ -6,6 +6,12 @@ namespace spx
   // Der Programmtitel
   //
   const QString ProjectConst::MAIN_TITLE{"SPX42 BT-Controller"};
+  // für Buggy Firmware, Temperatur-Lesen, Gradienten-Bug unterscheiden
+  const QRegExp ProjectConst::FIRMWARE_2_6x{"V2\\.6.*"};
+  const QRegExp ProjectConst::FIRMWARE_2_7x{"V2\\.7_V.*"};
+  const QRegExp ProjectConst::FIRMWARE_2_7_V_R83x{"V2\\.7_V r83.*"};
+  const QRegExp ProjectConst::FIRMWARE_2_7_Hx{"V2\\.7_?H.*"};
+  const QRegExp ProjectConst::FIRMWARE_2_7_H_r83{"V2\\.7_?H r83.*"};
 
   //
   // Einfache Konstanten

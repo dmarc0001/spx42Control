@@ -20,43 +20,43 @@ namespace spx
     cmd.append( &SpxCommandDef::ETX, 1 );
   }
 
-  QByteArray &Spx42Commands::sendManufacturers( )
+  QByteArray &Spx42Commands::sendManufacturers()
   {
     makeSipleCommand( SpxCommandDef::SPX_MANUFACTURERS );
     return ( cmd );
   }
 
-  QByteArray &Spx42Commands::sendSerialNumber( )
+  QByteArray &Spx42Commands::sendSerialNumber()
   {
     makeSipleCommand( SpxCommandDef::SPX_SERIAL_NUMBER );
     return ( cmd );
   }
 
-  QByteArray &Spx42Commands::sendAliveSignal( )
+  QByteArray &Spx42Commands::sendAliveSignal()
   {
     makeSipleCommand( SpxCommandDef::SPX_ALIVE );
     return ( cmd );
   }
 
-  QByteArray &Spx42Commands::sendFirmwareVersion( )
+  QByteArray &Spx42Commands::sendFirmwareVersion()
   {
     makeSipleCommand( SpxCommandDef::SPX_APPLICATION_ID );
     return ( cmd );
   }
 
-  QByteArray &Spx42Commands::sendStartYModem( )
+  QByteArray &Spx42Commands::sendStartYModem()
   {
     makeSipleCommand( SpxCommandDef::SPX_START_YMODEM );
     return ( cmd );
   }
 
-  QByteArray &Spx42Commands::sendStartProgramming( )
+  QByteArray &Spx42Commands::sendStartProgramming()
   {
     makeSipleCommand( SpxCommandDef::SPX_START_FW_PROGRAMM );
     return ( cmd );
   }
 
-  QByteArray &Spx42Commands::shutdownSPX42( )
+  QByteArray &Spx42Commands::shutdownSPX42()
   {
     makeSipleCommand( SpxCommandDef::SPX_SHUTDOWN );
     return ( cmd );
@@ -70,7 +70,7 @@ namespace spx
     params.clear();
     if ( pdu[ 0 ] == '~' )
     {
-      // OK, das ist ein Teil vom SPX
+      // OK, das ist ein Datagramm vom SPX
       params = pdu.split( ':' );
       cmd = params.at( 0 );
       cmd = cmd.remove( 0, 1 );

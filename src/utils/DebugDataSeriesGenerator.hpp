@@ -8,9 +8,9 @@
 
 #include "IDataSeriesGenerator.hpp"
 #include "config/ProjectConst.hpp"
-#include "config/SPX42Defs.hpp"
 #include "logging/Logger.hpp"
 #include "spx42/SPX42Config.hpp"
+#include "spx42/SPX42Defs.hpp"
 
 namespace spx
 {

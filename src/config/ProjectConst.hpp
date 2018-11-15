@@ -7,7 +7,7 @@
 #include <iostream>
 #include <utility>
 
-#include "SPX42Defs.hpp"
+#include "spx42/SPX42Defs.hpp"
 
 //
 // Definitionen
@@ -23,6 +23,12 @@ namespace spx
     //#### Stringkonstanten ohne Lokalisierung
     //###########################################################################
     static const QString MAIN_TITLE;  //! der Fenstertitel
+    // für Buggy Firmware, Temperatur-Lesen, Gradienten-Bug unterscheiden
+    static const QRegExp FIRMWARE_2_6x;
+    static const QRegExp FIRMWARE_2_7x;
+    static const QRegExp FIRMWARE_2_7_V_R83x;
+    static const QRegExp FIRMWARE_2_7_Hx;
+    static const QRegExp FIRMWARE_2_7_H_r83;
 
     //###########################################################################
     //#### Einfache Konstanten                                               ####
