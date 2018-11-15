@@ -7,7 +7,7 @@
 #include "bluetooth/SPX42RemotBtDevice.hpp"
 #include "database/SPX42Database.hpp"
 #include "logging/Logger.hpp"
-#include "utils/SPX42Config.hpp"
+#include "spx42/SPX42Config.hpp"
 
 namespace Ui
 {
@@ -32,10 +32,11 @@ namespace spx
                                    std::shared_ptr< Logger > logger,
                                    std::shared_ptr< SPX42Database > spx42Database,
                                    std::shared_ptr< SPX42Config > spxCfg,
-                                   std::shared_ptr< SPX42RemotBtDevice > remSPX42 );  //! Konstruktor
-    ~DeviceConfigFragment() override;                                                 //! Destruktor
-    virtual void deactivateTab( void ) override;                                      //! deaktiviere eventuelle signale
-    void initGuiWithConfig( void );  //! Initialisiere die GUI mit Werten aus der Config
+                                   std::shared_ptr< SPX42RemotBtDevice > remSPX42,
+                                   std::shared_ptr< SPX42Commands > spxCmds );  //! Konstruktor
+    ~DeviceConfigFragment() override;                                           //! Destruktor
+    virtual void deactivateTab( void ) override;                                //! deaktiviere eventuelle signale
+    void initGuiWithConfig( void );                                             //! Initialisiere die GUI mit Werten aus der Config
 
     protected:
     void changeEvent( QEvent *e ) override;  //! Globele Veränderungen

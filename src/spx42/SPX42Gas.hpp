@@ -5,7 +5,7 @@
 #include <QString>
 #include <QtGlobal>
 
-#include "../config/SPX42Defs.hpp"
+#include "spx42/SPX42Defs.hpp"
 
 namespace spx
 {

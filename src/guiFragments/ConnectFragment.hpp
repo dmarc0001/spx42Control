@@ -11,7 +11,7 @@
 #include "bluetooth/SPX42RemotBtDevice.hpp"
 #include "database/SPX42Database.hpp"
 #include "logging/Logger.hpp"
-#include "utils/SPX42Config.hpp"
+#include "spx42/SPX42Config.hpp"
 
 namespace Ui
 {
@@ -37,9 +37,10 @@ namespace spx
                               std::shared_ptr< Logger > logger,
                               std::shared_ptr< SPX42Database > spx42Database,
                               std::shared_ptr< SPX42Config > spxCfg,
-                              std::shared_ptr< SPX42RemotBtDevice > remSPX42 );  //! Konstruktor
-    ~ConnectFragment() override;                                                 //! Destruktor, muss GUI säubern
-    virtual void deactivateTab( void ) override;                                 //! deaktiviere eventuelle signale
+                              std::shared_ptr< SPX42RemotBtDevice > remSPX42,
+                              std::shared_ptr< SPX42Commands > spxCmds );  //! Konstruktor
+    ~ConnectFragment() override;                                           //! Destruktor, muss GUI säubern
+    virtual void deactivateTab( void ) override;                           //! deaktiviere eventuelle signale
 
     private:
     void setGuiConnected( bool isConnected );  //! Stati in der GUI setzten

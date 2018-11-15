@@ -35,9 +35,10 @@ namespace spx
                             std::shared_ptr< Logger > logger,
                             std::shared_ptr< SPX42Database > spx42Database,
                             std::shared_ptr< SPX42Config > spxCfg,
-                            std::shared_ptr< SPX42RemotBtDevice > remSPX42 )
+                            std::shared_ptr< SPX42RemotBtDevice > remSPX42,
+                            std::shared_ptr< SPX42Commands > spxCmds )
       : QWidget( parent )
-      , IFragmentInterface( logger, spx42Database, spxCfg, remSPX42 )
+      , IFragmentInterface( logger, spx42Database, spxCfg, remSPX42, spxCmds )
       , ui( new Ui::GasForm )
       , areSlotsConnected( false )
   {
@@ -58,7 +59,7 @@ namespace spx
     // delete ui;
   }
 
-  void GasFragment::deactivateTab( void )
+  void GasFragment::deactivateTab( )
   {
     disconnect( spxConfig.get(), nullptr, this, nullptr );
   }
@@ -160,7 +161,7 @@ namespace spx
   void GasFragment::onSpinO2ValueChangedSlot( int index, int o2Val )
   {
     volatile static int whereIgnored = -1;
-    quint64 g_idx = static_cast< quint64 >( index );
+    auto g_idx = static_cast< quint64 >( index );
 
     if ( whereIgnored == index )
     {
@@ -188,7 +189,7 @@ namespace spx
   void GasFragment::onSpinHeValueChangedSlot( int index, int heVal )
   {
     volatile static int whereIgnored = -1;
-    quint64 g_idx = static_cast< quint64 >( index );
+    auto g_idx = static_cast< quint64 >( index );
 
     if ( whereIgnored == index )
     {
@@ -239,7 +240,7 @@ namespace spx
 
   void GasFragment::onGasUseTypChangeSlot( int index, DiluentType which, int state )
   {
-    const quint64 g_idx = static_cast< quint64 >( index );
+    const auto g_idx = static_cast< quint64 >( index );
     //
     // FIXME: Alle anderen Gase dürfen dann NICHT which sein!
     // Nur ein DIL1, beliegig DIL2 aber nicht DIL1 == DIL2

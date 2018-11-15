@@ -13,10 +13,10 @@
 #include "IFragmentInterface.hpp"
 #include "bluetooth/SPX42RemotBtDevice.hpp"
 #include "config/ProjectConst.hpp"
-#include "config/SPX42Defs.hpp"
 #include "database/SPX42Database.hpp"
 #include "logging/Logger.hpp"
-#include "utils/SPX42Config.hpp"
+#include "spx42/SPX42Config.hpp"
+#include "spx42/SPX42Defs.hpp"
 
 namespace Ui
 {
@@ -62,9 +62,10 @@ namespace spx
                           std::shared_ptr< Logger > logger,
                           std::shared_ptr< SPX42Database > spx42Database,
                           std::shared_ptr< SPX42Config > spxCfg,
-                          std::shared_ptr< SPX42RemotBtDevice > remSPX42 );  //! Konstruktor
-    ~GasFragment() override;                                                 //! der Zerstörer
-    virtual void deactivateTab( void ) override;                             //! deaktiviere eventuelle signale
+                          std::shared_ptr< SPX42RemotBtDevice > remSPX42,
+                          std::shared_ptr< SPX42Commands > spxCmds );  //! Konstruktor
+    ~GasFragment() override;                                           //! der Zerstörer
+    virtual void deactivateTab( void ) override;                       //! deaktiviere eventuelle signale
 
     private:
     void fillReferences( void );     //! fülle die indizies mit Referenzen

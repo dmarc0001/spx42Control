@@ -4,10 +4,11 @@
 #include <memory>
 
 #include "bluetooth/SPX42RemotBtDevice.hpp"
-#include "config/SPX42Defs.hpp"
 #include "database/SPX42Database.hpp"
 #include "logging/Logger.hpp"
-#include "utils/SPX42Config.hpp"
+#include "spx42/SPX42Commands.hpp"
+#include "spx42/SPX42Config.hpp"
+#include "spx42/SPX42Defs.hpp"
 
 namespace spx
 {
@@ -17,14 +18,16 @@ namespace spx
     std::shared_ptr< Logger > lg;                       //! Zeiger auf das Log-Objekt
     std::shared_ptr< SPX42Database > database;          //! Zeiger auf die Datenbank
     std::shared_ptr< SPX42Config > spxConfig;           //! Zeiger auf das SPX42 Config Objekt
-    std::shared_ptr< SPX42RemotBtDevice > remoteSPX42;  // Zeiger auf das VErbindungsobjekt zum SPX42
+    std::shared_ptr< SPX42RemotBtDevice > remoteSPX42;  //! Zeiger auf das VErbindungsobjekt zum SPX42
+    std::shared_ptr< SPX42Commands > spxCommands;       //! Objekt zum erzeugen/decodieren der SPX Kommandos
     public:
     explicit IFragmentInterface( std::shared_ptr< Logger > logger,
                                  std::shared_ptr< SPX42Database > spx42Database,
                                  std::shared_ptr< SPX42Config > spxCfg,
-                                 std::shared_ptr< SPX42RemotBtDevice > remSPX42 );  //! Standartkonstruktor
-    virtual ~IFragmentInterface( void ) = default;                                  //! standartverhalten
-    virtual void deactivateTab( void ) = 0;                                         //! deaktiviere alle eventuellen signale etc.
+                                 std::shared_ptr< SPX42RemotBtDevice > remSPX42,
+                                 std::shared_ptr< SPX42Commands > spxCmds );  //! Standartkonstruktor
+    virtual ~IFragmentInterface( void ) = default;                            //! standartverhalten
+    virtual void deactivateTab( void ) = 0;                                   //! deaktiviere alle eventuellen signale etc.
 
     signals:
     virtual void onWarningMessageSig( const QString &msg, bool asPopup = false ) = 0;  //! eine Warnmeldung soll das Main darstellen

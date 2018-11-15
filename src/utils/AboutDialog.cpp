@@ -25,8 +25,8 @@ namespace spx
     }
     QImage image( ":/images/logo_header450.png" );
     ui->logoLabel->setPixmap( QPixmap::fromImage( image ) );
-    ui->buildNumberLabel->setText( cf.getBuildDate() );
-    ui->buildDateLabel->setText( cf.getBuildNumStr() );
+    ui->buildNumberLabel->setText( AppConfigClass::getBuildDate() );
+    ui->buildDateLabel->setText( AppConfigClass::getBuildNumStr() );
     QPalette pal = ui->logoLabel->palette();
     pal.setColor( QPalette::WindowText, Qt::darkRed );
     pal.setColor( QPalette::Text, Qt::darkRed );

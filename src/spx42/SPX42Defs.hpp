@@ -10,6 +10,16 @@ namespace spx
   //
   // Aufzählungen, einige sind eigentlich nur für die bessere Lesbarkeitdes Codes
   //
+  enum class SPX42FirmwareVersions : qint8
+  {
+    FIRMWARE_UNKNOWN,
+    FIRMWARE_2_6x,
+    FIRMWARE_2_7x,
+    FIRMWARE_2_7_V_R83x,
+    FIRMWARE_2_7_Hx,
+    FIRMWARE_2_7_H_r83
+  };
+
   enum class ApplicationTab : int
   {
     CONNECT_TAB,

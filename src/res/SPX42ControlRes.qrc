@@ -1,0 +1,55 @@
+﻿<RCC>
+    <qresource prefix="/"/>
+    <qresource prefix="/fonts">
+        <file>Hack-Bold.ttf</file>
+        <file>Hack-BoldItalic.ttf</file>
+        <file>Hack-Italic.ttf</file>
+        <file>Hack-Regular.ttf</file>
+        <file>DejaVuSansMono.ttf</file>
+        <file>TlwgTypewriter.ttf</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file>ic_bluetooth_black_24dp_1x.png</file>
+        <file>ic_power_settings_new.png</file>
+        <file>ic_folder.png</file>
+        <file>ic_folder_open.png</file>
+        <file>ic_settings_applications.png</file>
+        <file>ic_settings.png</file>
+        <file>ic_help_outline.png</file>
+        <file>ic_print.png</file>
+        <file>ic_edit.png</file>
+        <file>ic_edit_2x.png</file>
+        <file>ic_bluetooth_searching.png</file>
+        <file>ic_bluetooth_disabled.png</file>
+        <file>ic_bluetooth_black_24dp_1x_blue.png</file>
+        <file>ic_bluetooth_disabled_blue.png</file>
+        <file>ic_bluetooth_searching_blue.png</file>
+        <file>ic_edit_2x_blue.png</file>
+        <file>ic_edit_blue.png</file>
+        <file>ic_folder_blue.png</file>
+        <file>ic_folder_open_blue.png</file>
+        <file>ic_help_outline_blue.png</file>
+        <file>ic_power_settings_new_black_24dp_1x_blue.png</file>
+        <file>ic_power_settings_new_blue.png</file>
+        <file>ic_print_blue.png</file>
+        <file>ic_settings_applications_blue.png</file>
+        <file>ic_settings_blue.png</file>
+    </qresource>
+    <qresource prefix="/images">
+        <file>SPX42.jpg</file>
+        <file>logo_header205-54.png</file>
+        <file>logo_header240.png</file>
+        <file>logo_header450.png</file>
+        <file>ic_bluetooth_black_24dp_1x.png</file>
+    </qresource>
+    <qresource prefix="/" lang="de"/>
+    <qresource prefix="/scanner">
+        <file alias="bluetooth_black_normal">ic_bluetooth_black_24dp_1x.png</file>
+        <file alias="bluetooth_black_gross">ic_bluetooth_black_24dp_2x.png</file>
+        <file alias="worker">no_working.gif</file>
+        <file alias="workerAnimation">working.gif</file>
+    </qresource>
+    <qresource prefix="/style">
+        <file alias="defaultStyle.css">spx42Control.css</file>
+    </qresource>
+</RCC>

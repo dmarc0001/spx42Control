@@ -7,9 +7,10 @@ namespace spx
                                     std::shared_ptr< Logger > logger,
                                     std::shared_ptr< SPX42Database > spx42Database,
                                     std::shared_ptr< SPX42Config > spxCfg,
-                                    std::shared_ptr< SPX42RemotBtDevice > remSPX42 )
+                                    std::shared_ptr< SPX42RemotBtDevice > remSPX42,
+                                    std::shared_ptr< SPX42Commands > spxCmds )
       : QWidget( parent )
-      , IFragmentInterface( logger, spx42Database, spxCfg, remSPX42 )
+      , IFragmentInterface( logger, spx42Database, spxCfg, remSPX42, spxCmds )
       , ui( new Ui::connectForm )
       , errMsg( tr( "CONNECTION BLUETHOOTH ERROR: %1" ) )
       , discoverObj( std::unique_ptr< BtDiscoverObject >( new BtDiscoverObject( lg ) ) )
@@ -62,7 +63,7 @@ namespace spx
     deactivateTab();
   }
 
-  void ConnectFragment::deactivateTab( void )
+  void ConnectFragment::deactivateTab( )
   {
     //
     // deaktiviere signale für reciver
@@ -206,7 +207,7 @@ namespace spx
     ui->deviceComboBox->addItem( title, addr );
   }
 
-  void ConnectFragment::onDiscoverScanFinishedSlot( void )
+  void ConnectFragment::onDiscoverScanFinishedSlot( )
   {
     lg->debug( "ConnectFragment::onDiscoverScanFinishedSlot-> discovering finished..." );
     ui->discoverPushButton->setEnabled( true );
@@ -222,7 +223,24 @@ namespace spx
 
   void ConnectFragment::onDatagramRecivedSlot()
   {
+    QByteArray datagram;
     lg->debug( "ConnectFragment::onDatagramRecivedSlot..." );
+    //
+    // alle abholen...
+    //
+    while ( remoteSPX42->getNextDatagram( datagram ) )
+    {
+      // ja, es gab ein Datagram zum abholen
+
+      //
+      // falls es mehr gibt, lass dem Rest der App auch eine Chance
+      //
+      QCoreApplication::processEvents();
+    }
+
+    //
+    // auf welche will ich reagieren?
+    //
   }
 
   // ##########################################################################

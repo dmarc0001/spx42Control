@@ -12,14 +12,14 @@
 #include "IFragmentInterface.hpp"
 #include "bluetooth/SPX42RemotBtDevice.hpp"
 #include "config/ProjectConst.hpp"
-#include "config/SPX42Defs.hpp"
 #include "database/SPX42Database.hpp"
 #include "logging/Logger.hpp"
+#include "spx42/SPX42Config.hpp"
+#include "spx42/SPX42Defs.hpp"
 #include "ui_LogFragment.h"
 #include "utils/DebugDataSeriesGenerator.hpp"
 #include "utils/DiveDataSeriesGenerator.hpp"
 #include "utils/IDataSeriesGenerator.hpp"
-#include "utils/SPX42Config.hpp"
 
 namespace Ui
 {
@@ -48,9 +48,10 @@ namespace spx
                           std::shared_ptr< Logger > logger,
                           std::shared_ptr< SPX42Database > spx42Database,
                           std::shared_ptr< SPX42Config > spxCfg,
-                          std::shared_ptr< SPX42RemotBtDevice > remSPX42 );  //! Konstruktor
-    ~LogFragment() override;                                                 //! Destruktor
-    virtual void deactivateTab( void ) override;                             //! deaktiviere eventuelle signale
+                          std::shared_ptr< SPX42RemotBtDevice > remSPX42,
+                          std::shared_ptr< SPX42Commands > spxCmds );  //! Konstruktor
+    ~LogFragment() override;                                           //! Destruktor
+    virtual void deactivateTab( void ) override;                       //! deaktiviere eventuelle signale
 
     protected:
     void changeEvent( QEvent *e ) override;
