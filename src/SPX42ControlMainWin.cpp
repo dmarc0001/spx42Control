@@ -744,7 +744,7 @@ namespace spx
       // konvertiere in String
       // TODO: Abhängig von der Spannung färben
       //
-      QString labelText = tr( "AKKU" ).append( QString::asprintf( " %2.2f", akkuValue ) );
+      QString labelText = tr( "AKKU" ).append( QString::asprintf( " %2.2fV", akkuValue ) );
       akkuLabel->setText( labelText );
     }
   }
