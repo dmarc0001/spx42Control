@@ -19,6 +19,7 @@ namespace spx
     lg->debug( "ConnectFragment::ConnectFragment..." );
     ui->setupUi( this );
     ui->connectProgressBar->setVisible( false );
+    ui->editAliasesTableView->setVisible( false );
     //
     // geräte einlesen und combo liste füllen
     // hashliste mac, <name,alias>
@@ -150,6 +151,10 @@ namespace spx
   void ConnectFragment::onPropertyButtonSlot()
   {
     lg->debug( "ConnectFragment::onPropertyButtonSlot -> property button clicked." );
+    if ( remoteSPX42->getConnectionStatus() != SPX42RemotBtDevice::SPX42_CONNECTED )
+    {
+      ui->editAliasesTableView->setVisible( !ui->editAliasesTableView->isVisible() );
+    }
   }
 
   void ConnectFragment::onDiscoverButtonSlot()
@@ -286,7 +291,8 @@ namespace spx
     ui->deviceComboBox->setEnabled( !isConnected );
     ui->propertyPushButton->setEnabled( !isConnected );
     ui->discoverPushButton->setEnabled( !isConnected );
-
+    if ( isConnected )
+      ui->editAliasesTableView->setVisible( false );
     ui->tabHeaderLabel->setText( fragmentTitlePattern.arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) );
   }
 }  // namespace spx
