@@ -35,10 +35,8 @@ namespace spx
     connect( ui->discoverPushButton, &QPushButton::clicked, this, &ConnectFragment::onDiscoverButtonSlot );
     connect( ui->deviceComboBox, static_cast< void ( QComboBox::* )( int ) >( &QComboBox::currentIndexChanged ), this,
              &ConnectFragment::onCurrentIndexChangedSlot );
-    // signale vom Discovering
     connect( discoverObj.get(), &BtDiscoverObject::onDiscoveredDeviceSig, this, &ConnectFragment::onDiscoveredDeviceSlot );
     connect( discoverObj.get(), &BtDiscoverObject::onDiscoverScanFinishedSig, this, &ConnectFragment::onDiscoverScanFinishedSlot );
-    // Signalisierung vom verbundenen SPX
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onStateChangedSig, this, &ConnectFragment::onOnlineStatusChangedSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onSocketErrorSig, this, &ConnectFragment::onSocketErrorSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onDatagramRecivedSig, this, &ConnectFragment::onDatagramRecivedSlot );
@@ -221,9 +219,9 @@ namespace spx
   void ConnectFragment::onDatagramRecivedSlot()
   {
     QByteArray datagram;
-    char kdo;
     QDateTime nowDateTime;
     QByteArray value;
+    char kdo;
     //
     lg->debug( "ConnectFragment::onDatagramRecivedSlot..." );
     //
@@ -235,6 +233,15 @@ namespace spx
       kdo = spxCommands->decodeCommand( datagram );
       switch ( kdo )
       {
+        case SPX42CommandDef::SPX_ALIVE:
+          lg->debug( "ConnectFragment::onDatagramRecivedSlot -> alive/acku..." );
+          value = spxCommands->getParameter( 1 );
+          if ( value.length() == 2 )
+            value += "0";
+          ackuVal = ( value.toInt( nullptr, 16 ) / 100.0 );
+          // TODO: in der GUI anzeigen
+          emit onAkkuValueChangedSlot( ackuVal );
+          break;
         case SPX42CommandDef::SPX_APPLICATION_ID:
           lg->debug( "ConnectFragment::onDatagramRecivedSlot -> firmwareversion..." );
           // Setzte die Version in die Config

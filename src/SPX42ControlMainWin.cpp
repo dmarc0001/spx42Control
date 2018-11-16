@@ -12,7 +12,8 @@ namespace spx
       , ui( new Ui::SPX42ControlMainWin() )
       , spx42Config( new SPX42Config() )
       , spx42Commands( std::shared_ptr< SPX42Commands >( new SPX42Commands() ) )
-      , onlineLabel( std::unique_ptr< QLabel >( new QLabel( tr( "  SPX42 OFFLINE" ) ) ) )
+      , onlineLabel( std::unique_ptr< QLabel >( new QLabel( tr( "SPX42 OFFLINE" ) ) ) )
+      , akkuLabel( std::unique_ptr< QLabel >( new QLabel( "---" ) ) )
       , currentStatus( ApplicationStat::STAT_OFFLINE )
       , watchdogCounter( 0 )
       , zyclusCounter( 0 )
@@ -84,9 +85,9 @@ namespace spx
 #endif
 #endif
     }
-    //
-    // das folgende wird nur kompiliert, wenn DEBUG NICHT konfiguriert ist
-    //
+      //
+      // das folgende wird nur kompiliert, wenn DEBUG NICHT konfiguriert ist
+      //
 #ifndef DEBUG
     ui->menuDEBUGGING->clear();
     ui->menuDEBUGGING->setParent( Q_NULLPTR );
@@ -95,8 +96,6 @@ namespace spx
     //
     // einen onlineindikator in die Statusleiste bauen
     //
-    // onlinePalette.setColor( onlineLabel->foregroundRole(), Qt::green );
-    // offlinePalette.setColor( onlineLabel->foregroundRole(), Qt::red );
     onlinePalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_ONLINE );
     busyPalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_BUSY );
     offlinePalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_OFFLINE );
@@ -104,7 +103,9 @@ namespace spx
     errorPalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_ERROR );
     onlineLabel->setIndent( 25 );
     this->statusBar()->addWidget( onlineLabel.get(), 250 );
+    this->statusBar()->addWidget( akkuLabel.get(), 40 );
     onlineLabel->setPalette( offlinePalette );
+    akkuLabel->setPalette( offlinePalette );
     //
     fillTabTitleArray();
     //
@@ -585,6 +586,8 @@ namespace spx
         currentTab = ApplicationTab::CONNECT_TAB;
         connect( dynamic_cast< ConnectFragment * >( currObj ), &ConnectFragment::onWarningMessageSig, this,
                  &SPX42ControlMainWin::onWarningMessageSlot );
+        connect( dynamic_cast< ConnectFragment * >( currObj ), &ConnectFragment::onAkkuValueChangedSlot, this,
+                 &SPX42ControlMainWin::onAkkuValueChangedSlot );
         break;
 
       case static_cast< int >( ApplicationTab::CONFIG_TAB ):
@@ -678,6 +681,7 @@ namespace spx
         // config leeren
         //
         spx42Config->reset();
+        onAkkuValueChangedSlot();
         break;
       case SPX42RemotBtDevice::SPX42_CONNECTING:
         break;
@@ -715,6 +719,33 @@ namespace spx
         remoteSPX42->sendCommand( sendCommand );
         lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd license status...OK" );
         break;
+    }
+  }
+
+  /**
+   * @brief SPX42ControlMainWin::onAkkuValueChangedSlot
+   * @param akkuValue
+   */
+  void SPX42ControlMainWin::onAkkuValueChangedSlot( double akkuValue )
+  {
+    //
+    // versuche den Akkustand darzustellen
+    //
+    if ( akkuValue == 0.0 )
+    {
+      //
+      // kein Wert
+      //
+      akkuLabel->setText( "---" );
+    }
+    else
+    {
+      //
+      // konvertiere in String
+      // TODO: Abhängig von der Spannung färben
+      //
+      QString labelText = tr( "AKKU" ).append( QString::asprintf( " %2.2f", akkuValue ) );
+      akkuLabel->setText( labelText );
     }
   }
 
