@@ -9,6 +9,7 @@ namespace spx
 {
   const QString AppConfigClass::constBuildDate{static_cast< const char * >( &SPX_BUILDTIME[ 0 ] )};
   const QString AppConfigClass::constBuildNumStr{static_cast< const char * >( &SPX_BUILDCOUNT[ 0 ] )};
+  const QString AppConfigClass::constBuildTypeStr{static_cast< const char * >( &SPX_BUILDTYPE[ 0 ] )};
   const QString AppConfigClass::constLogGroupName{"logger"};
   const QString AppConfigClass::constLogFileKey{"logFileName"};
   const QString AppConfigClass::constNoData{"-"};
@@ -333,6 +334,11 @@ namespace spx
   QString AppConfigClass::getBuildNumStr()
   {
     return constBuildNumStr;
+  }
+
+  QString AppConfigClass::getBuldType()
+  {
+    return constBuildTypeStr;
   }
 
   QString AppConfigClass::getDatabaseName() const

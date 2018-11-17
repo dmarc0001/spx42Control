@@ -16,6 +16,7 @@ namespace spx
     private:
     static const QString constBuildDate;           //! Builddatum
     static const QString constBuildNumStr;         //! Buildnummer
+    static const QString constBuildTypeStr;        //! BuildType DEBUG/RELEASE
     static const QString constLogGroupName;        //! Gruppenname Logeinstellungen
     static const QString constLogFileKey;          //! Einstellung für Logdatei
     static const QString constNoData;              //! Kennzeichner für keine Daten
@@ -48,11 +49,12 @@ namespace spx
     int getWatchdogTime( void );                    //! Wert des Watchdog holen
     void setLogThreshold( qint8 th );               //! setzte Loggingstufe in Config
     qint8 getLogTreshold( void );                   //! hole Loggingstufe aus config
-    static QString getBuildDate();                  //! hole das Builddatum als String
-    static QString getBuildNumStr();                //! hole die Buildnummer als String
-    QString getDatabaseName() const;                //! datenbankdateiname
+    static QString getBuildDate( void );            //! hole das Builddatum als String
+    static QString getBuildNumStr( void );          //! hole die Buildnummer als String
+    static QString getBuldType( void );             //! hole den Buildtyp als String
+    QString getDatabaseName( void ) const;          //! datenbankdateiname
     void setDatabaseName( const QString &value );   //! datenbankdatei Name
-    QString getDatabasePath() const;                //! auf welchem Datenpfad finde ich die Datenbank
+    QString getDatabasePath( void ) const;          //! auf welchem Datenpfad finde ich die Datenbank
     void setDatabasePath( const QString &value );   //! auf welchem Datenpfad finde ich die Datenbank
     QString getFullDatabaseLocation( void ) const;  //! volle Beschreibung des Ortes + Name der Datenbank
 

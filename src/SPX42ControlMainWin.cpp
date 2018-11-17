@@ -75,15 +75,7 @@ namespace spx
     }
     else
     {
-#ifdef UNIX
-      setFont( QFont( "DejaVu Sans Mono", 11 ) );
-#else
-#ifdef TARGET_OS_MAC
-      setFont( QFont( "DejaVu Sans Mono", 14 ) );
-#else
       setFont( QFont( "DejaVu Sans Mono", 12 ) );
-#endif
-#endif
     }
       //
       // das folgende wird nur kompiliert, wenn DEBUG NICHT konfiguriert ist

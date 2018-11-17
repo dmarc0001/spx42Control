@@ -27,14 +27,20 @@ namespace spx
     ui->logoLabel->setPixmap( QPixmap::fromImage( image ) );
     ui->buildNumberLabel->setText( AppConfigClass::getBuildDate() );
     ui->buildDateLabel->setText( AppConfigClass::getBuildNumStr() );
+    ui->buildTypeLabel->setText( AppConfigClass::getBuldType() );
     QPalette pal = ui->logoLabel->palette();
     pal.setColor( QPalette::WindowText, Qt::darkRed );
     pal.setColor( QPalette::Text, Qt::darkRed );
+    pal.setColor( QPalette::ButtonText, Qt::blue );
     ui->buildNumberLabel->setPalette( pal );
     ui->buildDateLabel->setPalette( pal );
     ui->buildNumberLabelLabel->setPalette( pal );
     ui->buildDateLabelLabel->setPalette( pal );
-    pal.setColor( QPalette::ButtonText, Qt::blue );
+    ui->buildTypeLabel->setPalette( pal );
+    QFont grFont = ui->closeButton->font();
+    grFont.setBold( true );
+    grFont.setPointSize( 17 );
     ui->closeButton->setPalette( pal );
+    ui->closeButton->setFont( grFont );
   }
 }

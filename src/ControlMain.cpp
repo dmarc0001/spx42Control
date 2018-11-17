@@ -34,7 +34,15 @@ int main( int argc, char *argv[] )
   else
   {
     qWarning() << "Can't load external stylesheet, try internal...";
+#ifdef UNIX
+    destPath = ":/style/defaultStyleUx.css";
+#else
+#ifdef TARGET_OS_MAC
+    destPath = ":/style/defaultStyleMac.css";
+#else
     destPath = ":/style/defaultStyle.css";
+#endif
+#endif
     if ( readStylesheetFromFile( &app, destPath ) )
     {
       qDebug() << "internal Stylesheet correct loadet...";
