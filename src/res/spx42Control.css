@@ -13,7 +13,12 @@ QWidget
 
 QPushButton
 {
-  font-size: 14pt;
+  font-size: 13pt;
+}
+
+QPushButton#closeButton, QPushButton#cancelButton
+{
+  font-size: 17pt;
 }
 
 /* mit hover-Effekt */

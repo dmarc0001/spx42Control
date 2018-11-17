@@ -16,6 +16,11 @@ QPushButton
   font-size: 18pt;
 }
 
+QPushButton#closeButton, QPushButton#cancelButton
+{
+  font-size: 21pt;
+}
+
 /* mit hover-Effekt */
 QPushButton:hover:!pressed, QComboBox:hover, QSpinBox:hover
 {
