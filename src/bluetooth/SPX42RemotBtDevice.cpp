@@ -296,10 +296,10 @@ namespace spx
             break;
           }
           // in die Empfangsqueue
-          recQueue.enqueue( recBuffer.mid( 1, idxOfETX - 2 ) );
+          recQueue.enqueue( recBuffer.mid( 1, idxOfETX - 1 ) );
 #ifdef DEBUG
           lg->debug( QString( "SPX42RemotBtDevice::onReadSocketSlot -> datagram:: <%1>" )
-                         .arg( QString( recBuffer.mid( 1, idxOfETX - 2 ) ) ) );
+                         .arg( QString( recBuffer.mid( 1, idxOfETX - 1 ) ) ) );
 #endif
           // aus dem Empfangspuffer entfernen
           recBuffer.remove( 0, idxOfETX );
