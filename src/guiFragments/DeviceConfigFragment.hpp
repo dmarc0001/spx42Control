@@ -46,6 +46,8 @@ namespace spx
     bool volatile gradentSlotsIgnore;        //! Um Schleifen zu vermeiden kontrolliert Callbacks ignorieren
     QStringList oldAutoSetpoint;             //! Liste für Combobox mit älterer Firmware
     QStringList newAutoSetpoint;             //! Liste mit Einträgen für Combobox für neuere Firmware
+    QStringList oldDisplayBrightness;        //! alte Helligkeitswerte
+    QStringList newDisplayBrightness;        //! neue Helligkeitswerte
 
     public:
     explicit DeviceConfigFragment( QWidget *parent,

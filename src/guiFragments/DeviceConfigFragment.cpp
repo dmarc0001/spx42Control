@@ -28,6 +28,8 @@ namespace spx
     ui->transferProgressBar->setVisible( false );
     oldAutoSetpoint << tr( "OFF" ) << tr( "5 METERS" ) << tr( "10 METERS" ) << tr( "15 METERS" ) << tr( "20 METERS" );
     newAutoSetpoint << tr( "OFF" ) << tr( "6 METERS" ) << tr( "10 METERS" ) << tr( "15 METERS" ) << tr( "20 METERS" );
+    oldDisplayBrightness << tr( "10%" ) << tr( "50%" ) << tr( "100%" );
+    newDisplayBrightness << tr( "20%" ) << tr( "40%" ) << tr( "60%" ) << tr( "80%" ) << tr( "100%" );
     initGuiWithConfig();
     setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
     updateGuiFirmwareSpecific();
@@ -452,6 +454,18 @@ namespace spx
       ui->setpointAutoOnComboBox->clear();
       ui->setpointAutoOnComboBox->addItems( oldAutoSetpoint );
     }
+    if ( spxConfig->getIsNewerDisplayBrightness() )
+    {
+      // NEU: 0->20%, 1->40%, 2->60%, 3->80%, 4->100%
+      ui->displayBrightnessComboBox->clear();
+      ui->displayBrightnessComboBox->addItems( newDisplayBrightness );
+    }
+    else
+    {
+      // ALT: D= 0->10&, 1->50%, 2->100%
+      ui->displayBrightnessComboBox->clear();
+      ui->displayBrightnessComboBox->addItems( oldDisplayBrightness );
+    }
   }
 
   void DeviceConfigFragment::onDatagramRecivedSlot()
@@ -515,7 +529,7 @@ namespace spx
           // C=Last Decostop (0=3 Meter/1=6 Meter)
           //
           // eintrag in GUI -> durch callback dann auch eintrag in config
-          lg->debug( QString( "DeviceConfigFragment::onDatagramRecivedSlot -> LOW: %1 HIGH: %1" )
+          lg->debug( QString( "DeviceConfigFragment::onDatagramRecivedSlot -> LOW: %1 HIGH: %2" )
                          .arg( spxCommands->getParameter( 1 ).toInt( nullptr, 16 ) )
                          .arg( spxCommands->getParameter( 2 ).toInt( nullptr, 16 ) ) );
           ui->gradientLowSpinBox->setValue( spxCommands->getParameter( 1 ).toInt( nullptr, 16 ) );
@@ -533,7 +547,7 @@ namespace spx
           // A = Setpoint bei alte Firmware (0,1,2,3) = (deact,6,10,15,20)
           // A = Setpoint bei neue firmware (0,1,2) = (6,10,15)
           // P = Partialdruck (0..4) 1.0 .. 1.4
-          lg->debug( QString( "DeviceConfigFragment::onDatagramRecivedSlot -> autosetpoint %1, setpoint 1.%1..." )
+          lg->debug( QString( "DeviceConfigFragment::onDatagramRecivedSlot -> autosetpoint %1, setpoint 1.%2..." )
                          .arg( spxCommands->getParameter( 1 ).toInt( nullptr, 16 ) )
                          .arg( spxCommands->getParameter( 2 ).toInt( nullptr, 16 ) ) );
           switch ( spxCommands->getParameter( 1 ).toInt( nullptr, 16 ) )
@@ -578,13 +592,162 @@ namespace spx
           }
           break;
         case SPX42CommandDef::SPX_GET_SETUP_DISPLAYSETTINGS:
-          lg->debug( "DeviceConfigFragment::onDatagramRecivedSlot -> display settings..." );
+          lg->debug( QString( "DeviceConfigFragment::onDatagramRecivedSlot -> display settings bright: %1 orient: %2..." )
+                         .arg( spxCommands->getParameter( 1 ).toInt( nullptr, 16 ) )
+                         .arg( spxCommands->getParameter( 2 ).toInt( nullptr, 16 ) ) );
+          // Kommando GET_SETUP_DISPLAYSETTINGS liefert
+          // ~36:D:A
+          // ALT: D= 0->10&, 1->50%, 2->100%
+          // NEU: 0->20%, 1->40%, 2->60%, 3->80%, 4->100%
+          // A= 0->Landscape 1->180Grad
+          if ( spxConfig->getIsNewerDisplayBrightness() )
+          {
+            switch ( spxCommands->getParameter( 1 ).toInt( nullptr, 16 ) )
+            {
+              default:
+              case 0:
+                ui->displayBrightnessComboBox->setCurrentIndex( 0 );
+                break;
+              case 1:
+                ui->displayBrightnessComboBox->setCurrentIndex( 1 );
+                break;
+              case 2:
+                ui->displayBrightnessComboBox->setCurrentIndex( 2 );
+                break;
+              case 3:
+                ui->displayBrightnessComboBox->setCurrentIndex( 3 );
+                break;
+              case 4:
+                ui->displayBrightnessComboBox->setCurrentIndex( 4 );
+                break;
+            }
+          }
+          else
+          {
+            switch ( spxCommands->getParameter( 1 ).toInt( nullptr, 16 ) )
+            {
+              default:
+              case 0:
+                ui->displayBrightnessComboBox->setCurrentIndex( 0 );
+                break;
+              case 1:
+                ui->displayBrightnessComboBox->setCurrentIndex( 1 );
+                break;
+              case 2:
+                ui->displayBrightnessComboBox->setCurrentIndex( 2 );
+                break;
+            }
+          }
           break;
         case SPX42CommandDef::SPX_GET_SETUP_UNITS:
-          lg->debug( "DeviceConfigFragment::onDatagramRecivedSlot -> unit settings..." );
+          lg->debug( QString( "DeviceConfigFragment::onDatagramRecivedSlot -> unit settings temp: %1 dimen: %2 water: %3..." )
+                         .arg( spxCommands->getParameter( 1 ).toInt( nullptr, 16 ) )
+                         .arg( spxCommands->getParameter( 2 ).toInt( nullptr, 16 ) )
+                         .arg( spxCommands->getParameter( 3 ).toInt( nullptr, 16 ) ) );
+          // Kommando GET_SETUP_UNITS
+          // ~37:UD:UL:UW
+          // UD= Fahrenheit/Celsius => immer 0 in der Firmware 2.6.7.7_U
+          // UL= 0=metrisch 1=imperial
+          // UW= 0->Salzwasser 1->Süßwasser
+          switch ( spxCommands->getParameter( 1 ).toInt( nullptr, 16 ) )
+          {
+            // Celsios oder Fahrenheid?
+            default:
+            case 0:
+              ui->unitsTemperaturComboBox->setCurrentIndex( 0 );
+              break;
+            case 1:
+              ui->unitsTemperaturComboBox->setCurrentIndex( 1 );
+          }
+          switch ( spxCommands->getParameter( 2 ).toInt( nullptr, 16 ) )
+          {
+            // Metrisch oder imperial
+            default:
+            case 0:
+              ui->unitsDeepComboBox->setCurrentIndex( 0 );
+              break;
+            case 1:
+              if ( spxConfig->getHasFahrenheidBug() )
+              {
+                // bei der alten Firmware den Workarround =>
+                // macht dass die Einstellungen immer korrespondieren
+                ui->unitsTemperaturComboBox->setCurrentIndex( 1 );
+              }
+              ui->unitsDeepComboBox->setCurrentIndex( 1 );
+          }
+          switch ( spxCommands->getParameter( 3 ).toInt( nullptr, 16 ) )
+          {
+            // süß oder Salzwasser
+            default:
+            case 0:
+              ui->unitsWaterTypeComboBox->setCurrentIndex( 1 );
+              break;
+            case 1:
+              ui->unitsWaterTypeComboBox->setCurrentIndex( 0 );
+              break;
+          }
           break;
         case SPX42CommandDef::SPX_GET_SETUP_INDIVIDUAL:
-          lg->debug( "DeviceConfigFragment::onDatagramRecivedSlot -> individual..." );
+          lg->debug(
+              QString( "DeviceConfigFragment::onDatagramRecivedSlot -> individual: se: %1 pscr: %2 sc: %3 snd: %4 li:%5 ??: %6..." )
+                  .arg( spxCommands->getParameter( 1 ).toInt( nullptr, 16 ) )
+                  .arg( spxCommands->getParameter( 2 ).toInt( nullptr, 16 ) )
+                  .arg( spxCommands->getParameter( 3 ).toInt( nullptr, 16 ) )
+                  .arg( spxCommands->getParameter( 4 ).toInt( nullptr, 16 ) )
+                  .arg( spxCommands->getParameter( 5 ).toInt( nullptr, 16 ) )
+                  .arg( spxCommands->getParameter( 6 ).toInt( nullptr, 16 ) ) );
+          // Kommando GET_SETUP_INDIVIDUAL liefert
+          // ~38:SE:PS:SC:SN:LI:TS
+          // SE: Sensors 0->ON 1->OFF
+          // PS: PSCRMODE 0->OFF 1->ON
+          // SC: SensorCount 0=>1 1=>2 2=>3
+          // SN: Sound 0->OFF 1->ON
+          // LI: Loginterval 0->10sec 1->30Sec 2->60 Sec
+          // TS: ab Version 2.7_H_r83 Tempstick Version
+          //
+          // sensor enable
+          if ( spxCommands->getParameter( 1 ).toInt( nullptr, 16 ) )
+            ui->individualSeonsorsOnCheckBox->setCheckState( Qt::CheckState::Unchecked );
+          else
+            ui->individualSeonsorsOnCheckBox->setCheckState( Qt::CheckState::Checked );
+          // pscr mode
+          if ( spxCommands->getParameter( 2 ).toInt( nullptr, 16 ) )
+            ui->individualPSCRModeOnCheckBox->setCheckState( Qt::CheckState::Checked );
+          else
+            ui->individualPSCRModeOnCheckBox->setCheckState( Qt::CheckState::Unchecked );
+          // sensor count
+          switch ( spxCommands->getParameter( 3 ).toInt( nullptr, 16 ) )
+          {
+            case 0:
+              ui->individualSensorsCountComboBox->setCurrentIndex( 0 );
+              break;
+            case 1:
+              ui->individualSensorsCountComboBox->setCurrentIndex( 1 );
+              break;
+            case 2:
+            default:
+              ui->individualSensorsCountComboBox->setCurrentIndex( 2 );
+              break;
+          }
+          // sound warnings
+          if ( spxCommands->getParameter( 4 ).toInt( nullptr, 16 ) )
+            ui->individualAcousticWarningsOnCheckBox->setCheckState( Qt::CheckState::Checked );
+          else
+            ui->individualAcousticWarningsOnCheckBox->setCheckState( Qt::CheckState::Unchecked );
+          // log interval
+          switch ( spxCommands->getParameter( 5 ).toInt( nullptr, 16 ) )
+          {
+            case 0:
+              ui->individualLogIntervalComboBox->setCurrentIndex( 0 );
+              break;
+            case 1:
+              ui->individualLogIntervalComboBox->setCurrentIndex( 1 );
+              break;
+            case 2:
+            default:
+              ui->individualLogIntervalComboBox->setCurrentIndex( 3 );
+              break;
+          }
           break;
       }
       //
