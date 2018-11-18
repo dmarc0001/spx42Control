@@ -8,12 +8,12 @@ QWidget
 {
   font-family: "DejaVu Sans Mono";
   font-style: normal;
-  font-size: 16pt;
+  font-size: 14pt;
 }
 
 QPushButton
 {
-  font-size: 18pt;
+  font-size: 16pt;
 }
 
 QPushButton#closeButton, QPushButton#cancelButton
