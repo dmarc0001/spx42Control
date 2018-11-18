@@ -50,6 +50,51 @@ namespace spx
     return ( cmd );
   }
 
+  QByteArray &SPX42Commands::askForConfig()
+  {
+    QByteArray code;
+    cmd.clear();
+    // Prefix
+    cmd.append( &SPX42CommandDef::STX, 1 );
+    cmd.append( "~" );
+    //
+    code.append( &SPX42CommandDef::SPX_GET_SETUP_DEKO, 1 );
+    cmd.append( code.toHex() );
+    //
+    cmd.append( "~" );
+    code.clear();
+    code.append( &SPX42CommandDef::SPX_GET_SETUP_SETPOINT, 1 );
+    cmd.append( code.toHex() );
+    //
+    cmd.append( "~" );
+    code.clear();
+    code.append( &SPX42CommandDef::SPX_GET_SETUP_DISPLAYSETTINGS, 1 );
+    cmd.append( code.toHex() );
+    //
+    cmd.append( "~" );
+    code.clear();
+    code.append( &SPX42CommandDef::SPX_GET_SETUP_UNITS, 1 );
+    cmd.append( code.toHex() );
+    //
+    cmd.append( "~" );
+    code.clear();
+    code.append( &SPX42CommandDef::SPX_GET_SETUP_INDIVIDUAL, 1 );
+    cmd.append( code.toHex() );
+    //
+    cmd.append( "~" );
+    code.clear();
+    code.append( &SPX42CommandDef::SPX_LICENSE_STATE, 1 );
+    cmd.append( code.toHex() );
+    //
+    cmd.append( "~" );
+    code.clear();
+    code.append( &SPX42CommandDef::SPX_ALIVE, 1 );
+    cmd.append( code.toHex() );
+    // Postfix
+    cmd.append( &SPX42CommandDef::ETX, 1 );
+    return ( cmd );
+  }
+
   QByteArray &SPX42Commands::setDateTime( const QDateTime &nowDateTime )
   {
     //

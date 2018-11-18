@@ -20,6 +20,8 @@ namespace spx
     std::shared_ptr< SPX42Config > spxConfig;           //! Zeiger auf das SPX42 Config Objekt
     std::shared_ptr< SPX42RemotBtDevice > remoteSPX42;  //! Zeiger auf das VErbindungsobjekt zum SPX42
     std::shared_ptr< SPX42Commands > spxCommands;       //! Objekt zum erzeugen/decodieren der SPX Kommandos
+    double ackuVal;                                     //! aktueller Akkustand
+
     public:
     explicit IFragmentInterface( std::shared_ptr< Logger > logger,
                                  std::shared_ptr< SPX42Database > spx42Database,
@@ -32,6 +34,10 @@ namespace spx
     signals:
     virtual void onWarningMessageSig( const QString &msg, bool asPopup = false ) = 0;  //! eine Warnmeldung soll das Main darstellen
     virtual void onErrorgMessageSig( const QString &msg, bool asPopup = false ) = 0;   //! eine Warnmeldung soll das Main darstellen
+    virtual void onAkkuValueChangedSlot( double aValue ) = 0;  //! signalisiert, dass der Akku eine Spanniung hat
+
+    private slots:
+    virtual void onDatagramRecivedSlot( void ) = 0;  //! wenn ein Datentelegramm empfangen wurde
 
     public slots:
     virtual void onOnlineStatusChangedSlot( bool isOnline ) = 0;                //! Wenn sich der Onlinestatus des SPX42 ändert

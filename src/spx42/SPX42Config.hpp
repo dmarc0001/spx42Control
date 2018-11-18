@@ -26,6 +26,7 @@ namespace spx
     DecoGradientHash decoPresets;                       //! Hashliste der DECO-Presets (incl. CUSTOM == variabel)
     DecompressionDynamicGradient decoDynamicGradient;   //! dynamische Gradienten erlaubt
     DecompressionDeepstops decoDeepstopsEnabled;        //! sind deepstops erlaubt/an
+    DecoLastStop lastDecoStop;                          //! wo ist der letzte DECO Stop (3 oder 6 Meter)
     DisplayBrightness displayBrightness;                //! Display Helligkeit
     DisplayOrientation displayOrientation;              //! Ausrichtung des Displays
     DeviceTemperaturUnit unitTemperature;               //! Einheit der Tempteratur
@@ -45,7 +46,7 @@ namespace spx
     bool isFirmwareSupported;                           //! wird diese Firmware von der Software unterstützt
     bool isOldParamSorting;                             //! alte Versionen haben andre Reihenfolge der Parameter
     bool isNewerDisplayBrightness;                      //! neue Version Helligkeit
-    bool isSixMetersAutoSetpoint;                       //! Autosetpoint bei 5 oder 6 Meter
+    bool isSixMetersAutoSetpoint;                       //! Autosetpoint alt deact, 6, 10, 15, 20 NEU 6, 10, 15
 
     public:
     SPX42Config();                                                    //! Der Konstruktor
@@ -70,6 +71,8 @@ namespace spx
     DecompressionDynamicGradient getIsDecoDynamicGradients( void );            //! gib den aktuellen Wert zurück
     void setIsDecoDynamicGradients( DecompressionDynamicGradient isEnabled );  //! setze dynamische Gradienten an/aus
     DecompressionDeepstops getIstDeepstopsEnabled( void );                     //! gibt die Einstellung für deep stops zurück
+    DecoLastStop getLastDecoStop( void );                                      //! wo ist der letzte DECO Stop (3 oder 6 Meter)
+    void setLastDecoStop( DecoLastStop lastStop );                             //! setzte den letzten Deco Stop
     void setIsDeepstopsEnabled( DecompressionDeepstops isEnabled );            //! setze deppstop enabled an/aus
     DisplayBrightness getDisplayBrightness( void );                            //! Wie hell ist das Display?
     void setDisplayBrightness( DisplayBrightness brightness );                 //! Setze die Displayhelligkeit
@@ -121,6 +124,7 @@ namespace spx
     void decoDynamicGradientStateChangedSig(
         const DecompressionDynamicGradient &isDynamic );                      //! Signal wenn "dynamische Gradienten" verändert wird
     void decoDeepStopsEnabledSig( const DecompressionDeepstops &isEnabled );  //! Signal wenn "deep stops" geändert wird
+    void decoLastStopSig( DecoLastStop lastStop );                            //! wenn der letzte Stop verändert wurde
     // DISPLAYEINSTELLUNGEN
     void displayBrightnessChangedSig(
         const DisplayBrightness &brightness );  //! Signal wenn sich die Einstellung für Helligkeit ändert

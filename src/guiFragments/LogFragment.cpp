@@ -60,7 +60,7 @@ namespace spx
     deactivateTab();
   }
 
-  void LogFragment::deactivateTab( )
+  void LogFragment::deactivateTab()
   {
     disconnect( spxConfig.get(), nullptr, this, nullptr );
   }
@@ -306,4 +306,10 @@ namespace spx
   {
     // TODO: implementieren
   }
+
+  void LogFragment::onDatagramRecivedSlot()
+  {
+    // TODO: implementieren
+  }
+
 }  // namespace spx

@@ -24,7 +24,7 @@ namespace spx
     deactivateTab();
   }
 
-  void ChartsFragment::deactivateTab( )
+  void ChartsFragment::deactivateTab()
   {
     disconnect( spxConfig.get(), nullptr, this, nullptr );
   }
@@ -48,6 +48,11 @@ namespace spx
   }
 
   void ChartsFragment::onCloseDatabaseSlot()
+  {
+    // TODO: implementieren
+  }
+
+  void ChartsFragment::onDatagramRecivedSlot()
   {
     // TODO: implementieren
   }

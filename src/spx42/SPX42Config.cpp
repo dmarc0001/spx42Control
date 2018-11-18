@@ -14,6 +14,7 @@ namespace spx
       , currentPreset()
       , decoDynamicGradient()
       , decoDeepstopsEnabled()
+      , lastDecoStop()
       , displayBrightness()
       , displayOrientation()
       , unitTemperature()
@@ -88,6 +89,7 @@ namespace spx
         isFirmwareSupported = true;
         hasFahrenheidBug = true;
         isOldParamSorting = true;
+        isSixMetersAutoSetpoint = true;
         break;
       case static_cast< qint8 >( SPX42FirmwareVersions::FIRMWARE_2_7x ):
         // unbestimmte Firmware 2.7xxxx
@@ -95,6 +97,7 @@ namespace spx
         hasFahrenheidBug = false;
         canSetDate = false;
         hasSixValuesIndividual = false;
+        isSixMetersAutoSetpoint = false;
         break;
       case static_cast< qint8 >( SPX42FirmwareVersions::FIRMWARE_2_7_V_R83x ):
         isFirmwareSupported = true;
@@ -532,6 +535,31 @@ namespace spx
       if ( sendSignals )
       {
         emit decoDeepStopsEnabledSig( decoDeepstopsEnabled );
+      }
+    }
+  }
+
+  /**
+   * @brief SPX42Config::getLastDecoStop
+   * @return
+   */
+  DecoLastStop SPX42Config::getLastDecoStop( void )
+  {
+    return ( lastDecoStop );
+  }
+
+  /**
+   * @brief SPX42Config::setLastDecoStop
+   * @param lastStop
+   */
+  void SPX42Config::setLastDecoStop( DecoLastStop lastStop )
+  {
+    if ( lastStop != lastDecoStop )
+    {
+      lastDecoStop = lastStop;
+      if ( sendSignals )
+      {
+        emit decoLastStopSig( lastDecoStop );
       }
     }
   }

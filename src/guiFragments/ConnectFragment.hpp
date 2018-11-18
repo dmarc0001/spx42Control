@@ -33,7 +33,6 @@ namespace spx
     std::unique_ptr< BtDiscoverObject > discoverObj;  //! Objekt zum Discovern der Geräte
     SPXDeviceList spx42Devices;                       //! Liste mit gefundenen SPX42
     QString fragmentTitlePattern;                     //! das Muster (lokalisierungsfähig) für Fragmentüberschrift
-    double ackuVal;                                   //! aktueller Akkustand
 
     public:
     explicit ConnectFragment( QWidget *parent,
@@ -51,7 +50,7 @@ namespace spx
     signals:
     void onWarningMessageSig( const QString &msg, bool asPopup = false ) override;  //! eine Warnmeldung soll das Main darstellen
     void onErrorgMessageSig( const QString &msg, bool asPopup = false ) override;   //! eine Warnmeldung soll das Main darstellen
-    void onAkkuValueChangedSlot( double aValue );                                   //! signalisiert, dass der Akku eine Spanniung hat
+    void onAkkuValueChangedSlot( double aValue ) override;                          //! signalisiert, dass der Akku eine Spanniung hat
 
     public slots:
     virtual void onOnlineStatusChangedSlot( bool isOnline ) override;                //! Wenn sich der Onlinestatus des SPX42 ändert
@@ -60,13 +59,13 @@ namespace spx
     virtual void onCloseDatabaseSlot( void ) override;                               //! wenn die Datenbank geschlosen wird
 
     private slots:
+    virtual void onDatagramRecivedSlot( void ) override;              //! wenn ein Datentelegramm empfangen wurde
     void onConnectButtonSlot( void );                                 //! Wenn der Verbinde-Knopf gedrückt wurde
     void onPropertyButtonSlot( void );                                //! Verbindungs/Geräte eigenschaften
     void onDiscoverButtonSlot( void );                                //! Suche nach BT Geräten
     void onCurrentIndexChangedSlot( int index );                      //! Dropdown box: Auswahl geändert
     void onDiscoveredDeviceSlot( const SPXDeviceDescr &deviceInfo );  //! wurde ein neues gerät gefunden...
     void onDiscoverScanFinishedSlot( void );                          //! wenn das discovering abgeschlossen ist
-    void onDatagramRecivedSlot( void );                               //! wenn ein Datentelegramm empfangen wurde
   };
 }
 #endif  // CONNECTFORM_HPP

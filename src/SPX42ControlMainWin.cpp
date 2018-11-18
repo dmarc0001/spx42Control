@@ -75,7 +75,7 @@ namespace spx
     }
     else
     {
-      setFont( QFont( "DejaVu Sans Mono", 12 ) );
+      setFont( QFont( "DejaVu Sans Mono" ) );
     }
       //
       // das folgende wird nur kompiliert, wenn DEBUG NICHT konfiguriert ist
@@ -114,7 +114,11 @@ namespace spx
     ui->areaTabWidget->setCurrentIndex( 0 );
     onTabCurrentChangedSlot( 0 );
     connectActions();
+#ifdef DEBUG
+    setWindowTitle( QString( "%1 - %2" ).arg( ProjectConst::MAIN_TITLE ).arg( "DEBUG" ) );
+#else
     setWindowTitle( ProjectConst::MAIN_TITLE );
+#endif
     setOnlineStatusMessage();
     connect( &watchdog, &QTimer::timeout, this, &SPX42ControlMainWin::onWatchdogTimerSlot );
     watchdog.start( 1000 );

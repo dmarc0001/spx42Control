@@ -72,6 +72,11 @@ namespace spx
     DEEPSTOPS_ENABLED,
     DEEPSTOPS_DISABLED
   };
+  enum class DecoLastStop : qint8
+  {
+    LAST_STOP_ON_3,
+    LAST_STOP_ON_6
+  };
   enum class DisplayBrightness : qint8
   {
     BRIGHT_20,

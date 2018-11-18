@@ -59,7 +59,7 @@ namespace spx
     // delete ui;
   }
 
-  void GasFragment::deactivateTab( )
+  void GasFragment::deactivateTab()
   {
     disconnect( spxConfig.get(), nullptr, this, nullptr );
   }
@@ -337,4 +337,10 @@ namespace spx
   {
     // TODO: implementieren
   }
+
+  void GasFragment::onDatagramRecivedSlot()
+  {
+    // TODO: implementieren
+  }
+
 }  // namespace spx

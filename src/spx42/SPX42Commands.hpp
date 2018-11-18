@@ -24,6 +24,7 @@ namespace spx
     QByteArray &aksForAliveSignal( void );                    //! Sende ein Lebenszeichen 0x03
     QByteArray &askForFirmwareVersion( void );                //! Firmwareversion erfragen 0x04
     QByteArray &askForLicenseState( void );                   //! erfrage Lizenzstatus 0x46
+    QByteArray &askForConfig( void );                         //! erfrage die Konfiguration des SPX42
     QByteArray &setDateTime( const QDateTime &nowDateTime );  //! setzte im SPX DAtum und Zeit, sofern seine Firmware das kann
     QByteArray &sendStartYModem( void );                      //! Schalte SPX auf YMODEM-Betrieb!
     QByteArray &sendStartProgramming( void );                 //! sag dem SPX42, er soll die Firmware flashen

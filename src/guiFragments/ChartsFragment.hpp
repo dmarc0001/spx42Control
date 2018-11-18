@@ -36,8 +36,10 @@ namespace spx
     signals:
     void onWarningMessageSig( const QString &msg, bool asPopup = false ) override;  //! eine Warnmeldung soll das Main darstellen
     void onErrorgMessageSig( const QString &msg, bool asPopup = false ) override;   //! eine Warnmeldung soll das Main darstellen
+    void onAkkuValueChangedSlot( double aValue ) override;                          //! signalisiert, dass der Akku eine Spanniung hat
 
     private slots:
+    virtual void onDatagramRecivedSlot( void ) override;                             //! wenn ein Datentelegramm empfangen wurde
     virtual void onOnlineStatusChangedSlot( bool isOnline ) override;                //! Wenn sich der Onlinestatus des SPX42 ändert
     virtual void onSocketErrorSlot( QBluetoothSocket::SocketError error ) override;  //! wenn bei einer Verbindung ein Fehler auftritt
     virtual void onConfLicChangedSlot( void ) override;                              //! Wenn sich die Lizenz ändert
