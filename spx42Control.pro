@@ -35,8 +35,8 @@ UI_DIR                                 = ui
 
 CONFIG(debug, debug|release) {
   DEFINES                              += DEBUG
-  unix: TARGET                         = $$join(TARGET,,,_debug)
-  else: TARGET                         = $$join(TARGET,,,_D)
+  #unix: TARGET                         = $$join(TARGET,,,_debug)
+  #else: TARGET                         = $$join(TARGET,,,_D)
 }
 
 *msvc* {
