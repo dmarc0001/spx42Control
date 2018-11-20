@@ -1,30 +1,31 @@
-﻿#include "BtDiscoverObject.hpp"
+﻿#include "BtDiscoverRemoteDevice.hpp"
 
 namespace spx
 {
-  BtDiscoverObject::BtDiscoverObject( std::shared_ptr< Logger > logger, QObject *parent ) : QObject( parent ), lg( logger )
+  BtDiscoverRemoteDevice::BtDiscoverRemoteDevice( std::shared_ptr< Logger > logger, QObject *parent ) : QObject( parent ), lg( logger )
   {
     //
     // Geräte Discovering Objekt erschaffen
     //
     lg->debug( " BtDiscoverDialog::BtDiscoverDialog -> create device discovering object..." );
-    btDevices = std::unique_ptr< SPX42BtDevices >( new SPX42BtDevices( lg, this ) );
+    btDevices = std::unique_ptr< SPX42BtDevicesManager >( new SPX42BtDevicesManager( lg, this ) );
     //
     // discovering agent object
     //
-    connect( btDevices.get(), &SPX42BtDevices::onDiscoveredDeviceSig, this, &BtDiscoverObject::onDiscoveredDeviceSlot );
-    connect( btDevices.get(), &SPX42BtDevices::onDiscoverScanFinishedSig, this, &BtDiscoverObject::onDiscoverScanFinishedSlot );
-    connect( btDevices.get(), &SPX42BtDevices::onDeviceHostModeStateChangedSig, this,
-             &BtDiscoverObject::onDeviceHostModeStateChangedSlot );
+    connect( btDevices.get(), &SPX42BtDevicesManager::onDiscoveredDeviceSig, this, &BtDiscoverRemoteDevice::onDiscoveredDeviceSlot );
+    connect( btDevices.get(), &SPX42BtDevicesManager::onDiscoverScanFinishedSig, this,
+             &BtDiscoverRemoteDevice::onDiscoverScanFinishedSlot );
+    connect( btDevices.get(), &SPX42BtDevicesManager::onDeviceHostModeStateChangedSig, this,
+             &BtDiscoverRemoteDevice::onDeviceHostModeStateChangedSlot );
     // connect( btDevices.get(), &SPX42BtDevices::onDevicePairingDoneSig, this, &BtDiscoverObject::onDevicePairingDoneSlot );
   }
 
-  BtDiscoverObject::~BtDiscoverObject()
+  BtDiscoverRemoteDevice::~BtDiscoverRemoteDevice()
   {
     lg->debug( "BtDiscoverObject::~BtDiscoverObject..." );
   }
 
-  void BtDiscoverObject::startDiscover()
+  void BtDiscoverRemoteDevice::startDiscover()
   {
     lg->debug( "BtDiscoverObject::onGuiStartScanSlot..." );
     btDevices->setHostDiscoverable( true );
@@ -34,19 +35,19 @@ namespace spx
     lg->debug( "BtDiscoverObject::onGuiStartScanSlot...OK" );
   }
 
-  void BtDiscoverObject::stopDiscover()
+  void BtDiscoverRemoteDevice::stopDiscover()
   {
     lg->debug( "BtDiscoverObject::stopDiscover..." );
     btDevices->cancelDiscoverDevices();
     lg->debug( "BtDiscoverObject::stopDiscover...OK" );
   }
 
-  SPXDeviceList BtDiscoverObject::getSPX42Devices() const
+  SPXDeviceList BtDiscoverRemoteDevice::getSPX42Devices() const
   {
     return ( btDevices->getSPX42Devices() );
   }
 
-  void BtDiscoverObject::onDeviceHostModeStateChangedSlot( QBluetoothLocalDevice::HostMode mode )
+  void BtDiscoverRemoteDevice::onDeviceHostModeStateChangedSlot( QBluetoothLocalDevice::HostMode mode )
   {
     if ( mode != QBluetoothLocalDevice::HostPoweredOff )
     {
@@ -67,13 +68,13 @@ namespace spx
     }
   }
 
-  void BtDiscoverObject::onDiscoverScanFinishedSlot()
+  void BtDiscoverRemoteDevice::onDiscoverScanFinishedSlot()
   {
     lg->debug( "BtDiscoverOject::onDiscoverScanFinishedSlot..." );
     emit onDiscoverScanFinishedSig();
   }
 
-  void BtDiscoverObject::onDiscoveredDeviceSlot( const SPXDeviceDescr &deviceInfo )
+  void BtDiscoverRemoteDevice::onDiscoveredDeviceSlot( const SPXDeviceDescr &deviceInfo )
   {
     // TODO: durch lambda ersetzten
     emit onDiscoveredDeviceSig( deviceInfo );

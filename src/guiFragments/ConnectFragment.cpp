@@ -13,7 +13,7 @@ namespace spx
       , IFragmentInterface( logger, spx42Database, spxCfg, remSPX42, spxCmds )
       , ui( new Ui::connectForm )
       , errMsg( tr( "CONNECTION BLUETHOOTH ERROR: %1" ) )
-      , discoverObj( std::unique_ptr< BtDiscoverObject >( new BtDiscoverObject( lg ) ) )
+      , discoverObj( std::unique_ptr< BtDiscoverRemoteDevice >( new BtDiscoverRemoteDevice( lg ) ) )
       , spx42Devices()
   {
     lg->debug( "ConnectFragment::ConnectFragment..." );
@@ -36,8 +36,9 @@ namespace spx
     connect( ui->discoverPushButton, &QPushButton::clicked, this, &ConnectFragment::onDiscoverButtonSlot );
     connect( ui->deviceComboBox, static_cast< void ( QComboBox::* )( int ) >( &QComboBox::currentIndexChanged ), this,
              &ConnectFragment::onCurrentIndexChangedSlot );
-    connect( discoverObj.get(), &BtDiscoverObject::onDiscoveredDeviceSig, this, &ConnectFragment::onDiscoveredDeviceSlot );
-    connect( discoverObj.get(), &BtDiscoverObject::onDiscoverScanFinishedSig, this, &ConnectFragment::onDiscoverScanFinishedSlot );
+    connect( discoverObj.get(), &BtDiscoverRemoteDevice::onDiscoveredDeviceSig, this, &ConnectFragment::onDiscoveredDeviceSlot );
+    connect( discoverObj.get(), &BtDiscoverRemoteDevice::onDiscoverScanFinishedSig, this,
+             &ConnectFragment::onDiscoverScanFinishedSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onStateChangedSig, this, &ConnectFragment::onOnlineStatusChangedSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onSocketErrorSig, this, &ConnectFragment::onSocketErrorSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onDatagramRecivedSig, this, &ConnectFragment::onDatagramRecivedSlot );

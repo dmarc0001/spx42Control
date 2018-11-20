@@ -7,7 +7,7 @@
 #include <QRegExp>
 #include <QTimer>
 #include <memory>
-#include "bluetooth/SPX42BtDevices.hpp"
+#include "bluetooth/SPX42BtDevicesManager.hpp"
 #include "config/ProjectConst.hpp"
 #include "logging/Logger.hpp"
 #include "spx42/SPX42CommandDef.hpp"

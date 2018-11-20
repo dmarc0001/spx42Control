@@ -1,4 +1,4 @@
-﻿#include "BtServiceDiscover.hpp"
+﻿#include "BtDiscoverRemoteService.hpp"
 
 #include <utility>
 
@@ -6,10 +6,10 @@
 
 namespace spx
 {
-  BtServiceDiscover::BtServiceDiscover( std::shared_ptr< Logger > logger,
-                                        QBluetoothAddress &l_addr,
-                                        QBluetoothAddress &r_addr,
-                                        QObject *parent )
+  BtDiscoverRemoteService::BtDiscoverRemoteService( std::shared_ptr< Logger > logger,
+                                                    QBluetoothAddress &l_addr,
+                                                    QBluetoothAddress &r_addr,
+                                                    QObject *parent )
       : QObject( parent ), lg( std::move( logger ) ), laddr( l_addr ), raddr( r_addr ), servicesCount( 0 ), expression( ".*" )
   {
     //
@@ -33,19 +33,19 @@ namespace spx
     // signale mit Slots verbinden
     //
     connect( discoveryAgent.get(), &QBluetoothServiceDiscoveryAgent::serviceDiscovered, this,
-             &BtServiceDiscover::onDiscoveredServiceSlot );
+             &BtDiscoverRemoteService::onDiscoveredServiceSlot );
     connect( discoveryAgent.get(), &QBluetoothServiceDiscoveryAgent::finished, this,
              [=] { emit onDiscoverScanFinishedSig( raddr ); } );
   }
 
-  BtServiceDiscover::~BtServiceDiscover()
+  BtDiscoverRemoteService::~BtDiscoverRemoteService()
   {
     lg->debug( "BtServiceDiscover::~BtServiceDiscover..." );
     // sämtliche Verbindungen kappen...
     disconnect( discoveryAgent.get(), nullptr, nullptr, nullptr );
   }
 
-  bool BtServiceDiscover::setServiceFilter( const QString &expr )
+  bool BtDiscoverRemoteService::setServiceFilter( const QString &expr )
   {
     expression.setPattern( expr );
     if ( expression.isValid() )
@@ -54,12 +54,12 @@ namespace spx
     return ( false );
   }
 
-  void BtServiceDiscover::resetServiceFilter()
+  void BtDiscoverRemoteService::resetServiceFilter()
   {
     expression.setPattern( ".*" );
   }
 
-  void BtServiceDiscover::start()
+  void BtDiscoverRemoteService::start()
   {
     //
     // starte das suchen nach Services
@@ -67,17 +67,17 @@ namespace spx
     discoveryAgent->start();
   }
 
-  void BtServiceDiscover::cancelDiscover()
+  void BtDiscoverRemoteService::cancelDiscover()
   {
     discoveryAgent->stop();
   }
 
-  int BtServiceDiscover::servicesDiscovered()
+  int BtDiscoverRemoteService::servicesDiscovered()
   {
     return ( servicesCount );
   }
 
-  void BtServiceDiscover::onDiscoveredServiceSlot( const QBluetoothServiceInfo &info )
+  void BtDiscoverRemoteService::onDiscoveredServiceSlot( const QBluetoothServiceInfo &info )
   {
     if ( info.serviceName().isEmpty() )
       return;

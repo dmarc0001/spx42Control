@@ -66,13 +66,13 @@ SOURCES                 += \
     src/utils/DebugDataSeriesGenerator.cpp \
     src/utils/DiveDataSeriesGenerator.cpp \
     src/guiFragments/ChartsFragment.cpp \
-    src/bluetooth/BtDevicesManager.cpp \
-    src/bluetooth/BtServiceDiscover.cpp \
-    src/bluetooth/SPX42BtDevices.cpp \
     src/database/SPX42Database.cpp \
     src/bluetooth/SPX42RemotBtDevice.cpp \
-    src/bluetooth/BtDiscoverObject.cpp \
-    src/spx42/SPX42Commands.cpp
+    src/spx42/SPX42Commands.cpp \
+    src/bluetooth/BtLocalDevicesManager.cpp \
+    src/bluetooth/BtDiscoverRemoteDevice.cpp \
+    src/bluetooth/BtDiscoverRemoteService.cpp \
+    src/bluetooth/SPX42BtDevicesManager.cpp
 
 HEADERS                 += \
     src/SPX42ControlMainWin.hpp \
@@ -94,15 +94,15 @@ HEADERS                 += \
     src/utils/DiveDataSeriesGenerator.hpp \
     src/guiFragments/ChartsFragment.hpp \
     src/spx42/SPX42Commands.hpp \
-    src/bluetooth/BtDevicesManager.hpp \
-    src/bluetooth/BtServiceDiscover.hpp \
-    src/bluetooth/SPX42BtDevices.hpp \
     src/database/SPX42Database.hpp \
     src/config/currBuildDef.hpp \
     src/bluetooth/SPX42RemotBtDevice.hpp \
-    src/bluetooth/BtDiscoverObject.hpp \
     src/bluetooth/BtTypes.hpp \
-    src/spx42/SPX42CommandDef.hpp
+    src/spx42/SPX42CommandDef.hpp \
+    src/bluetooth/BtLocalDevicesManager.hpp \
+    src/bluetooth/BtDiscoverRemoteDevice.hpp \
+    src/bluetooth/BtDiscoverRemoteService.hpp \
+    src/bluetooth/SPX42BtDevicesManager.hpp
 
 FORMS                   += \
     src/ui/SPX42ControlMainWin.ui \
