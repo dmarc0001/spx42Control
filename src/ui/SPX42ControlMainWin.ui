@@ -7,13 +7,19 @@
     <x>0</x>
     <y>0</y>
     <width>1024</width>
-    <height>768</height>
+    <height>800</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>866</width>
-    <height>650</height>
+    <width>980</width>
+    <height>800</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>2048</width>
+    <height>1820</height>
    </size>
   </property>
   <property name="baseSize">
@@ -82,7 +88,7 @@
      <x>0</x>
      <y>0</y>
      <width>1024</width>
-     <height>20</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -148,7 +154,7 @@
   <widget class="QStatusBar" name="mainStatusBar"/>
   <action name="actionQUIT">
    <property name="icon">
-    <iconset resource="../res/Spx42ControlRes.qrc">
+    <iconset resource="../res/SPX42ControlRes.qrc">
      <normaloff>:/icons/ic_power_settings_new.png</normaloff>
      <activeoff>:/icons/ic_power_settings_new_blue.png</activeoff>:/icons/ic_power_settings_new.png</iconset>
    </property>
@@ -167,7 +173,7 @@
   </action>
   <action name="actionAbout">
    <property name="icon">
-    <iconset resource="../res/Spx42ControlRes.qrc">
+    <iconset resource="../res/SPX42ControlRes.qrc">
      <normaloff>:/icons/ic_help_outline.png</normaloff>
      <activeoff>:/icons/ic_help_outline_blue.png</activeoff>:/icons/ic_help_outline.png</iconset>
    </property>
@@ -183,7 +189,7 @@
   </action>
   <action name="actionOpenDB">
    <property name="icon">
-    <iconset resource="../res/Spx42ControlRes.qrc">
+    <iconset resource="../res/SPX42ControlRes.qrc">
      <normaloff>:/icons/ic_folder_open.png</normaloff>
      <activeoff>:/icons/ic_folder_open_blue.png</activeoff>:/icons/ic_folder_open.png</iconset>
    </property>
@@ -202,7 +208,7 @@
   </action>
   <action name="actionActionPrint">
    <property name="icon">
-    <iconset resource="../res/Spx42ControlRes.qrc">
+    <iconset resource="../res/SPX42ControlRes.qrc">
      <normaloff>:/icons/ic_print.png</normaloff>
      <activeoff>:/icons/ic_folder_open_blue.png</activeoff>:/icons/ic_print.png</iconset>
    </property>
@@ -221,7 +227,7 @@
   </action>
   <action name="actionSettings">
    <property name="icon">
-    <iconset resource="../res/Spx42ControlRes.qrc">
+    <iconset resource="../res/SPX42ControlRes.qrc">
      <normaloff>:/icons/ic_settings.png</normaloff>
      <activeoff>:/icons/ic_settings_blue.png</activeoff>:/icons/ic_settings.png</iconset>
    </property>
@@ -240,7 +246,7 @@
   </action>
   <action name="actionConnectBluetooth">
    <property name="icon">
-    <iconset resource="../res/Spx42ControlRes.qrc">
+    <iconset resource="../res/SPX42ControlRes.qrc">
      <normaloff>:/icons/ic_bluetooth_black_24dp_1x.png</normaloff>
      <activeoff>:/icons/ic_bluetooth_black_24dp_1x_blue.png</activeoff>:/icons/ic_bluetooth_black_24dp_1x.png</iconset>
    </property>
@@ -300,7 +306,7 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="../res/Spx42ControlRes.qrc"/>
+  <include location="../res/SPX42ControlRes.qrc"/>
  </resources>
  <connections/>
 </ui>

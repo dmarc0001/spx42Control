@@ -14,10 +14,10 @@ namespace spx
   {
     FIRMWARE_UNKNOWN,
     FIRMWARE_2_6x,
-    FIRMWARE_2_7x,
+    FIRMWARE_2_7_H_R83x,
     FIRMWARE_2_7_V_R83x,
     FIRMWARE_2_7_Hx,
-    FIRMWARE_2_7_H_r83
+    FIRMWARE_2_7x
   };
 
   enum class ApplicationTab : int
@@ -71,6 +71,11 @@ namespace spx
   {
     DEEPSTOPS_ENABLED,
     DEEPSTOPS_DISABLED
+  };
+  enum class DecoLastStop : qint8
+  {
+    LAST_STOP_ON_3,
+    LAST_STOP_ON_6
   };
   enum class DisplayBrightness : qint8
   {

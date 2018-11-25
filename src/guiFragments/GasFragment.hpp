@@ -62,10 +62,9 @@ namespace spx
                           std::shared_ptr< Logger > logger,
                           std::shared_ptr< SPX42Database > spx42Database,
                           std::shared_ptr< SPX42Config > spxCfg,
-                          std::shared_ptr< SPX42RemotBtDevice > remSPX42,
-                          std::shared_ptr< SPX42Commands > spxCmds );  //! Konstruktor
-    ~GasFragment() override;                                           //! der Zerstörer
-    virtual void deactivateTab( void ) override;                       //! deaktiviere eventuelle signale
+                          std::shared_ptr< SPX42RemotBtDevice > remSPX42 );  //! Konstruktor
+    ~GasFragment() override;                                                 //! der Zerstörer
+    virtual void deactivateTab( void ) override;                             //! deaktiviere eventuelle signale
 
     private:
     void fillReferences( void );     //! fülle die indizies mit Referenzen
@@ -77,12 +76,14 @@ namespace spx
     signals:
     void onWarningMessageSig( const QString &msg, bool asPopup = false ) override;  //! eine Warnmeldung soll das Main darstellen
     void onErrorgMessageSig( const QString &msg, bool asPopup = false ) override;   //! eine Warnmeldung soll das Main darstellen
+    void onAkkuValueChangedSlot( double aValue ) override;                          //! signalisiert, dass der Akku eine Spanniung hat
 
     private slots:
     virtual void onOnlineStatusChangedSlot( bool isOnline ) override;                //! Wenn sich der Onlinestatus des SPX42 ändert
     virtual void onSocketErrorSlot( QBluetoothSocket::SocketError error ) override;  //! wenn es Fehler in der BT Verbindung gibt
     virtual void onConfLicChangedSlot( void ) override;                              //! Wenn sich die Lizenz ändert
     virtual void onCloseDatabaseSlot( void ) override;                               //! wenn die Datenbank geschlosen wird
+    virtual void onCommandRecivedSlot( void ) override;                              //! wenn ein Datentelegramm empfangen wurde
     void onSpinO2ValueChangedSlot( int index, int o2Val );                           //! O2 Wert eines Gases hat sich verändert
     void onSpinHeValueChangedSlot( int index, int heVal );                           //! HE Wert eines Gases hat sich verändert
     void onGasUseTypChangeSlot( int index, DiluentType which, int state );           //! wenn sich das Diluent ändert

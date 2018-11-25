@@ -28,7 +28,7 @@ namespace spx
     static const QRegExp FIRMWARE_2_7x;
     static const QRegExp FIRMWARE_2_7_V_R83x;
     static const QRegExp FIRMWARE_2_7_Hx;
-    static const QRegExp FIRMWARE_2_7_H_r83;
+    static const QRegExp FIRMWARE_2_7_H_R83x;
 
     //###########################################################################
     //#### Einfache Konstanten                                               ####
@@ -55,11 +55,11 @@ namespace spx
     //###########################################################################
     //#### member-Variable/Konstante                                         ####
     //###########################################################################
-    static const QColor offlineColor;
-    static const QColor onlineColor;
-    static const QColor connectingColor;
-    static const QColor workingColor;
-    static const QColor errorColor;
+    static const QColor COLOR_OFFLINE;
+    static const QColor COLOR_ONLINE;
+    static const QColor COLOR_CONNECTING;
+    static const QColor COLOR_BUSY;
+    static const QColor COLOR_ERROR;
   };
 
   //

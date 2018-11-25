@@ -11,7 +11,7 @@ namespace spx
   const QRegExp ProjectConst::FIRMWARE_2_7x{"V2\\.7_V.*"};
   const QRegExp ProjectConst::FIRMWARE_2_7_V_R83x{"V2\\.7_V r83.*"};
   const QRegExp ProjectConst::FIRMWARE_2_7_Hx{"V2\\.7_?H.*"};
-  const QRegExp ProjectConst::FIRMWARE_2_7_H_r83{"V2\\.7_?H r83.*"};
+  const QRegExp ProjectConst::FIRMWARE_2_7_H_R83x{"V2\\.7_?H r83.*"};
 
   //
   // Einfache Konstanten
@@ -33,9 +33,9 @@ namespace spx
   //
   // Zuweisung der Konstanten
   //
-  const QColor ProjectConst::offlineColor{128, 128, 128};
-  const QColor ProjectConst::onlineColor{0, 254, 0, 35};
-  const QColor ProjectConst::connectingColor{200, 140, 50, 35};
-  const QColor ProjectConst::workingColor{254, 254, 0, 35};
-  const QColor ProjectConst::errorColor{255, 20, 20, 100};
+  const QColor ProjectConst::COLOR_OFFLINE{128, 128, 128, 255};
+  const QColor ProjectConst::COLOR_ONLINE{0, 220, 0, 255};
+  const QColor ProjectConst::COLOR_CONNECTING{242, 135, 68, 255};
+  const QColor ProjectConst::COLOR_BUSY{0, 220, 0, 128};
+  const QColor ProjectConst::COLOR_ERROR{255, 20, 20, 180};
 }

@@ -13,7 +13,7 @@ QWidget
 
 QPushButton
 {
-  font-size: 13pt;
+  font-size: 14pt;
 }
 
 QPushButton#closeButton, QPushButton#cancelButton

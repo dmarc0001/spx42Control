@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1007</width>
-    <height>547</height>
+    <width>1012</width>
+    <height>751</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -149,7 +149,7 @@
         <property name="minimumSize">
          <size>
           <width>380</width>
-          <height>0</height>
+          <height>650</height>
          </size>
         </property>
         <property name="maximumSize">
@@ -158,25 +158,25 @@
           <height>1024</height>
          </size>
         </property>
-        <layout class="QVBoxLayout" name="leftColumnVerticalLayout">
-         <property name="spacing">
-          <number>24</number>
-         </property>
-         <property name="rightMargin">
-          <number>4</number>
-         </property>
+        <layout class="QVBoxLayout" name="verticalLayout_7">
          <item>
           <widget class="QGroupBox" name="decompressionGroupBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize">
             <size>
              <width>350</width>
-             <height>180</height>
+             <height>280</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
              <width>600</width>
-             <height>185</height>
+             <height>300</height>
             </size>
            </property>
            <property name="statusTip">
@@ -204,6 +204,9 @@
             <property name="spacing">
              <number>0</number>
             </property>
+            <property name="sizeConstraint">
+             <enum>QLayout::SetMinimumSize</enum>
+            </property>
             <property name="leftMargin">
              <number>0</number>
             </property>
@@ -218,21 +221,27 @@
             </property>
             <item>
              <widget class="QWidget" name="decompressionMainVerticalWidget" native="true">
-              <layout class="QVBoxLayout" name="decompressionMainVerticalLayout">
-               <property name="spacing">
-                <number>4</number>
-               </property>
-               <property name="sizeConstraint">
-                <enum>QLayout::SetDefaultConstraint</enum>
-               </property>
-               <property name="topMargin">
-                <number>0</number>
-               </property>
-               <property name="bottomMargin">
-                <number>4</number>
-               </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>220</height>
+               </size>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_6">
                <item>
                 <widget class="QWidget" name="gradientLowHorizontalWidget" native="true">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
@@ -248,8 +257,17 @@
                  <layout class="QHBoxLayout" name="gradientLowHorizontalLayout">
                   <item>
                    <widget class="QLabel" name="gradientLowLabel">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>24</height>
+                     </size>
+                    </property>
                     <property name="text">
                      <string>GF-LOW</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
                     </property>
                    </widget>
                   </item>
@@ -270,6 +288,9 @@
                     <property name="statusTip">
                      <string>value for gradient factor low...</string>
                     </property>
+                    <property name="alignment">
+                     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                    </property>
                    </widget>
                   </item>
                  </layout>
@@ -277,6 +298,12 @@
                </item>
                <item>
                 <widget class="QWidget" name="gradientHighHorizontalWidget" native="true">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
@@ -292,8 +319,17 @@
                  <layout class="QHBoxLayout" name="gradientHighHorizontalLayout">
                   <item>
                    <widget class="QLabel" name="gradientHighLabel">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>24</height>
+                     </size>
+                    </property>
                     <property name="text">
                      <string>GF-HIGH</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
                     </property>
                    </widget>
                   </item>
@@ -314,6 +350,9 @@
                     <property name="statusTip">
                      <string>value for gradient factor high...</string>
                     </property>
+                    <property name="alignment">
+                     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                    </property>
                    </widget>
                   </item>
                  </layout>
@@ -321,6 +360,12 @@
                </item>
                <item>
                 <widget class="QWidget" name="conservatismHorizontalWidget" native="true">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
@@ -336,8 +381,17 @@
                  <layout class="QHBoxLayout" name="conservatismHorizontalLayout">
                   <item>
                    <widget class="QLabel" name="conservatismLabel">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>24</height>
+                     </size>
+                    </property>
                     <property name="text">
                      <string>CONSERVATISM</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
                     </property>
                    </widget>
                   </item>
@@ -357,6 +411,9 @@
                     </property>
                     <property name="statusTip">
                      <string>preset for decompression gradients...</string>
+                    </property>
+                    <property name="layoutDirection">
+                     <enum>Qt::LeftToRight</enum>
                     </property>
                     <item>
                      <property name="text">
@@ -395,6 +452,12 @@
                </item>
                <item>
                 <widget class="QCheckBox" name="dynamicGradientsOnCheckBox">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
@@ -410,19 +473,323 @@
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="deepStopOnCheckBox">
+                <widget class="QWidget" name="lastDecoStopWidget" native="true">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
                    <height>24</height>
                   </size>
                  </property>
-                 <property name="statusTip">
-                  <string>switch deep deco stops on or off...</string>
+                 <property name="maximumSize">
+                  <size>
+                   <width>500</width>
+                   <height>16777215</height>
+                  </size>
                  </property>
-                 <property name="text">
-                  <string>DEEP STOPS ON</string>
+                 <layout class="QHBoxLayout" name="horizontalLayout_3">
+                  <item>
+                   <widget class="QLabel" name="lastDecoStopLabel">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>24</height>
+                     </size>
+                    </property>
+                    <property name="text">
+                     <string>LAST DECO STOP</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QComboBox" name="lastDecoStopComboBox">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>21</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>180</width>
+                      <height>16777215</height>
+                     </size>
+                    </property>
+                    <property name="layoutDirection">
+                     <enum>Qt::LeftToRight</enum>
+                    </property>
+                    <item>
+                     <property name="text">
+                      <string>3 METERS</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>6 METERS</string>
+                     </property>
+                    </item>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QWidget" name="deepStopOnWidget" native="true">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
                  </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>50</height>
+                  </size>
+                 </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_8">
+                  <property name="sizeConstraint">
+                   <enum>QLayout::SetMinimumSize</enum>
+                  </property>
+                  <item>
+                   <widget class="QCheckBox" name="deepStopOnCheckBox">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>24</height>
+                     </size>
+                    </property>
+                    <property name="statusTip">
+                     <string>switch deep deco stops on or off...</string>
+                    </property>
+                    <property name="text">
+                     <string>DEEP STOPS ON</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="setpointGroupBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>350</width>
+             <height>140</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>600</width>
+             <height>140</height>
+            </size>
+           </property>
+           <property name="statusTip">
+            <string>settings for oxygen setpoint...</string>
+           </property>
+           <property name="locale">
+            <locale language="English" country="UnitedStates"/>
+           </property>
+           <property name="title">
+            <string> SETPOINT </string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+           </property>
+           <property name="flat">
+            <bool>false</bool>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_5">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QWidget" name="setpointMainVerticalWidget" native="true">
+              <layout class="QVBoxLayout" name="setpointMainVerticalLayout">
+               <property name="spacing">
+                <number>4</number>
+               </property>
+               <property name="sizeConstraint">
+                <enum>QLayout::SetDefaultConstraint</enum>
+               </property>
+               <property name="bottomMargin">
+                <number>4</number>
+               </property>
+               <item>
+                <widget class="QWidget" name="setpointAutoHorizontalWidget" native="true">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>500</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <layout class="QHBoxLayout" name="setpointAutoHorizontalLayout">
+                  <item>
+                   <widget class="QLabel" name="setpointAutoOnLabel">
+                    <property name="text">
+                     <string>AUTOSETPOINT</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QComboBox" name="setpointAutoOnComboBox">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>21</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>160</width>
+                      <height>16777215</height>
+                     </size>
+                    </property>
+                    <property name="statusTip">
+                     <string>set the point of automatic oxygen setpoint...</string>
+                    </property>
+                    <property name="layoutDirection">
+                     <enum>Qt::LeftToRight</enum>
+                    </property>
+                    <item>
+                     <property name="text">
+                      <string>OFF</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>6 m</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>10 m</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>15 m</string>
+                     </property>
+                    </item>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QWidget" name="setpointHorizontalWidget" native="true">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>500</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <layout class="QHBoxLayout" name="setpointHorizontalLayout">
+                  <item>
+                   <widget class="QLabel" name="setpointSetpointLabel">
+                    <property name="text">
+                     <string>SETPOINT</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QComboBox" name="setpointSetpointComboBox">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>21</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>160</width>
+                      <height>16777215</height>
+                     </size>
+                    </property>
+                    <property name="statusTip">
+                     <string>set the oxygen setpoint value...</string>
+                    </property>
+                    <property name="layoutDirection">
+                     <enum>Qt::LeftToRight</enum>
+                    </property>
+                    <item>
+                     <property name="text">
+                      <string>1.0 BAR</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>1.1 BAR</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>1.2 BAR</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>1.3 BAR</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>1.4 BAR</string>
+                     </property>
+                    </item>
+                   </widget>
+                  </item>
+                 </layout>
                 </widget>
                </item>
               </layout>
@@ -433,6 +800,12 @@
          </item>
          <item>
           <widget class="QGroupBox" name="displayGroupBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize">
             <size>
              <width>350</width>
@@ -474,7 +847,7 @@
              <number>0</number>
             </property>
             <property name="topMargin">
-             <number>4</number>
+             <number>0</number>
             </property>
             <property name="rightMargin">
              <number>0</number>
@@ -489,7 +862,7 @@
                 <number>4</number>
                </property>
                <property name="sizeConstraint">
-                <enum>QLayout::SetMaximumSize</enum>
+                <enum>QLayout::SetDefaultConstraint</enum>
                </property>
                <property name="bottomMargin">
                 <number>4</number>
@@ -532,6 +905,9 @@
                     </property>
                     <property name="statusTip">
                      <string>settings for display brightness...</string>
+                    </property>
+                    <property name="layoutDirection">
+                     <enum>Qt::LeftToRight</enum>
                     </property>
                     <item>
                      <property name="text">
@@ -602,6 +978,9 @@
                     <property name="statusTip">
                      <string>settings for display orientation...</string>
                     </property>
+                    <property name="layoutDirection">
+                     <enum>Qt::LeftToRight</enum>
+                    </property>
                     <item>
                      <property name="text">
                       <string>LANDSCAPE</string>
@@ -623,6 +1002,24 @@
            </layout>
           </widget>
          </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="rightColumnVerticalWidget" native="true">
+        <property name="minimumSize">
+         <size>
+          <width>380</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>800</width>
+          <height>1024</height>
+         </size>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_11">
          <item>
           <widget class="QGroupBox" name="unitGroupBox">
            <property name="minimumSize">
@@ -713,6 +1110,9 @@
                     <property name="statusTip">
                      <string>switch temperature measuring unit...</string>
                     </property>
+                    <property name="layoutDirection">
+                     <enum>Qt::LeftToRight</enum>
+                    </property>
                     <item>
                      <property name="text">
                       <string>CELSIUS</string>
@@ -766,6 +1166,9 @@
                     </property>
                     <property name="statusTip">
                      <string>switch lenght/depth measuring unit...</string>
+                    </property>
+                    <property name="layoutDirection">
+                     <enum>Qt::LeftToRight</enum>
                     </property>
                     <item>
                      <property name="text">
@@ -821,6 +1224,9 @@
                     <property name="statusTip">
                      <string>switch (general) water type...</string>
                     </property>
+                    <property name="layoutDirection">
+                     <enum>Qt::LeftToRight</enum>
+                    </property>
                     <item>
                      <property name="text">
                       <string>FRESH</string>
@@ -842,233 +1248,14 @@
            </layout>
           </widget>
          </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QWidget" name="rightColumnVerticalWidget" native="true">
-        <property name="minimumSize">
-         <size>
-          <width>380</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>800</width>
-          <height>1024</height>
-         </size>
-        </property>
-        <layout class="QVBoxLayout" name="rightColumnVerticalLayout">
-         <property name="spacing">
-          <number>24</number>
-         </property>
-         <property name="leftMargin">
-          <number>24</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QGroupBox" name="setpointGroupBox">
-           <property name="minimumSize">
-            <size>
-             <width>350</width>
-             <height>1</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>600</width>
-             <height>140</height>
-            </size>
-           </property>
-           <property name="statusTip">
-            <string>settings for oxygen setpoint...</string>
-           </property>
-           <property name="locale">
-            <locale language="English" country="UnitedStates"/>
-           </property>
-           <property name="title">
-            <string> SETPOINT </string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-           </property>
-           <property name="flat">
-            <bool>false</bool>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_5">
-            <property name="spacing">
-             <number>0</number>
-            </property>
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QWidget" name="setpointMainVerticalWidget" native="true">
-              <layout class="QVBoxLayout" name="setpointMainVerticalLayout">
-               <property name="spacing">
-                <number>4</number>
-               </property>
-               <property name="bottomMargin">
-                <number>4</number>
-               </property>
-               <item>
-                <widget class="QWidget" name="setpointAutoHorizontalWidget" native="true">
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>24</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>500</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <layout class="QHBoxLayout" name="setpointAutoHorizontalLayout">
-                  <item>
-                   <widget class="QLabel" name="setpointAutoOnLabel">
-                    <property name="text">
-                     <string>AUTOSETPOINT</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QComboBox" name="setpointAutoOnComboBox">
-                    <property name="minimumSize">
-                     <size>
-                      <width>0</width>
-                      <height>21</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>80</width>
-                      <height>16777215</height>
-                     </size>
-                    </property>
-                    <property name="statusTip">
-                     <string>set the point of automatic oxygen setpoint...</string>
-                    </property>
-                    <item>
-                     <property name="text">
-                      <string>6 m</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>10 m</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>15 m</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>20 m</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>OFF</string>
-                     </property>
-                    </item>
-                   </widget>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item>
-                <widget class="QWidget" name="setpointHorizontalWidget" native="true">
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>24</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>500</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <layout class="QHBoxLayout" name="setpointHorizontalLayout">
-                  <item>
-                   <widget class="QLabel" name="setpointSetpointLabel">
-                    <property name="text">
-                     <string>SETPOINT</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QComboBox" name="setpointSetpointComboBox">
-                    <property name="minimumSize">
-                     <size>
-                      <width>0</width>
-                      <height>21</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>80</width>
-                      <height>16777215</height>
-                     </size>
-                    </property>
-                    <property name="statusTip">
-                     <string>set the oxygen setpoint value...</string>
-                    </property>
-                    <item>
-                     <property name="text">
-                      <string>1.0</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>1.1</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>1.2</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>1.3</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>1.4</string>
-                     </property>
-                    </item>
-                   </widget>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
          <item>
           <widget class="QGroupBox" name="individualGroupBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize">
             <size>
              <width>350</width>
@@ -1078,7 +1265,7 @@
            <property name="maximumSize">
             <size>
              <width>600</width>
-             <height>225</height>
+             <height>300</height>
             </size>
            </property>
            <property name="statusTip">
@@ -1093,30 +1280,18 @@
            <property name="alignment">
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
            </property>
-           <layout class="QVBoxLayout" name="individualGroupBoxVerticalLayout">
-            <property name="spacing">
-             <number>0</number>
-            </property>
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
+           <layout class="QVBoxLayout" name="verticalLayout_10">
             <item>
              <widget class="QWidget" name="individualVerticalWidget" native="true">
-              <layout class="QVBoxLayout" name="individualVerticalLayout">
-               <property name="spacing">
-                <number>4</number>
-               </property>
-               <property name="bottomMargin">
-                <number>4</number>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_9">
+               <property name="sizeConstraint">
+                <enum>QLayout::SetMinimumSize</enum>
                </property>
                <item>
                 <widget class="QCheckBox" name="individualSeonsorsOnCheckBox">
@@ -1182,6 +1357,9 @@
                       <width>80</width>
                       <height>16777215</height>
                      </size>
+                    </property>
+                    <property name="layoutDirection">
+                     <enum>Qt::LeftToRight</enum>
                     </property>
                     <item>
                      <property name="text">
@@ -1258,6 +1436,9 @@
                     <property name="statusTip">
                      <string>set the time between measurings (and logentrys)...</string>
                     </property>
+                    <property name="layoutDirection">
+                     <enum>Qt::LeftToRight</enum>
+                    </property>
                     <item>
                      <property name="text">
                       <string>20 s</string>
@@ -1271,6 +1452,68 @@
                     <item>
                      <property name="text">
                       <string>60 s</string>
+                     </property>
+                    </item>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QWidget" name="individualTempStickHorizontalWidget" native="true">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>500</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <layout class="QHBoxLayout" name="individualLogIntervalHorizontalLayout_2">
+                  <item>
+                   <widget class="QLabel" name="individualTEmpStickLabel">
+                    <property name="text">
+                     <string>TEMPSTICK TYPE</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QComboBox" name="individualTempStickComboBox">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>21</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>80</width>
+                      <height>16777215</height>
+                     </size>
+                    </property>
+                    <property name="statusTip">
+                     <string>set the time between measurings (and logentrys)...</string>
+                    </property>
+                    <property name="layoutDirection">
+                     <enum>Qt::LeftToRight</enum>
+                    </property>
+                    <item>
+                     <property name="text">
+                      <string>T1</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>T2</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>T3</string>
                      </property>
                     </item>
                    </widget>

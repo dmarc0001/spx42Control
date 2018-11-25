@@ -14,6 +14,7 @@ namespace spx
       , currentPreset()
       , decoDynamicGradient()
       , decoDeepstopsEnabled()
+      , lastDecoStop()
       , displayBrightness()
       , displayOrientation()
       , unitTemperature()
@@ -75,6 +76,9 @@ namespace spx
     isOldParamSorting = false;
     isNewerDisplayBrightness = false;
     isSixMetersAutoSetpoint = false;
+    //
+    // jetzt unterscheiden wer was kann
+    //
     switch ( static_cast< qint8 >( value ) )
     {
       case static_cast< qint8 >( SPX42FirmwareVersions::FIRMWARE_UNKNOWN ):
@@ -85,6 +89,7 @@ namespace spx
         isFirmwareSupported = true;
         hasFahrenheidBug = true;
         isOldParamSorting = true;
+        isSixMetersAutoSetpoint = true;
         break;
       case static_cast< qint8 >( SPX42FirmwareVersions::FIRMWARE_2_7x ):
         // unbestimmte Firmware 2.7xxxx
@@ -92,6 +97,7 @@ namespace spx
         hasFahrenheidBug = false;
         canSetDate = false;
         hasSixValuesIndividual = false;
+        isSixMetersAutoSetpoint = false;
         break;
       case static_cast< qint8 >( SPX42FirmwareVersions::FIRMWARE_2_7_V_R83x ):
         isFirmwareSupported = true;
@@ -107,7 +113,7 @@ namespace spx
         hasFahrenheidBug = false;
         canSetDate = false;
         break;
-      case static_cast< qint8 >( SPX42FirmwareVersions::FIRMWARE_2_7_H_r83 ):
+      case static_cast< qint8 >( SPX42FirmwareVersions::FIRMWARE_2_7_H_R83x ):
         // Build 197
         isFirmwareSupported = true;
         hasFahrenheidBug = false;
@@ -134,11 +140,12 @@ namespace spx
     if ( ProjectConst::FIRMWARE_2_6x.exactMatch( value ) )
       setSpxFirmwareVersion( SPX42FirmwareVersions::FIRMWARE_2_6x );
     // jetzt die 2.7er Versionen
+    // exakt die 2.7.H,r83
+    else if ( ProjectConst::FIRMWARE_2_7_H_R83x.exactMatch( value ) )
+      setSpxFirmwareVersion( SPX42FirmwareVersions::FIRMWARE_2_7_H_R83x );
+    // oder 2.7.V.r83
     else if ( ProjectConst::FIRMWARE_2_7_V_R83x.exactMatch( value ) )
       setSpxFirmwareVersion( SPX42FirmwareVersions::FIRMWARE_2_7_V_R83x );
-    // exakt die 2.7.Hr83
-    else if ( ProjectConst::FIRMWARE_2_7_H_r83.exactMatch( value ) )
-      setSpxFirmwareVersion( SPX42FirmwareVersions::FIRMWARE_2_7_H_r83 );
     // oder unbestimmte 2.7H
     else if ( ProjectConst::FIRMWARE_2_7_Hx.exactMatch( value ) )
       setSpxFirmwareVersion( SPX42FirmwareVersions::FIRMWARE_2_7_Hx );
@@ -147,6 +154,16 @@ namespace spx
       setSpxFirmwareVersion( SPX42FirmwareVersions::FIRMWARE_2_7x );
     else
       setSpxFirmwareVersion( SPX42FirmwareVersions::FIRMWARE_UNKNOWN );
+  }
+
+  /**
+   * @brief SPX42Config::setSpxFirmwareVersion
+   * @param value
+   */
+  void SPX42Config::setSpxFirmwareVersion( const QByteArray &value )
+  {
+    QString versionString( value );
+    setSpxFirmwareVersion( versionString );
   }
 
   /**
@@ -187,6 +204,55 @@ namespace spx
       {
         emit licenseChangedSig( spxLicense );
       }
+    }
+  }
+
+  /**
+   * @brief SPX42Config::setLicense
+   * @param lic
+   * @param ind
+   */
+  void SPX42Config::setLicense( const QByteArray &lic, const QByteArray &ind )
+  {
+    // Kommando SPX_LICENSE_STATE
+    // komplett: <~45:LS:CE>
+    // übergeben LS,CE
+    // LS : License State 0=Nitrox,1=Normoxic Trimix,2=Full Trimix
+    // CE : Custom Enabled 0= disabled, 1=enabled
+    qint8 licVal = static_cast< qint8 >( lic.toInt() );
+    qint8 indVal = -1;
+    if ( ind != nullptr && !ind.isEmpty() && !ind.isNull() )
+    {
+      // wurde eine Individuallizenz erwähnt?
+      indVal = static_cast< qint8 >( ind.toInt() );
+      switch ( indVal )
+      {
+        default:
+        case 0:
+          setLicense( IndividualLicense::LIC_NONE );
+          break;
+        case 1:
+          setLicense( IndividualLicense::LIC_INDIVIDUAL );
+      }
+    }
+    //
+    // lizenz eintragen
+    //
+    switch ( licVal )
+    {
+      default:
+      case 0:
+        setLicense( LicenseType::LIC_NITROX );
+        break;
+      case 1:
+        setLicense( LicenseType::LIC_NORMOXIX );
+        break;
+      case 2:
+        setLicense( LicenseType::LIC_FULLTMX );
+        break;
+      case 3:
+        setLicense( LicenseType::LIC_MIL );
+        break;
     }
   }
 
@@ -469,6 +535,31 @@ namespace spx
       if ( sendSignals )
       {
         emit decoDeepStopsEnabledSig( decoDeepstopsEnabled );
+      }
+    }
+  }
+
+  /**
+   * @brief SPX42Config::getLastDecoStop
+   * @return
+   */
+  DecoLastStop SPX42Config::getLastDecoStop( void )
+  {
+    return ( lastDecoStop );
+  }
+
+  /**
+   * @brief SPX42Config::setLastDecoStop
+   * @param lastStop
+   */
+  void SPX42Config::setLastDecoStop( DecoLastStop lastStop )
+  {
+    if ( lastStop != lastDecoStop )
+    {
+      lastDecoStop = lastStop;
+      if ( sendSignals )
+      {
+        emit decoLastStopSig( lastDecoStop );
       }
     }
   }

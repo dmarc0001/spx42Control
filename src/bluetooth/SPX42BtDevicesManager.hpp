@@ -8,23 +8,23 @@
 #include <QRegExp>
 #include <QVector>
 #include <memory>
-#include "BtDevicesManager.hpp"
-#include "BtServiceDiscover.hpp"
+#include "BtDiscoverRemoteService.hpp"
+#include "BtLocalDevicesManager.hpp"
 #include "BtTypes.hpp"
 #include "config/ProjectConst.hpp"
 #include "logging/Logger.hpp"
 
 namespace spx
 {
-  class SPX42BtDevices : public QObject
+  class SPX42BtDevicesManager : public QObject
   {
     Q_OBJECT
     private:
     std::shared_ptr< Logger > lg;
     bool deviceDiscoverFinished;
     QBluetoothAddress currentServiceScanDevice;
-    std::unique_ptr< BtDevicesManager > btDevicesManager;
-    std::unique_ptr< BtServiceDiscover > btServicesAgent;
+    std::unique_ptr< BtLocalDevicesManager > btDevicesManager;
+    std::unique_ptr< BtDiscoverRemoteService > btServicesAgent;
     QBluetoothAddress laddr;
     SPXDeviceList spx42Devices;
     SPXDeviceList discoverdDevices;
@@ -32,8 +32,8 @@ namespace spx
     QRegExp exp;
 
     public:
-    explicit SPX42BtDevices( std::shared_ptr< Logger > logger, QObject *parent = nullptr );
-    ~SPX42BtDevices();                                                                 //! Der Destruktor
+    explicit SPX42BtDevicesManager( std::shared_ptr< Logger > logger, QObject *parent = nullptr );
+    ~SPX42BtDevicesManager();                                                          //! Der Destruktor
     void startDiscoverDevices( void );                                                 //! Geräte suchen
     void cancelDiscoverDevices( void );                                                //! Discovering abbrechen
     SPXDeviceList getSPX42Devices( void ) const;                                       //! gefundene Geräte zurückgeben

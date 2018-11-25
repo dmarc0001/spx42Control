@@ -51,5 +51,7 @@
     </qresource>
     <qresource prefix="/style">
         <file alias="defaultStyle.css">spx42Control.css</file>
+        <file alias="defaultStyleMac.css">spx42ControlMac.css</file>
+        <file alias="defaultStyleUx.css">spx42ControlUx.css</file>
     </qresource>
 </RCC>

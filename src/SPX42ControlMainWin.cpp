@@ -1,5 +1,5 @@
-﻿#include "Spx42ControlMainWin.hpp"
-#include "ui_Spx42ControlMainWin.h"
+﻿#include "SPX42ControlMainWin.hpp"
+#include "ui_SPX42ControlMainWin.h"
 
 namespace spx
 {
@@ -12,13 +12,17 @@ namespace spx
       , ui( new Ui::SPX42ControlMainWin() )
       , spx42Config( new SPX42Config() )
       , spx42Commands( std::shared_ptr< SPX42Commands >( new SPX42Commands() ) )
-      , onlineLabel( std::unique_ptr< QLabel >( new QLabel( tr( "  SPX42 OFFLINE" ) ) ) )
+      , onlineLabel( std::unique_ptr< QLabel >( new QLabel( tr( "SPX42 OFFLINE" ) ) ) )
+      , akkuLabel( std::unique_ptr< QLabel >( new QLabel( "---" ) ) )
       , currentStatus( ApplicationStat::STAT_OFFLINE )
       , watchdogCounter( 0 )
       , zyclusCounter( 0 )
       , currentTab()
       , offlinePalette( onlineLabel->palette() )
       , onlinePalette( onlineLabel->palette() )
+      , busyPalette( onlineLabel->palette() )
+      , connectingPalette( onlineLabel->palette() )
+      , errorPalette( onlineLabel->palette() )
   {
     //
     // Hilfebutton ausblenden
@@ -71,11 +75,7 @@ namespace spx
     }
     else
     {
-#ifdef UNIX
-      setFont( QFont( "DejaVu Sans Mono", 11 ) );
-#else
-      setFont( QFont( "DejaVu Sans Mono", 12 ) );
-#endif
+      setFont( QFont( "DejaVu Sans Mono" ) );
     }
       //
       // das folgende wird nur kompiliert, wenn DEBUG NICHT konfiguriert ist
@@ -88,13 +88,16 @@ namespace spx
     //
     // einen onlineindikator in die Statusleiste bauen
     //
-    // onlinePalette.setColor( onlineLabel->foregroundRole(), Qt::green );
-    // offlinePalette.setColor( onlineLabel->foregroundRole(), Qt::red );
-    onlinePalette.setColor( onlineLabel->foregroundRole(), ProjectConst::onlineColor );
-    offlinePalette.setColor( onlineLabel->foregroundRole(), ProjectConst::offlineColor );
+    onlinePalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_ONLINE );
+    busyPalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_BUSY );
+    offlinePalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_OFFLINE );
+    connectingPalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_CONNECTING );
+    errorPalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_ERROR );
     onlineLabel->setIndent( 25 );
     this->statusBar()->addWidget( onlineLabel.get(), 250 );
+    this->statusBar()->addWidget( akkuLabel.get(), 40 );
     onlineLabel->setPalette( offlinePalette );
+    akkuLabel->setPalette( offlinePalette );
     //
     fillTabTitleArray();
     //
@@ -111,7 +114,11 @@ namespace spx
     ui->areaTabWidget->setCurrentIndex( 0 );
     onTabCurrentChangedSlot( 0 );
     connectActions();
+#ifdef DEBUG
+    setWindowTitle( QString( "%1 - %2" ).arg( ProjectConst::MAIN_TITLE ).arg( "DEBUG" ) );
+#else
     setWindowTitle( ProjectConst::MAIN_TITLE );
+#endif
     setOnlineStatusMessage();
     connect( &watchdog, &QTimer::timeout, this, &SPX42ControlMainWin::onWatchdogTimerSlot );
     watchdog.start( 1000 );
@@ -459,29 +466,45 @@ namespace spx
     QString online;
     // ist die Kiste verbunden?
     QFont font = onlineLabel->font();
-    if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
+    //
+    // welcher Fall?
+    //
+    switch ( remoteSPX42->getConnectionStatus() )
     {
-      //
-      // verbunden darstellen
-      //
-      online = tr( "SPX42 ONLINE" );
-      onlineLabel->setText( tr( "SPX42 ONLINE" ) );
-      onlineLabel->setPalette( onlinePalette );
-      font.setBold( true );
-      onlineLabel->setFont( font );
+      case SPX42RemotBtDevice::SPX42_DISCONNECTED:
+      case SPX42RemotBtDevice::SPX42_DISCONNECTING:
+        //
+        // nicht verbunden darstellen
+        //
+        online = tr( "SPX42 OFFLINE" );
+        onlineLabel->setPalette( offlinePalette );
+        break;
+      case SPX42RemotBtDevice::SPX42_CONNECTED:
+        //
+        // verbunden darstellen
+        //
+        online = tr( "SPX42 ONLINE" );
+        onlineLabel->setPalette( onlinePalette );
+        break;
+      case SPX42RemotBtDevice::SPX42_CONNECTING:
+        //
+        // verbinden... darstellen
+        //
+        online = tr( "SPX42 CONNECTING" );
+        onlineLabel->setPalette( connectingPalette );
+        break;
+      case SPX42RemotBtDevice::SPX42_ERROR:
+        //
+        // FEHLER darstellen
+        //
+        online = tr( "SPX42 OFFLINE/ERROR" );
+        onlineLabel->setPalette( errorPalette );
+        break;
     }
-    else
-    {
-      //
-      // nicht verbunden darstellen
-      //
-      online = tr( "SPX42 OFFLINE" );
-      onlineLabel->setText( tr( "SPX42 OFFINE" ) );
-      onlineLabel->setPalette( offlinePalette );
-      font.setBold( false );
-      onlineLabel->setFont( font );
-    }
+    onlineLabel->setFont( font );
+    //
     // und, ist eine Meldung vorhanden?
+    //
     if ( !msg.isEmpty() )
     {
       onlineLabel->setText( QString( "%1 - %2" ).arg( online ).arg( msg ) );
@@ -515,7 +538,7 @@ namespace spx
       if ( --zyclusCounter < 0 )
       {
         zyclusCounter = 6;
-        QByteArray sendCommand = spx42Commands->sendAliveSignal();
+        QByteArray sendCommand = spx42Commands->aksForAliveSignal();
 #ifdef DEBUG
         lg->debug( "SPX42ControlMainWin::onWatchdogTimerSlot -> send cmd alive..." );
 #endif
@@ -553,17 +576,19 @@ namespace spx
       // default:
       case static_cast< int >( ApplicationTab::CONNECT_TAB ):
         lg->debug( "SPX42ControlMainWin::setApplicationTab -> CONNECT TAB..." );
-        currObj = new ConnectFragment( Q_NULLPTR, lg, spx42Database, spx42Config, remoteSPX42, spx42Commands );
+        currObj = new ConnectFragment( Q_NULLPTR, lg, spx42Database, spx42Config, remoteSPX42 );
         currObj->setObjectName( "spx42Connect" );
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::CONNECT_TAB ) ) );
         currentTab = ApplicationTab::CONNECT_TAB;
         connect( dynamic_cast< ConnectFragment * >( currObj ), &ConnectFragment::onWarningMessageSig, this,
                  &SPX42ControlMainWin::onWarningMessageSlot );
+        connect( dynamic_cast< ConnectFragment * >( currObj ), &ConnectFragment::onAkkuValueChangedSlot, this,
+                 &SPX42ControlMainWin::onAkkuValueChangedSlot );
         break;
 
       case static_cast< int >( ApplicationTab::CONFIG_TAB ):
         lg->debug( "SPX42ControlMainWin::setApplicationTab -> CONFIG TAB..." );
-        currObj = new DeviceConfigFragment( Q_NULLPTR, lg, spx42Database, spx42Config, remoteSPX42, spx42Commands );
+        currObj = new DeviceConfigFragment( Q_NULLPTR, lg, spx42Database, spx42Config, remoteSPX42 );
         currObj->setObjectName( "spx42Config" );
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::CONFIG_TAB ) ) );
         currentTab = ApplicationTab::CONFIG_TAB;
@@ -571,7 +596,7 @@ namespace spx
 
       case static_cast< int >( ApplicationTab::GAS_TAB ):
         lg->debug( "SPX42ControlMainWin::setApplicationTab -> GAS TAB..." );
-        currObj = new GasFragment( Q_NULLPTR, lg, spx42Database, spx42Config, remoteSPX42, spx42Commands );
+        currObj = new GasFragment( Q_NULLPTR, lg, spx42Database, spx42Config, remoteSPX42 );
         currObj->setObjectName( "spx42Gas" );
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::GAS_TAB ) ) );
         currentTab = ApplicationTab::GAS_TAB;
@@ -579,7 +604,7 @@ namespace spx
 
       case static_cast< int >( ApplicationTab::LOG_TAB ):
         lg->debug( "SPX42ControlMainWin::setApplicationTab -> LOG TAB..." );
-        currObj = new LogFragment( Q_NULLPTR, lg, spx42Database, spx42Config, remoteSPX42, spx42Commands );
+        currObj = new LogFragment( Q_NULLPTR, lg, spx42Database, spx42Config, remoteSPX42 );
         currObj->setObjectName( "spx42log" );
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::LOG_TAB ) ) );
         currentTab = ApplicationTab::LOG_TAB;
@@ -587,7 +612,7 @@ namespace spx
 
       case static_cast< int >( ApplicationTab::CHART_TAB ):
         lg->debug( "SPX42ControlMainWin::setApplicationTab -> CHART TAB..." );
-        currObj = new ChartsFragment( Q_NULLPTR, lg, spx42Database, spx42Config, remoteSPX42, spx42Commands );
+        currObj = new ChartsFragment( Q_NULLPTR, lg, spx42Database, spx42Config, remoteSPX42 );
         currObj->setObjectName( "spx42charts" );
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::CHART_TAB ) ) );
         currentTab = ApplicationTab::CHART_TAB;
@@ -641,32 +666,82 @@ namespace spx
     lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot" );
     setOnlineStatusMessage();
     //
-    // so, wenn der SPX onlöine ist immer als erstes ein paar Kommandos
-    // zum SPX42 schicken um ihn zu identifizieren
+    // was soll immer passieren
     //
-    if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
+    switch ( remoteSPX42->getConnectionStatus() )
+    {
+      case SPX42RemotBtDevice::SPX42_DISCONNECTED:
+      case SPX42RemotBtDevice::SPX42_DISCONNECTING:
+      case SPX42RemotBtDevice::SPX42_ERROR:
+        //
+        // config leeren
+        //
+        spx42Config->reset();
+        onAkkuValueChangedSlot();
+        break;
+      case SPX42RemotBtDevice::SPX42_CONNECTING:
+        break;
+      case SPX42RemotBtDevice::SPX42_CONNECTED:
+        //
+        // so, wenn der SPX online ist immer als erstes ein paar Kommandos
+        // zum SPX42 schicken um ihn zu identifizieren
+        //
+        //
+        // Frage nach dem Hersteller
+        //
+        QByteArray sendCommand = spx42Commands->askForManufacturers();
+        lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd manufacturer..." );
+        remoteSPX42->sendCommand( sendCommand );
+        lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd manufacturer...OK" );
+        //
+        // gleich danach Frage nach der Seriennummer
+        //
+        sendCommand = spx42Commands->askForSerialNumber();
+        lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd serialnumber..." );
+        remoteSPX42->sendCommand( sendCommand );
+        lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd serialnumber...OK" );
+        //
+        // und dann noch Frage nach der Firmwareversion
+        //
+        sendCommand = spx42Commands->askForFirmwareVersion();
+        lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd firmwareversion..." );
+        remoteSPX42->sendCommand( sendCommand );
+        lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd firmwareversion...OK" );
+        //
+        // und lizenz nicht vergessen
+        //
+        sendCommand = spx42Commands->askForLicenseState();
+        lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd license status..." );
+        remoteSPX42->sendCommand( sendCommand );
+        lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd license status...OK" );
+        break;
+    }
+  }
+
+  /**
+   * @brief SPX42ControlMainWin::onAkkuValueChangedSlot
+   * @param akkuValue
+   */
+  void SPX42ControlMainWin::onAkkuValueChangedSlot( double akkuValue )
+  {
+    //
+    // versuche den Akkustand darzustellen
+    //
+    if ( akkuValue == 0.0 )
     {
       //
-      // Frage nach dem Hersteller
+      // kein Wert
       //
-      QByteArray sendCommand = spx42Commands->sendManufacturers();
-      lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd manufacturer..." );
-      remoteSPX42->sendCommand( sendCommand );
-      lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd manufacturer...OK" );
+      akkuLabel->setText( "---" );
+    }
+    else
+    {
       //
-      // gleich danach Frage nach der Seriennummer
+      // konvertiere in String
+      // TODO: Abhängig von der Spannung färben
       //
-      sendCommand = spx42Commands->sendSerialNumber();
-      lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd serialnumber..." );
-      remoteSPX42->sendCommand( sendCommand );
-      lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd serialnumber...OK" );
-      //
-      // und dann noch Frage nach der Firmwareversion
-      //
-      sendCommand = spx42Commands->sendFirmwareVersion();
-      lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd firmwareversion..." );
-      remoteSPX42->sendCommand( sendCommand );
-      lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd firmwareversion...OK" );
+      QString labelText = tr( "AKKU" ).append( QString::asprintf( " %2.2fV", akkuValue ) );
+      akkuLabel->setText( labelText );
     }
   }
 
@@ -707,4 +782,4 @@ namespace spx
       lg->warn( QString( "SPX42ControlMainWin::onErrorMessageSlot -> as msgline: <%1>" ).arg( msg ) );
     }
   }
-}
+}  // namespace spx

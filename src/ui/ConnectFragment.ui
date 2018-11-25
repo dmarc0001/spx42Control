@@ -47,6 +47,9 @@
       <property name="spacing">
        <number>0</number>
       </property>
+      <property name="sizeConstraint">
+       <enum>QLayout::SetMinimumSize</enum>
+      </property>
       <property name="leftMargin">
        <number>0</number>
       </property>
@@ -119,35 +122,47 @@
    </item>
    <item>
     <widget class="QWidget" name="bodyWidget" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>250</height>
+      </size>
+     </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="1">
-       <spacer name="verticalSpacer">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetMinimumSize</enum>
+      </property>
+      <item row="1" column="0">
+       <spacer name="horizontalSpacer">
         <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Minimum</enum>
+         <enum>Qt::Horizontal</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>20</width>
-          <height>15</height>
+          <width>40</width>
+          <height>20</height>
          </size>
         </property>
        </spacer>
       </item>
-      <item row="1" column="1">
+      <item row="0" column="1">
        <widget class="QComboBox" name="deviceComboBox">
         <property name="minimumSize">
          <size>
-          <width>250</width>
-          <height>0</height>
+          <width>350</width>
+          <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>350</width>
-          <height>23</height>
+          <width>450</width>
+          <height>40</height>
          </size>
         </property>
         <property name="statusTip">
@@ -155,7 +170,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="2">
+      <item row="0" column="2">
        <widget class="QLabel" name="deviceLabel">
         <property name="minimumSize">
          <size>
@@ -180,30 +195,17 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="2" column="1">
+      <item row="1" column="1">
        <widget class="QPushButton" name="connectButton">
         <property name="minimumSize">
          <size>
-          <width>250</width>
+          <width>350</width>
           <height>48</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>350</width>
+          <width>450</width>
           <height>58</height>
          </size>
         </property>
@@ -214,7 +216,7 @@
          <string>connect device</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/Spx42ControlRes.qrc">
+         <iconset resource="../res/SPX42ControlRes.qrc">
           <normaloff>:/icons/ic_bluetooth_black_24dp_1x.png</normaloff>
           <activeoff>:/icons/ic_bluetooth_black_24dp_1x_blue.png</activeoff>:/icons/ic_bluetooth_black_24dp_1x.png</iconset>
         </property>
@@ -232,7 +234,7 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="2">
+      <item row="1" column="2">
        <widget class="QPushButton" name="propertyPushButton">
         <property name="minimumSize">
          <size>
@@ -258,7 +260,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../res/Spx42ControlRes.qrc">
+         <iconset resource="../res/SPX42ControlRes.qrc">
           <normaloff>:/icons/ic_edit.png</normaloff>
           <activeoff>:/icons/ic_edit_blue.png</activeoff>:/icons/ic_edit.png</iconset>
         </property>
@@ -273,30 +275,17 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="3">
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="3" column="1">
+      <item row="2" column="1">
        <widget class="QPushButton" name="discoverPushButton">
         <property name="minimumSize">
          <size>
-          <width>250</width>
+          <width>350</width>
           <height>48</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>350</width>
+          <width>450</width>
           <height>58</height>
          </size>
         </property>
@@ -307,7 +296,7 @@
          <string>discover devices</string>
         </property>
         <property name="icon">
-         <iconset resource="../res/Spx42ControlRes.qrc">
+         <iconset resource="../res/SPX42ControlRes.qrc">
           <normaloff>:/icons/ic_bluetooth_searching.png</normaloff>
           <activeoff>:/icons/ic_bluetooth_searching_blue.png</activeoff>:/icons/ic_bluetooth_searching.png</iconset>
         </property>
@@ -322,15 +311,68 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="1">
+      <item row="1" column="3">
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="editorWidget" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetMaximumSize</enum>
+      </property>
+      <item>
+       <widget class="QTableView" name="editAliasesTableView">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>80</height>
+         </size>
+        </property>
+        <property name="statusTip">
+         <string>edit device aliases</string>
+        </property>
+        <property name="gridStyle">
+         <enum>Qt::DotLine</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="verticalSpacer_2">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Minimum</enum>
+        </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>20</width>
-          <height>40</height>
+          <width>2</width>
+          <height>2</height>
          </size>
         </property>
        </spacer>
@@ -375,7 +417,7 @@
   <tabstop>discoverPushButton</tabstop>
  </tabstops>
  <resources>
-  <include location="../res/Spx42ControlRes.qrc"/>
+  <include location="../res/SPX42ControlRes.qrc"/>
  </resources>
  <connections/>
 </ui>

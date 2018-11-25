@@ -8,17 +8,17 @@ QWidget
 {
   font-family: "DejaVu Sans Mono";
   font-style: normal;
-  font-size: 11pt;
+  font-size: 14pt;
 }
 
 QPushButton
 {
-  font-size: 13pt;
+  font-size: 16pt;
 }
 
 QPushButton#closeButton, QPushButton#cancelButton
 {
-  font-size: 17pt;
+  font-size: 21pt;
 }
 
 /* mit hover-Effekt */
@@ -38,7 +38,7 @@ QPushButton:hover:pressed
 QLabel#tabHeaderLabel
 {
   font-style: bold;
-  font-size: 14pt;
+  font-size: 18pt;
   color: red;
 }
 

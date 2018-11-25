@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>SPX42 app execute</DisplayName>
+    <Description>Binary executable files for the spx42Control application.</Description> 
+    <Version>1.0.0</Version>
+    <ReleaseDate>2018-11-28</ReleaseDate>
+    <Default>true</Default>
+    <Script>installscript.qs</Script>
+    <Dependencies>runtime</Dependencies>
+    <!--
+    <Licenses>
+        <License name="Public Domain Software" file="license.txt" />
+    </Licenses>
+    <UserInterfaces>
+        <UserInterface>page.ui</UserInterface>
+    </UserInterfaces>
+    <Translations>
+        <Translation>qt_FirmwareUpdater_de_DE.qm</Translation>
+    </Translations>
+    -->    
+</Package>

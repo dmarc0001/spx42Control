@@ -48,6 +48,7 @@ namespace spx
     std::shared_ptr< SPX42Database > spx42Database;     //! Datenbankobjekt zur Speicherung der SPX Daten/Einstellungen
     std::shared_ptr< SPX42Commands > spx42Commands;     //! erzeugen von Kommandotelegrams für den SPX42
     std::unique_ptr< QLabel > onlineLabel;              //! Label signalisiert online oder offline
+    std::unique_ptr< QLabel > akkuLabel;                //! Label signalisiert online oder offline
     QStringList tabTitle;                               //! Tab Titel (nicht statisch, das Objekt gibts eh nur einmal)
     AppConfigClass cf;                                  //! Konfiguration aus Datei
     QTimer watchdog;                                    //! Wachhund für Timeouts
@@ -57,6 +58,9 @@ namespace spx
     ApplicationTab currentTab;                          //! welcher Tab ist aktiv?
     QPalette offlinePalette;                            //! Pallette für offline Schrift
     QPalette onlinePalette;                             //! Pallette für offline Schrift
+    QPalette busyPalette;                               //! Pallette für "offline Schrift"ist beschäftigt"
+    QPalette connectingPalette;                         //! Pallette für verbinden
+    QPalette errorPalette;                              //! Pallette für den Fehlerfall
 
     public:
     explicit SPX42ControlMainWin( QWidget *parent = nullptr );
@@ -79,6 +83,7 @@ namespace spx
     void onWatchdogTimerSlot( void );                                       //! timer für zyklische Sachen, watchdog...
     void onTabCurrentChangedSlot( int idx );                                //! TAB Index gewechselt
     void onLicenseChangedSlot( void );                                      //! Lizenztyp getriggert
+    void onAkkuValueChangedSlot( double akkuValue = 0.0 );                  //! Akkuwert setzen
     void onOnlineStatusChangedSlot( bool isOnline );                        //! Wenn sich der Onlinestatus des SPX42 ändert
     void onWarningMessageSlot( const QString &msg, bool asPopup = false );  //! eine Warnmeldung soll das Main darstellen
     void onErrorgMessageSlot( const QString &msg, bool asPopup = false );   //! eine Warnmeldung soll das Main darstellen

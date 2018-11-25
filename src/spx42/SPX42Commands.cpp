@@ -20,27 +20,94 @@ namespace spx
     cmd.append( &SPX42CommandDef::ETX, 1 );
   }
 
-  QByteArray &SPX42Commands::sendManufacturers()
+  QByteArray &SPX42Commands::askForManufacturers()
   {
     makeSipleCommand( SPX42CommandDef::SPX_MANUFACTURERS );
     return ( cmd );
   }
 
-  QByteArray &SPX42Commands::sendSerialNumber()
+  QByteArray &SPX42Commands::askForSerialNumber()
   {
     makeSipleCommand( SPX42CommandDef::SPX_SERIAL_NUMBER );
     return ( cmd );
   }
 
-  QByteArray &SPX42Commands::sendAliveSignal()
+  QByteArray &SPX42Commands::aksForAliveSignal()
   {
     makeSipleCommand( SPX42CommandDef::SPX_ALIVE );
     return ( cmd );
   }
 
-  QByteArray &SPX42Commands::sendFirmwareVersion()
+  QByteArray &SPX42Commands::askForFirmwareVersion()
   {
     makeSipleCommand( SPX42CommandDef::SPX_APPLICATION_ID );
+    return ( cmd );
+  }
+
+  QByteArray &SPX42Commands::askForLicenseState()
+  {
+    makeSipleCommand( SPX42CommandDef::SPX_LICENSE_STATE );
+    return ( cmd );
+  }
+
+  QByteArray &SPX42Commands::askForConfig()
+  {
+    QByteArray code;
+    cmd.clear();
+    // Prefix
+    cmd.append( &SPX42CommandDef::STX, 1 );
+    cmd.append( "~" );
+    //
+    code.append( &SPX42CommandDef::SPX_GET_SETUP_DEKO, 1 );
+    cmd.append( code.toHex() );
+    //
+    cmd.append( "~" );
+    code.clear();
+    code.append( &SPX42CommandDef::SPX_GET_SETUP_SETPOINT, 1 );
+    cmd.append( code.toHex() );
+    //
+    cmd.append( "~" );
+    code.clear();
+    code.append( &SPX42CommandDef::SPX_GET_SETUP_DISPLAYSETTINGS, 1 );
+    cmd.append( code.toHex() );
+    //
+    cmd.append( "~" );
+    code.clear();
+    code.append( &SPX42CommandDef::SPX_GET_SETUP_UNITS, 1 );
+    cmd.append( code.toHex() );
+    //
+    cmd.append( "~" );
+    code.clear();
+    code.append( &SPX42CommandDef::SPX_GET_SETUP_INDIVIDUAL, 1 );
+    cmd.append( code.toHex() );
+    //
+    cmd.append( "~" );
+    code.clear();
+    code.append( &SPX42CommandDef::SPX_LICENSE_STATE, 1 );
+    cmd.append( code.toHex() );
+    //
+    cmd.append( "~" );
+    code.clear();
+    code.append( &SPX42CommandDef::SPX_ALIVE, 1 );
+    cmd.append( code.toHex() );
+    // Postfix
+    cmd.append( &SPX42CommandDef::ETX, 1 );
+    return ( cmd );
+  }
+
+  QByteArray &SPX42Commands::setDateTime( const QDateTime &nowDateTime )
+  {
+    //
+    // kann der SPX das überhaupt? Das klärt der Caller!
+    //
+    QByteArray code;
+    cmd.clear();
+    cmd.append( &SPX42CommandDef::STX, 1 );
+    cmd.append( "~" );
+    code.append( &SPX42CommandDef::SPX_DATETIME, 1 );
+    cmd.append( code.toHex() );
+    cmd.append( nowDateTime.toString( ":hh:mm:dd:MM:yy" ).toLatin1() );
+    cmd.append( &SPX42CommandDef::ETX, 1 );
     return ( cmd );
   }
 
@@ -72,7 +139,7 @@ namespace spx
     {
       // OK, das ist ein Datagramm vom SPX
       params = pdu.split( ':' );
-      cmd = params.at( 0 );
+      // cmd = params.at( 0 );
       cmd = cmd.remove( 0, 1 );
       retVal = static_cast< char >( cmd.toUInt( nullptr, 16 ) & 0xff );
     }

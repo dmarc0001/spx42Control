@@ -5,13 +5,13 @@
 #### Autor: Dirk Marciniak                                                 ####
 ####                                                                       ####
 ###############################################################################
-win32:VERSION_PE_HEADER                = 0.3
+win32:VERSION_PE_HEADER                = 0.4
 win32:QMAKE_TARGET_COMPANY             = submatix.com
 win32:QMAKE_TARGET_COPYRIGHT           = D. Marciniak
 win32:QMAKE_TARGET_PRODUCT             = SPX42 BT-Controller
 win32:RC_ICONS                         = src/res/programIcon.ico
-win32:VERSION                          = 0.3.1.0  # major.minor.patch.build
-else:VERSION                           = 0.3.1    # major.minor.patch
+win32:VERSION                          = 0.4.1.0  # major.minor.patch.build
+else:VERSION                           = 0.4.1    # major.minor.patch
 macx:ICON                              = src/res/programIcon.ico
 #
 TARGET                                 = spx42Control
@@ -33,11 +33,10 @@ UI_DIR                                 = ui
 
 # %{CurrentProject:NativePath}/%{CurrentKit:FileSystemName}/%{CurrentBuild:Name}
 
-# wenn debug in der config steht, die EXE auch so benennen
-build_pass:CONFIG(debug, debug|release) {
+CONFIG(debug, debug|release) {
   DEFINES                              += DEBUG
-  unix: TARGET                         = $$join(TARGET,,,_debug)
-  else: TARGET                         = $$join(TARGET,,,_D)
+  #unix: TARGET                         = $$join(TARGET,,,_debug)
+  #else: TARGET                         = $$join(TARGET,,,_D)
 }
 
 *msvc* {
@@ -67,14 +66,14 @@ SOURCES                 += \
     src/utils/DebugDataSeriesGenerator.cpp \
     src/utils/DiveDataSeriesGenerator.cpp \
     src/guiFragments/ChartsFragment.cpp \
-    src/bluetooth/BtDevicesManager.cpp \
-    src/bluetooth/BtServiceDiscover.cpp \
-    src/bluetooth/SPX42BtDevices.cpp \
     src/database/SPX42Database.cpp \
     src/bluetooth/SPX42RemotBtDevice.cpp \
-    src/bluetooth/BtDiscoverObject.cpp \
     src/spx42/SPX42Commands.cpp \
-    src/spx42/SPXCommandDef.cpp
+    src/bluetooth/BtLocalDevicesManager.cpp \
+    src/bluetooth/BtDiscoverRemoteDevice.cpp \
+    src/bluetooth/BtDiscoverRemoteService.cpp \
+    src/bluetooth/SPX42BtDevicesManager.cpp \
+    src/spx42/SPX42SingleCommand.cpp
 
 HEADERS                 += \
     src/SPX42ControlMainWin.hpp \
@@ -96,15 +95,16 @@ HEADERS                 += \
     src/utils/DiveDataSeriesGenerator.hpp \
     src/guiFragments/ChartsFragment.hpp \
     src/spx42/SPX42Commands.hpp \
-    src/bluetooth/BtDevicesManager.hpp \
-    src/bluetooth/BtServiceDiscover.hpp \
-    src/bluetooth/SPX42BtDevices.hpp \
     src/database/SPX42Database.hpp \
     src/config/currBuildDef.hpp \
     src/bluetooth/SPX42RemotBtDevice.hpp \
-    src/bluetooth/BtDiscoverObject.hpp \
     src/bluetooth/BtTypes.hpp \
-    src/spx42/SPX42CommandDef.hpp
+    src/spx42/SPX42CommandDef.hpp \
+    src/bluetooth/BtLocalDevicesManager.hpp \
+    src/bluetooth/BtDiscoverRemoteDevice.hpp \
+    src/bluetooth/BtDiscoverRemoteService.hpp \
+    src/bluetooth/SPX42BtDevicesManager.hpp \
+    src/spx42/SPX42SingleCommand.hpp
 
 FORMS                   += \
     src/ui/SPX42ControlMainWin.ui \

@@ -26,6 +26,7 @@ namespace spx
     DecoGradientHash decoPresets;                       //! Hashliste der DECO-Presets (incl. CUSTOM == variabel)
     DecompressionDynamicGradient decoDynamicGradient;   //! dynamische Gradienten erlaubt
     DecompressionDeepstops decoDeepstopsEnabled;        //! sind deepstops erlaubt/an
+    DecoLastStop lastDecoStop;                          //! wo ist der letzte DECO Stop (3 oder 6 Meter)
     DisplayBrightness displayBrightness;                //! Display Helligkeit
     DisplayOrientation displayOrientation;              //! Ausrichtung des Displays
     DeviceTemperaturUnit unitTemperature;               //! Einheit der Tempteratur
@@ -45,18 +46,19 @@ namespace spx
     bool isFirmwareSupported;                           //! wird diese Firmware von der Software unterstützt
     bool isOldParamSorting;                             //! alte Versionen haben andre Reihenfolge der Parameter
     bool isNewerDisplayBrightness;                      //! neue Version Helligkeit
-    bool isSixMetersAutoSetpoint;                       //! Autosetpoint bei 5 oder 6 Meter
+    bool isSixMetersAutoSetpoint;                       //! Autosetpoint alt deact, 6, 10, 15, 20 NEU 6, 10, 15
 
     public:
-    SPX42Config();                                     //! Der Konstruktor
-    SPX42License &getLicense( void );                  //! Lizenz des aktuellen SPX42
-    void setLicense( const LicenseType value );        //! Lizenz des aktuellen SPX42 merken
-    void setLicense( const IndividualLicense value );  //! Lizenz des aktuellen SPX42 merken
-    QString getLicName( void ) const;                  //! Textliche Darstellung der Lizenz
-    SPX42Gas &getGasAt( int num );                     //! Gib ein Gas mit der Nummer num vom SPX42 zurück
-    void reset( void );                                //! Resetiere das Objekt
-    QString getSerialNumber( void ) const;             //! Seriennummer des aktuellen SPX42 zurückgeben
-    void setSerialNumber( const QString &serial );     //! Seriennumemr des aktuellen SPX42 speichern
+    SPX42Config();                                                    //! Der Konstruktor
+    SPX42License &getLicense( void );                                 //! Lizenz des aktuellen SPX42
+    void setLicense( const LicenseType value );                       //! Lizenz des aktuellen SPX42 merken
+    void setLicense( const IndividualLicense value );                 //! Lizenz des aktuellen SPX42 merken
+    void setLicense( const QByteArray &lic, const QByteArray &ind );  //! Lizenz aus dem Kommando vom SPX lesen
+    QString getLicName( void ) const;                                 //! Textliche Darstellung der Lizenz
+    SPX42Gas &getGasAt( int num );                                    //! Gib ein Gas mit der Nummer num vom SPX42 zurück
+    void reset( void );                                               //! Resetiere das Objekt
+    QString getSerialNumber( void ) const;                            //! Seriennummer des aktuellen SPX42 zurückgeben
+    void setSerialNumber( const QString &serial );                    //! Seriennumemr des aktuellen SPX42 speichern
     void setCurrentPreset( DecompressionPreset presetType,
                            qint8 low = 0,
                            qint8 high = 0 );  //! Aktuelle Gradienteneinstellungen merken
@@ -69,6 +71,8 @@ namespace spx
     DecompressionDynamicGradient getIsDecoDynamicGradients( void );            //! gib den aktuellen Wert zurück
     void setIsDecoDynamicGradients( DecompressionDynamicGradient isEnabled );  //! setze dynamische Gradienten an/aus
     DecompressionDeepstops getIstDeepstopsEnabled( void );                     //! gibt die Einstellung für deep stops zurück
+    DecoLastStop getLastDecoStop( void );                                      //! wo ist der letzte DECO Stop (3 oder 6 Meter)
+    void setLastDecoStop( DecoLastStop lastStop );                             //! setzte den letzten Deco Stop
     void setIsDeepstopsEnabled( DecompressionDeepstops isEnabled );            //! setze deppstop enabled an/aus
     DisplayBrightness getDisplayBrightness( void );                            //! Wie hell ist das Display?
     void setDisplayBrightness( DisplayBrightness brightness );                 //! Setze die Displayhelligkeit
@@ -99,20 +103,14 @@ namespace spx
     SPX42FirmwareVersions getSpxFirmwareVersion() const;                       //! gibt die Version der Firmware als enum zurück
     void setSpxFirmwareVersion( SPX42FirmwareVersions value );                 //! setzt die Firmwareversion
     void setSpxFirmwareVersion( const QString &value );                        //! setzt die Firmwareversion
-
-    bool getHasFahrenheidBug() const;
-
-    bool getCanSetDate() const;
-
-    bool getHasSixValuesIndividual() const;
-
-    bool getIsFirmwareSupported() const;
-
-    bool getIsOldParamSorting() const;
-
-    bool getIsNewerDisplayBrightness() const;
-
-    bool getIsSixMetersAutoSetpoint() const;
+    void setSpxFirmwareVersion( const QByteArray &value );                     //! setzt die Firmwareversion
+    bool getHasFahrenheidBug() const;                                          //! hat die Firmware den Fahrenheid Bug?
+    bool getCanSetDate() const;                                                //! kann die Firmware Datum setzten
+    bool getHasSixValuesIndividual() const;                                    //! hat individual sex parameter
+    bool getIsFirmwareSupported() const;                                       //! ist diese Firmware unterstützt
+    bool getIsOldParamSorting() const;                                         //! alte Parameterordnung?
+    bool getIsNewerDisplayBrightness() const;                                  //! neuere Helligkeitsabstufungen
+    bool getIsSixMetersAutoSetpoint() const;                                   //! fünf oder sechs meter autosetpoint
 
     private slots:
     // void licenseChangedPrivateSlot( SPX42License& lic );
@@ -126,6 +124,7 @@ namespace spx
     void decoDynamicGradientStateChangedSig(
         const DecompressionDynamicGradient &isDynamic );                      //! Signal wenn "dynamische Gradienten" verändert wird
     void decoDeepStopsEnabledSig( const DecompressionDeepstops &isEnabled );  //! Signal wenn "deep stops" geändert wird
+    void decoLastStopSig( DecoLastStop lastStop );                            //! wenn der letzte Stop verändert wurde
     // DISPLAYEINSTELLUNGEN
     void displayBrightnessChangedSig(
         const DisplayBrightness &brightness );  //! Signal wenn sich die Einstellung für Helligkeit ändert
