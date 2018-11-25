@@ -946,4 +946,55 @@ namespace spx
     return isSixMetersAutoSetpoint;
   }
 
+  QByteArray SPX42Config::makeConfigHash()
+  {
+    // config während Ausführung sperren
+    // QMutexLocker locker( &configLocker );
+
+    QByteArray serialized;
+
+    serialized.append( QString( "firmware version (enum): %1\n" ).arg( static_cast< int >( spxFirmwareVersion ) ) );
+    serialized.append( spxLicense.serialize() );
+    serialized.append( QString( "serial number: %1" ).arg( serialNumber ) );
+    for ( int i = 0; i < 8; i++ )
+    {
+      serialized.append( QString( "GAS%1: %2" ).arg( i, 2, 10, QChar( '0' ) ) );
+      serialized.append( gasList[ i ].serialize() );
+    }
+    serialized.append( QString( "deco preset (enum): %1 (%2:%3)" )
+                           .arg( static_cast< int >( currentPreset ) )
+                           .arg( decoPresets.value( static_cast< int >( currentPreset ) ).first )
+                           .arg( decoPresets.value( static_cast< int >( currentPreset ) ).second ) );
+    serialized.append( QString( "dynamic gradients: %1" ).arg( static_cast< bool >( decoDynamicGradient ) ) );
+    serialized.append( QString( "deep stops enabled: %1" ).arg( static_cast< bool >( decoDeepstopsEnabled ) ) );
+    serialized.append( QString( "last deco stop (enum): %1" ).arg( static_cast< int >( lastDecoStop ) ) );
+    serialized.append( QString( "display brightness (enum): %1" ).arg( static_cast< int >( displayBrightness ) ) );
+    serialized.append( QString( "display orientation (enum): %1" ).arg( static_cast< int >( displayOrientation ) ) );
+    serialized.append( QString( "unit for temperature (enum): %1" ).arg( static_cast< int >( unitTemperature ) ) );
+    serialized.append( QString( "unit for lenght (enum): %1" ).arg( static_cast< int >( unitLength ) ) );
+    serialized.append( QString( "water type (enum): %1" ).arg( static_cast< int >( unitWaterType ) ) );
+    serialized.append( QString( "auto setpoint value (enum): %1" ).arg( static_cast< int >( setpointAuto ) ) );
+    serialized.append( QString( "setpoint value (enum): %1" ).arg( static_cast< int >( setpointValue ) ) );
+    serialized.append( QString( "individual sensors on: %1" ).arg( static_cast< bool >( individualSensorsOn ) ) );
+    serialized.append( QString( "indiovidual pscr on: %1" ).arg( static_cast< bool >( individualPSCROn ) ) );
+    serialized.append( QString( "individual sensors count: %1" ).arg( static_cast< int >( individualSensorCount ) ) + 1 );
+    serialized.append( QString( "indiovidual acoustic warnings on: %1" ).arg( static_cast< bool >( individualAcustic ) ) );
+    serialized.append( QString( "individual log interval: %1" ).arg( ( static_cast< int >( individualLogInterval ) + 1 ) * 10 ) );
+    serialized.append( QString( "individual temp stick type (enum): %1" ).arg( static_cast< int >( individualTempStick ) ) );
+    serialized.append( QString( "has fahrenheid bug: %1" ).arg( static_cast< bool >( hasFahrenheidBug ) ) );
+    serialized.append( QString( "can set date: %1" ).arg( static_cast< bool >( canSetDate ) ) );
+    serialized.append( QString( "has six values individual: %1" ).arg( static_cast< bool >( hasSixValuesIndividual ) ) );
+    serialized.append( QString( "is firmware supported: %1" ).arg( static_cast< bool >( isFirmwareSupported ) ) );
+    serialized.append( QString( "is old parameter sort: %1" ).arg( static_cast< bool >( isOldParamSorting ) ) );
+    serialized.append( QString( "is newer display brightness: %1" ).arg( static_cast< bool >( isNewerDisplayBrightness ) ) );
+    serialized.append( QString( "is six meter autosetpoint: %1" ).arg( static_cast< bool >( isSixMetersAutoSetpoint ) ) );
+    //
+    // erzeuge aus dem Zeug einen cryptographischem hash
+    //
+    QCryptographicHash qhash( QCryptographicHash::Md5 );
+    qhash.reset();
+    qhash.addData( serialized );
+    return ( qhash.result() );
+  }
+
 }  // namespace spx

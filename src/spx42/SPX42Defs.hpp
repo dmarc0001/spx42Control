@@ -177,6 +177,7 @@ namespace spx
     void setLicType( const LicenseType &value );       //! Lizenztyp setzten
     IndividualLicense getLicInd() const;               //! erfrage Individual Lizenz
     void setLicInd( const IndividualLicense &value );  //! setzte Individual Lizenz
+    QByteArray serialize( void );                      //! serialisiere die Lizenz
 
     signals:
     // void licenseChangedPrivateSig( const SPX42License lic );  //! Signal das sich das geändert hat

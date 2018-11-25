@@ -1,6 +1,7 @@
 ﻿#ifndef SPX42CONFIG_HPP
 #define SPX42CONFIG_HPP
 
+#include <QCryptographicHash>
 #include <QHash>
 #include <QObject>
 #include <QString>
@@ -111,6 +112,9 @@ namespace spx
     bool getIsOldParamSorting() const;                                         //! alte Parameterordnung?
     bool getIsNewerDisplayBrightness() const;                                  //! neuere Helligkeitsabstufungen
     bool getIsSixMetersAutoSetpoint() const;                                   //! fünf oder sechs meter autosetpoint
+
+    private:
+    QByteArray makeConfigHash( void );  //! erzeuge einen crypto hash für die Daten
 
     private slots:
     // void licenseChangedPrivateSlot( SPX42License& lic );

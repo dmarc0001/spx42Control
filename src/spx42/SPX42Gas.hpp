@@ -39,6 +39,7 @@ namespace spx
     qint16 getMOD( void );                                          //! Maximal Oxigen Depth
     qint16 getEAD( void );                                          //! Equivalent Air Depth
     void reset( void );                                             //! Alles auf Voreinstellung
+    QByteArray serialize( void );                                   //! serialize
   };
 }
 #endif  //   SPX42GAS_HPP

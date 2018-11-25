@@ -11,7 +11,7 @@ namespace spx
   {
   }
 
-  quint8 SPX42Gas::getO2( )
+  quint8 SPX42Gas::getO2()
   {
     return O2;
   }
@@ -53,7 +53,7 @@ namespace spx
     return ( O2 );
   }
 
-  quint8 SPX42Gas::getHe( )
+  quint8 SPX42Gas::getHe()
   {
     return He;
   }
@@ -89,7 +89,7 @@ namespace spx
     return ( He );
   }
 
-  quint8 SPX42Gas::getN2( )
+  quint8 SPX42Gas::getN2()
   {
     return ( 100 - O2 - He );
   }
@@ -100,7 +100,7 @@ namespace spx
     return ( this->dType );
   }
 
-  DiluentType SPX42Gas::getDiluentType( )
+  DiluentType SPX42Gas::getDiluentType()
   {
     return ( this->dType );
   }
@@ -111,12 +111,12 @@ namespace spx
     return ( this->isBaulout );
   }
 
-  bool SPX42Gas::getBailout( )
+  bool SPX42Gas::getBailout()
   {
     return ( this->isBaulout );
   }
 
-  QString SPX42Gas::getGasName( ) const
+  QString SPX42Gas::getGasName() const
   {
     if ( O2 == 100 )
     {
@@ -142,23 +142,33 @@ namespace spx
     return ( QString( QObject::tr( "TX%1/%2" ) ).arg( O2, 2, 10, QChar( '0' ) ).arg( He, 2, 10, QChar( '0' ) ) );
   }
 
-  qint16 SPX42Gas::getMOD( )
+  qint16 SPX42Gas::getMOD()
   {
     // FIXME: Berechne MOD
     return ( 0 );
   }
 
-  qint16 SPX42Gas::getEAD( )
+  qint16 SPX42Gas::getEAD()
   {
     // FIXME: Berechne EAD
     return ( 0 );
   }
 
-  void SPX42Gas::reset( )
+  void SPX42Gas::reset()
   {
     O2 = 21;
     He = 0;
     dType = DiluentType::DIL_NONE;
     isBaulout = false;
   }
-}
+
+  QByteArray SPX42Gas::serialize()
+  {
+    QByteArray serialized;
+    serialized.append( QString( "o2:%1 he:%2 type:%3 bailout:%4" )
+                           .arg( static_cast< int >( O2 ) )
+                           .arg( static_cast< int >( He ) )
+                           .arg( static_cast< int >( dType ) )
+                           .arg( static_cast< bool >( isBaulout ) ) );
+    return ( serialized );
+  }
