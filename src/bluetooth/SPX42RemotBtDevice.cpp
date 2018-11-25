@@ -151,21 +151,26 @@ namespace spx
   }
 
   /**
-   * @brief SPX42RemotBtDevice::getNextDatagram
-   * @param array
-   * @return  dequeue erfolgreich?
+   * @brief SPX42RemotBtDevice::getNextRecCommand
+   * @return
    */
-  bool SPX42RemotBtDevice::getNextDatagram( QByteArray &array )
+  spSingleCommand SPX42RemotBtDevice::getNextRecCommand()
   {
-    array.clear();
-    // ist was zum zurückschicken da?
-    if ( recQueue.isEmpty() )
-      return ( false );
-    // ja es gibt da was, gib das zurück!
-    array.append( recQueue.dequeue() );
-    return ( true );
+    //
+    // schaue, ob da was vorhanden war
+    //
+    if ( rCmdQueue.isEmpty() )
+      return ( nullptr );
+    //
+    // es gibt ein Datum -> zurück
+    //
+    return ( rCmdQueue.dequeue() );
   }
 
+  /**
+   * @brief SPX42RemotBtDevice::onSocketErrorSlot
+   * @param error
+   */
   void SPX42RemotBtDevice::onSocketErrorSlot( QBluetoothSocket::SocketError error )
   {
     //
@@ -222,6 +227,7 @@ namespace spx
         wasSocketError = false;
         sendQueue.clear();
         recQueue.clear();
+        rCmdQueue.clear();
         if ( !sendTimer.isActive() )
           sendTimer.start();
         emit onStateChangedSig( state );
@@ -254,7 +260,6 @@ namespace spx
     // lese Daten vom Socket...
     //
     auto canRead = socket->bytesAvailable();
-    // lg->debug( QString( "SPX42RemotBtDevice::onReadSocketSlot -> %1 bytes availible..." ).arg( canRead ) );
     if ( canRead > 0 )
     {
       //
@@ -262,62 +267,46 @@ namespace spx
       //
       recBuffer.append( socket->readAll() );
       //
-      // Datagramme suchen und extraieren...
+      // suche nach dem Ende eines Datagrammee / eines Logeintrages
       //
-      int idxOfETX = -1;
-      int idxOfSTX = recBuffer.indexOf( SPX42CommandDef::STX );
+      int idxOfETX = recBuffer.indexOf( SPX42CommandDef::ETX );
+      int idxOfSTX = -1;
       //
-      // solange ein Anfang signalisiert ist, Datagramme extraieren
+      // solange es ein Ende gibt muss ich Datagramme extraieren
       //
-      while ( idxOfSTX > -1 )
+      while ( idxOfETX > -1 )
       {
-        // Start ist schon mal vorhanden
-        if ( idxOfSTX > 0 )
+        //
+        // da ist ein Endezeichen, also sollte ein Datagramm zu finden sein
+        //
+        idxOfSTX = recBuffer.indexOf( SPX42CommandDef::STX );
+        if ( idxOfSTX < idxOfETX )
         {
-          // da ist noch etwas davor, abschnippeln...
-          // ab Stelle 0, länge idxOfSTX
-          recBuffer.remove( 0, idxOfSTX );
-        }
-        // jetzt ist STX das erste Zeichen
-        idxOfSTX = 0;
-        // gibt es das Ende?
-        idxOfETX = recBuffer.indexOf( SPX42CommandDef::ETX );
-        if ( idxOfETX > -1 )
-        {
-          //
-          // Start und Ende eines Datagramms gefunden
-          // wenn ein Fehler passiert (der Fundort kann eigentlich nur >= 2 sein, Vorsorge Treffen
-          //
-          if ( idxOfETX < 2 )
-          {
-            lg->warn( QString( "SPX42RemotBtDevice::onReadSocketSlot -> idxOfETX: <%1>" ).arg( idxOfETX, 3, 10, QChar( '0' ) ) );
-            idxOfETX = -1;
-            idxOfSTX = -1;
-            break;
-          }
-          // in die Empfangsqueue
-          recQueue.enqueue( recBuffer.mid( 1, idxOfETX - 1 ) );
+          // so wie es soll, das Ende ist nach dem Anfang
+          // ich kopiere mir nun das Datagramm
+          QByteArray _datagramm = recBuffer.mid( idxOfSTX + 1, idxOfETX - 2 );
 #ifdef DEBUG
-          lg->debug( QString( "SPX42RemotBtDevice::onReadSocketSlot -> datagram:: <%1>" )
-                         .arg( QString( recBuffer.mid( 1, idxOfETX - 1 ) ) ) );
+          lg->debug( QString( "SPX42RemotBtDevice::onReadSocketSlot -> datagram:: <%1>" ).arg( QString( _datagramm ) ) );
 #endif
-          // aus dem Empfangspuffer entfernen
-          recBuffer.remove( 0, idxOfETX );
-          // Sende Signal an den der es wissen will
-          emit onDatagramRecivedSig();
-          //
-          // neue Suche nach einem Anfang
-          //
-          idxOfSTX = recBuffer.indexOf( SPX42CommandDef::STX );
+          // und noch das Datagramm aus dem Puffer tilgen
+          recBuffer.remove( 0, idxOfETX + 1 );
+          // welcehs Kommando?
+          char cmd = decodeCommand( _datagramm );
+          // in die Empfangsqueue setzen
+          rCmdQueue.enqueue( spSingleCommand( new SPX42SingleCommand( cmd, params ) ) );
+          // ein timerereignis async zum versenden
+          QTimer::singleShot( 5, [this] { emit onCommandRecivedSig(); } );
         }
         else
         {
-          //
-          // Das Ende ist nicht gefunden, schleife abbrechen
-          // bis zum nächsten Datenempfang
-          //
-          idxOfSTX = -1;
+          // nanu, da ist ein neuer Anfang NACH dem Ende, aber kein Anfang davor
+          // d.h. ich habe hier ein unvollständiges Datagramm
+          // verwerfe es! also alles bis zum ersten Ende löschen
+          recBuffer.remove( 0, idxOfETX + 1 );
+          // nächste Runde
         }
+        // das Datagrammende Ende neu finden
+        idxOfETX = recBuffer.indexOf( SPX42CommandDef::ETX );
       }
       //
       // Puffer auf überlauf prüfen und ggt reagieren
@@ -328,6 +317,9 @@ namespace spx
         recBuffer.clear();
       }
     }
+    //
+    // ENDE
+    //
   }
 
   /**

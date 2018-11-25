@@ -11,7 +11,7 @@
 
 namespace spx
 {
-  class BtServiceDiscover : public QObject
+  class BtDiscoverRemoteService : public QObject
   {
     Q_OBJECT
     private:
@@ -23,11 +23,11 @@ namespace spx
     QRegExp expression;
 
     public:
-    explicit BtServiceDiscover( std::shared_ptr< Logger > logger,
-                                QBluetoothAddress &l_addr,
-                                QBluetoothAddress &r_addr,
-                                QObject *parent = nullptr );
-    ~BtServiceDiscover();
+    explicit BtDiscoverRemoteService( std::shared_ptr< Logger > logger,
+                                      QBluetoothAddress &l_addr,
+                                      QBluetoothAddress &r_addr,
+                                      QObject *parent = nullptr );
+    ~BtDiscoverRemoteService();
     bool setServiceFilter( const QString &expr );
     void resetServiceFilter( void );
     int servicesDiscovered( void );

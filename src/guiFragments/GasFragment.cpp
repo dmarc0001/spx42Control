@@ -35,10 +35,9 @@ namespace spx
                             std::shared_ptr< Logger > logger,
                             std::shared_ptr< SPX42Database > spx42Database,
                             std::shared_ptr< SPX42Config > spxCfg,
-                            std::shared_ptr< SPX42RemotBtDevice > remSPX42,
-                            std::shared_ptr< SPX42Commands > spxCmds )
+                            std::shared_ptr< SPX42RemotBtDevice > remSPX42 )
       : QWidget( parent )
-      , IFragmentInterface( logger, spx42Database, spxCfg, remSPX42, spxCmds )
+      , IFragmentInterface( logger, spx42Database, spxCfg, remSPX42 )
       , ui( new Ui::GasForm )
       , areSlotsConnected( false )
   {
@@ -338,7 +337,7 @@ namespace spx
     // TODO: implementieren
   }
 
-  void GasFragment::onDatagramRecivedSlot()
+  void GasFragment::onCommandRecivedSlot()
   {
     // TODO: implementieren
   }

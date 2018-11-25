@@ -52,6 +52,33 @@ namespace spx
     constexpr char SPX_SET_UPDATE_ADDR{0x6a};            //! setzt die Addr, ab wlcher das Update geschrieben wird *upload*
     constexpr char SPX_CHECK_UPLOADED_FILE{0x6b};        //! gibt die übertragene Datei als Hexdump aus *upload*
   }
+
+  namespace SPXCmdParam
+  {
+    constexpr int ALIVE_POWER{1};                //! Parameter Nummer 1
+    constexpr int FIRMWARE_VERSION{1};           //! Parameter 1 Firmwareversion
+    constexpr int SERIAL_NUMBER{1};              //! Parameter 1 Seriennummer
+    constexpr int LICENSE_STATE{1};              //! Lizenzstatus
+    constexpr int LICENSE_INDIVIDUAL{2};         //! Individual
+    constexpr int DECO_GF_LOW{1};                //! Gradient für LOW Deco
+    constexpr int DECO_GF_HIGH{2};               //! Gradient für HIGH Deco
+    constexpr int DECO_DEEPSTOPS{3};             //! Deepstops ja/nein
+    constexpr int DECO_DYNGRADIENTS{4};          //! dynamische gradienten
+    constexpr int DECO_LASTSTOP{5};              //! letzter Decostop 0 => 3 Meter, 1 => 6 Meter
+    constexpr int SETPOINT_AUTO{1};              //! Autosetpoint bei Tiefe...
+    constexpr int SETPOINT_VALUE{2};             //! Setpoint in PPO 0..4
+    constexpr int DISPLAY_BRIGHTNESS{1};         //! Display Helligkeit
+    constexpr int DISPLAY_ORIENT{2};             //! Diaplay Ausrichtung
+    constexpr int UNITS_TEMPERATURE{1};          //! Temperatur (Celsius
+    constexpr int UNITS_METRIC_OR_IMPERIAL{2};   //! metrisch oder imperial
+    constexpr int UNITS_SALT_OR_FRESHWATER{3};   //! Salz- oder Süsswasser
+    constexpr int INDIVIDUAL_SENSORSENABLED{1};  //! Sensoren an/aus?
+    constexpr int INDIVIDUAL_PASSIVEMODE{2};     //! PSCR Mode
+    constexpr int INDIVIDUAL_SENSORCOUNT{3};     //! Anzahl der Sensoren
+    constexpr int INDIVIDUAL_SOUND_ONOFF{4};     //! Akustische Warnungen an/aus
+    constexpr int INDIVIDUAL_LOGINTERVAL{5};     //! Loginterval 10, 20 oder 30 Sekunden
+    constexpr int INDIVIDUAL_TEMPSTICK{6};       //! Tempstickversion
+  }
 }
 
 #endif  // SPXCOMMANDDEF_HPP
