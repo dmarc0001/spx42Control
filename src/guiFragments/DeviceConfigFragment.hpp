@@ -54,11 +54,10 @@ namespace spx
                                    std::shared_ptr< Logger > logger,
                                    std::shared_ptr< SPX42Database > spx42Database,
                                    std::shared_ptr< SPX42Config > spxCfg,
-                                   std::shared_ptr< SPX42RemotBtDevice > remSPX42,
-                                   std::shared_ptr< SPX42Commands > spxCmds );  //! Konstruktor
-    ~DeviceConfigFragment() override;                                           //! Destruktor
-    virtual void deactivateTab( void ) override;                                //! deaktiviere eventuelle signale
-    void initGuiWithConfig( void );                                             //! Initialisiere die GUI mit Werten aus der Config
+                                   std::shared_ptr< SPX42RemotBtDevice > remSPX42 );  //! Konstruktor
+    ~DeviceConfigFragment() override;                                                 //! Destruktor
+    virtual void deactivateTab( void ) override;                                      //! deaktiviere eventuelle signale
+    void initGuiWithConfig( void );  //! Initialisiere die GUI mit Werten aus der Config
 
     protected:
     void changeEvent( QEvent *e ) override;  //! Globele Veränderungen
@@ -86,7 +85,7 @@ namespace spx
     virtual void onSocketErrorSlot( QBluetoothSocket::SocketError error ) override;  //! ein Fehler bei der BT Verbindung
     virtual void onConfLicChangedSlot( void ) override;                              //! Wenn sich die Lizenz ändert
     virtual void onCloseDatabaseSlot( void ) override;                               //! wenn die Datenbank geschlosen wird
-    virtual void onDatagramRecivedSlot( void ) override;                             //! wenn ein Datentelegramm empfangen wurde
+    virtual void onCommandRecivedSlot( void ) override;                              //! wenn ein Datentelegramm empfangen wurde
     void onDecoComboChangedSlot( int index );                 //! ändert sich der Inhalt der Combobox für Dekompressionseinstellungen
     void onDecoGradientLowChangedSlot( int low );             //! wenn der Gradient LOW geändert wurde
     void onDecoGradientHighChangedSlot( int high );           //! wenn der Gradient HIGH geändert wurde
@@ -105,6 +104,7 @@ namespace spx
     void onIndividualSensorsCountChangedSlot( int index );  //! wenn sich die Einstellung für die Anzahl der Sensoren ändert
     void onIndividualAcousticChangedSlot( int state );      //! wenn sich ide Einstellung der Akustischen Warnung ändert
     void onIndividualLogIntervalChangedSlot( int state );   //! wenn sich die Einstellung des Logintervals ändert
+    void onIndividualTempstickChangedSlot( int state );     //! wenn sich die Einstellung für den TempStick ändert
     void onConfigUpdateSlot( void );  //! ereignis wenn der Timer abgelaufen ist für das Update der Einstellungen (vom spx lesen)
   };
 }

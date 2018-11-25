@@ -139,7 +139,7 @@ namespace spx
     {
       // OK, das ist ein Datagramm vom SPX
       params = pdu.split( ':' );
-      cmd = params.at( 0 );
+      // cmd = params.at( 0 );
       cmd = cmd.remove( 0, 1 );
       retVal = static_cast< char >( cmd.toUInt( nullptr, 16 ) & 0xff );
     }

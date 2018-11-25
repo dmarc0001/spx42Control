@@ -3,19 +3,29 @@
 
 namespace spx
 {
+  SPXDeviceList ConnectFragment::spx42Devices{SPXDeviceList()};
+
+  /**
+   * @brief ConnectFragment::ConnectFragment
+   * @param parent
+   * @param logger
+   * @param spx42Database
+   * @param spxCfg
+   * @param remSPX42
+   */
   ConnectFragment::ConnectFragment( QWidget *parent,
                                     std::shared_ptr< Logger > logger,
                                     std::shared_ptr< SPX42Database > spx42Database,
                                     std::shared_ptr< SPX42Config > spxCfg,
-                                    std::shared_ptr< SPX42RemotBtDevice > remSPX42,
-                                    std::shared_ptr< SPX42Commands > spxCmds )
+                                    std::shared_ptr< SPX42RemotBtDevice > remSPX42 )
       : QWidget( parent )
-      , IFragmentInterface( logger, spx42Database, spxCfg, remSPX42, spxCmds )
+      , IFragmentInterface( logger, spx42Database, spxCfg, remSPX42 )
       , ui( new Ui::connectForm )
       , errMsg( tr( "CONNECTION BLUETHOOTH ERROR: %1" ) )
       , discoverObj( std::unique_ptr< BtDiscoverRemoteDevice >( new BtDiscoverRemoteDevice( lg ) ) )
-      , spx42Devices()
   {
+    // merke mir ob das Programm das zum ersten mal macht...
+    static bool isFirstStart{true};
     lg->debug( "ConnectFragment::ConnectFragment..." );
     ui->setupUi( this );
     ui->connectProgressBar->setVisible( false );
@@ -41,7 +51,7 @@ namespace spx
              &ConnectFragment::onDiscoverScanFinishedSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onStateChangedSig, this, &ConnectFragment::onOnlineStatusChangedSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onSocketErrorSig, this, &ConnectFragment::onSocketErrorSlot );
-    connect( remoteSPX42.get(), &SPX42RemotBtDevice::onDatagramRecivedSig, this, &ConnectFragment::onDatagramRecivedSlot );
+    connect( remoteSPX42.get(), &SPX42RemotBtDevice::onCommandRecivedSig, this, &ConnectFragment::onCommandRecivedSlot );
     //
     // Fragmenttitel Musterstring erzeugen
     //
@@ -50,16 +60,33 @@ namespace spx
     // setzte den Connectionsstatus
     //
     setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
-    // nach 200 ms discover starten
-    QTimer::singleShot( 200, this, [=]() { this->onDiscoverButtonSlot(); } );
+    // nach 200 ms discover starten, falls das das erste mal ist
+    if ( isFirstStart )
+    {
+      QTimer::singleShot( 200, this, [=]() { this->onDiscoverButtonSlot(); } );
+      isFirstStart = false;
+    }
+    else
+    {
+      for ( auto deviceInfo : ConnectFragment::spx42Devices )
+      {
+        addDeviceComboEntry( deviceInfo );
+      }
+    }
   }
 
+  /**
+   * @brief ConnectFragment::~ConnectFragment
+   */
   ConnectFragment::~ConnectFragment()
   {
     lg->debug( "ConnectFragment::~ConnectFragment..." );
     deactivateTab();
   }
 
+  /**
+   * @brief ConnectFragment::deactivateTab
+   */
   void ConnectFragment::deactivateTab()
   {
     //
@@ -69,6 +96,9 @@ namespace spx
     disconnect( remoteSPX42.get(), nullptr, this, nullptr );
   }
 
+  /**
+   * @brief ConnectFragment::onOnlineStatusChangedSlot
+   */
   void ConnectFragment::onOnlineStatusChangedSlot( bool )
   {
     setGuiConnected( ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED ) ||
@@ -76,6 +106,10 @@ namespace spx
     // TODO: evtl mehr machen
   }
 
+  /**
+   * @brief ConnectFragment::onSocketErrorSlot
+   * @param btErr
+   */
   void ConnectFragment::onSocketErrorSlot( QBluetoothSocket::SocketError btErr )
   {
     QString sendMsg;
@@ -101,16 +135,25 @@ namespace spx
     emit onErrorgMessageSig( sendMsg, true );
   }
 
+  /**
+   * @brief ConnectFragment::onConfLicChangedSlot
+   */
   void ConnectFragment::onConfLicChangedSlot()
   {
     setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
   }
 
+  /**
+   * @brief ConnectFragment::onCloseDatabaseSlot
+   */
   void ConnectFragment::onCloseDatabaseSlot()
   {
     // TODO: implementieren
   }
 
+  /**
+   * @brief ConnectFragment::onConnectButtonSlot
+   */
   void ConnectFragment::onConnectButtonSlot()
   {
     bool isConnected = remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED;
@@ -142,13 +185,15 @@ namespace spx
       //
       // jetzt das remote objekt arbeiten lassen
       //
-      // remoteSPX42->startConnection( spx42Devices.take( remoteMac ) );
       discoverObj->stopDiscover();
       remoteSPX42->endConnection();
       remoteSPX42->startConnection( remoteMac );
     }
   }
 
+  /**
+   * @brief ConnectFragment::onPropertyButtonSlot
+   */
   void ConnectFragment::onPropertyButtonSlot()
   {
     lg->debug( "ConnectFragment::onPropertyButtonSlot -> property button clicked." );
@@ -158,6 +203,9 @@ namespace spx
     }
   }
 
+  /**
+   * @brief ConnectFragment::onDiscoverButtonSlot
+   */
   void ConnectFragment::onDiscoverButtonSlot()
   {
     lg->debug( "ConnectFragment::onDiscoverButtonSlot -> discover button clicked." );
@@ -165,15 +213,18 @@ namespace spx
     // Liste löschen
     //
     ui->deviceComboBox->clear();
-    spx42Devices.clear();
+    ConnectFragment::spx42Devices.clear();
     ui->discoverPushButton->setEnabled( false );
     //
     // das Discovering starten
     //
-    // discoverObj->stopDiscover();
     discoverObj->startDiscover();
   }
 
+  /**
+   * @brief ConnectFragment::onDiscoveredDeviceSlot
+   * @param deviceInfo
+   */
   void ConnectFragment::onDiscoveredDeviceSlot( const SPXDeviceDescr &deviceInfo )
   {
     lg->debug( "ConnectFragment::onDiscoveredDeviceSlot-> device found, try inserting in combo..." );
@@ -182,8 +233,129 @@ namespace spx
     // dabei gehe ich davon aus das die discoverroutine auf doppelte Geräte schon
     // geprüft hat
     //
+    addDeviceComboEntry( deviceInfo );
+  }
+
+  /**
+   * @brief ConnectFragment::onDiscoverScanFinishedSlot
+   */
+  void ConnectFragment::onDiscoverScanFinishedSlot()
+  {
+    lg->debug( "ConnectFragment::onDiscoverScanFinishedSlot-> discovering finished..." );
+    ui->discoverPushButton->setEnabled( true );
+    // TODO: massnahmen ergreifen
+  }
+
+  /**
+   * @brief ConnectFragment::onCurrentIndexChangedSlot
+   * @param index
+   */
+  void ConnectFragment::onCurrentIndexChangedSlot( int index )
+  {
+    lg->debug( QString( "ConnectFragment::onCurrentIndexChangedSlot -> index changed to <%1>. addr: <%2>" )
+                   .arg( index, 2, 10, QChar( '0' ) )
+                   .arg( ui->deviceComboBox->itemData( index ).toString() ) );
+  }
+
+  /**
+   * @brief ConnectFragment::onCommandRecivedSlot
+   */
+  void ConnectFragment::onCommandRecivedSlot()
+  {
+    spSingleCommand recCommand;
+    QDateTime nowDateTime;
+    QByteArray value;
+    char kdo;
+    //
+    lg->debug( "ConnectFragment::onDatagramRecivedSlot..." );
+    //
+    // alle abholen...
+    //
+    while ( ( recCommand = remoteSPX42->getNextRecCommand() ) )
+    {
+      // ja, es gab ein Datagram zum abholen
+      kdo = recCommand->getCommand();
+      switch ( kdo )
+      {
+        case SPX42CommandDef::SPX_ALIVE:
+          // Kommando ALIVE liefert zurück:
+          // ~03:PW
+          // PX => Angabe HEX in Milivolt vom Akku
+          lg->debug( "ConnectFragment::onDatagramRecivedSlot -> alive/acku..." );
+          ackuVal = ( recCommand->getValueAt( SPXCmdParam::ALIVE_POWER ) / 100.0 );
+          emit onAkkuValueChangedSlot( ackuVal );
+          break;
+        case SPX42CommandDef::SPX_APPLICATION_ID:
+          // Kommando APPLICATION_ID (VERSION)
+          // ~04:NR -> VERSION als String
+          lg->debug( "ConnectFragment::onDatagramRecivedSlot -> firmwareversion..." );
+          // Setzte die Version in die Config
+          spxConfig->setSpxFirmwareVersion( recCommand->getParamAt( SPXCmdParam::FIRMWARE_VERSION ) );
+          // Geht das Datum zu setzen?
+          if ( spxConfig->getCanSetDate() )
+          {
+            // ja der kann das Datum online setzten
+            nowDateTime = QDateTime::currentDateTime();
+            // sende das Datum an den SPX
+            remoteSPX42->setDateTime( nowDateTime );
+          }
+          break;
+        case SPX42CommandDef::SPX_SERIAL_NUMBER:
+          // Kommando SERIAL NUMBER
+          // ~07:XXX -> Seriennummer als String
+          lg->debug( "ConnectFragment::onDatagramRecivedSlot -> serialnumber..." );
+          spxConfig->setSerialNumber( recCommand->getParamAt( SPXCmdParam::SERIAL_NUMBER ) );
+          setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
+          break;
+        case SPX42CommandDef::SPX_LICENSE_STATE:
+          // Kommando SPX_LICENSE_STATE
+          // komplett: <~45:LS:CE>
+          // übergeben LS,CE
+          // LS : License State 0=Nitrox,1=Normoxic Trimix,2=Full Trimix
+          // CE : Custom Enabled 0= disabled, 1=enabled
+          lg->debug( "ConnectFragment::onDatagramRecivedSlot -> license state..." );
+          spxConfig->setLicense( recCommand->getParamAt( SPXCmdParam::LICENSE_STATE ),
+                                 recCommand->getParamAt( SPXCmdParam::LICENSE_INDIVIDUAL ) );
+          setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
+          break;
+      }
+      //
+      // falls es mehr gibt, lass dem Rest der App auch eine Chance
+      //
+      QCoreApplication::processEvents();
+    }
+  }
+
+  // ##########################################################################
+  // PRIVATE Funktionen
+  // ##########################################################################
+
+  /**
+   * @brief ConnectFragment::setGuiConnected
+   * @param isConnected
+   */
+  void ConnectFragment::setGuiConnected( bool isConnected )
+  {
+    //
+    // setzte die GUI Elemente entsprechend des Online Status
+    //
+    isConnected ? ui->connectButton->setText( tr( "DISCONNECT DEVICE" ) ) : ui->connectButton->setText( tr( "CONNECT DEVICE" ) );
+    ui->deviceComboBox->setEnabled( !isConnected );
+    ui->propertyPushButton->setEnabled( !isConnected );
+    ui->discoverPushButton->setEnabled( !isConnected );
+    if ( isConnected )
+      ui->editAliasesTableView->setVisible( false );
+    ui->tabHeaderLabel->setText( fragmentTitlePattern.arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) );
+  }
+
+  /**
+   * @brief ConnectFragment::addDeviceComboEntry
+   * @param deviceInfo
+   */
+  void ConnectFragment::addDeviceComboEntry( const SPXDeviceDescr &deviceInfo )
+  {
     QString addr = deviceInfo.first;
-    spx42Devices.insert( addr, deviceInfo );
+    ConnectFragment::spx42Devices.insert( addr, deviceInfo );
     //
     // und nun eine vernünftige Anzeige machen und die MAC als Schlüssel lassen
     //
@@ -206,94 +378,5 @@ namespace spx
       title = QString( "%1 (%2)" ).arg( deviceInfo.second ).arg( addr );
     }
     ui->deviceComboBox->addItem( title, addr );
-  }
-
-  void ConnectFragment::onDiscoverScanFinishedSlot()
-  {
-    lg->debug( "ConnectFragment::onDiscoverScanFinishedSlot-> discovering finished..." );
-    ui->discoverPushButton->setEnabled( true );
-    // TODO: massnahmen ergreifen
-  }
-
-  void ConnectFragment::onCurrentIndexChangedSlot( int index )
-  {
-    lg->debug( QString( "ConnectFragment::onCurrentIndexChangedSlot -> index changed to <%1>. addr: <%2>" )
-                   .arg( index, 2, 10, QChar( '0' ) )
-                   .arg( ui->deviceComboBox->itemData( index ).toString() ) );
-  }
-
-  void ConnectFragment::onDatagramRecivedSlot()
-  {
-    QByteArray datagram;
-    QDateTime nowDateTime;
-    QByteArray value;
-    char kdo;
-    //
-    lg->debug( "ConnectFragment::onDatagramRecivedSlot..." );
-    //
-    // alle abholen...
-    //
-    while ( remoteSPX42->getNextDatagram( datagram ) )
-    {
-      // ja, es gab ein Datagram zum abholen
-      kdo = spxCommands->decodeCommand( datagram );
-      switch ( kdo )
-      {
-        case SPX42CommandDef::SPX_ALIVE:
-          lg->debug( "ConnectFragment::onDatagramRecivedSlot -> alive/acku..." );
-          value = spxCommands->getParameter( 1 );
-          if ( value.length() == 2 )
-            value += "0";
-          ackuVal = ( value.toInt( nullptr, 16 ) / 100.0 );
-          // TODO: in der GUI anzeigen
-          emit onAkkuValueChangedSlot( ackuVal );
-          break;
-        case SPX42CommandDef::SPX_APPLICATION_ID:
-          lg->debug( "ConnectFragment::onDatagramRecivedSlot -> firmwareversion..." );
-          // Setzte die Version in die Config
-          spxConfig->setSpxFirmwareVersion( spxCommands->getParameter( 1 ) );
-          // Geht das Datum zu setzen?
-          if ( spxConfig->getCanSetDate() )
-          {
-            // ja der kann das Datum online setzten
-            nowDateTime = QDateTime::currentDateTime();
-            // sende das Datum an den SPX
-            remoteSPX42->sendCommand( spxCommands->setDateTime( nowDateTime ) );
-          }
-          break;
-        case SPX42CommandDef::SPX_SERIAL_NUMBER:
-          lg->debug( "ConnectFragment::onDatagramRecivedSlot -> serialnumber..." );
-          spxConfig->setSerialNumber( spxCommands->getParameter( 1 ) );
-          setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
-          break;
-        case SPX42CommandDef::SPX_LICENSE_STATE:
-          lg->debug( "ConnectFragment::onDatagramRecivedSlot -> license state..." );
-          spxConfig->setLicense( spxCommands->getParameter( 1 ), spxCommands->getParameter( 2 ) );
-          setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
-          break;
-      }
-      //
-      // falls es mehr gibt, lass dem Rest der App auch eine Chance
-      //
-      QCoreApplication::processEvents();
-    }
-  }
-
-  // ##########################################################################
-  // PRIVATE Funktionen
-  // ##########################################################################
-
-  void ConnectFragment::setGuiConnected( bool isConnected )
-  {
-    //
-    // setzte die GUI Elemente entsprechend des Online Status
-    //
-    isConnected ? ui->connectButton->setText( tr( "DISCONNECT DEVICE" ) ) : ui->connectButton->setText( tr( "CONNECT DEVICE" ) );
-    ui->deviceComboBox->setEnabled( !isConnected );
-    ui->propertyPushButton->setEnabled( !isConnected );
-    ui->discoverPushButton->setEnabled( !isConnected );
-    if ( isConnected )
-      ui->editAliasesTableView->setVisible( false );
-    ui->tabHeaderLabel->setText( fragmentTitlePattern.arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) );
   }
 }  // namespace spx

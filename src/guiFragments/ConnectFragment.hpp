@@ -27,11 +27,11 @@ namespace spx
     private:
     Q_OBJECT
     Q_INTERFACES( spx::IFragmentInterface )
+    static SPXDeviceList spx42Devices;                      //! Liste mit gefundenen SPX42
     std::unique_ptr< Ui::connectForm > ui;                  //! Zeiger auf die GUI Objekte
     DeviceAliasHash devices;                                //! gehashte Liste der verfügbaren Geräte
     QString errMsg;                                         //! Fehlermeldungen BT Connection
     std::unique_ptr< BtDiscoverRemoteDevice > discoverObj;  //! Objekt zum Discovern der Geräte
-    SPXDeviceList spx42Devices;                             //! Liste mit gefundenen SPX42
     QString fragmentTitlePattern;                           //! das Muster (lokalisierungsfähig) für Fragmentüberschrift
 
     public:
@@ -39,13 +39,13 @@ namespace spx
                               std::shared_ptr< Logger > logger,
                               std::shared_ptr< SPX42Database > spx42Database,
                               std::shared_ptr< SPX42Config > spxCfg,
-                              std::shared_ptr< SPX42RemotBtDevice > remSPX42,
-                              std::shared_ptr< SPX42Commands > spxCmds );  //! Konstruktor
-    ~ConnectFragment() override;                                           //! Destruktor, muss GUI säubern
-    virtual void deactivateTab( void ) override;                           //! deaktiviere eventuelle signale
+                              std::shared_ptr< SPX42RemotBtDevice > remSPX42 );  //! Konstruktor
+    ~ConnectFragment() override;                                                 //! Destruktor, muss GUI säubern
+    virtual void deactivateTab( void ) override;                                 //! deaktiviere eventuelle signale
 
     private:
-    void setGuiConnected( bool isConnected );  //! Stati in der GUI setzten
+    void setGuiConnected( bool isConnected );                      //! Stati in der GUI setzten
+    void addDeviceComboEntry( const SPXDeviceDescr &deviceInfo );  //! trage einen eintrag in die Liste ein
 
     signals:
     void onWarningMessageSig( const QString &msg, bool asPopup = false ) override;  //! eine Warnmeldung soll das Main darstellen
@@ -59,7 +59,7 @@ namespace spx
     virtual void onCloseDatabaseSlot( void ) override;                               //! wenn die Datenbank geschlosen wird
 
     private slots:
-    virtual void onDatagramRecivedSlot( void ) override;              //! wenn ein Datentelegramm empfangen wurde
+    virtual void onCommandRecivedSlot( void ) override;               //! wenn ein Datentelegramm empfangen wurde
     void onConnectButtonSlot( void );                                 //! Wenn der Verbinde-Knopf gedrückt wurde
     void onPropertyButtonSlot( void );                                //! Verbindungs/Geräte eigenschaften
     void onDiscoverButtonSlot( void );                                //! Suche nach BT Geräten

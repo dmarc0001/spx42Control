@@ -72,7 +72,8 @@ SOURCES                 += \
     src/bluetooth/BtLocalDevicesManager.cpp \
     src/bluetooth/BtDiscoverRemoteDevice.cpp \
     src/bluetooth/BtDiscoverRemoteService.cpp \
-    src/bluetooth/SPX42BtDevicesManager.cpp
+    src/bluetooth/SPX42BtDevicesManager.cpp \
+    src/spx42/SPX42SingleCommand.cpp
 
 HEADERS                 += \
     src/SPX42ControlMainWin.hpp \
@@ -102,7 +103,8 @@ HEADERS                 += \
     src/bluetooth/BtLocalDevicesManager.hpp \
     src/bluetooth/BtDiscoverRemoteDevice.hpp \
     src/bluetooth/BtDiscoverRemoteService.hpp \
-    src/bluetooth/SPX42BtDevicesManager.hpp
+    src/bluetooth/SPX42BtDevicesManager.hpp \
+    src/spx42/SPX42SingleCommand.hpp
 
 FORMS                   += \
     src/ui/SPX42ControlMainWin.ui \

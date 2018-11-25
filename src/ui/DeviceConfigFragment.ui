@@ -1019,16 +1019,7 @@
           <height>1024</height>
          </size>
         </property>
-        <layout class="QVBoxLayout" name="rightColumnVerticalLayout">
-         <property name="spacing">
-          <number>24</number>
-         </property>
-         <property name="leftMargin">
-          <number>24</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
+        <layout class="QVBoxLayout" name="verticalLayout_11">
          <item>
           <widget class="QGroupBox" name="unitGroupBox">
            <property name="minimumSize">
@@ -1259,6 +1250,12 @@
          </item>
          <item>
           <widget class="QGroupBox" name="individualGroupBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize">
             <size>
              <width>350</width>
@@ -1268,7 +1265,7 @@
            <property name="maximumSize">
             <size>
              <width>600</width>
-             <height>225</height>
+             <height>300</height>
             </size>
            </property>
            <property name="statusTip">
@@ -1283,30 +1280,18 @@
            <property name="alignment">
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
            </property>
-           <layout class="QVBoxLayout" name="individualGroupBoxVerticalLayout">
-            <property name="spacing">
-             <number>0</number>
-            </property>
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
+           <layout class="QVBoxLayout" name="verticalLayout_10">
             <item>
              <widget class="QWidget" name="individualVerticalWidget" native="true">
-              <layout class="QVBoxLayout" name="individualVerticalLayout">
-               <property name="spacing">
-                <number>4</number>
-               </property>
-               <property name="bottomMargin">
-                <number>4</number>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_9">
+               <property name="sizeConstraint">
+                <enum>QLayout::SetMinimumSize</enum>
                </property>
                <item>
                 <widget class="QCheckBox" name="individualSeonsorsOnCheckBox">
@@ -1467,6 +1452,68 @@
                     <item>
                      <property name="text">
                       <string>60 s</string>
+                     </property>
+                    </item>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QWidget" name="individualTempStickHorizontalWidget" native="true">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>500</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <layout class="QHBoxLayout" name="individualLogIntervalHorizontalLayout_2">
+                  <item>
+                   <widget class="QLabel" name="individualTEmpStickLabel">
+                    <property name="text">
+                     <string>TEMPSTICK TYPE</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QComboBox" name="individualTempStickComboBox">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>21</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>80</width>
+                      <height>16777215</height>
+                     </size>
+                    </property>
+                    <property name="statusTip">
+                     <string>set the time between measurings (and logentrys)...</string>
+                    </property>
+                    <property name="layoutDirection">
+                     <enum>Qt::LeftToRight</enum>
+                    </property>
+                    <item>
+                     <property name="text">
+                      <string>T1</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>T2</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>T3</string>
                      </property>
                     </item>
                    </widget>

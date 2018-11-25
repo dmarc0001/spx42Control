@@ -19,25 +19,23 @@ namespace spx
     std::shared_ptr< SPX42Database > database;          //! Zeiger auf die Datenbank
     std::shared_ptr< SPX42Config > spxConfig;           //! Zeiger auf das SPX42 Config Objekt
     std::shared_ptr< SPX42RemotBtDevice > remoteSPX42;  //! Zeiger auf das VErbindungsobjekt zum SPX42
-    std::shared_ptr< SPX42Commands > spxCommands;       //! Objekt zum erzeugen/decodieren der SPX Kommandos
     double ackuVal;                                     //! aktueller Akkustand
 
     public:
     explicit IFragmentInterface( std::shared_ptr< Logger > logger,
                                  std::shared_ptr< SPX42Database > spx42Database,
                                  std::shared_ptr< SPX42Config > spxCfg,
-                                 std::shared_ptr< SPX42RemotBtDevice > remSPX42,
-                                 std::shared_ptr< SPX42Commands > spxCmds );  //! Standartkonstruktor
-    virtual ~IFragmentInterface( void ) = default;                            //! standartverhalten
-    virtual void deactivateTab( void ) = 0;                                   //! deaktiviere alle eventuellen signale etc.
+                                 std::shared_ptr< SPX42RemotBtDevice > remSPX42 );  //! Standartkonstruktor
+    virtual ~IFragmentInterface( void ) = default;                                  //! standartverhalten
+    virtual void deactivateTab( void ) = 0;                                         //! deaktiviere alle eventuellen signale etc.
 
     signals:
     virtual void onWarningMessageSig( const QString &msg, bool asPopup = false ) = 0;  //! eine Warnmeldung soll das Main darstellen
     virtual void onErrorgMessageSig( const QString &msg, bool asPopup = false ) = 0;   //! eine Warnmeldung soll das Main darstellen
-    virtual void onAkkuValueChangedSlot( double aValue ) = 0;  //! signalisiert, dass der Akku eine Spanniung hat
+    virtual void onAkkuValueChangedSlot( double aValue ) = 0;  //! signalisiert, dass der Akku eine Spannung hat
 
     private slots:
-    virtual void onDatagramRecivedSlot( void ) = 0;  //! wenn ein Datentelegramm empfangen wurde
+    virtual void onCommandRecivedSlot( void ) = 0;  //! wenn ein Kommando empfangen wurde
 
     public slots:
     virtual void onOnlineStatusChangedSlot( bool isOnline ) = 0;                //! Wenn sich der Onlinestatus des SPX42 ändert

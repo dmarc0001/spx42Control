@@ -48,10 +48,9 @@ namespace spx
                           std::shared_ptr< Logger > logger,
                           std::shared_ptr< SPX42Database > spx42Database,
                           std::shared_ptr< SPX42Config > spxCfg,
-                          std::shared_ptr< SPX42RemotBtDevice > remSPX42,
-                          std::shared_ptr< SPX42Commands > spxCmds );  //! Konstruktor
-    ~LogFragment() override;                                           //! Destruktor
-    virtual void deactivateTab( void ) override;                       //! deaktiviere eventuelle signale
+                          std::shared_ptr< SPX42RemotBtDevice > remSPX42 );  //! Konstruktor
+    ~LogFragment() override;                                                 //! Destruktor
+    virtual void deactivateTab( void ) override;                             //! deaktiviere eventuelle signale
 
     protected:
     void changeEvent( QEvent *e ) override;
@@ -72,7 +71,7 @@ namespace spx
     virtual void onSocketErrorSlot( QBluetoothSocket::SocketError error ) override;  //! wenn fehler in der BT VERbindung auftauchen
     virtual void onConfLicChangedSlot( void ) override;                              //! Wenn sich die Lizenz ändert
     virtual void onCloseDatabaseSlot( void ) override;                               //! wenn die Datenbank geschlosen wird
-    virtual void onDatagramRecivedSlot( void ) override;                             //! wenn ein Datentelegramm empfangen wurde
+    virtual void onCommandRecivedSlot( void ) override;                              //! wenn ein Datentelegramm empfangen wurde
     void onReadLogDirectorySlot( void );
     void onReadLogContentSlot( void );
     void onLogListViewClickedSlot( const QModelIndex &index );

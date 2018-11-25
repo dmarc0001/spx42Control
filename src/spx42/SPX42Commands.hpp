@@ -13,8 +13,10 @@ namespace spx
   {
     private:
     QByteArray cmd;
-    QList< QByteArray > params;
     void makeSipleCommand( char commandChar );
+
+    protected:
+    QList< QByteArray > params;
 
     public:
     SPX42Commands() = default;
