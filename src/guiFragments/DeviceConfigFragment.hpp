@@ -48,8 +48,6 @@ namespace spx
     QStringList newAutoSetpoint;             //! Liste mit Einträgen für Combobox für neuere Firmware
     QStringList oldDisplayBrightness;        //! alte Helligkeitswerte
     QStringList newDisplayBrightness;        //! neue Helligkeitswerte
-    QTimer configComputeHashTimer;           //! timer soll nach dem Empfang von Einstellunge das berechnen eines hash verzögern
-    QTimer configWriteTimer;                 //! Nach Änderungen der Konfiguration zurück zum SPX schreiben (etwas verzögert)
 
     public:
     explicit DeviceConfigFragment( QWidget *parent,
