@@ -50,7 +50,7 @@ namespace spx
     bool isNewerDisplayBrightness;                      //! neue Version Helligkeit
     bool isSixMetersAutoSetpoint;                       //! Autosetpoint alt deact, 6, 10, 15, 20 NEU 6, 10, 15
     QCryptographicHash qhash;                           //! hasobjekt erzeugen
-    QList< QByteArray > gasHashes;                      //! Hashes für gesetzte Gaase
+    QByteArray gasHashes[ 8 ];                          //! Hashes für gesetzte Gaase
     QByteArray currentSpxHash;                          //! Hash über Hauptwerte
     QByteArray currentDecoHash;                         //! Hash über Dekompressionswerte
     QByteArray currentDisplayHash;                      //! Hashwert über Displaywerte
