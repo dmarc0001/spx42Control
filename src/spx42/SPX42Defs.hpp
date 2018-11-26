@@ -7,6 +7,16 @@
 
 namespace spx
 {
+  namespace SPX42ConfiggClass
+  {
+    constexpr quint8 CFCLASS_SPX{0x01};
+    constexpr quint8 CFCLASS_DECO{0x02};
+    constexpr quint8 CFCLASS_DISPLAY{0x04};
+    constexpr quint8 CFCLASS_UNITS{0x10};
+    constexpr quint8 CFCLASS_SETPOINT{0x20};
+    constexpr quint8 CFCLASS_INDIVIDUAL{0x40};
+    constexpr quint8 CFCLASS_ALL{0xff};
+  }
   //
   // Aufzählungen, einige sind eigentlich nur für die bessere Lesbarkeitdes Codes
   //

@@ -5,6 +5,7 @@
 #include <QHash>
 #include <QObject>
 #include <QString>
+#include <QStringList>
 #include <QtGlobal>
 
 #include "SPX42Gas.hpp"
@@ -21,13 +22,13 @@ namespace spx
     bool isValid;                                       //! Ist das Objekt gültig?
     SPX42FirmwareVersions spxFirmwareVersion;           //! welche Firmwareversion?
     SPX42License spxLicense;                            //! SPX42 Lizenz
-    QString serialNumber;                               //! Seriennummer des aktuellen SPX42
+    QString spxSerialNumber;                            //! Seriennummer des aktuellen SPX42
     SPX42Gas gasList[ 8 ];                              //! Gasliste des aktuellen SPX42
-    DecompressionPreset currentPreset;                  //! Aktueller Typ der Dekompressionsgradienten
+    DecompressionPreset decoCurrentPreset;              //! Aktueller Typ der Dekompressionsgradienten
     DecoGradientHash decoPresets;                       //! Hashliste der DECO-Presets (incl. CUSTOM == variabel)
     DecompressionDynamicGradient decoDynamicGradient;   //! dynamische Gradienten erlaubt
     DecompressionDeepstops decoDeepstopsEnabled;        //! sind deepstops erlaubt/an
-    DecoLastStop lastDecoStop;                          //! wo ist der letzte DECO Stop (3 oder 6 Meter)
+    DecoLastStop decoLastStop;                          //! wo ist der letzte DECO Stop (3 oder 6 Meter)
     DisplayBrightness displayBrightness;                //! Display Helligkeit
     DisplayOrientation displayOrientation;              //! Ausrichtung des Displays
     DeviceTemperaturUnit unitTemperature;               //! Einheit der Tempteratur
@@ -48,6 +49,20 @@ namespace spx
     bool isOldParamSorting;                             //! alte Versionen haben andre Reihenfolge der Parameter
     bool isNewerDisplayBrightness;                      //! neue Version Helligkeit
     bool isSixMetersAutoSetpoint;                       //! Autosetpoint alt deact, 6, 10, 15, 20 NEU 6, 10, 15
+    QCryptographicHash qhash;                           //! hasobjekt erzeugen
+    QList< QByteArray > gasHashes;                      //! Hashes für gesetzte Gaase
+    QByteArray currentSpxHash;                          //! Hash über Hauptwerte
+    QByteArray currentDecoHash;                         //! Hash über Dekompressionswerte
+    QByteArray currentDisplayHash;                      //! Hashwert über Displaywerte
+    QByteArray currentUnitHash;                         //! Hash über unit einstellungen
+    QByteArray currentSetpointHash;                     //! Hash über setpoint Einstellungen
+    QByteArray currentIndividualHash;                   //! Hash über Inidividual einstellungen
+    QByteArray savedSpxHash;                            //! Hash über Hauptwerte
+    QByteArray savedDecoHash;                           //! Hash über Dekompressionswerte
+    QByteArray savedDisplayHash;                        //! Hashwert über Displaywerte
+    QByteArray savedUnitHash;                           //! Hash über unit einstellungen
+    QByteArray savedSetpointHash;                       //! Hash über setpoint Einstellungen
+    QByteArray savedIndividualHash;                     //! Hash über Inidividual einstellungen
 
     public:
     SPX42Config();                                                    //! Der Konstruktor
@@ -57,6 +72,7 @@ namespace spx
     void setLicense( const QByteArray &lic, const QByteArray &ind );  //! Lizenz aus dem Kommando vom SPX lesen
     QString getLicName( void ) const;                                 //! Textliche Darstellung der Lizenz
     SPX42Gas &getGasAt( int num );                                    //! Gib ein Gas mit der Nummer num vom SPX42 zurück
+    void setGasAt( int num, SPX42Gas gas );                           //! setzte Gas mit der Nummer xxx in die Config
     void reset( void );                                               //! Resetiere das Objekt
     QString getSerialNumber( void ) const;                            //! Seriennummer des aktuellen SPX42 zurückgeben
     void setSerialNumber( const QString &serial );                    //! Seriennumemr des aktuellen SPX42 speichern
@@ -112,16 +128,23 @@ namespace spx
     bool getIsOldParamSorting() const;                                         //! alte Parameterordnung?
     bool getIsNewerDisplayBrightness() const;                                  //! neuere Helligkeitsabstufungen
     bool getIsSixMetersAutoSetpoint() const;                                   //! fünf oder sechs meter autosetpoint
+    void freezeConfigs( void );                                                //! setzte die aktuelle Konfiguration als "gesichert"
+    quint8 getChangedConfig( void );                                           //! was ist geändert?
 
     private:
-    QByteArray makeConfigHash( void );  //! erzeuge einen crypto hash für die Daten
+    QByteArray makeSpxHash( void );         //! Hash über die globalen Einstellungen
+    QByteArray makeDecoHash( void );        //! Hash über Dekompressionseinstellungen
+    QByteArray makeDisplayHash( void );     //! Hash über displayvariable
+    QByteArray makeUnitsHash( void );       //! Hash über einheiten Einstellungen
+    QByteArray makeSetpointHash( void );    //! Hash über setpointeinstellungen
+    QByteArray makeIndividualHash( void );  //! Hash über individual Einstellungen
 
     private slots:
     // void licenseChangedPrivateSlot( SPX42License& lic );
 
     signals:
-    void licenseChangedSig( const SPX42License &lic );           //! Signal wenn die lizenz verändert wird
-    void serialNumberChangedSig( const QString &serialNumber );  //! Signal wenn die Seriennummer neu gesetzt wird
+    void licenseChangedSig( const SPX42License &lic );              //! Signal wenn die lizenz verändert wird
+    void serialNumberChangedSig( const QString &spxSerialNumber );  //! Signal wenn die Seriennummer neu gesetzt wird
     // DEKOMPRESSIONSEINSTELLUNGEN
     void decoGradientChangedSig(
         const DecoGradient &preset );  //! Signal wird gesendet wenn Gradienten verändert sind ( nutze: Qt::QueuedConnection )

@@ -5,6 +5,7 @@
 #include <QByteArray>
 #include <QQueue>
 #include <QRegExp>
+#include <QStringList>
 #include <QTimer>
 #include <memory>
 #include "bluetooth/SPX42BtDevicesManager.hpp"

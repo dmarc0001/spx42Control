@@ -172,3 +172,4 @@ namespace spx
                            .arg( static_cast< bool >( isBaulout ) ) );
     return ( serialized );
   }
+}
