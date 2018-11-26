@@ -284,9 +284,12 @@ namespace spx
         {
           // so wie es soll, das Ende ist nach dem Anfang
           // ich kopiere mir nun das Datagramm
-          QByteArray _datagramm = recBuffer.mid( idxOfSTX + 1, idxOfETX - 2 );
+          // dei Länge ergibt sich aus dem Ende minus das 0x03 und minus Anfang
+          QByteArray _datagramm = recBuffer.mid( idxOfSTX + 1, ( idxOfETX - idxOfSTX ) - 1 );
 #ifdef DEBUG
-          lg->debug( QString( "SPX42RemotBtDevice::onReadSocketSlot -> datagram:: <%1>" ).arg( QString( _datagramm ) ) );
+          lg->debug( QString( "SPX42RemotBtDevice::onReadSocketSlot -> datagram:: <%1> <%2>" )
+                         .arg( QString( _datagramm.toHex( ':' ) ) )
+                         .arg( QString( _datagramm ) ) );
 #endif
           // und noch das Datagramm aus dem Puffer tilgen
           recBuffer.remove( 0, idxOfETX + 1 );

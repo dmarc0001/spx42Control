@@ -87,6 +87,7 @@ namespace spx
     void onOnlineStatusChangedSlot( bool isOnline );                        //! Wenn sich der Onlinestatus des SPX42 ändert
     void onWarningMessageSlot( const QString &msg, bool asPopup = false );  //! eine Warnmeldung soll das Main darstellen
     void onErrorgMessageSlot( const QString &msg, bool asPopup = false );   //! eine Warnmeldung soll das Main darstellen
+    void onConfigWasChangedSlot( void );                                    //! Signal empfangen, dass config geschrieben wurde
     void onConfigWriteBackSlot( void );                                     //! timer wenn configs zurück geschrieben werden müssen
   };
 }  // namespace spx42

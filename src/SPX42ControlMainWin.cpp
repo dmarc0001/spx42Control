@@ -122,6 +122,7 @@ namespace spx
     connect( &watchdog, &QTimer::timeout, this, &SPX42ControlMainWin::onWatchdogTimerSlot );
     watchdog.start( 1000 );
     connect( &configWriteTimer, &QTimer::timeout, this, &SPX42ControlMainWin::onConfigWriteBackSlot );
+    configWriteTimer.stop();
   }
 
   /**
@@ -582,7 +583,7 @@ namespace spx
         currentTab = ApplicationTab::CONNECT_TAB;
         connect( dynamic_cast< ConnectFragment * >( currObj ), &ConnectFragment::onWarningMessageSig, this,
                  &SPX42ControlMainWin::onWarningMessageSlot );
-        connect( dynamic_cast< ConnectFragment * >( currObj ), &ConnectFragment::onAkkuValueChangedSlot, this,
+        connect( dynamic_cast< ConnectFragment * >( currObj ), &ConnectFragment::onAkkuValueChangedSig, this,
                  &SPX42ControlMainWin::onAkkuValueChangedSlot );
         break;
 
@@ -592,6 +593,8 @@ namespace spx
         currObj->setObjectName( "spx42Config" );
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::CONFIG_TAB ) ) );
         currentTab = ApplicationTab::CONFIG_TAB;
+        connect( dynamic_cast< DeviceConfigFragment * >( currObj ), &DeviceConfigFragment::onConfigWasChangedSig, this,
+                 &SPX42ControlMainWin::onConfigWasChangedSlot );
         break;
 
       case static_cast< int >( ApplicationTab::GAS_TAB ):
@@ -600,6 +603,8 @@ namespace spx
         currObj->setObjectName( "spx42Gas" );
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::GAS_TAB ) ) );
         currentTab = ApplicationTab::GAS_TAB;
+        connect( dynamic_cast< GasFragment * >( currObj ), &GasFragment::onConfigWasChangedSig, this,
+                 &SPX42ControlMainWin::onConfigWasChangedSlot );
         break;
 
       case static_cast< int >( ApplicationTab::LOG_TAB ):
@@ -786,9 +791,22 @@ namespace spx
   /**
    * @brief SPX42ControlMainWin::onConfigWriteBackSlot
    */
-  void SPX42ControlMainWin::onConfigWriteBackSlot( void )
+  void SPX42ControlMainWin::onConfigWriteBackSlot()
   {
-    // TODO: implementieren
+    // TODO: Konfiguration testen und sinnvolle Veränderungen schreiben
+    lg->debug( "SPX42ControlMainWin::onConfigWriteBackSlot -> TODO: write back config" );
   }
 
+  /**
+   * @brief SPX42ControlMainWin::onConfigWasChanged
+   */
+  void SPX42ControlMainWin::onConfigWasChangedSlot()
+  {
+    //
+    // Timer starten, bei jeden Aufruf neu
+    // so dass nicht sofort geschrieben wird.
+    //
+    configWriteTimer.start( ProjectConst::CONFIG_WRITE_DELAY );
+    lg->debug( "SPX42ControlMainWin::onConfigWasChangedSlot -> start wait timer again..." );
+  }
 }  // namespace spx

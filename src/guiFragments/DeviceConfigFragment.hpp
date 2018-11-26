@@ -78,7 +78,8 @@ namespace spx
     signals:
     void onWarningMessageSig( const QString &msg, bool asPopup = false ) override;  //! eine Warnmeldung soll das Main darstellen
     void onErrorgMessageSig( const QString &msg, bool asPopup = false ) override;   //! eine Warnmeldung soll das Main darstellen
-    void onAkkuValueChangedSlot( double aValue ) override;                          //! signalisiert, dass der Akku eine Spanniung hat
+    void onAkkuValueChangedSig( double aValue ) override;                           //! signalisiert, dass der Akku eine Spanniung hat
+    void onConfigWasChangedSig( void );  //! signalisieret das ich was in die Config geschrieben habe
 
     private slots:
     virtual void onOnlineStatusChangedSlot( bool isOnline ) override;                //! Wenn sich der Onlinestatus des SPX42 ändert

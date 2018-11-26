@@ -494,7 +494,7 @@ namespace spx
           // PX => Angabe HEX in Milivolt vom Akku
           lg->debug( "DeviceConfigFragment::onDatagramRecivedSlot -> alive/acku..." );
           ackuVal = ( recCommand->getValueAt( SPXCmdParam::ALIVE_POWER ) / 100.0 );
-          emit onAkkuValueChangedSlot( ackuVal );
+          emit onAkkuValueChangedSig( ackuVal );
           break;
         case SPX42CommandDef::SPX_APPLICATION_ID:
           // Kommando APPLICATION_ID (VERSION)
@@ -810,6 +810,7 @@ namespace spx
     ui->gradientHighSpinBox->setValue( newGradient.second );
     spxConfig->setCurrentPreset( static_cast< DecompressionPreset >( index ), newGradient.first, newGradient.second );
     gradentSlotsIgnore = false;
+    emit onConfigWasChangedSig();
   }
 
   /**
@@ -840,6 +841,7 @@ namespace spx
       setGradientPresetWithoutCallback( preset );
     }
     spxConfig->setCurrentPreset( preset, static_cast< qint8 >( low ), high );
+    emit onConfigWasChangedSig();
   }
 
   /**
@@ -868,6 +870,7 @@ namespace spx
       setGradientPresetWithoutCallback( preset );
     }
     spxConfig->setCurrentPreset( preset, low, static_cast< qint8 >( high ) );
+    emit onConfigWasChangedSig();
   }
 
   /**
@@ -887,6 +890,7 @@ namespace spx
     // Callbacks wieder erlauben
     //
     gradentSlotsIgnore = false;
+    emit onConfigWasChangedSig();
   }
 
   /**
@@ -901,6 +905,7 @@ namespace spx
     if ( state == static_cast< int >( Qt::CheckState::Checked ) )
       newState = DecompressionDynamicGradient::DYNAMIC_GRADIENT_ON;
     spxConfig->setIsDecoDynamicGradients( newState );
+    emit onConfigWasChangedSig();
   }
 
   /**
@@ -915,6 +920,7 @@ namespace spx
     if ( state == static_cast< int >( Qt::CheckState::Checked ) )
       newState = DecompressionDeepstops::DEEPSTOPS_ENABLED;
     spxConfig->setIsDeepstopsEnabled( newState );
+    emit onConfigWasChangedSig();
   }
 
   /**
@@ -933,6 +939,7 @@ namespace spx
       case 1:
         spxConfig->setLastDecoStop( DecoLastStop::LAST_STOP_ON_6 );
     }
+    emit onConfigWasChangedSig();
   }
 
   /**
@@ -972,6 +979,7 @@ namespace spx
     // setze im config-Objekt die Helligkeit
     //
     spxConfig->setDisplayBrightness( static_cast< DisplayBrightness >( index ) );
+    emit onConfigWasChangedSig();
   }
 
   /**
@@ -996,6 +1004,7 @@ namespace spx
       lg->debug( QString( "DeviceConfigFragment::onDisplayOrientationChangedSlot: orientation to %1" ).arg( orString ) );
     }
     spxConfig->setDisplayOrientation( static_cast< DisplayOrientation >( index ) );
+    emit onConfigWasChangedSig();
   }
 
   /**
@@ -1020,6 +1029,7 @@ namespace spx
       lg->debug( QString( "DeviceConfigFragment::onUnitsTemperatureChangedSlot: temperatur unit to %1" ).arg( tmpString ) );
     }
     spxConfig->setUnitsTemperatur( tUnit );
+    emit onConfigWasChangedSig();
   }
 
   /**
@@ -1044,6 +1054,7 @@ namespace spx
       lg->debug( QString( "DeviceConfigFragment::onUnitsLengthChangedSlot: lengt unit to %1" ).arg( lenString ) );
     }
     spxConfig->setUnitsLength( lUnit );
+    emit onConfigWasChangedSig();
   }
 
   /**
@@ -1068,6 +1079,7 @@ namespace spx
       lg->debug( QString( "DeviceConfigFragment::onUnitsWatertypeChangedSlot: lengt unit to %1" ).arg( typeString ) );
     }
     spxConfig->setUnitsWaterType( wUnit );
+    emit onConfigWasChangedSig();
   }
 
   /**
@@ -1102,6 +1114,7 @@ namespace spx
       lg->debug( QString( "DeviceConfigFragment::onSetpointAutoChangedSlot: auto setpoint to %1" ).arg( autoDepth ) );
     }
     spxConfig->setSetpointAuto( autoSP );
+    emit onConfigWasChangedSig();
   }
 
   /**
@@ -1136,6 +1149,7 @@ namespace spx
       lg->debug( QString( "DeviceConfigFragment::onSetpointValueChangedSlot: setpoint (ppo2) to %1" ).arg( setpoint ) );
     }
     spxConfig->setSetpointValue( setpointValue );
+    emit onConfigWasChangedSig();
   }
 
   /**
@@ -1150,6 +1164,7 @@ namespace spx
     if ( state == static_cast< int >( Qt::CheckState::Checked ) )
       newState = DeviceIndividualSensors::SENSORS_ON;
     spxConfig->setIndividualSensorsOn( newState );
+    emit onConfigWasChangedSig();
   }
 
   /**
@@ -1164,6 +1179,7 @@ namespace spx
     if ( state == static_cast< int >( Qt::CheckState::Checked ) )
       newState = DeviceIndividualPSCR::PSCR_ON;
     spxConfig->setIndividualPscrMode( newState );
+    emit onConfigWasChangedSig();
   }
 
   /**
@@ -1191,6 +1207,7 @@ namespace spx
       lg->debug( QString( "DeviceConfigFragment::onIndividualSensorsCountChangedSlot: count sensors to %1" ).arg( sensorCount ) );
     }
     spxConfig->setIndividualSensorsCount( setpointValue );
+    emit onConfigWasChangedSig();
   }
 
   /**
@@ -1205,6 +1222,7 @@ namespace spx
     if ( state == static_cast< int >( Qt::CheckState::Checked ) )
       newState = DeviceIndividualAcoustic::ACOUSTIC_ON;
     spxConfig->setIndividualAcoustic( newState );
+    emit onConfigWasChangedSig();
   }
 
   /**
@@ -1232,6 +1250,7 @@ namespace spx
       lg->debug( QString( "DeviceConfigFragment::onIndividualLogIntervalChangedSlot: interrval to %1" ).arg( logInterval ) );
     }
     spxConfig->setIndividualLogInterval( logInterval );
+    emit onConfigWasChangedSig();
   }
 
   /**
@@ -1243,6 +1262,7 @@ namespace spx
     auto tempstickType = static_cast< DeviceIndividualTempstick >( state );
     spxConfig->setIndividualTempStick( tempstickType );
     lg->debug( QString( "DeviceConfigFragment::onIndividualTempstickChangedSlot -> set type %1" ).arg( state ) );
+    emit onConfigWasChangedSig();
   }
 
   /**

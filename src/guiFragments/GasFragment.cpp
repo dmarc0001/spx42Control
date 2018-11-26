@@ -183,6 +183,7 @@ namespace spx
     gRef.at( g_idx )->n2Line->setText( QString( "%1" ).arg( currGas.getN2(), 2, 10, QChar( '0' ) ) );
     gRef.at( g_idx )->gasName->setText( currGas.getGasName() );
     // TODO: Gas noch färben, je nach O2-Level
+    emit onConfigWasChangedSig();
   }
 
   void GasFragment::onSpinHeValueChangedSlot( int index, int heVal )
@@ -211,6 +212,7 @@ namespace spx
     gRef.at( g_idx )->n2Line->setText( QString( "%1" ).arg( currGas.getN2(), 2, 10, QChar( '0' ) ) );
     gRef.at( g_idx )->gasName->setText( currGas.getGasName() );
     // TODO: Gas noch färben, je nach O2-Level
+    emit onConfigWasChangedSig();
   }
 
   void GasFragment::checkGases()
@@ -286,6 +288,7 @@ namespace spx
         gRef[ g_idx ]->dil1CheckBox->setCheckState( Qt::Unchecked );
         whereIgnored = -1;
       }
+      emit onConfigWasChangedSig();
       return;
     }
     //
@@ -297,6 +300,7 @@ namespace spx
     gRef[ g_idx ]->dil2CheckBox->setCheckState( Qt::Unchecked );
     gRef[ g_idx ]->dil2CheckBox->setCheckState( Qt::Unchecked );
     whereIgnored = -1;
+    emit onConfigWasChangedSig();
   }
 
   void GasFragment::onBaCheckChangeSlot( int index, int state )
@@ -310,6 +314,7 @@ namespace spx
     {
       spxConfig->getGasAt( index ).setBailout( false );
     }
+    emit onConfigWasChangedSig();
   }
 
   void GasFragment::onConfLicChangedSlot()
