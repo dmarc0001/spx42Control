@@ -50,7 +50,6 @@ namespace spx
     QStringList tabTitle;                               //! Tab Titel (nicht statisch, das Objekt gibts eh nur einmal)
     AppConfigClass cf;                                  //! Konfiguration aus Datei
     QTimer watchdog;                                    //! Wachhund für Timeouts
-    QTimer configComputeHashTimer;  //! timer soll nach dem Empfang von Einstellunge das berechnen eines hash verzögern
     QTimer configWriteTimer;        //! Nach Änderungen der Konfiguration zurück zum SPX schreiben (etwas verzögert)
     QStringList spx42GasHashes;     //! Hashwerte der Gaseinstellungen (acht Stück)
     ApplicationStat currentStatus;  //! welchen Status hat die App?
@@ -88,7 +87,6 @@ namespace spx
     void onOnlineStatusChangedSlot( bool isOnline );                        //! Wenn sich der Onlinestatus des SPX42 ändert
     void onWarningMessageSlot( const QString &msg, bool asPopup = false );  //! eine Warnmeldung soll das Main darstellen
     void onErrorgMessageSlot( const QString &msg, bool asPopup = false );   //! eine Warnmeldung soll das Main darstellen
-    void onComputeHashTimerSlot( void );                                    //! timer wenn hashes erneuert werden müssen
     void onConfigWriteBackSlot( void );                                     //! timer wenn configs zurück geschrieben werden müssen
   };
 }  // namespace spx42
