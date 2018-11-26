@@ -313,58 +313,80 @@ namespace spx
     QByteArray serialized = gasList[ num ].serialize();
     qhash.reset();
     qhash.addData( serialized );
-    gasHashes[ num ] = qhash.result();
+    currentGasHashes[ num ] = qhash.result();
   }
 
   /**
    * @brief Setze das Objekt auf einen definierten Grundzustand
    */
-  void SPX42Config::reset()
+  void SPX42Config::reset( quint8 classes )
   {
     isValid = false;
-    spxLicense.setLicType( LicenseType::LIC_NITROX );
-    spxLicense.setLicInd( IndividualLicense::LIC_NONE );
-    spxSerialNumber = "0000000000";
-    for ( int i = 0; i < 8; i++ )
+    if ( classes & SPX42ConfigClass::CFCLASS_SPX )
     {
-      gasList[ i ].reset();
-      gasHashes[ i ].clear();
+      spxLicense.setLicType( LicenseType::LIC_NITROX );
+      spxLicense.setLicInd( IndividualLicense::LIC_NONE );
+      spxSerialNumber = "0000000000";
+      hasFahrenheidBug = false;
+      canSetDate = false;
+      hasSixValuesIndividual = true;
+      isFirmwareSupported = false;
+      isOldParamSorting = false;
+      isNewerDisplayBrightness = true;
+      isSixMetersAutoSetpoint = true;
+      currentSpxHash.clear();
+      savedSpxHash.clear();
     }
-    decoCurrentPreset = DecompressionPreset::DECO_KEY_CONSERVATIVE;
-    decoDeepstopsEnabled = DecompressionDeepstops::DEEPSTOPS_ENABLED;
-    decoDynamicGradient = DecompressionDynamicGradient::DYNAMIC_GRADIENT_ON;
-    displayBrightness = DisplayBrightness::BRIGHT_100;
-    displayOrientation = DisplayOrientation::LANDSCAPE;
-    unitTemperature = DeviceTemperaturUnit::CELSIUS;
-    unitLength = DeviceLenghtUnit::METRIC;
-    unitWaterType = DeviceWaterType::FRESHWATER;
-    setpointAuto = DeviceSetpointAuto::AUTO_06;
-    setpointValue = DeviceSetpointValue::SETPOINT_10;
-    individualSensorsOn = DeviceIndividualSensors::SENSORS_ON;
-    individualPSCROn = DeviceIndividualPSCR::PSCR_OFF;
-    individualSensorCount = DeviceIndividualSensorCount::SENSOR_COUNT_03;
-    individualAcustic = DeviceIndividualAcoustic::ACOUSTIC_ON;
-    individualLogInterval = DeviceIndividualLogInterval::INTERVAL_20;
-    individualTempStick = DeviceIndividualTempstick::TEMPSTICK01;
-    hasFahrenheidBug = false;
-    canSetDate = false;
-    hasSixValuesIndividual = true;
-    isFirmwareSupported = false;
-    isOldParamSorting = false;
-    isNewerDisplayBrightness = true;
-    isSixMetersAutoSetpoint = true;
-    currentSpxHash.clear();
-    currentDecoHash.clear();
-    currentDisplayHash.clear();
-    currentUnitHash.clear();
-    currentSetpointHash.clear();
-    currentIndividualHash.clear();
-    savedSpxHash.clear();
-    savedDecoHash.clear();
-    savedDisplayHash.clear();
-    savedUnitHash.clear();
-    savedSetpointHash.clear();
-    savedIndividualHash.clear();
+    if ( classes & SPX42ConfigClass::CFCLASS_GASES )
+    {
+      for ( int i = 0; i < 8; i++ )
+      {
+        gasList[ i ].reset();
+        currentGasHashes[ i ].clear();
+        savedGasHashes[ i ].clear();
+      }
+    }
+    if ( classes & SPX42ConfigClass::CFCLASS_DECO )
+    {
+      decoCurrentPreset = DecompressionPreset::DECO_KEY_CONSERVATIVE;
+      decoDeepstopsEnabled = DecompressionDeepstops::DEEPSTOPS_ENABLED;
+      decoDynamicGradient = DecompressionDynamicGradient::DYNAMIC_GRADIENT_ON;
+      currentDecoHash.clear();
+      savedDecoHash.clear();
+    }
+    if ( classes & SPX42ConfigClass::CFCLASS_DISPLAY )
+    {
+      displayBrightness = DisplayBrightness::BRIGHT_100;
+      displayOrientation = DisplayOrientation::LANDSCAPE;
+      currentDisplayHash.clear();
+      savedDisplayHash.clear();
+    }
+    if ( classes & SPX42ConfigClass::CFCLASS_UNITS )
+    {
+      unitTemperature = DeviceTemperaturUnit::CELSIUS;
+      unitLength = DeviceLenghtUnit::METRIC;
+      unitWaterType = DeviceWaterType::FRESHWATER;
+      currentUnitHash.clear();
+      savedUnitHash.clear();
+    }
+    if ( classes & SPX42ConfigClass::CFCLASS_SETPOINT )
+    {
+      setpointAuto = DeviceSetpointAuto::AUTO_06;
+      setpointValue = DeviceSetpointValue::SETPOINT_10;
+      currentSetpointHash.clear();
+      savedSetpointHash.clear();
+    }
+    if ( classes & SPX42ConfigClass::CFCLASS_INDIVIDUAL )
+    {
+      individualSensorsOn = DeviceIndividualSensors::SENSORS_ON;
+      individualPSCROn = DeviceIndividualPSCR::PSCR_OFF;
+      individualSensorCount = DeviceIndividualSensorCount::SENSOR_COUNT_03;
+      individualAcustic = DeviceIndividualAcoustic::ACOUSTIC_ON;
+      individualLogInterval = DeviceIndividualLogInterval::INTERVAL_20;
+      individualTempStick = DeviceIndividualTempstick::TEMPSTICK01;
+      currentIndividualHash.clear();
+      savedIndividualHash.clear();
+    }
     emit licenseChangedSig( spxLicense );
   }
 
@@ -1103,21 +1125,40 @@ namespace spx
     savedUnitHash = currentUnitHash;
     savedSetpointHash = currentSetpointHash;
     savedIndividualHash = currentIndividualHash;
+    for ( int i = 0; i < 8; i++ )
+    {
+      savedGasHashes[ i ] = currentGasHashes[ i ];
+    }
   }
 
+  /**
+   * @brief SPX42Config::getChangedConfig
+   * @return
+   */
   quint8 SPX42Config::getChangedConfig( void )
   {
     quint8 result = 0;
     if ( currentSpxHash != savedSpxHash )
-      result |= SPX42ConfiggClass::CFCLASS_SPX;
+      result |= SPX42ConfigClass::CFCLASS_SPX;
     if ( currentDecoHash != savedDecoHash )
-      result |= SPX42ConfiggClass::CFCLASS_DECO;
+      result |= SPX42ConfigClass::CFCLASS_DECO;
     if ( currentDisplayHash != savedDisplayHash )
-      result |= SPX42ConfiggClass::CFCLASS_DISPLAY;
+      result |= SPX42ConfigClass::CFCLASS_DISPLAY;
     if ( currentSetpointHash != savedSetpointHash )
-      result |= SPX42ConfiggClass::CFCLASS_SETPOINT;
+      result |= SPX42ConfigClass::CFCLASS_SETPOINT;
+    if ( currentUnitHash != savedUnitHash )
+      result |= SPX42ConfigClass::CFCLASS_UNITS;
     if ( currentIndividualHash != savedIndividualHash )
-      result |= SPX42ConfiggClass::CFCLASS_INDIVIDUAL;
+      result |= SPX42ConfigClass::CFCLASS_INDIVIDUAL;
+    for ( int i = 0; i < 8; i++ )
+    {
+      if ( savedGasHashes[ i ] != currentGasHashes[ i ] )
+      {
+        result |= SPX42ConfigClass::CFCLASS_GASES;
+        // schleife verlassen
+        break;
+      }
+    }
     return ( result );
   }
 }  // namespace spx

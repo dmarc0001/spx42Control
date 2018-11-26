@@ -50,13 +50,14 @@ namespace spx
     bool isNewerDisplayBrightness;                      //! neue Version Helligkeit
     bool isSixMetersAutoSetpoint;                       //! Autosetpoint alt deact, 6, 10, 15, 20 NEU 6, 10, 15
     QCryptographicHash qhash;                           //! hasobjekt erzeugen
-    QByteArray gasHashes[ 8 ];                          //! Hashes für gesetzte Gaase
+    QByteArray currentGasHashes[ 8 ];                   //! Hashes für gesetzte Gaase
     QByteArray currentSpxHash;                          //! Hash über Hauptwerte
     QByteArray currentDecoHash;                         //! Hash über Dekompressionswerte
     QByteArray currentDisplayHash;                      //! Hashwert über Displaywerte
     QByteArray currentUnitHash;                         //! Hash über unit einstellungen
     QByteArray currentSetpointHash;                     //! Hash über setpoint Einstellungen
     QByteArray currentIndividualHash;                   //! Hash über Inidividual einstellungen
+    QByteArray savedGasHashes[ 8 ];                     //! Hashes für gesetzte Gaase
     QByteArray savedSpxHash;                            //! Hash über Hauptwerte
     QByteArray savedDecoHash;                           //! Hash über Dekompressionswerte
     QByteArray savedDisplayHash;                        //! Hashwert über Displaywerte
@@ -73,7 +74,7 @@ namespace spx
     QString getLicName( void ) const;                                 //! Textliche Darstellung der Lizenz
     SPX42Gas &getGasAt( int num );                                    //! Gib ein Gas mit der Nummer num vom SPX42 zurück
     void setGasAt( int num, SPX42Gas gas );                           //! setzte Gas mit der Nummer xxx in die Config
-    void reset( void );                                               //! Resetiere das Objekt
+    void reset( quint8 classes = SPX42ConfigClass::CFCLASS_ALL );     //! Resetiere das Objekt
     QString getSerialNumber( void ) const;                            //! Seriennummer des aktuellen SPX42 zurückgeben
     void setSerialNumber( const QString &serial );                    //! Seriennumemr des aktuellen SPX42 speichern
     void setCurrentPreset( DecompressionPreset presetType,
