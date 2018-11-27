@@ -543,6 +543,7 @@ namespace spx
           lg->debug( QString( "DeviceConfigFragment::onDatagramRecivedSlot -> LOW: %1 HIGH: %2" )
                          .arg( recCommand->getValueAt( SPXCmdParam::DECO_GF_LOW ) )
                          .arg( recCommand->getValueAt( SPXCmdParam::DECO_GF_HIGH ) ) );
+          disconnectSlots( SIGNALS_DECOMPRESSION );
           ui->gradientLowSpinBox->setValue( static_cast< int >( recCommand->getValueAt( SPXCmdParam::DECO_GF_LOW ) ) );
           ui->gradientHighSpinBox->setValue( static_cast< int >( recCommand->getValueAt( SPXCmdParam::DECO_GF_HIGH ) ) );
           ui->deepStopOnCheckBox->setCheckState(
@@ -550,6 +551,7 @@ namespace spx
           ui->dynamicGradientsOnCheckBox->setCheckState(
               recCommand->getValueAt( SPXCmdParam::DECO_DYNGRADIENTS ) == 1 ? Qt::CheckState::Checked : Qt::CheckState::Unchecked );
           ui->lastDecoStopComboBox->setCurrentIndex( recCommand->getValueAt( SPXCmdParam::DECO_LASTSTOP ) == 1 ? 1 : 0 );
+          connectSlots( SIGNALS_DECOMPRESSION );
           break;
         case SPX42CommandDef::SPX_GET_SETUP_SETPOINT:
           lg->debug( "DeviceConfigFragment::onDatagramRecivedSlot -> setpoint..." );
@@ -561,6 +563,7 @@ namespace spx
           lg->debug( QString( "DeviceConfigFragment::onDatagramRecivedSlot -> autosetpoint %1, setpoint 1.%2..." )
                          .arg( recCommand->getValueAt( SPXCmdParam::SETPOINT_AUTO ) )
                          .arg( recCommand->getValueAt( SPXCmdParam::SETPOINT_VALUE ) ) );
+          disconnectSlots( SIGNALS_SETPOINT );
           switch ( recCommand->getValueAt( SPXCmdParam::SETPOINT_AUTO ) )
           {
             // autosetpoint bei Tiefe....
@@ -601,6 +604,7 @@ namespace spx
               ui->setpointSetpointComboBox->setCurrentIndex( 4 );
               break;
           }
+          connectSlots( SIGNALS_SETPOINT );
           break;
         case SPX42CommandDef::SPX_GET_SETUP_DISPLAYSETTINGS:
           // Kommando GET_SETUP_DISPLAYSETTINGS liefert
@@ -611,6 +615,7 @@ namespace spx
           lg->debug( QString( "DeviceConfigFragment::onDatagramRecivedSlot -> display settings bright: %1 orient: %2..." )
                          .arg( recCommand->getValueAt( SPXCmdParam::DISPLAY_BRIGHTNESS ) )
                          .arg( recCommand->getValueAt( SPXCmdParam::DISPLAY_ORIENT ) ) );
+          disconnectSlots( SIGNALS_DISPLAY );
           if ( spxConfig->getIsNewerDisplayBrightness() )
           {
             switch ( recCommand->getValueAt( SPXCmdParam::DISPLAY_BRIGHTNESS ) )
@@ -649,6 +654,7 @@ namespace spx
                 break;
             }
           }
+          connectSlots( SIGNALS_DISPLAY );
           break;
         case SPX42CommandDef::SPX_GET_SETUP_UNITS:
           // Kommando GET_SETUP_UNITS
@@ -660,6 +666,7 @@ namespace spx
                          .arg( recCommand->getValueAt( SPXCmdParam::UNITS_TEMPERATURE ) )
                          .arg( recCommand->getValueAt( SPXCmdParam::UNITS_METRIC_OR_IMPERIAL ) )
                          .arg( recCommand->getValueAt( SPXCmdParam::UNITS_SALT_OR_FRESHWATER ) ) );
+          disconnectSlots( SIGNALS_UNITS );
           switch ( recCommand->getValueAt( SPXCmdParam::UNITS_TEMPERATURE ) )
           {
             // Celsios oder Fahrenheid?
@@ -697,6 +704,7 @@ namespace spx
               ui->unitsWaterTypeComboBox->setCurrentIndex( 0 );
               break;
           }
+          connectSlots( SIGNALS_UNITS );
           break;
         case SPX42CommandDef::SPX_GET_SETUP_INDIVIDUAL:
           lg->debug(
@@ -716,6 +724,7 @@ namespace spx
           // LI: Loginterval 0->10sec 1->30Sec 2->60 Sec
           // TS: ab Version 2.7_H_r83 Tempstick Version
           //
+          disconnectSlots( SIGNALS_INDIVIDUAL );
           // sensor enable
           if ( recCommand->getValueAt( SPXCmdParam::INDIVIDUAL_SENSORSENABLED ) )
             ui->individualSeonsorsOnCheckBox->setCheckState( Qt::CheckState::Unchecked );
@@ -773,6 +782,7 @@ namespace spx
               ui->individualTempStickComboBox->setCurrentIndex( 2 );
               break;
           }
+          connectSlots( SIGNALS_INDIVIDUAL );
           break;
       }
       //
@@ -1278,6 +1288,7 @@ namespace spx
     // Beginnen wir mit Decompressionssachen
     //
     QByteArray sendCommand = remoteSPX42->askForConfig();
+    remoteSPX42->sendCommand( sendCommand );
     lg->debug( "DeviceConfigFragment::onConfigUpdateSlot -> send cmd decoinfos..." );
     //
     // TODO: DISPLAY
