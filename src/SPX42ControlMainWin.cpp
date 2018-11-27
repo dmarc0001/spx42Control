@@ -793,8 +793,12 @@ namespace spx
    */
   void SPX42ControlMainWin::onConfigWriteBackSlot()
   {
-    // TODO: Konfiguration testen und sinnvolle Veränderungen schreiben
+    //
+    // erledigt, Timer stoppen
+    //
+    configWriteTimer.stop();
     lg->debug( "SPX42ControlMainWin::onConfigWriteBackSlot -> TODO: write back config" );
+    // TODO: Konfiguration testen und sinnvolle Veränderungen schreiben
   }
 
   /**

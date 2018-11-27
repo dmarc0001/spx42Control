@@ -204,8 +204,6 @@ namespace spx
    */
   void SPX42RemotBtDevice::onStateChangedSlot( QBluetoothSocket::SocketState state )
   {
-    // TODO: drum kümmern
-    // lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth onlinestatus has changed..." );
     switch ( state )
     {
       case QBluetoothSocket::UnconnectedState:
