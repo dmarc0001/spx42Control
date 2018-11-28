@@ -40,6 +40,8 @@ namespace spx
   {
     private:
     Q_OBJECT
+    static const CmdMarker marker;                      //! zur initialisierung von Einträgen
+    static const QByteArray ar;                         //! zur initialisierung von Einträgen
     std::unique_ptr< Ui::SPX42ControlMainWin > ui;      //! das GUI Objekt
     std::shared_ptr< Logger > lg;                       //! Loggerobjekt für Logs
     const std::shared_ptr< SPX42Config > spx42Config;   //! Konfiguration des verbundenen SPX42

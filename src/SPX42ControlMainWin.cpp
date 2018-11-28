@@ -3,6 +3,9 @@
 
 namespace spx
 {
+  const CmdMarker SPX42ControlMainWin::marker{'\0'};
+  const QByteArray SPX42ControlMainWin::ar{};
+
   /**
    * @brief Der Konstruktor des Hauptfensters
    * @param parent Elternteil...
@@ -539,7 +542,7 @@ namespace spx
       if ( --zyclusCounter < 0 )
       {
         zyclusCounter = 6;
-        QByteArray sendCommand = remoteSPX42->aksForAliveSignal();
+        SendListEntry sendCommand = remoteSPX42->aksForAliveSignal();
 #ifdef DEBUG
         lg->debug( "SPX42ControlMainWin::onWatchdogTimerSlot -> send cmd alive..." );
 #endif
@@ -694,7 +697,7 @@ namespace spx
         //
         // Frage nach dem Hersteller
         //
-        QByteArray sendCommand = remoteSPX42->askForManufacturers();
+        SendListEntry sendCommand = remoteSPX42->askForManufacturers();
         lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd manufacturer..." );
         remoteSPX42->sendCommand( sendCommand );
         lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd manufacturer...OK" );
@@ -793,12 +796,67 @@ namespace spx
    */
   void SPX42ControlMainWin::onConfigWriteBackSlot()
   {
+    SendListEntry sendCommand( SPX42ControlMainWin::marker, SPX42ControlMainWin::ar );
     //
     // erledigt, Timer stoppen
     //
     configWriteTimer.stop();
-    lg->debug( "SPX42ControlMainWin::onConfigWriteBackSlot -> TODO: write back config" );
-    // TODO: Konfiguration testen und sinnvolle Veränderungen schreiben
+    //
+    // finde heraus, was sich verändert hat
+    //
+    quint8 changed = spx42Config->getChangedConfig();
+    if ( changed == 0 )
+    {
+      lg->debug( "SPX42ControlMainWin::onConfigWriteBackSlot -> no changes, go away..." );
+      return;
+    }
+    lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> write back config, changed value: 0x%1 (bitwhise)" )
+                   .arg( static_cast< int >( changed & 0xff ), 2, 16, QChar( '0' ) ) );
+    if ( changed & SPX42ConfigClass::CFCLASS_DECO )
+    {
+      //
+      // sende neue DECO Einstellungen
+      //
+      sendCommand = remoteSPX42->sendDecoParams( *spx42Config );
+      lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> write <%1> old order: %2" )
+                     .arg( QString( sendCommand.second ) )
+                     .arg( ( spx42Config->getIsOldParamSorting() ? "true" : "false" ) ) );
+      remoteSPX42->sendCommand( sendCommand );
+    }
+    if ( changed & SPX42ConfigClass::CFCLASS_DISPLAY )
+    {
+      //
+      // sende neue Display einstellungen
+      //
+    }
+    if ( changed & SPX42ConfigClass::CFCLASS_SETPOINT )
+    {
+      //
+      // setpoint Einstellungen senden
+      //
+    }
+    if ( changed & SPX42ConfigClass::CFCLASS_UNITS )
+    {
+      //
+      // einheiten senden
+      //
+    }
+    if ( changed & SPX42ConfigClass::CFCLASS_INDIVIDUAL )
+    {
+      //
+      // individual einstellungen senden
+      //
+    }
+    if ( changed & SPX42ConfigClass::CFCLASS_GASES )
+    {
+      //
+      // TODO: gase senden (nur die, welche verändert sind)
+      //
+    }
+    //
+    // danach CONFIG als syncron setzen
+    //
+    spx42Config->freezeConfigs();
   }
 
   /**

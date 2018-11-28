@@ -166,7 +166,7 @@ namespace spx
     TEMPSTICK03
   };
 
-  // Declariere Typen für Gradienten
+  // Declariere Typen für Gradienten LOW,HIGH
   using DecoGradient = std::pair< qint8, qint8 >;
   using DecoGradientHash = QHash< int, DecoGradient >;
 

@@ -255,44 +255,45 @@ namespace spx
     if ( SIGNALS_INDIVIDUAL & which_signals )
     {
       // INDIVIDUAL
-      disconnect( ui->individualLogIntervalComboBox );
-      disconnect( ui->individualAcousticWarningsOnCheckBox );
-      disconnect( ui->individualSensorsCountComboBox );
-      disconnect( ui->individualPSCRModeOnCheckBox );
-      disconnect( ui->individualSeonsorsOnCheckBox );
-      disconnect( ui->individualTempStickComboBox );
+      disconnect( ui->individualLogIntervalComboBox, nullptr, nullptr, nullptr );
+      disconnect( ui->individualAcousticWarningsOnCheckBox, nullptr, nullptr, nullptr );
+      disconnect( ui->individualSensorsCountComboBox, nullptr, nullptr, nullptr );
+      disconnect( ui->individualPSCRModeOnCheckBox, nullptr, nullptr, nullptr );
+      disconnect( ui->individualSeonsorsOnCheckBox, nullptr, nullptr, nullptr );
+      disconnect( ui->individualTempStickComboBox, nullptr, nullptr, nullptr );
     }
 
     if ( SIGNALS_SETPOINT & which_signals )
     {
       // SETPOINT
-      disconnect( ui->setpointSetpointComboBox );
-      disconnect( ui->setpointAutoOnComboBox );
+      disconnect( ui->setpointSetpointComboBox, nullptr, nullptr, nullptr );
+      disconnect( ui->setpointAutoOnComboBox, nullptr, nullptr, nullptr );
     }
 
     if ( SIGNALS_UNITS & which_signals )
     {
       // EINHEITEN
-      disconnect( ui->unitsWaterTypeComboBox );
-      disconnect( ui->unitsDeepComboBox );
-      disconnect( ui->unitsTemperaturComboBox );
+      disconnect( ui->unitsWaterTypeComboBox, nullptr, nullptr, nullptr );
+      disconnect( ui->unitsDeepComboBox, nullptr, nullptr, nullptr );
+      disconnect( ui->unitsTemperaturComboBox, nullptr, nullptr, nullptr );
     }
 
     if ( SIGNALS_DISPLAY & which_signals )
     {
       // DISPLAY
-      disconnect( ui->displayOrientationComboBox );
-      disconnect( ui->displayBrightnessComboBox );
+      disconnect( ui->displayOrientationComboBox, nullptr, nullptr, nullptr );
+      disconnect( ui->displayBrightnessComboBox, nullptr, nullptr, nullptr );
     }
 
     if ( SIGNALS_DECOMPRESSION & which_signals )
     {
       // Dekompression
-      disconnect( ui->deepStopOnCheckBox );
-      disconnect( ui->dynamicGradientsOnCheckBox );
-      disconnect( ui->gradientHighSpinBox );
-      disconnect( ui->gradientLowSpinBox );
-      disconnect( ui->conservatismComboBox );
+      disconnect( ui->deepStopOnCheckBox, nullptr, nullptr, nullptr );
+      disconnect( ui->dynamicGradientsOnCheckBox, nullptr, nullptr, nullptr );
+      disconnect( ui->gradientHighSpinBox, nullptr, nullptr, nullptr );
+      disconnect( ui->gradientLowSpinBox, nullptr, nullptr, nullptr );
+      disconnect( ui->conservatismComboBox, nullptr, nullptr, nullptr );
+      disconnect( ui->lastDecoStopComboBox, nullptr, this, nullptr );
     }
 
     if ( SIGNALS_PROGRAM & which_signals )
@@ -301,9 +302,6 @@ namespace spx
       disconnect( spxConfig.get(), nullptr, this, nullptr );
       // CONFIG
       disconnect( remoteSPX42.get(), nullptr, this, nullptr );
-      disconnect( remoteSPX42.get(), nullptr, this, nullptr );
-      disconnect( remoteSPX42.get(), nullptr, this, nullptr );
-      disconnect( ui->lastDecoStopComboBox, nullptr, this, nullptr );
     }
   }
 
@@ -476,6 +474,9 @@ namespace spx
     spSingleCommand recCommand;
     QDateTime nowDateTime;
     QByteArray value;
+    DecoGradient currentGradient;
+    DecompressionPreset preset;
+
     char kdo;
     //
     lg->debug( "DeviceConfigFragment::onDatagramRecivedSlot..." );
@@ -543,14 +544,28 @@ namespace spx
           lg->debug( QString( "DeviceConfigFragment::onDatagramRecivedSlot -> LOW: %1 HIGH: %2" )
                          .arg( recCommand->getValueAt( SPXCmdParam::DECO_GF_LOW ) )
                          .arg( recCommand->getValueAt( SPXCmdParam::DECO_GF_HIGH ) ) );
+          // config speichern
           disconnectSlots( SIGNALS_DECOMPRESSION );
-          ui->gradientLowSpinBox->setValue( static_cast< int >( recCommand->getValueAt( SPXCmdParam::DECO_GF_LOW ) ) );
-          ui->gradientHighSpinBox->setValue( static_cast< int >( recCommand->getValueAt( SPXCmdParam::DECO_GF_HIGH ) ) );
+          currentGradient.first = static_cast< qint8 >( recCommand->getValueAt( SPXCmdParam::DECO_GF_LOW ) );
+          currentGradient.second = static_cast< qint8 >( recCommand->getValueAt( SPXCmdParam::DECO_GF_HIGH ) );
+          preset = spxConfig->getPresetForGradient( currentGradient.first, currentGradient.second );
+          spxConfig->setCurrentPreset( preset, currentGradient.first, currentGradient.second );
+          spxConfig->setIsDeepstopsEnabled( recCommand->getValueAt( SPXCmdParam::DECO_DEEPSTOPS ) == 1
+                                                ? DecompressionDeepstops::DEEPSTOPS_ENABLED
+                                                : DecompressionDeepstops::DEEPSTOPS_DISABLED );
+          spxConfig->setIsDecoDynamicGradients( recCommand->getValueAt( SPXCmdParam::DECO_DYNGRADIENTS ) == 1
+                                                    ? DecompressionDynamicGradient::DYNAMIC_GRADIENT_ON
+                                                    : DecompressionDynamicGradient::DYNAMIC_GRADIENT_OFF );
+          // GUI einrichten
+          ui->gradientLowSpinBox->setValue( static_cast< int >( currentGradient.first ) );
+          ui->gradientHighSpinBox->setValue( static_cast< int >( currentGradient.second ) );
+          ui->conservatismComboBox->setCurrentIndex( static_cast< int >( preset ) );
           ui->deepStopOnCheckBox->setCheckState(
               recCommand->getValueAt( SPXCmdParam::DECO_DEEPSTOPS ) == 1 ? Qt::CheckState::Checked : Qt::CheckState::Unchecked );
           ui->dynamicGradientsOnCheckBox->setCheckState(
               recCommand->getValueAt( SPXCmdParam::DECO_DYNGRADIENTS ) == 1 ? Qt::CheckState::Checked : Qt::CheckState::Unchecked );
           ui->lastDecoStopComboBox->setCurrentIndex( recCommand->getValueAt( SPXCmdParam::DECO_LASTSTOP ) == 1 ? 1 : 0 );
+          spxConfig->freezeConfigs();
           connectSlots( SIGNALS_DECOMPRESSION );
           break;
         case SPX42CommandDef::SPX_GET_SETUP_SETPOINT:
@@ -604,6 +619,7 @@ namespace spx
               ui->setpointSetpointComboBox->setCurrentIndex( 4 );
               break;
           }
+          spxConfig->freezeConfigs();
           connectSlots( SIGNALS_SETPOINT );
           break;
         case SPX42CommandDef::SPX_GET_SETUP_DISPLAYSETTINGS:
@@ -654,6 +670,7 @@ namespace spx
                 break;
             }
           }
+          spxConfig->freezeConfigs();
           connectSlots( SIGNALS_DISPLAY );
           break;
         case SPX42CommandDef::SPX_GET_SETUP_UNITS:
@@ -704,6 +721,7 @@ namespace spx
               ui->unitsWaterTypeComboBox->setCurrentIndex( 0 );
               break;
           }
+          spxConfig->freezeConfigs();
           connectSlots( SIGNALS_UNITS );
           break;
         case SPX42CommandDef::SPX_GET_SETUP_INDIVIDUAL:
@@ -782,6 +800,7 @@ namespace spx
               ui->individualTempStickComboBox->setCurrentIndex( 2 );
               break;
           }
+          spxConfig->freezeConfigs();
           connectSlots( SIGNALS_INDIVIDUAL );
           break;
       }
@@ -827,11 +846,12 @@ namespace spx
    * @brief der LOW Gradient wurde manuell geändert
    * @param der neue LOW Wert
    */
-  void DeviceConfigFragment::onDecoGradientLowChangedSlot( int low )
+  void DeviceConfigFragment::onDecoGradientLowChangedSlot( int _low )
   {
     DecompressionPreset preset;
     // DecoGradient newGradient;
     qint8 high;
+    qint8 low = static_cast< qint8 >( _low );
     //
     if ( gradentSlotsIgnore )
       return;
@@ -842,15 +862,15 @@ namespace spx
     //
     // Passen die Werte zu einem Preset?
     //
-    preset = spxConfig->getPresetForGradient( static_cast< qint8 >( low ), static_cast< qint8 >( high ) );
+    preset = spxConfig->getPresetForGradient( low, high );
     //
     // hat sich dabei das Preset verändert?
     //
-    if ( ui->conservatismComboBox->currentIndex() != static_cast< qint8 >( preset ) )
+    if ( ui->conservatismComboBox->currentIndex() != static_cast< int >( preset ) )
     {
       setGradientPresetWithoutCallback( preset );
     }
-    spxConfig->setCurrentPreset( preset, static_cast< qint8 >( low ), high );
+    spxConfig->setCurrentPreset( preset, low, high );
     emit onConfigWasChangedSig();
   }
 
@@ -858,11 +878,12 @@ namespace spx
    * @brief der HIGH Gradient wurde manuell geändert
    * @param der neue HIGH Wert
    */
-  void DeviceConfigFragment::onDecoGradientHighChangedSlot( int high )
+  void DeviceConfigFragment::onDecoGradientHighChangedSlot( int _high )
   {
     DecompressionPreset preset;
     // DecoGradient newGradient;
     qint8 low;
+    qint8 high = static_cast< qint8 >( _high );
     //
     if ( gradentSlotsIgnore )
       return;
@@ -873,13 +894,12 @@ namespace spx
     //
     // Passen die Werte zu einem Preset?
     //
-    preset = spxConfig->getPresetForGradient( static_cast< qint8 >( low ), static_cast< qint8 >( high ) );
-    spxConfig->setCurrentPreset( preset, low, static_cast< qint8 >( high ) );
-    if ( ui->conservatismComboBox->currentIndex() != static_cast< qint8 >( preset ) )
+    preset = spxConfig->getPresetForGradient( low, high );
+    if ( ui->conservatismComboBox->currentIndex() != static_cast< int >( preset ) )
     {
       setGradientPresetWithoutCallback( preset );
     }
-    spxConfig->setCurrentPreset( preset, low, static_cast< qint8 >( high ) );
+    spxConfig->setCurrentPreset( preset, low, high );
     emit onConfigWasChangedSig();
   }
 
@@ -900,7 +920,6 @@ namespace spx
     // Callbacks wieder erlauben
     //
     gradentSlotsIgnore = false;
-    emit onConfigWasChangedSig();
   }
 
   /**
@@ -911,7 +930,8 @@ namespace spx
   {
     DecompressionDynamicGradient newState = DecompressionDynamicGradient::DYNAMIC_GRADIENT_OFF;
     //
-    lg->debug( QString( "DeviceConfigFragment::onDecoDynamicGradientStateChangedSlot: changed to %1" ).arg( state ) );
+    lg->debug( QString( "DeviceConfigFragment::onDecoDynamicGradientStateChangedSlot: changed to %1" )
+                   .arg( state == static_cast< int >( Qt::CheckState::Checked ) ? "ENABLED" : "DISABLED" ) );
     if ( state == static_cast< int >( Qt::CheckState::Checked ) )
       newState = DecompressionDynamicGradient::DYNAMIC_GRADIENT_ON;
     spxConfig->setIsDecoDynamicGradients( newState );
@@ -926,7 +946,8 @@ namespace spx
   {
     DecompressionDeepstops newState = DecompressionDeepstops::DEEPSTOPS_DISABLED;
     //
-    lg->debug( QString( "DeviceConfigFragment::onDecoDeepStopsEnableChangedSlot: changed to %1" ).arg( state ) );
+    lg->debug( QString( "DeviceConfigFragment::onDecoDeepStopsEnableChangedSlot: changed to %1" )
+                   .arg( state == static_cast< int >( Qt::CheckState::Checked ) ? "ENABLED" : "DISABLED" ) );
     if ( state == static_cast< int >( Qt::CheckState::Checked ) )
       newState = DecompressionDeepstops::DEEPSTOPS_ENABLED;
     spxConfig->setIsDeepstopsEnabled( newState );
@@ -1287,7 +1308,7 @@ namespace spx
     //
     // Beginnen wir mit Decompressionssachen
     //
-    QByteArray sendCommand = remoteSPX42->askForConfig();
+    SendListEntry sendCommand = remoteSPX42->askForConfig();
     remoteSPX42->sendCommand( sendCommand );
     lg->debug( "DeviceConfigFragment::onConfigUpdateSlot -> send cmd decoinfos..." );
     //

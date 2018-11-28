@@ -424,35 +424,7 @@ namespace spx
    */
   void SPX42Config::setCurrentPreset( DecompressionPreset presetType, qint8 low, qint8 high )
   {
-    //
-    // wenn CUSTOM gegeben ist, dann die Werte eintragen
-    //
-    if ( presetType == DecompressionPreset::DECO_KEY_CUSTOM )
-    {
-      //
-      // insert macht ein update....
-      //
-      decoPresets.insert( static_cast< int >( DecompressionPreset::DECO_KEY_CUSTOM ), DecoGradient( low, high ) );
-      if ( sendSignals )
-      {
-        emit decoGradientChangedSig( getCurrentDecoGradientValue() );
-      }
-      currentDecoHash = makeDecoHash();
-      return;
-    }
-    //
-    // oder wenn sich der Typ geändert hat
-    //
-    if ( decoCurrentPreset != presetType )
-    {
-      decoCurrentPreset = presetType;
-      if ( sendSignals )
-      {
-        emit decoGradientChangedSig( getCurrentDecoGradientValue() );
-      }
-      currentDecoHash = makeDecoHash();
-    }
-    // oder nix geändert, nix machen
+    setCurrentPreset( presetType, DecoGradient( low, high ) );
   }
 
   /**
@@ -470,27 +442,27 @@ namespace spx
       //
       // insert macht ein update....
       //
-      decoPresets.insert( static_cast< int >( DecompressionPreset::DECO_KEY_CUSTOM ), dGradient );
-      if ( sendSignals )
-      {
-        emit decoGradientChangedSig( getCurrentDecoGradientValue() );
-      }
-      currentDecoHash = makeDecoHash();
-      return;
-    }
-    //
-    // oder wenn sich der Typ geändert hat
-    //
-    if ( decoCurrentPreset != presetType )
-    {
+      decoPresets.insert( static_cast< int >( DecompressionPreset::DECO_KEY_CUSTOM ),
+                          DecoGradient( dGradient.first, dGradient.second ) );
       decoCurrentPreset = presetType;
+      currentDecoHash = makeDecoHash();
       if ( sendSignals )
       {
         emit decoGradientChangedSig( getCurrentDecoGradientValue() );
       }
-      currentDecoHash = makeDecoHash();
     }
-    // oder nix geändert, nix machen
+    else
+    {
+      //
+      // ein PRESET ausgewählt werte verwerfen...
+      //
+      decoCurrentPreset = presetType;
+      currentDecoHash = makeDecoHash();
+      if ( sendSignals )
+      {
+        emit decoGradientChangedSig( getCurrentDecoGradientValue() );
+      }
+    }
   }
 
   /**
@@ -1023,7 +995,7 @@ namespace spx
    * @brief SPX42Config::makeSpxHash
    * @return
    */
-  QByteArray SPX42Config::makeSpxHash()
+  QString SPX42Config::makeSpxHash()
   {
     QByteArray serialized;
     serialized.append( QString( "firmware version (enum): %1\n" ).arg( static_cast< int >( spxFirmwareVersion ) ) );
@@ -1031,47 +1003,48 @@ namespace spx
     serialized.append( QString( "serial number: %1" ).arg( spxSerialNumber ) );
     qhash.reset();
     qhash.addData( serialized );
-    return ( qhash.result() );
+    return ( QString( qhash.result().toBase64() ) );
   }
 
   /**
    * @brief SPX42Config::makeDecoHash
    * @return
    */
-  QByteArray SPX42Config::makeDecoHash()
+  QString SPX42Config::makeDecoHash()
   {
     QByteArray serialized;
-    serialized.append( QString( "deco preset (enum): %1 (%2:%3)" )
-                           .arg( static_cast< int >( decoCurrentPreset ) )
-                           .arg( decoPresets.value( static_cast< int >( decoCurrentPreset ) ).first )
-                           .arg( decoPresets.value( static_cast< int >( decoCurrentPreset ) ).second ) );
+    serialized.append( QString( "deco preset (enum): %1" ).arg( static_cast< int >( decoCurrentPreset ) ) );
+    serialized.append(
+        QString( "low gradient: %1" ).arg( decoPresets.value( static_cast< int >( decoCurrentPreset ) ).first, 2, 10, QChar( '0' ) ) );
+    serialized.append( QString( "high gradient: %1" )
+                           .arg( decoPresets.value( static_cast< int >( decoCurrentPreset ) ).second, 2, 10, QChar( '0' ) ) );
     serialized.append( QString( "dynamic gradients: %1" ).arg( static_cast< bool >( decoDynamicGradient ) ) );
     serialized.append( QString( "deep stops enabled: %1" ).arg( static_cast< bool >( decoDeepstopsEnabled ) ) );
     serialized.append( QString( "last deco stop (enum): %1" ).arg( static_cast< int >( decoLastStop ) ) );
     qhash.reset();
     qhash.addData( serialized );
-    return ( qhash.result() );
+    return ( QString( qhash.result().toBase64() ) );
   }
 
   /**
    * @brief SPX42Config::makeDisplayHash
    * @return
    */
-  QByteArray SPX42Config::makeDisplayHash()
+  QString SPX42Config::makeDisplayHash()
   {
     QByteArray serialized;
     serialized.append( QString( "display brightness (enum): %1" ).arg( static_cast< int >( displayBrightness ) ) );
     serialized.append( QString( "display orientation (enum): %1" ).arg( static_cast< int >( displayOrientation ) ) );
     qhash.reset();
     qhash.addData( serialized );
-    return ( qhash.result() );
+    return ( QString( qhash.result().toBase64() ) );
   }
 
   /**
    * @brief SPX42Config::makeUnitsHash
    * @return
    */
-  QByteArray SPX42Config::makeUnitsHash()
+  QString SPX42Config::makeUnitsHash()
   {
     QByteArray serialized;
     serialized.append( QString( "unit for temperature (enum): %1" ).arg( static_cast< int >( unitTemperature ) ) );
@@ -1079,28 +1052,28 @@ namespace spx
     serialized.append( QString( "water type (enum): %1" ).arg( static_cast< int >( unitWaterType ) ) );
     qhash.reset();
     qhash.addData( serialized );
-    return ( qhash.result() );
+    return ( QString( qhash.result().toBase64() ) );
   }
 
   /**
    * @brief SPX42Config::makeSetpointHash
    * @return
    */
-  QByteArray SPX42Config::makeSetpointHash()
+  QString SPX42Config::makeSetpointHash()
   {
     QByteArray serialized;
     serialized.append( QString( "auto setpoint value (enum): %1" ).arg( static_cast< int >( setpointAuto ) ) );
     serialized.append( QString( "setpoint value (enum): %1" ).arg( static_cast< int >( setpointValue ) ) );
     qhash.reset();
     qhash.addData( serialized );
-    return ( qhash.result() );
+    return ( QString( qhash.result().toBase64() ) );
   }
 
   /**
    * @brief SPX42Config::makeIndividualHash
    * @return
    */
-  QByteArray SPX42Config::makeIndividualHash()
+  QString SPX42Config::makeIndividualHash()
   {
     QByteArray serialized;
     serialized.append( QString( "individual sensors on: %1" ).arg( static_cast< bool >( individualSensorsOn ) ) );
@@ -1111,7 +1084,7 @@ namespace spx
     serialized.append( QString( "individual temp stick type (enum): %1" ).arg( static_cast< int >( individualTempStick ) ) );
     qhash.reset();
     qhash.addData( serialized );
-    return ( qhash.result() );
+    return ( QString( qhash.result().toBase64() ) );
   }
 
   /**

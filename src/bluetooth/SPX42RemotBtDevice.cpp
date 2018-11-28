@@ -114,12 +114,12 @@ namespace spx
    * @brief SPX42RemotBtDevice::sendCommand
    * @param telegram
    */
-  void SPX42RemotBtDevice::sendCommand( const QByteArray &telegram )
+  void SPX42RemotBtDevice::sendCommand( const SendListEntry &entry )
   {
     //
     // in die sendequeue packen
     //
-    sendQueue.enqueue( telegram );
+    sendList.append( entry );
   }
 
   /**
@@ -223,7 +223,7 @@ namespace spx
         // Voreinstellungen machen
         //
         wasSocketError = false;
-        sendQueue.clear();
+        sendList.clear();
         recQueue.clear();
         rCmdQueue.clear();
         if ( !sendTimer.isActive() )
@@ -285,9 +285,7 @@ namespace spx
           // dei Länge ergibt sich aus dem Ende minus das 0x03 und minus Anfang
           QByteArray _datagramm = recBuffer.mid( idxOfSTX + 1, ( idxOfETX - idxOfSTX ) - 1 );
 #ifdef DEBUG
-          lg->debug( QString( "SPX42RemotBtDevice::onReadSocketSlot -> datagram:: <%1> <%2>" )
-                         .arg( QString( _datagramm.toHex( ':' ) ) )
-                         .arg( QString( _datagramm ) ) );
+          lg->debug( QString( "SPX42RemotBtDevice::onReadSocketSlot -> datagram:: <%1>" ).arg( QString( _datagramm ) ) );
 #endif
           // und noch das Datagramm aus dem Puffer tilgen
           recBuffer.remove( 0, idxOfETX + 1 );
@@ -330,14 +328,14 @@ namespace spx
   {
     if ( ignoreTimer )
       return;
-    if ( ( socket != nullptr ) && ( socket->state() == QBluetoothSocket::ConnectedState ) && !sendQueue.isEmpty() )
+    if ( ( socket != nullptr ) && ( socket->state() == QBluetoothSocket::ConnectedState ) && !sendList.isEmpty() )
     {
       ignoreTimer = true;
-      QByteArray telegram( sendQueue.dequeue() );
+      SendListEntry entry( sendList.takeFirst() );
 #ifdef DEBUG
-      lg->debug( QString( "SPX42RemotBtDevice::onSendSocketTimerSlot -> send telegram <%1>..." ).arg( QString( telegram ) ) );
+      lg->debug( QString( "SPX42RemotBtDevice::onSendSocketTimerSlot -> send telegram <%1>..." ).arg( QString( entry.second ) ) );
 #endif
-      socket->write( telegram );
+      socket->write( entry.second );
       // Wartezeit startet neu
       sendTimer.start();
       ignoreTimer = false;

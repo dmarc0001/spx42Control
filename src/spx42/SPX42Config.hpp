@@ -50,20 +50,20 @@ namespace spx
     bool isNewerDisplayBrightness;                      //! neue Version Helligkeit
     bool isSixMetersAutoSetpoint;                       //! Autosetpoint alt deact, 6, 10, 15, 20 NEU 6, 10, 15
     QCryptographicHash qhash;                           //! hasobjekt erzeugen
-    QByteArray currentGasHashes[ 8 ];                   //! Hashes für gesetzte Gaase
-    QByteArray currentSpxHash;                          //! Hash über Hauptwerte
-    QByteArray currentDecoHash;                         //! Hash über Dekompressionswerte
-    QByteArray currentDisplayHash;                      //! Hashwert über Displaywerte
-    QByteArray currentUnitHash;                         //! Hash über unit einstellungen
-    QByteArray currentSetpointHash;                     //! Hash über setpoint Einstellungen
-    QByteArray currentIndividualHash;                   //! Hash über Inidividual einstellungen
-    QByteArray savedGasHashes[ 8 ];                     //! Hashes für gesetzte Gaase
-    QByteArray savedSpxHash;                            //! Hash über Hauptwerte
-    QByteArray savedDecoHash;                           //! Hash über Dekompressionswerte
-    QByteArray savedDisplayHash;                        //! Hashwert über Displaywerte
-    QByteArray savedUnitHash;                           //! Hash über unit einstellungen
-    QByteArray savedSetpointHash;                       //! Hash über setpoint Einstellungen
-    QByteArray savedIndividualHash;                     //! Hash über Inidividual einstellungen
+    QString currentGasHashes[ 8 ];                      //! Hashes für gesetzte Gaase
+    QString currentSpxHash;                             //! Hash über Hauptwerte
+    QString currentDecoHash;                            //! Hash über Dekompressionswerte
+    QString currentDisplayHash;                         //! Hashwert über Displaywerte
+    QString currentUnitHash;                            //! Hash über unit einstellungen
+    QString currentSetpointHash;                        //! Hash über setpoint Einstellungen
+    QString currentIndividualHash;                      //! Hash über Inidividual einstellungen
+    QString savedGasHashes[ 8 ];                        //! Hashes für gesetzte Gaase
+    QString savedSpxHash;                               //! Hash über Hauptwerte
+    QString savedDecoHash;                              //! Hash über Dekompressionswerte
+    QString savedDisplayHash;                           //! Hashwert über Displaywerte
+    QString savedUnitHash;                              //! Hash über unit einstellungen
+    QString savedSetpointHash;                          //! Hash über setpoint Einstellungen
+    QString savedIndividualHash;                        //! Hash über Inidividual einstellungen
 
     public:
     SPX42Config();                                                    //! Der Konstruktor
@@ -133,12 +133,12 @@ namespace spx
     quint8 getChangedConfig( void );                                           //! was ist geändert?
 
     private:
-    QByteArray makeSpxHash( void );         //! Hash über die globalen Einstellungen
-    QByteArray makeDecoHash( void );        //! Hash über Dekompressionseinstellungen
-    QByteArray makeDisplayHash( void );     //! Hash über displayvariable
-    QByteArray makeUnitsHash( void );       //! Hash über einheiten Einstellungen
-    QByteArray makeSetpointHash( void );    //! Hash über setpointeinstellungen
-    QByteArray makeIndividualHash( void );  //! Hash über individual Einstellungen
+    QString makeSpxHash( void );         //! Hash über die globalen Einstellungen
+    QString makeDecoHash( void );        //! Hash über Dekompressionseinstellungen
+    QString makeDisplayHash( void );     //! Hash über displayvariable
+    QString makeUnitsHash( void );       //! Hash über einheiten Einstellungen
+    QString makeSetpointHash( void );    //! Hash über setpointeinstellungen
+    QString makeIndividualHash( void );  //! Hash über individual Einstellungen
 
     private slots:
     // void licenseChangedPrivateSlot( SPX42License& lic );
