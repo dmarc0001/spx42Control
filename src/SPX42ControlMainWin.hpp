@@ -49,6 +49,7 @@ namespace spx
     std::shared_ptr< SPX42Database > spx42Database;     //! Datenbankobjekt zur Speicherung der SPX Daten/Einstellungen
     std::unique_ptr< QLabel > onlineLabel;              //! Label signalisiert online oder offline
     std::unique_ptr< QLabel > akkuLabel;                //! Label signalisiert online oder offline
+    std::unique_ptr< QLabel > waitForWriteLabel;        //! Label zeigt an, wenn noch Daten zum Schreiben offen sind
     QStringList tabTitle;                               //! Tab Titel (nicht statisch, das Objekt gibts eh nur einmal)
     AppConfigClass cf;                                  //! Konfiguration aus Datei
     QTimer watchdog;                                    //! Wachhund für Timeouts

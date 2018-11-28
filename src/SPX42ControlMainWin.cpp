@@ -16,6 +16,7 @@ namespace spx
       , spx42Config( new SPX42Config() )
       , onlineLabel( std::unique_ptr< QLabel >( new QLabel( tr( "SPX42 OFFLINE" ) ) ) )
       , akkuLabel( std::unique_ptr< QLabel >( new QLabel( "---" ) ) )
+      , waitForWriteLabel( std::unique_ptr< QLabel >( new QLabel( tr( "CLEAR" ) ) ) )
       , currentStatus( ApplicationStat::STAT_OFFLINE )
       , watchdogCounter( 0 )
       , zyclusCounter( 0 )
@@ -97,9 +98,11 @@ namespace spx
     errorPalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_ERROR );
     onlineLabel->setIndent( 25 );
     this->statusBar()->addWidget( onlineLabel.get(), 250 );
+    this->statusBar()->addWidget( waitForWriteLabel.get(), 40 );
     this->statusBar()->addWidget( akkuLabel.get(), 40 );
     onlineLabel->setPalette( offlinePalette );
     akkuLabel->setPalette( offlinePalette );
+    waitForWriteLabel->setPalette( offlinePalette );
     //
     fillTabTitleArray();
     //
@@ -482,6 +485,7 @@ namespace spx
         //
         online = tr( "SPX42 OFFLINE" );
         onlineLabel->setPalette( offlinePalette );
+        waitForWriteLabel->setPalette( offlinePalette );
         break;
       case SPX42RemotBtDevice::SPX42_CONNECTED:
         //
@@ -489,6 +493,7 @@ namespace spx
         //
         online = tr( "SPX42 ONLINE" );
         onlineLabel->setPalette( onlinePalette );
+        waitForWriteLabel->setPalette( onlinePalette );
         break;
       case SPX42RemotBtDevice::SPX42_CONNECTING:
         //
@@ -805,58 +810,69 @@ namespace spx
     // finde heraus, was sich verändert hat
     //
     quint8 changed = spx42Config->getChangedConfig();
-    if ( changed == 0 )
+    if ( changed != 0 )
+    {
+      lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> write back config, changed value: 0x%1 (bitwhise)" )
+                     .arg( static_cast< int >( changed & 0xff ), 2, 16, QChar( '0' ) ) );
+      if ( changed & SPX42ConfigClass::CFCLASS_DECO )
+      {
+        //
+        // sende neue DECO Einstellungen
+        //
+        sendCommand = remoteSPX42->sendDecoParams( *spx42Config );
+        lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> write <%1> old order: %2" )
+                       .arg( QString( sendCommand.second ) )
+                       .arg( ( spx42Config->getIsOldParamSorting() ? "true" : "false" ) ) );
+        remoteSPX42->sendCommand( sendCommand );
+      }
+      if ( changed & SPX42ConfigClass::CFCLASS_DISPLAY )
+      {
+        //
+        // sende neue Display einstellungen
+        //
+      }
+      if ( changed & SPX42ConfigClass::CFCLASS_SETPOINT )
+      {
+        //
+        // setpoint Einstellungen senden
+        //
+      }
+      if ( changed & SPX42ConfigClass::CFCLASS_UNITS )
+      {
+        //
+        // einheiten senden
+        //
+      }
+      if ( changed & SPX42ConfigClass::CFCLASS_INDIVIDUAL )
+      {
+        //
+        // individual einstellungen senden
+        //
+      }
+      if ( changed & SPX42ConfigClass::CFCLASS_GASES )
+      {
+        //
+        // TODO: gase senden (nur die, welche verändert sind)
+        //
+      }
+      //
+      // danach CONFIG als syncron setzen
+      //
+      spx42Config->freezeConfigs();
+    }
+    else
     {
       lg->debug( "SPX42ControlMainWin::onConfigWriteBackSlot -> no changes, go away..." );
-      return;
-    }
-    lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> write back config, changed value: 0x%1 (bitwhise)" )
-                   .arg( static_cast< int >( changed & 0xff ), 2, 16, QChar( '0' ) ) );
-    if ( changed & SPX42ConfigClass::CFCLASS_DECO )
-    {
-      //
-      // sende neue DECO Einstellungen
-      //
-      sendCommand = remoteSPX42->sendDecoParams( *spx42Config );
-      lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> write <%1> old order: %2" )
-                     .arg( QString( sendCommand.second ) )
-                     .arg( ( spx42Config->getIsOldParamSorting() ? "true" : "false" ) ) );
-      remoteSPX42->sendCommand( sendCommand );
-    }
-    if ( changed & SPX42ConfigClass::CFCLASS_DISPLAY )
-    {
-      //
-      // sende neue Display einstellungen
-      //
-    }
-    if ( changed & SPX42ConfigClass::CFCLASS_SETPOINT )
-    {
-      //
-      // setpoint Einstellungen senden
-      //
-    }
-    if ( changed & SPX42ConfigClass::CFCLASS_UNITS )
-    {
-      //
-      // einheiten senden
-      //
-    }
-    if ( changed & SPX42ConfigClass::CFCLASS_INDIVIDUAL )
-    {
-      //
-      // individual einstellungen senden
-      //
-    }
-    if ( changed & SPX42ConfigClass::CFCLASS_GASES )
-    {
-      //
-      // TODO: gase senden (nur die, welche verändert sind)
-      //
     }
     //
-    // danach CONFIG als syncron setzen
+    // Label rücksetzten
+    // TODO: nach der Quittung erst
     //
-    spx42Config->freezeConfigs();
+    QFont font = onlineLabel->font();
+    font.setBold( false );
+    waitForWriteLabel->setFont( font );
+    waitForWriteLabel->setPalette( onlinePalette );
+    waitForWriteLabel->setText( tr( "CLEAR" ) );
   }
 
   /**
@@ -870,5 +886,13 @@ namespace spx
     //
     configWriteTimer.start( ProjectConst::CONFIG_WRITE_DELAY );
     lg->debug( "SPX42ControlMainWin::onConfigWasChangedSlot -> start wait timer again..." );
+    //
+    // LABEL für Schreibpuffer...
+    //
+    QFont font = onlineLabel->font();
+    font.setBold( true );
+    waitForWriteLabel->setFont( font );
+    waitForWriteLabel->setPalette( busyPalette );
+    waitForWriteLabel->setText( tr( "BUSY" ) );
   }
 }  // namespace spx
