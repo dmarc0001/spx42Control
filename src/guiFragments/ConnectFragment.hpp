@@ -47,6 +47,7 @@ namespace spx
     void setGuiConnected( bool isConnected );                      //! Stati in der GUI setzten
     void addDeviceComboEntry( const SPXDeviceDescr &deviceInfo );  //! trage einen eintrag in die Liste ein
     void fillDeviceCombo( void );                                  //! fülle die Dropdownliste
+    void trySetIndex( void );                                      //! versuche einen eintrag zu selektieren
 
     signals:
     void onWarningMessageSig( const QString &msg, bool asPopup = false ) override;  //! eine Warnmeldung soll das Main darstellen

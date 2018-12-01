@@ -128,6 +128,14 @@ namespace spx
           fillDeviceCombo();
         } );
       }
+      else
+      {
+        //
+        // der ist schon in der Datenbank
+        // setzte als letzte Verbindung
+        //
+        database->setLastConnected( addr );
+      }
     }
     // TODO: evtl mehr machen
   }
@@ -271,6 +279,7 @@ namespace spx
     lg->debug( "ConnectFragment::onDiscoverScanFinishedSlot-> discovering finished..." );
     ui->discoverPushButton->setEnabled( true );
     // TODO: massnahmen ergreifen
+    void trySetIndex();
   }
 
   /**
@@ -414,22 +423,41 @@ namespace spx
     {
       addDeviceComboEntry( deviceInfo );
     }
+    trySetIndex();
+  }
+
+  void ConnectFragment::trySetIndex()
+  {
     //
     // wer ist verbunden
     //
-    auto mac = remoteSPX42->getRemoteConnected();
-    if ( !mac.isEmpty() )
+    QString mac;
+    mac = remoteSPX42->getRemoteConnected();
+    if ( mac.isEmpty() )
     {
       //
-      // wie sieht der Eintrag nun aus
+      // nichts verbunden
+      // gucke ob ich das zulettz verbundene Gerät finde
       //
+      lg->debug( "ConnectFragment::fillDeviceCombo -> not connected, try last connected..." );
+      mac = database->getLastConnected();
+      lg->debug( QString( "ConnectFragment::fillDeviceCombo -> last connected: " ).append( mac ) );
+    }
+    if ( !mac.isEmpty() )
+    {
+      lg->debug( QString( "ConnectFragment::fillDeviceCombo -> last connected was: " ).append( mac ) );
+      //
+      // verbunden oder nicht, versuche etwas zu selektiern
+      //
+      // suche nach diesem Eintrag...
       auto deviceInfo = spxDevicesAliasHash.value( mac );
       // neu zusammensetzten
       auto title = QString( "%1 (%2)" ).arg( deviceInfo.alias ).arg( deviceInfo.name );
-      // suche nach diesem Eintrag...
-      int index = ui->deviceComboBox->findData( remoteSPX42->getRemoteConnected() );
+      lg->debug( QString( "ConnectFragment::fillDeviceCombo -> search for: " ).append( title ) );
+      int index = ui->deviceComboBox->findData( title );
       if ( index != -1 )
       {
+        lg->debug( QString( "ConnectFragment::fillDeviceCombo -> found " ).append( index ) );
         //
         // -1 for not found
         // also, wenn gefunden, selektiere diesen Eintrag

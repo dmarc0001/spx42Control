@@ -371,9 +371,40 @@ namespace spx
     }
     else
     {
-      lg->warn( "SPX42Database::setAliasForName -> db is not valid or not opened." );
+      lg->warn( "SPX42Database::setLastConnected -> db is not valid or not opened." );
     }
     return ( false );
+  }
+
+  /**
+   * @brief SPX42Database::getLastConnected
+   * @return
+   */
+  QString SPX42Database::getLastConnected( void )
+  {
+    lg->debug( "SPX42Database::getLastConnected..." );
+    if ( db.isValid() && db.isOpen() )
+    {
+      //
+      // alle flags löschen
+      //
+      QSqlQuery query( QString( "select mac from %1 where last=1" ).arg( SPX42Database::deviceTableName ), db );
+      if ( !query.exec() )
+      {
+        QSqlError err = db.lastError();
+        lg->warn( QString( "SPX42Database::getLastConnected -> <%1>..." ).arg( err.text() ) );
+        return ( "" );
+      }
+      //
+      // Abfrage korrekt bearbeitet
+      //
+      return ( query.value( 0 ).toString() );
+    }
+    else
+    {
+      lg->warn( "SPX42Database::setAliasForName -> db is not valid or not opened." );
+      return ( "" );
+    }
   }
 
   // ##########################################################################

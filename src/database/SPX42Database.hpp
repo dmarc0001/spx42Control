@@ -64,6 +64,7 @@ namespace spx
     bool setAliasForMac( const QString &mac, const QString &alias );    //! setzte einen Aliasnamen für MAC
     bool setAliasForName( const QString &name, const QString &alias );  //! setzte einen Aliasnamen für MAC
     bool setLastConnected( const QString &mac );                        //! setzte das Gerät auf "last connected"
+    QString getLastConnected( void );                                   //! wer war der letzte?
 
     private:
     bool existTable( const QString &tableName );  //! gibt es folgende Tabelle?
