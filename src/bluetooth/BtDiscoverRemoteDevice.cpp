@@ -7,7 +7,7 @@ namespace spx
     //
     // Geräte Discovering Objekt erschaffen
     //
-    lg->debug( " BtDiscoverDialog::BtDiscoverDialog -> create device discovering object..." );
+    lg->debug( " BtDiscoverRemoteDevice::BtDiscoverRemoteDevice -> create device discovering object..." );
     btDevices = std::unique_ptr< SPX42BtDevicesManager >( new SPX42BtDevicesManager( lg, this ) );
     //
     // discovering agent object
@@ -17,29 +17,29 @@ namespace spx
              &BtDiscoverRemoteDevice::onDiscoverScanFinishedSlot );
     connect( btDevices.get(), &SPX42BtDevicesManager::onDeviceHostModeStateChangedSig, this,
              &BtDiscoverRemoteDevice::onDeviceHostModeStateChangedSlot );
-    // connect( btDevices.get(), &SPX42BtDevices::onDevicePairingDoneSig, this, &BtDiscoverObject::onDevicePairingDoneSlot );
+    // connect( btDevices.get(), &SPX42BtDevices::onDevicePairingDoneSig, this, &BtDiscoverRemoteDevice::onDevicePairingDoneSlot );
   }
 
   BtDiscoverRemoteDevice::~BtDiscoverRemoteDevice()
   {
-    lg->debug( "BtDiscoverObject::~BtDiscoverObject..." );
+    lg->debug( "BtDiscoverRemoteDevice::~BtDiscoverRemoteDevice..." );
   }
 
   void BtDiscoverRemoteDevice::startDiscover()
   {
-    lg->debug( "BtDiscoverObject::onGuiStartScanSlot..." );
+    lg->debug( "BtDiscoverRemoteDevice::onGuiStartScanSlot..." );
     btDevices->setHostDiscoverable( true );
     btDevices->setHostPower( true );
     btDevices->setInquiryGeneralUnlimited( true );
     btDevices->startDiscoverDevices();
-    lg->debug( "BtDiscoverObject::onGuiStartScanSlot...OK" );
+    lg->debug( "BtDiscoverRemoteDevice::onGuiStartScanSlot...OK" );
   }
 
   void BtDiscoverRemoteDevice::stopDiscover()
   {
-    lg->debug( "BtDiscoverObject::stopDiscover..." );
+    lg->debug( "BtDiscoverRemoteDevice::stopDiscover..." );
     btDevices->cancelDiscoverDevices();
-    lg->debug( "BtDiscoverObject::stopDiscover...OK" );
+    lg->debug( "BtDiscoverRemoteDevice::stopDiscover...OK" );
   }
 
   SPXDeviceList BtDiscoverRemoteDevice::getSPX42Devices() const
@@ -51,20 +51,20 @@ namespace spx
   {
     if ( mode != QBluetoothLocalDevice::HostPoweredOff )
     {
-      lg->info( QString( "BtDiscoverObject::onDeviceHostModeStateChangedSlot -> host power off: true" ) );
+      lg->info( QString( "BtDiscoverRemoteDevice::onDeviceHostModeStateChangedSlot -> host power off: true" ) );
     }
     else
     {
-      lg->info( QString( "BtDiscoverObject::onDeviceHostModeStateChangedSlot -> host power off: false" ) );
+      lg->info( QString( "BtDiscoverRemoteDevice::onDeviceHostModeStateChangedSlot -> host power off: false" ) );
     }
 
     if ( mode == QBluetoothLocalDevice::HostDiscoverable )
     {
-      lg->info( QString( "BtDiscoverObject::onDeviceHostModeStateChangedSlot -> host discoverable: true" ) );
+      lg->info( QString( "BtDiscoverRemoteDevice::onDeviceHostModeStateChangedSlot -> host discoverable: true" ) );
     }
     else
     {
-      lg->info( QString( "BtDiscoverObject::onDeviceHostModeStateChangedSlot -> host discoverable: false" ) );
+      lg->info( QString( "BtDiscoverRemoteDevice::onDeviceHostModeStateChangedSlot -> host discoverable: false" ) );
     }
   }
 

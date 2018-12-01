@@ -8,6 +8,20 @@ namespace spx
   const QString SPX42Database::sqlDriver{"QSQLITE"};
   const qint16 SPX42Database::databaseVersion{1};
 
+  SPX42DeviceAlias::SPX42DeviceAlias() : mac(), name(), alias(), lastConnected( false )
+  {
+  }
+
+  SPX42DeviceAlias::SPX42DeviceAlias( const QString &_mac, const QString &_name, const QString &_alias, bool _lastConnect )
+      : mac( _mac ), name( _name ), alias( _alias ), lastConnected( _lastConnect )
+  {
+  }
+
+  SPX42DeviceAlias::SPX42DeviceAlias( const SPX42DeviceAlias &di )
+      : mac( di.mac ), name( di.name ), alias( di.alias ), lastConnected( di.lastConnected )
+  {
+  }
+
   /**
    * @brief SPX42Database::SPX42Database
    * @param logger
@@ -146,14 +160,17 @@ namespace spx
   {
     lg->debug( "SPX42Database::getDeviceAliasHash..." );
     DeviceAliasHash aliase;
+    //
     if ( db.isValid() && db.isOpen() )
     {
-      QSqlQuery query( QString( "select mac,name,alias from %1" ).arg( SPX42Database::deviceTableName ), db );
+      QSqlQuery query( QString( "select mac,name,alias,last from %1" ).arg( SPX42Database::deviceTableName ), db );
       while ( query.next() )
       {
         QString mac( query.value( 0 ).toString() );
-        QPair< QString, QString > nPair( query.value( 1 ).toString(), query.value( 2 ).toString() );
-        aliase.insert( mac, nPair );
+        // &_mac, &_name, &_alias, _lastConnect
+        SPX42DeviceAlias devAlias( query.value( 0 ).toString(), query.value( 1 ).toString(), query.value( 2 ).toString(),
+                                   static_cast< bool >( ( query.value( 3 ).toInt() & 0x01 ) ) );
+        aliase.insert( mac, devAlias );
       }
       lg->debug( QString( "SPX42Database::getDeviceAliasHash -> <%1> items..." ).arg( aliase.count() ) );
     }
@@ -164,31 +181,47 @@ namespace spx
     return ( aliase );
   }
 
-  bool SPX42Database::addAlias( const QString &mac, const QString &name, const QString &alias )
+  bool SPX42Database::addAlias( const QString &mac, const QString &name, const QString &alias, bool lastConnected )
   {
-    QSqlQuery query( QString( "select mac from %1" ).arg( SPX42Database::deviceTableName ), db );
+    QSqlQuery query( "", db );
     QSqlError err;
     QString sql;
     //
     lg->debug( "SPX42Database::addAlias..." );
     if ( db.isValid() && db.isOpen() )
     {
-      if ( !query.exec() )
+      //
+      // guck nach, ob der Eintrag vorhanden ist
+      sql = QString( "select mac from %1 where mac='%2'" ).arg( SPX42Database::deviceTableName ).arg( mac );
+      lg->debug( QString( "SPX42Database::addAlias -> ASK (%1)..." ).arg( sql ) );
+      if ( !query.exec( sql ) )
       {
         err = db.lastError();
         lg->warn( QString( "SPX42Database::addAlias -> problem while select from database: <%1>" ).arg( err.text() ) );
         return ( false );
       }
-      if ( query.value( 0 ).isNull() )
+
+      lg->debug( "SPX42Database::addAlias -> ASK ...OK" );
+      query.first();
+      /*
+      lg->debug( QString( "SPX42Database::addAlias ->  isvalid %1, first %2, at %3..." )
+                     .arg( query.isValid() )
+                     .arg( query.first() )
+                     .arg( query.at() ) );
+      lg->debug( "SPX42Database::addAlias -> isValid...OK" );
+      */
+      if ( query.at() < 0 )
       {
         //
         // MAC ist noch nicht in der Datenbank, INSERT
         //
-        sql = QString( "insert into %1 (mac, name, alias) values ('%2', '%3', '%4')" )
+        sql = QString( "insert into %1 (mac, name, alias, last) values ('%2', '%3', '%4', %5)" )
                   .arg( SPX42Database::deviceTableName )
                   .arg( mac )
                   .arg( name )
-                  .arg( alias );
+                  .arg( alias )
+                  .arg( lastConnected ? 1 : 0 );
+        lg->debug( QString( "SPX42Database::addAlias -> INSERT (%1)..." ).arg( sql ) );
         if ( query.exec( sql ) )
         {
           lg->debug( "SPX42Database::addAlias -> insert OK" );
@@ -201,11 +234,13 @@ namespace spx
       //
       // Mac war in der Datenbank, also update
       //
-      sql = QString( "update %1 set name='%2', alias='%3' where mac='%4'" )
+      sql = QString( "update %1 set name='%2', alias='%3', last=%4 where mac='%5'" )
                 .arg( SPX42Database::deviceTableName )
                 .arg( name )
                 .arg( alias )
+                .arg( lastConnected ? 1 : 0 )
                 .arg( mac );
+      lg->debug( QString( "SPX42Database::addAlias -> UPDATE (%1)..." ).arg( sql ) );
       if ( !query.exec( sql ) )
       {
         err = db.lastError();
@@ -223,6 +258,16 @@ namespace spx
   }
 
   /**
+   * @brief SPX42Database::addAlias
+   * @param devAlias
+   * @return
+   */
+  bool SPX42Database::addAlias( const SPX42DeviceAlias &devAlias )
+  {
+    return ( addAlias( devAlias.mac, devAlias.name, devAlias.alias, devAlias.lastConnected ) );
+  }
+
+  /**
    * @brief SPX42Database::setAliasForMac
    * @param mac
    * @param alias
@@ -235,7 +280,7 @@ namespace spx
     {
       QSqlQuery query(
           QString( "update %1 set alias='%2' where mac='%3'" ).arg( SPX42Database::deviceTableName ).arg( alias ).arg( mac ), db );
-      if ( query.next() )
+      if ( query.exec() )
       {
         //
         // Abfrage korrekt bearbeitet
@@ -269,7 +314,7 @@ namespace spx
     {
       QSqlQuery query(
           QString( "update %1 set alias='%2' where name='%3'" ).arg( SPX42Database::deviceTableName ).arg( alias ).arg( name ), db );
-      if ( query.next() )
+      if ( query.exec() )
       {
         //
         // Abfrage korrekt bearbeitet
@@ -282,6 +327,47 @@ namespace spx
         QSqlError err = db.lastError();
         lg->warn( QString( "SPX42Database::setAliasForName -> <%1>..." ).arg( err.text() ) );
       }
+    }
+    else
+    {
+      lg->warn( "SPX42Database::setAliasForName -> db is not valid or not opened." );
+    }
+    return ( false );
+  }
+
+  /**
+   * @brief SPX42Database::setLastConnected
+   * @param mac
+   * @return
+   */
+  bool SPX42Database::setLastConnected( const QString &mac )
+  {
+    lg->debug( "SPX42Database::setLastConnected..." );
+    if ( db.isValid() && db.isOpen() )
+    {
+      //
+      // alle flags löschen
+      //
+      QSqlQuery queryUpd( "update %1 set last=%2", db );
+      if ( !queryUpd.exec() )
+      {
+        QSqlError err = db.lastError();
+        lg->warn( QString( "SPX42Database::setLastConnected -> <%1>..." ).arg( err.text() ) );
+        return ( false );
+      }
+      QSqlQuery querySet( QString( "update %1 set last=%2 where mac='%3'" ).arg( SPX42Database::deviceTableName ).arg( 1 ).arg( mac ),
+                          db );
+      if ( !querySet.exec() )
+      {
+        QSqlError err = db.lastError();
+        lg->warn( QString( "SPX42Database::setLastConnected -> <%1>..." ).arg( err.text() ) );
+        return ( false );
+      }
+      //
+      // Abfrage korrekt bearbeitet
+      //
+      lg->debug( "SPX42Database::setLastConnected...OK" );
+      return ( true );
     }
     else
     {
@@ -431,6 +517,7 @@ namespace spx
   bool SPX42Database::createAliasTable()
   {
     QString sql;
+    lg->debug( "SPX42Database::createAliasTable..." );
     QSqlQuery query( QString( "drop table if exist %1" ).arg( SPX42Database::deviceTableName ), db );
     //
     // das Statement zusammenschrauben
@@ -438,10 +525,12 @@ namespace spx
     sql = "create table " + SPX42Database::deviceTableName + "\n(\n";
     sql += " mac TEXT not NULL,\n";
     sql += " name TEXT not NULL,\n ";
-    sql += " alias TEXT default NULL\n";
+    sql += " alias TEXT default NULL,\n";
+    sql += " last INTEGER default 0\n";
     sql += ")";
     if ( query.exec( sql ) )
     {
+      lg->debug( "SPX42Database::createAliasTable...OK" );
       return ( true );
     }
     QSqlError err = db.lastError();

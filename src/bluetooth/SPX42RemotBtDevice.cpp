@@ -55,9 +55,11 @@ namespace spx
     // TODO: wenn verbunden, trennen oder was?
     if ( socket != nullptr )
     {
+      lg->debug( "SPX42RemotBtDevice::startConnection -> disconnect/remove old connection..." );
       endConnection();
-      delete socket;
+      socket->deleteLater();
       socket = nullptr;
+      lg->debug( "SPX42RemotBtDevice::startConnection -> disconnect/remove old connection...OK" );
     }
     // merken der Daten
     remoteAddr = QBluetoothAddress( mac );
@@ -103,11 +105,25 @@ namespace spx
         lg->info( "close bluethooth connection" );
         socket->close();
       }
+      QThread::msleep( 120 );
       if ( socket->state() != QBluetoothSocket::UnconnectedState )
       {
         socket->abort();
       }
     }
+  }
+
+  /**
+   * @brief SPX42RemotBtDevice::getRemoteConnected
+   * @return
+   */
+  QString SPX42RemotBtDevice::getRemoteConnected()
+  {
+    if ( socket->state() == QBluetoothSocket::ConnectedState )
+    {
+      return ( remoteAddr.toString() );
+    }
+    return ( QString() );
   }
 
   /**

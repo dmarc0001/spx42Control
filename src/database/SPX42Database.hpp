@@ -11,9 +11,28 @@
 
 namespace spx
 {
-  // hash<MAC<NAME,ALIAS>>
-  using DeviceAliasHash = QHash< QString, QPair< QString, QString > >;
+  //
+  class SPX42DeviceAlias;  // forward deklaration
+  using DeviceAliasHash = QHash< QString, SPX42DeviceAlias >;
 
+  /**
+   * @brief The SPX42DeviceAlias class definiert parameter für gerät
+   */
+  class SPX42DeviceAlias
+  {
+    public:
+    SPX42DeviceAlias();
+    explicit SPX42DeviceAlias( const QString &_mac, const QString &_name, const QString &_alias, bool _lastConnect = false );
+    SPX42DeviceAlias( const SPX42DeviceAlias &di );
+    QString mac;
+    QString name;
+    QString alias;
+    bool lastConnected;
+  };
+
+  /**
+   * @brief The SPX42Database class
+   */
   class SPX42Database : public QObject
   {
     Q_OBJECT
@@ -37,9 +56,14 @@ namespace spx
                             bool createPath = false );  //! öffne die Datenbank, checke auf Vollständigkeit
     void closeDatabase( void );                         //! schliesse Datenbank
     DeviceAliasHash getDeviceAliasHash( void );         //! gib einen hash mit einem hash (ALIAS <-> DEVICENAME) zurück
-    bool addAlias( const QString &mac, const QString &name, const QString &alias );  //! erzeuge einen Alias Eintrag
-    bool setAliasForMac( const QString &mac, const QString &alias );                 //! setzte einen Aliasnamen für MAC
-    bool setAliasForName( const QString &name, const QString &alias );               //! setzte einen Aliasnamen für MAC
+    bool addAlias( const QString &mac,
+                   const QString &name,
+                   const QString &alias,
+                   bool lastConnected = false );                        //! erzeuge einen Alias Eintrag
+    bool addAlias( const SPX42DeviceAlias &devAlias );                  //! erzeuge einen Alias Eintrag
+    bool setAliasForMac( const QString &mac, const QString &alias );    //! setzte einen Aliasnamen für MAC
+    bool setAliasForName( const QString &name, const QString &alias );  //! setzte einen Aliasnamen für MAC
+    bool setLastConnected( const QString &mac );                        //! setzte das Gerät auf "last connected"
 
     private:
     bool existTable( const QString &tableName );  //! gibt es folgende Tabelle?

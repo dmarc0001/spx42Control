@@ -7,6 +7,7 @@
 #include <QQueue>
 #include <QRegExp>
 #include <QStringList>
+#include <QThread>
 #include <QTime>
 #include <QTimer>
 #include <memory>
@@ -60,6 +61,7 @@ namespace spx
     void sendCommand( const SendListEntry &entry );  //! sende ein Datagramm zum SPX42
     SPX42ConnectStatus getConnectionStatus( void );  //! verbindungsstatus erfragen
     spSingleCommand getNextRecCommand( void );       //! nächtes Kommand holen, shared ptr zurück
+    QString getRemoteConnected( void );              //! mit wem bin ich verbunden
 
     signals:
     void onStateChangedSig( QBluetoothSocket::SocketState state );  //! Signal, wenn Onlinestatus sich ändert

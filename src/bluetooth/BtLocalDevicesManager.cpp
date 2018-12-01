@@ -69,7 +69,11 @@ namespace spx
 
   void BtLocalDevicesManager::cancelDiscoverDevices()
   {
-    discoveryAgent->stop();
+    if ( discoveryAgent->isActive() )
+    {
+      lg->debug( "BtLocalDevicesManager::cancelDiscoverDevices - discovering is active, cancl it..." );
+      discoveryAgent->stop();
+    }
   }
 
   const QBluetoothLocalDevice *BtLocalDevicesManager::getLocalDevice()

@@ -396,6 +396,8 @@ namespace spx
    */
   QString SPX42Config::getSerialNumber() const
   {
+    if ( spxSerialNumber.isEmpty() || spxSerialNumber.isNull() )
+      return ( "000000" );
     return ( spxSerialNumber );
   }
 
