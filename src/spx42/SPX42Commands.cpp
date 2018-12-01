@@ -174,6 +174,8 @@ namespace spx
     QByteArray code;
     QString cmdStr;
     QByteArray cmd;
+    // notwendig weil alter Firmware einen Fehler beim high gradient hat :-(
+    DecoGradient gradient = cfg.getCurrentDecoGradientValue();
     cmd.append( &SPX42CommandDef::STX, 1 );
     cmd.append( "~" );
     code.append( &SPX42CommandDef::SPX_SET_SETUP_DEKO, 1 );
@@ -187,6 +189,7 @@ namespace spx
       // DY = Dynamische gradienten 0->off 1->on
       // DS = Deepstops 0=> enabled, 1=>disabled
       cmdStr = ":%1:%2:%3:%4:%5";
+      gradient.first += 1;  // Firmware bugfix workarround :-(
     }
     else
     {
@@ -198,8 +201,8 @@ namespace spx
       // LS=Last Decostop (0=3 Meter/1=6 Meter)
       cmdStr = ":%2:%1:%5:%4:%3";
     }
-    cmd.append( cmdStr.arg( cfg.getCurrentDecoGradientValue().second, 2, 16, QChar( '0' ) )
-                    .arg( cfg.getCurrentDecoGradientValue().first, 2, 16, QChar( '0' ) )
+    cmd.append( cmdStr.arg( gradient.second, 2, 16, QChar( '0' ) )
+                    .arg( gradient.first, 2, 16, QChar( '0' ) )
                     .arg( ( cfg.getLastDecoStop() == DecoLastStop::LAST_STOP_ON_3 ) ? 0 : 1 )
                     .arg( ( cfg.getIsDecoDynamicGradients() == DecompressionDynamicGradient::DYNAMIC_GRADIENT_ON ) ? 1 : 0 )
                     .arg( ( cfg.getIstDeepstopsEnabled() == DecompressionDeepstops::DEEPSTOPS_ENABLED ? 1 : 0 ) )
