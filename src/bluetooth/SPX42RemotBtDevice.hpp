@@ -20,7 +20,7 @@
 
 namespace spx
 {
-  constexpr int SEND_TIMERVAL = 90;
+  constexpr int SEND_TIMERVAL = 200;
 
   class SPX42RemotBtDevice;
 
