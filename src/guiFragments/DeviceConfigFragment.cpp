@@ -743,10 +743,10 @@ namespace spx
             // süß oder Salzwasser
             default:
             case 0:
-              ui->unitsWaterTypeComboBox->setCurrentIndex( 1 );
+              ui->unitsWaterTypeComboBox->setCurrentIndex( 0 );
               break;
             case 1:
-              ui->unitsWaterTypeComboBox->setCurrentIndex( 0 );
+              ui->unitsWaterTypeComboBox->setCurrentIndex( 1 );
               break;
           }
           spxConfig->freezeConfigs( SPX42ConfigClass::CFCLASS_UNITS );
@@ -1139,6 +1139,7 @@ namespace spx
     }
     spxConfig->setUnitsWaterType( static_cast< DeviceWaterType >( index ) );
     emit onConfigWasChangedSig();
+    lg->debug( QString( "######## UNIT HASHES: %1" ).arg( spxConfig->geteUnitHashes() ) );
   }
 
   /**

@@ -812,7 +812,7 @@ namespace spx
     quint8 changed = spx42Config->getChangedConfig();
     if ( changed != 0 )
     {
-      lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> write back config, changed value: 0x%1 (bitwhise)" )
+      lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> write back config, changed value: <0x%1> (bitwhise)" )
                      .arg( static_cast< int >( changed & 0xff ), 2, 16, QChar( '0' ) ) );
       if ( changed & SPX42ConfigClass::CFCLASS_DECO )
       {

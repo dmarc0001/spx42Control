@@ -113,8 +113,8 @@ namespace spx
   };
   enum class DeviceWaterType : qint8
   {
-    FRESHWATER,
-    SALTWATER
+    SALTWATER,
+    FRESHWATER
   };
   enum class DeviceSetpointAuto : qint8
   {

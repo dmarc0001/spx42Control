@@ -1163,4 +1163,9 @@ namespace spx
     }
     return ( result );
   }
+
+  QString SPX42Config::geteUnitHashes( void )
+  {
+    return ( QString( "unit current hash: %1, unit saved hash: %2" ).arg( currentUnitHash ).arg( savedUnitHash ) );
+  }
 }  // namespace spx

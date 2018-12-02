@@ -1229,12 +1229,12 @@
                     </property>
                     <item>
                      <property name="text">
-                      <string>FRESH</string>
+                      <string>SALT</string>
                      </property>
                     </item>
                     <item>
                      <property name="text">
-                      <string>SALT</string>
+                      <string>FRESH</string>
                      </property>
                     </item>
                    </widget>
