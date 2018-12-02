@@ -118,11 +118,11 @@ namespace spx
   };
   enum class DeviceSetpointAuto : qint8
   {
+    AUTO_OFF,
     AUTO_06,
     AUTO_10,
     AUTO_15,
-    AUTO_20,
-    AUTO_OFF
+    AUTO_20
   };
   enum class DeviceSetpointValue : qint8
   {

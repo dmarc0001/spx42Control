@@ -836,6 +836,11 @@ namespace spx
         //
         // setpoint Einstellungen senden
         //
+        sendCommand = remoteSPX42->sendSetpointParams( *spx42Config );
+        lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> write <%1> old order: %2" )
+                       .arg( QString( sendCommand.second ) )
+                       .arg( ( spx42Config->getIsOldParamSorting() ? "true" : "false" ) ) );
+        remoteSPX42->sendCommand( sendCommand );
       }
       if ( changed & SPX42ConfigClass::CFCLASS_UNITS )
       {
@@ -855,15 +860,15 @@ namespace spx
         // TODO: gase senden (nur die, welche verändert sind)
         //
       }
-      //
-      // danach CONFIG als syncron setzen
-      //
-      spx42Config->freezeConfigs();
     }
     else
     {
       lg->debug( "SPX42ControlMainWin::onConfigWriteBackSlot -> no changes, go away..." );
     }
+    //
+    // danach CONFIG als syncron setzen
+    //
+    spx42Config->freezeConfigs();
     //
     // Label rücksetzten
     // TODO: nach der Quittung erst

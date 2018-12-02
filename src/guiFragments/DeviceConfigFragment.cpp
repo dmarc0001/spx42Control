@@ -565,7 +565,7 @@ namespace spx
           ui->dynamicGradientsOnCheckBox->setCheckState(
               recCommand->getValueAt( SPXCmdParam::DECO_DYNGRADIENTS ) == 1 ? Qt::CheckState::Checked : Qt::CheckState::Unchecked );
           ui->lastDecoStopComboBox->setCurrentIndex( recCommand->getValueAt( SPXCmdParam::DECO_LASTSTOP ) == 1 ? 1 : 0 );
-          spxConfig->freezeConfigs();
+          spxConfig->freezeConfigs( SPX42ConfigClass::CFCLASS_DECO );
           connectSlots( SIGNALS_DECOMPRESSION );
           break;
         case SPX42CommandDef::SPX_GET_SETUP_SETPOINT:
@@ -619,7 +619,7 @@ namespace spx
               ui->setpointSetpointComboBox->setCurrentIndex( 4 );
               break;
           }
-          spxConfig->freezeConfigs();
+          spxConfig->freezeConfigs( SPX42ConfigClass::CFCLASS_SETPOINT );
           connectSlots( SIGNALS_SETPOINT );
           break;
         case SPX42CommandDef::SPX_GET_SETUP_DISPLAYSETTINGS:
@@ -670,7 +670,7 @@ namespace spx
                 break;
             }
           }
-          spxConfig->freezeConfigs();
+          spxConfig->freezeConfigs( SPX42ConfigClass::CFCLASS_DISPLAY );
           connectSlots( SIGNALS_DISPLAY );
           break;
         case SPX42CommandDef::SPX_GET_SETUP_UNITS:
@@ -721,7 +721,7 @@ namespace spx
               ui->unitsWaterTypeComboBox->setCurrentIndex( 0 );
               break;
           }
-          spxConfig->freezeConfigs();
+          spxConfig->freezeConfigs( SPX42ConfigClass::CFCLASS_UNITS );
           connectSlots( SIGNALS_UNITS );
           break;
         case SPX42CommandDef::SPX_GET_SETUP_INDIVIDUAL:
@@ -800,7 +800,7 @@ namespace spx
               ui->individualTempStickComboBox->setCurrentIndex( 2 );
               break;
           }
-          spxConfig->freezeConfigs();
+          spxConfig->freezeConfigs( SPX42ConfigClass::CFCLASS_INDIVIDUAL );
           connectSlots( SIGNALS_INDIVIDUAL );
           break;
       }
@@ -1305,14 +1305,8 @@ namespace spx
     // es ist Zeit alle Einstellungen abzufragen
     // Seriennummer, Version, Lizenz wird im Objekt
     // SPX42ControlMainWin abgefragt...
-    //
-    // Beginnen wir mit Decompressionssachen
-    //
     SendListEntry sendCommand = remoteSPX42->askForConfig();
     remoteSPX42->sendCommand( sendCommand );
     lg->debug( "DeviceConfigFragment::onConfigUpdateSlot -> send cmd decoinfos..." );
-    //
-    // TODO: DISPLAY
-    //
   }
 }  // namespace spx

@@ -746,8 +746,9 @@ namespace spx
       {
         emit setpointAutoChangeSig( setpointAuto );
       }
-      currentSetpointHash = makeSetpointHash();
     }
+    // mach hier den hash immer
+    currentSetpointHash = makeSetpointHash();
   }
 
   /**
@@ -772,8 +773,9 @@ namespace spx
       {
         emit setpointValueChangedSig( setpointValue );
       }
-      currentSetpointHash = makeSetpointHash();
     }
+    // mache den Hash immer
+    currentSetpointHash = makeSetpointHash();
   }
 
   /**
@@ -1064,8 +1066,8 @@ namespace spx
   QString SPX42Config::makeSetpointHash()
   {
     QByteArray serialized;
-    serialized.append( QString( "auto setpoint value (enum): %1" ).arg( static_cast< int >( setpointAuto ) ) );
-    serialized.append( QString( "setpoint value (enum): %1" ).arg( static_cast< int >( setpointValue ) ) );
+    serialized.append( QString( "auto setpoint value (enum): %1" ).arg( static_cast< int >( setpointAuto ), 2, 10, QChar( '0' ) ) );
+    serialized.append( QString( "setpoint value (enum): %1" ).arg( static_cast< int >( setpointValue ), 2, 10, QChar( '0' ) ) );
     qhash.reset();
     qhash.addData( serialized );
     return ( QString( qhash.result().toBase64() ) );
@@ -1092,18 +1094,30 @@ namespace spx
   /**
    * @brief SPX42Config::freezeConfigs
    */
-  void SPX42Config::freezeConfigs()
+  void SPX42Config::freezeConfigs( quint8 changed )
   {
-    savedSpxHash = currentSpxHash;
-    savedDecoHash = currentDecoHash;
-    savedDisplayHash = currentDisplayHash;
-    savedUnitHash = currentUnitHash;
-    savedSetpointHash = currentSetpointHash;
-    savedIndividualHash = currentIndividualHash;
-    for ( int i = 0; i < 8; i++ )
+    //
+    // was soll gefrostet werden?
+    //
+    if ( changed & SPX42ConfigClass::CFCLASS_SPX )
+      savedSpxHash = currentSpxHash;
+    if ( changed & SPX42ConfigClass::CFCLASS_DECO )
+      savedDecoHash = currentDecoHash;
+    if ( changed & SPX42ConfigClass::CFCLASS_GASES )
     {
-      savedGasHashes[ i ] = currentGasHashes[ i ];
+      for ( int i = 0; i < 8; i++ )
+      {
+        savedGasHashes[ i ] = currentGasHashes[ i ];
+      }
     }
+    if ( changed & SPX42ConfigClass::CFCLASS_DISPLAY )
+      savedDisplayHash = currentDisplayHash;
+    if ( changed & SPX42ConfigClass::CFCLASS_UNITS )
+      savedUnitHash = currentUnitHash;
+    if ( changed & SPX42ConfigClass::CFCLASS_SETPOINT )
+      savedSetpointHash = currentSetpointHash;
+    if ( changed & SPX42ConfigClass::CFCLASS_INDIVIDUAL )
+      savedIndividualHash = currentIndividualHash;
   }
 
   /**

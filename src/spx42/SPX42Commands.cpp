@@ -212,4 +212,37 @@ namespace spx
     // erwarte Quittung! (true)
     return ( SendListEntry( CmdMarker( SPX42CommandDef::SPX_SET_SETUP_DEKO, true ), cmd ) );
   }
+
+  SendListEntry SPX42Commands::sendSetpointParams( SPX42Config &cfg )
+  {
+    QByteArray code;
+    QString cmdStr;
+    QByteArray cmd;
+    cmd.append( &SPX42CommandDef::STX, 1 );
+    cmd.append( "~" );
+    code.append( &SPX42CommandDef::SPX_SET_SETUP_SETPOINT, 1 );
+    cmd.append( code.toHex() );
+    if ( cfg.getIsOldParamSorting() )
+    {
+      //
+      // Kommando SPX_SET_SETUP_SETPOINT
+      // ~30:P:A
+      // P = Partialdruck (0..4) 1.0 .. 1.4
+      // A = Setpoint bei (0,1,2,3,4) = (0,5,15,20,25)
+      cmdStr = ":%2:%1";
+    }
+    else
+    {
+      // ~30:A:P
+      // A = Setpoint bei (0,1,2,3,4) = (0,5/6,15,20,25)
+      // P = Partialdruck (0..4) 1.0 .. 1.4
+      cmdStr = ":%1:%2";
+    }
+    cmd.append( cmdStr.arg( static_cast< int >( cfg.getSetpointAuto() ), 1, 16 )
+                    .arg( static_cast< int >( cfg.getSetpointValue() ), 1, 16 )
+                    .toLatin1() );
+    cmd.append( &SPX42CommandDef::ETX, 1 );
+    // erwarte Quittung! (true)
+    return ( SendListEntry( CmdMarker( SPX42CommandDef::SPX_SET_SETUP_SETPOINT, true ), cmd ) );
+  }
 }

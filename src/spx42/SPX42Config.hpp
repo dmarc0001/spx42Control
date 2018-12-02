@@ -129,7 +129,7 @@ namespace spx
     bool getIsOldParamSorting() const;                                         //! alte Parameterordnung?
     bool getIsNewerDisplayBrightness() const;                                  //! neuere Helligkeitsabstufungen
     bool getIsSixMetersAutoSetpoint() const;                                   //! fünf oder sechs meter autosetpoint
-    void freezeConfigs( void );                                                //! setzte die aktuelle Konfiguration als "gesichert"
+    void freezeConfigs( quint8 changed = SPX42ConfigClass::CFCLASS_ALL );      //! setzte die aktuelle Konfiguration als "gesichert"
     quint8 getChangedConfig( void );                                           //! was ist geändert?
 
     private:
