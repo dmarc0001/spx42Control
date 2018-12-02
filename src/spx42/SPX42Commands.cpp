@@ -189,7 +189,8 @@ namespace spx
       // DY = Dynamische gradienten 0->off 1->on
       // DS = Deepstops 0=> enabled, 1=>disabled
       cmdStr = ":%1:%2:%3:%4:%5";
-      gradient.first += 1;  // Firmware bugfix workarround :-(
+      // gradient.first += 1;  // Firmware bugfix workarround :-(
+      // gradient.second += 1;
     }
     else
     {

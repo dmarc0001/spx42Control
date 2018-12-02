@@ -183,7 +183,7 @@ namespace spx
 
   bool SPX42Database::addAlias( const QString &mac, const QString &name, const QString &alias, bool lastConnected )
   {
-    QSqlQuery query( "", db );
+    QSqlQuery query( db );
     QSqlError err;
     QString sql;
     //
@@ -342,22 +342,23 @@ namespace spx
    */
   bool SPX42Database::setLastConnected( const QString &mac )
   {
+    QString sql;
+    QSqlQuery query( db );
     lg->debug( "SPX42Database::setLastConnected..." );
     if ( db.isValid() && db.isOpen() )
     {
       //
       // alle flags löschen
       //
-      QSqlQuery queryUpd( "update %1 set last=%2", db );
-      if ( !queryUpd.exec() )
+      sql = QString( "update %1 set last=0" ).arg( SPX42Database::deviceTableName );
+      if ( !query.exec( sql ) )
       {
         QSqlError err = db.lastError();
         lg->warn( QString( "SPX42Database::setLastConnected -> <%1>..." ).arg( err.text() ) );
         return ( false );
       }
-      QSqlQuery querySet( QString( "update %1 set last=%2 where mac='%3'" ).arg( SPX42Database::deviceTableName ).arg( 1 ).arg( mac ),
-                          db );
-      if ( !querySet.exec() )
+      sql = QString( "update %1 set last=%2 where mac='%3'" ).arg( SPX42Database::deviceTableName ).arg( 1 ).arg( mac );
+      if ( !query.exec( sql ) )
       {
         QSqlError err = db.lastError();
         lg->warn( QString( "SPX42Database::setLastConnected -> <%1>..." ).arg( err.text() ) );
@@ -389,7 +390,7 @@ namespace spx
       // alle flags löschen
       //
       QSqlQuery query( QString( "select mac from %1 where last=1" ).arg( SPX42Database::deviceTableName ), db );
-      if ( !query.exec() )
+      if ( !query.next() )
       {
         QSqlError err = db.lastError();
         lg->warn( QString( "SPX42Database::getLastConnected -> <%1>..." ).arg( err.text() ) );
@@ -398,6 +399,8 @@ namespace spx
       //
       // Abfrage korrekt bearbeitet
       //
+      lg->debug( QString( "SPX42Database::getLastConnected -> device: %1" )
+                     .arg( query.value( 0 ).isNull() ? "NONE" : query.value( 1 ).toString() ) );
       return ( query.value( 0 ).toString() );
     }
     else

@@ -119,7 +119,7 @@ namespace spx
    */
   QString SPX42RemotBtDevice::getRemoteConnected()
   {
-    if ( socket->state() == QBluetoothSocket::ConnectedState )
+    if ( socket != nullptr && socket->state() == QBluetoothSocket::ConnectedState )
     {
       return ( remoteAddr.toString() );
     }

@@ -269,6 +269,7 @@ namespace spx
     // geprüft hat
     //
     addDeviceComboEntry( deviceInfo );
+    trySetIndex();
   }
 
   /**
@@ -278,8 +279,7 @@ namespace spx
   {
     lg->debug( "ConnectFragment::onDiscoverScanFinishedSlot-> discovering finished..." );
     ui->discoverPushButton->setEnabled( true );
-    // TODO: massnahmen ergreifen
-    void trySetIndex();
+    trySetIndex();
   }
 
   /**
@@ -432,6 +432,7 @@ namespace spx
     // wer ist verbunden
     //
     QString mac;
+    lg->debug( "ConnectFragment::trySetIndex..." );
     mac = remoteSPX42->getRemoteConnected();
     if ( mac.isEmpty() )
     {
@@ -439,31 +440,29 @@ namespace spx
       // nichts verbunden
       // gucke ob ich das zulettz verbundene Gerät finde
       //
-      lg->debug( "ConnectFragment::fillDeviceCombo -> not connected, try last connected..." );
+      lg->debug( "ConnectFragment::trySetIndex -> not connected, try last connected..." );
       mac = database->getLastConnected();
-      lg->debug( QString( "ConnectFragment::fillDeviceCombo -> last connected: " ).append( mac ) );
     }
     if ( !mac.isEmpty() )
     {
-      lg->debug( QString( "ConnectFragment::fillDeviceCombo -> last connected was: " ).append( mac ) );
+      lg->debug( QString( "ConnectFragment::trySetIndex -> last connected was: " ).append( mac ) );
       //
       // verbunden oder nicht, versuche etwas zu selektiern
       //
       // suche nach diesem Eintrag...
-      auto deviceInfo = spxDevicesAliasHash.value( mac );
-      // neu zusammensetzten
-      auto title = QString( "%1 (%2)" ).arg( deviceInfo.alias ).arg( deviceInfo.name );
-      lg->debug( QString( "ConnectFragment::fillDeviceCombo -> search for: " ).append( title ) );
-      int index = ui->deviceComboBox->findData( title );
-      if ( index != -1 )
+      //
+      int index = ui->deviceComboBox->findData( mac );
+      if ( index != ui->deviceComboBox->currentIndex() && index != -1 )
       {
-        lg->debug( QString( "ConnectFragment::fillDeviceCombo -> found " ).append( index ) );
+        lg->debug( QString( "ConnectFragment::trySetIndex -> found at idx %1, set to idx" ).arg( index ) );
         //
         // -1 for not found
+        // und der index ist nicht schon auf diesen Wert gesetzt
         // also, wenn gefunden, selektiere diesen Eintrag
         //
         ui->deviceComboBox->setCurrentIndex( index );
       }
     }
+    lg->debug( "ConnectFragment::trySetIndex...OK" );
   }
 }  // namespace spx
