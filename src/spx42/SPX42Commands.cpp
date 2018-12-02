@@ -267,4 +267,26 @@ namespace spx
     // erwarte Quittung! (true)
     return ( SendListEntry( CmdMarker( SPX42CommandDef::SPX_SET_SETUP_SETPOINT, true ), cmd ) );
   }
+
+  SendListEntry SPX42Commands::sendUnitsParams( SPX42Config &cfg )
+  {
+    QByteArray code;
+    QByteArray cmd;
+    cmd.append( &SPX42CommandDef::STX, 1 );
+    cmd.append( "~" );
+    code.append( &SPX42CommandDef::SPX_SET_SETUP_UNITS, 1 );
+    cmd.append( code.toHex() );
+    // ~32:UD:UL:UW
+    // UD= Fahrenheit/Celsius => immer 0 in der aktuellen Firmware 2.6.7.7_U
+    // UL= 0=>metrisch 1=>imperial
+    // UW= 0->Salzwasser 1->Süßwasser
+    cmd.append( QString( ":%1:%2:%3" )
+                    .arg( static_cast< int >( cfg.getUnitsTemperatur() ), 1, 16 )
+                    .arg( static_cast< int >( cfg.getUnitsLength() ), 1, 16 )
+                    .arg( static_cast< int >( cfg.getUnitsWaterType() ), 1, 16 )
+                    .toLatin1() );
+    cmd.append( &SPX42CommandDef::ETX, 1 );
+    // erwarte Quittung! (true)
+    return ( SendListEntry( CmdMarker( SPX42CommandDef::SPX_SET_SETUP_SETPOINT, true ), cmd ) );
+  }
 }

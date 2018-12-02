@@ -704,6 +704,14 @@ namespace spx
                          .arg( recCommand->getValueAt( SPXCmdParam::UNITS_METRIC_OR_IMPERIAL ) )
                          .arg( recCommand->getValueAt( SPXCmdParam::UNITS_SALT_OR_FRESHWATER ) ) );
           disconnectSlots( SIGNALS_UNITS );
+          // CONFIG
+          spxConfig->setUnitsTemperatur(
+              static_cast< DeviceTemperaturUnit >( recCommand->getValueAt( SPXCmdParam::UNITS_TEMPERATURE ) ) );
+          spxConfig->setUnitsLength(
+              static_cast< DeviceLenghtUnit >( recCommand->getValueAt( SPXCmdParam::UNITS_METRIC_OR_IMPERIAL ) ) );
+          spxConfig->setUnitsWaterType(
+              static_cast< DeviceWaterType >( recCommand->getValueAt( SPXCmdParam::UNITS_SALT_OR_FRESHWATER ) ) );
+          // GUI
           switch ( recCommand->getValueAt( SPXCmdParam::UNITS_TEMPERATURE ) )
           {
             // Celsios oder Fahrenheid?
@@ -714,7 +722,7 @@ namespace spx
             case 1:
               ui->unitsTemperaturComboBox->setCurrentIndex( 1 );
           }
-          switch ( SPXCmdParam::UNITS_METRIC_OR_IMPERIAL )
+          switch ( recCommand->getValueAt( SPXCmdParam::UNITS_METRIC_OR_IMPERIAL ) )
           {
             // Metrisch oder imperial
             default:
@@ -730,7 +738,7 @@ namespace spx
               }
               ui->unitsDeepComboBox->setCurrentIndex( 1 );
           }
-          switch ( SPXCmdParam::UNITS_SALT_OR_FRESHWATER )
+          switch ( recCommand->getValueAt( SPXCmdParam::UNITS_SALT_OR_FRESHWATER ) )
           {
             // süß oder Salzwasser
             default:
@@ -1114,10 +1122,10 @@ namespace spx
    */
   void DeviceConfigFragment::onUnitsWatertypeChangedSlot( int index )
   {
-    auto wUnit = static_cast< DeviceWaterType >( index );
     if ( lg->getThreshold() == LgThreshold::LG_DEBUG )
     {
       QString typeString;
+      auto wUnit = static_cast< DeviceWaterType >( index );
       //
       if ( wUnit == DeviceWaterType::FRESHWATER )
       {
@@ -1129,7 +1137,7 @@ namespace spx
       }
       lg->debug( QString( "DeviceConfigFragment::onUnitsWatertypeChangedSlot: lengt unit to %1" ).arg( typeString ) );
     }
-    spxConfig->setUnitsWaterType( wUnit );
+    spxConfig->setUnitsWaterType( static_cast< DeviceWaterType >( index ) );
     emit onConfigWasChangedSig();
   }
 

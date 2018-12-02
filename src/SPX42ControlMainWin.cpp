@@ -689,7 +689,7 @@ namespace spx
         //
         // config leeren
         //
-        spx42Config->reset();
+        spx42Config->resetConfig();
         onAkkuValueChangedSlot();
         break;
       case SPX42RemotBtDevice::SPX42_CONNECTING:
@@ -831,9 +831,7 @@ namespace spx
         // sende neue Display einstellungen
         //
         sendCommand = remoteSPX42->sendDisplayParams( *spx42Config );
-        lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> write <%1> old order: %2" )
-                       .arg( QString( sendCommand.second ) )
-                       .arg( ( spx42Config->getIsOldParamSorting() ? "true" : "false" ) ) );
+        lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> write <%1>" ).arg( QString( sendCommand.second ) ) );
         remoteSPX42->sendCommand( sendCommand );
       }
       if ( changed & SPX42ConfigClass::CFCLASS_SETPOINT )
@@ -852,6 +850,9 @@ namespace spx
         //
         // einheiten senden
         //
+        sendCommand = remoteSPX42->sendUnitsParams( *spx42Config );
+        lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> write <%1>" ).arg( QString( sendCommand.second ) ) );
+        remoteSPX42->sendCommand( sendCommand );
       }
       if ( changed & SPX42ConfigClass::CFCLASS_INDIVIDUAL )
       {

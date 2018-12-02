@@ -39,7 +39,7 @@ namespace spx
       , isSixMetersAutoSetpoint( false )
       , qhash( QCryptographicHash::Md5 )
   {
-    reset();
+    resetConfig( SPX42ConfigClass::CFCLASS_ALL );
     // connect( &spxLicense, &SPX42License::licenseChangedPrivateSig, this, &SPX42Config::licenseChangedPrivateSlot );
     //
     // DECO Presets füllen
@@ -326,7 +326,7 @@ namespace spx
   /**
    * @brief Setze das Objekt auf einen definierten Grundzustand
    */
-  void SPX42Config::reset( quint8 classes )
+  void SPX42Config::resetConfig( quint8 classes )
   {
     isValid = false;
     if ( classes & SPX42ConfigClass::CFCLASS_SPX )
@@ -1044,8 +1044,10 @@ namespace spx
   QString SPX42Config::makeDisplayHash()
   {
     QByteArray serialized;
-    serialized.append( QString( "display brightness (enum): %1" ).arg( static_cast< int >( displayBrightness ) ) );
-    serialized.append( QString( "display orientation (enum): %1" ).arg( static_cast< int >( displayOrientation ) ) );
+    serialized.append(
+        QString( "display brightness (enum): %1" ).arg( static_cast< int >( displayBrightness ), 2, 10, QChar( '0' ) ) );
+    serialized.append(
+        QString( "display orientation (enum): %1" ).arg( static_cast< int >( displayOrientation ), 2, 10, QChar( '0' ) ) );
     qhash.reset();
     qhash.addData( serialized );
     return ( QString( qhash.result().toBase64() ) );
@@ -1058,9 +1060,10 @@ namespace spx
   QString SPX42Config::makeUnitsHash()
   {
     QByteArray serialized;
-    serialized.append( QString( "unit for temperature (enum): %1" ).arg( static_cast< int >( unitTemperature ) ) );
-    serialized.append( QString( "unit for lenght (enum): %1" ).arg( static_cast< int >( unitLength ) ) );
-    serialized.append( QString( "water type (enum): %1" ).arg( static_cast< int >( unitWaterType ) ) );
+    serialized.append(
+        QString( "unit for temperature (enum): %1" ).arg( static_cast< int >( unitTemperature ), 2, 10, QChar( '0' ) ) );
+    serialized.append( QString( "unit for lenght (enum): %1" ).arg( static_cast< int >( unitLength ), 2, 10, QChar( '0' ) ) );
+    serialized.append( QString( "water type (enum): %1" ).arg( static_cast< int >( unitWaterType ), 2, 10, QChar( '0' ) ) );
     qhash.reset();
     qhash.addData( serialized );
     return ( QString( qhash.result().toBase64() ) );
@@ -1089,10 +1092,13 @@ namespace spx
     QByteArray serialized;
     serialized.append( QString( "individual sensors on: %1" ).arg( static_cast< bool >( individualSensorsOn ) ) );
     serialized.append( QString( "indiovidual pscr on: %1" ).arg( static_cast< bool >( individualPSCROn ) ) );
-    serialized.append( QString( "individual sensors count: %1" ).arg( static_cast< int >( individualSensorCount ) ) + 1 );
+    serialized.append(
+        QString( "individual sensors count: %1" ).arg( static_cast< int >( individualSensorCount ), 2, 10, QChar( '0' ) ) + 1 );
     serialized.append( QString( "individual acoustic warnings on: %1" ).arg( static_cast< bool >( individualAcustic ) ) );
-    serialized.append( QString( "individual log interval: %1" ).arg( ( static_cast< int >( individualLogInterval ) + 1 ) * 10 ) );
-    serialized.append( QString( "individual temp stick type (enum): %1" ).arg( static_cast< int >( individualTempStick ) ) );
+    serialized.append( QString( "individual log interval: %1" )
+                           .arg( ( static_cast< int >( individualLogInterval ) + 1 ) * 10, 2, 10, QChar( '0' ) ) );
+    serialized.append(
+        QString( "individual temp stick type (enum): %1" ).arg( static_cast< int >( individualTempStick ), 2, 10, QChar( '0' ) ) );
     qhash.reset();
     qhash.addData( serialized );
     return ( QString( qhash.result().toBase64() ) );
