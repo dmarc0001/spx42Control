@@ -1,5 +1,7 @@
 ﻿#include "SPX42Config.hpp"
 
+// TODO: hashes wieder nur bei bedarf machen
+
 namespace spx
 {
   /**
@@ -167,6 +169,7 @@ namespace spx
   {
     QString versionString( value );
     setSpxFirmwareVersion( versionString );
+    currentSpxHash = makeSpxHash();
   }
 
   /**
@@ -191,8 +194,9 @@ namespace spx
       {
         emit licenseChangedSig( spxLicense );
       }
-      currentSpxHash = makeSpxHash();
     }
+    // immer setzten
+    currentSpxHash = makeSpxHash();
   }
 
   /**
@@ -208,8 +212,9 @@ namespace spx
       {
         emit licenseChangedSig( spxLicense );
       }
-      currentSpxHash = makeSpxHash();
     }
+    // immer setzten
+    currentSpxHash = makeSpxHash();
   }
 
   /**
@@ -259,6 +264,8 @@ namespace spx
         setLicense( LicenseType::LIC_MIL );
         break;
     }
+    // immer setzten
+    currentSpxHash = makeSpxHash();
   }
 
   /**
@@ -414,8 +421,9 @@ namespace spx
       {
         emit serialNumberChangedSig( spxSerialNumber );
       }
-      currentSpxHash = makeSpxHash();
     }
+    // immer setzten
+    currentSpxHash = makeSpxHash();
   }
 
   /**
@@ -447,7 +455,6 @@ namespace spx
       decoPresets.insert( static_cast< int >( DecompressionPreset::DECO_KEY_CUSTOM ),
                           DecoGradient( dGradient.first, dGradient.second ) );
       decoCurrentPreset = presetType;
-      currentDecoHash = makeDecoHash();
       if ( sendSignals )
       {
         emit decoGradientChangedSig( getCurrentDecoGradientValue() );
@@ -459,12 +466,12 @@ namespace spx
       // ein PRESET ausgewählt werte verwerfen...
       //
       decoCurrentPreset = presetType;
-      currentDecoHash = makeDecoHash();
       if ( sendSignals )
       {
         emit decoGradientChangedSig( getCurrentDecoGradientValue() );
       }
     }
+    currentDecoHash = makeDecoHash();
   }
 
   /**
@@ -538,8 +545,8 @@ namespace spx
       {
         emit decoDynamicGradientStateChangedSig( decoDynamicGradient );
       }
-      currentDecoHash = makeDecoHash();
     }
+    currentDecoHash = makeDecoHash();
   }
 
   /**
@@ -564,8 +571,8 @@ namespace spx
       {
         emit decoDeepStopsEnabledSig( decoDeepstopsEnabled );
       }
-      currentDecoHash = makeDecoHash();
     }
+    currentDecoHash = makeDecoHash();
   }
 
   /**
@@ -590,8 +597,8 @@ namespace spx
       {
         emit decoLastStopSig( decoLastStop );
       }
-      currentDecoHash = makeDecoHash();
     }
+    currentDecoHash = makeDecoHash();
   }
 
   /**
@@ -616,8 +623,8 @@ namespace spx
       {
         emit displayBrightnessChangedSig( displayBrightness );
       }
-      currentDisplayHash = makeDisplayHash();
     }
+    currentDisplayHash = makeDisplayHash();
   }
 
   /**
@@ -642,8 +649,8 @@ namespace spx
       {
         emit displayOrientationChangedSig( displayOrientation );
       }
-      currentDisplayHash = makeDisplayHash();
     }
+    currentDisplayHash = makeDisplayHash();
   }
 
   /**
@@ -668,8 +675,8 @@ namespace spx
       {
         emit unitsTemperaturChangedSig( unitTemperature );
       }
-      currentUnitHash = makeUnitsHash();
     }
+    currentUnitHash = makeUnitsHash();
   }
 
   /**
@@ -694,8 +701,8 @@ namespace spx
       {
         emit unitsLengtChangedSig( unitLength );
       }
-      currentUnitHash = makeUnitsHash();
     }
+    currentUnitHash = makeUnitsHash();
   }
 
   /**
@@ -720,8 +727,8 @@ namespace spx
       {
         emit untisWaterTypeChangedSig( unitWaterType );
       }
-      currentUnitHash = makeUnitsHash();
     }
+    currentUnitHash = makeUnitsHash();
   }
 
   /**
@@ -800,8 +807,8 @@ namespace spx
       {
         emit individualSensorsOnChangedSig( individualSensorsOn );
       }
-      currentIndividualHash = makeIndividualHash();
     }
+    currentIndividualHash = makeIndividualHash();
   }
 
   /**
@@ -825,8 +832,8 @@ namespace spx
       {
         emit individualPscrModeChangedSig( individualPSCROn );
       }
-      currentIndividualHash = makeIndividualHash();
     }
+    currentIndividualHash = makeIndividualHash();
   }
 
   /**
@@ -850,8 +857,8 @@ namespace spx
       {
         emit individualSensorsCountChangedSig( individualSensorCount );
       }
-      currentIndividualHash = makeIndividualHash();
     }
+    currentIndividualHash = makeIndividualHash();
   }
 
   /**
@@ -876,8 +883,8 @@ namespace spx
       {
         emit individualAcousticChangedSig( individualAcustic );
       }
-      currentIndividualHash = makeIndividualHash();
     }
+    currentIndividualHash = makeIndividualHash();
   }
 
   /**
@@ -902,8 +909,8 @@ namespace spx
       {
         emit individualLogIntervalChangedSig( individualLogInterval );
       }
-      currentIndividualHash = makeIndividualHash();
     }
+    currentIndividualHash = makeIndividualHash();
   }
 
   /**
@@ -928,8 +935,8 @@ namespace spx
       {
         emit individualTempstickChangedSig( individualTempStick );
       }
-      currentIndividualHash = makeIndividualHash();
     }
+    currentIndividualHash = makeIndividualHash();
   }
 
   /**

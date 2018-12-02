@@ -245,4 +245,26 @@ namespace spx
     // erwarte Quittung! (true)
     return ( SendListEntry( CmdMarker( SPX42CommandDef::SPX_SET_SETUP_SETPOINT, true ), cmd ) );
   }
+
+  SendListEntry SPX42Commands::sendDisplayParams( SPX42Config &cfg )
+  {
+    QByteArray code;
+    QByteArray cmd;
+    cmd.append( &SPX42CommandDef::STX, 1 );
+    cmd.append( "~" );
+    code.append( &SPX42CommandDef::SPX_SET_SETUP_DISPLAYSETTINGS, 1 );
+    cmd.append( code.toHex() );
+    // ~31:D:A
+    // Alte Settings D= 0->10&, 1->50%, 2->100%
+    // Neuere Settings 0->20%, 1->40%, 2->60%, 3->80%, 4->100%
+    // A= 0->Landscape 1->180Grad
+    // Display setzen
+    cmd.append( QString( ":%1:%2" )
+                    .arg( static_cast< int >( cfg.getDisplayBrightness() ), 1, 16 )
+                    .arg( static_cast< int >( cfg.getDisplayOrientation() ), 1, 16 )
+                    .toLatin1() );
+    cmd.append( &SPX42CommandDef::ETX, 1 );
+    // erwarte Quittung! (true)
+    return ( SendListEntry( CmdMarker( SPX42CommandDef::SPX_SET_SETUP_SETPOINT, true ), cmd ) );
+  }
 }

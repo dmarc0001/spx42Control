@@ -579,6 +579,10 @@ namespace spx
                          .arg( recCommand->getValueAt( SPXCmdParam::SETPOINT_AUTO ) )
                          .arg( recCommand->getValueAt( SPXCmdParam::SETPOINT_VALUE ) ) );
           disconnectSlots( SIGNALS_SETPOINT );
+          // config speichern
+          spxConfig->setSetpointAuto( static_cast< DeviceSetpointAuto >( recCommand->getValueAt( SPXCmdParam::SETPOINT_AUTO ) ) );
+          spxConfig->setSetpointValue( static_cast< DeviceSetpointValue >( recCommand->getValueAt( SPXCmdParam::SETPOINT_VALUE ) ) );
+          // GUI machen
           switch ( recCommand->getValueAt( SPXCmdParam::SETPOINT_AUTO ) )
           {
             // autosetpoint bei Tiefe....
@@ -632,6 +636,12 @@ namespace spx
                          .arg( recCommand->getValueAt( SPXCmdParam::DISPLAY_BRIGHTNESS ) )
                          .arg( recCommand->getValueAt( SPXCmdParam::DISPLAY_ORIENT ) ) );
           disconnectSlots( SIGNALS_DISPLAY );
+          // config machen
+          spxConfig->setDisplayBrightness(
+              static_cast< DisplayBrightness >( recCommand->getValueAt( SPXCmdParam::DISPLAY_BRIGHTNESS ) ) );
+          spxConfig->setDisplayOrientation(
+              static_cast< DisplayOrientation >( recCommand->getValueAt( SPXCmdParam::DISPLAY_ORIENT ) ) );
+          // GUI
           if ( spxConfig->getIsNewerDisplayBrightness() )
           {
             switch ( recCommand->getValueAt( SPXCmdParam::DISPLAY_BRIGHTNESS ) )
@@ -669,6 +679,16 @@ namespace spx
                 ui->displayBrightnessComboBox->setCurrentIndex( 2 );
                 break;
             }
+          }
+          switch ( recCommand->getValueAt( SPXCmdParam::DISPLAY_ORIENT ) )
+          {
+            default:
+            case 0:
+              ui->displayOrientationComboBox->setCurrentIndex( 0 );
+              break;
+            case 1:
+              ui->displayOrientationComboBox->setCurrentIndex( 1 );
+              break;
           }
           spxConfig->freezeConfigs( SPX42ConfigClass::CFCLASS_DISPLAY );
           connectSlots( SIGNALS_DISPLAY );

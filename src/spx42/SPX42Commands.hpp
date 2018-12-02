@@ -64,6 +64,8 @@ namespace spx
     SendListEntry sendDecoParams( SPX42Config &cfg );
     //! sende Kommando zu setzten der Setpoints
     SendListEntry sendSetpointParams( SPX42Config &cfg );
+    //! sende Kommando zu setzten der Displayeinstellungen
+    SendListEntry sendDisplayParams( SPX42Config &cfg );
   };
 }
 #endif  // SPX42COMMANDS_HPP
