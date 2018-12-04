@@ -3,8 +3,12 @@
 
 #include <QBluetoothSocket>
 #include <QByteArray>
+#include <QList>
 #include <QQueue>
 #include <QRegExp>
+#include <QStringList>
+#include <QThread>
+#include <QTime>
 #include <QTimer>
 #include <memory>
 #include "bluetooth/SPX42BtDevicesManager.hpp"
@@ -16,7 +20,10 @@
 
 namespace spx
 {
-  constexpr int SEND_TIMERVAL = 90;
+  constexpr int SEND_TIMERVAL = 200;
+
+  class SPX42RemotBtDevice;
+
   // eine lesbarmachung
   using spSingleCommand = std::shared_ptr< SPX42SingleCommand >;
 
@@ -36,7 +43,7 @@ namespace spx
     private:
     std::shared_ptr< Logger > lg;         //! Zeiger auf Loggerobjekt
     QTimer sendTimer;                     //! Timer zum versenden von Kommandos
-    QQueue< QByteArray > sendQueue;       //! Liste mit zu sendenden Telegrammen
+    QList< SendListEntry > sendList;      //! Liste mit zu sendenden Telegrammen
     QQueue< QByteArray > recQueue;        //! Liste mit empfangenen Telegrammen
     QQueue< spSingleCommand > rCmdQueue;  //! Decodierte Liste mit empfangenen Kommandos
     QBluetoothSocket *socket;             //! Zeiger auf einen Socket
@@ -51,9 +58,10 @@ namespace spx
     ~SPX42RemotBtDevice();
     void startConnection( const QString &mac );      //! starte eine BT Verbindung
     void endConnection( void );                      //! trenne die BT Verbindung
-    void sendCommand( const QByteArray &telegram );  //! sende ein Datagramm zum SPX42
+    void sendCommand( const SendListEntry &entry );  //! sende ein Datagramm zum SPX42
     SPX42ConnectStatus getConnectionStatus( void );  //! verbindungsstatus erfragen
     spSingleCommand getNextRecCommand( void );       //! nächtes Kommand holen, shared ptr zurück
+    QString getRemoteConnected( void );              //! mit wem bin ich verbunden
 
     signals:
     void onStateChangedSig( QBluetoothSocket::SocketState state );  //! Signal, wenn Onlinestatus sich ändert

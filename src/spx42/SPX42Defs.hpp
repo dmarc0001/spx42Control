@@ -7,6 +7,17 @@
 
 namespace spx
 {
+  namespace SPX42ConfigClass
+  {
+    constexpr quint8 CFCLASS_SPX{0x01};
+    constexpr quint8 CFCLASS_DECO{0x02};
+    constexpr quint8 CFCLASS_GASES{0x04};
+    constexpr quint8 CFCLASS_DISPLAY{0x08};
+    constexpr quint8 CFCLASS_UNITS{0x10};
+    constexpr quint8 CFCLASS_SETPOINT{0x20};
+    constexpr quint8 CFCLASS_INDIVIDUAL{0x40};
+    constexpr quint8 CFCLASS_ALL{0xff};
+  }
   //
   // Aufzählungen, einige sind eigentlich nur für die bessere Lesbarkeitdes Codes
   //
@@ -102,16 +113,16 @@ namespace spx
   };
   enum class DeviceWaterType : qint8
   {
-    FRESHWATER,
-    SALTWATER
+    SALTWATER,
+    FRESHWATER
   };
   enum class DeviceSetpointAuto : qint8
   {
+    AUTO_OFF,
     AUTO_06,
     AUTO_10,
     AUTO_15,
-    AUTO_20,
-    AUTO_OFF
+    AUTO_20
   };
   enum class DeviceSetpointValue : qint8
   {
@@ -155,7 +166,7 @@ namespace spx
     TEMPSTICK03
   };
 
-  // Declariere Typen für Gradienten
+  // Declariere Typen für Gradienten LOW,HIGH
   using DecoGradient = std::pair< qint8, qint8 >;
   using DecoGradientHash = QHash< int, DecoGradient >;
 
@@ -177,6 +188,7 @@ namespace spx
     void setLicType( const LicenseType &value );       //! Lizenztyp setzten
     IndividualLicense getLicInd() const;               //! erfrage Individual Lizenz
     void setLicInd( const IndividualLicense &value );  //! setzte Individual Lizenz
+    QByteArray serialize( void );                      //! serialisiere die Lizenz
 
     signals:
     // void licenseChangedPrivateSig( const SPX42License lic );  //! Signal das sich das geändert hat

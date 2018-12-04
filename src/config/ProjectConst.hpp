@@ -33,13 +33,14 @@ namespace spx
     //###########################################################################
     //#### Einfache Konstanten                                               ####
     //###########################################################################
-    static constexpr int BUFFER_LEN = 1200;        //! Empfangspufferlänge
-    static constexpr int CXN_SUCCESS = 0;          //! Winsock OK Value
-    static constexpr int CXN_ERROR = 1;            //! Winsock ERROR Value
-    static constexpr int SOCK_BUFFLEN = 128;       //! WINSOCK Pufferlänge (fuer BT)
-    static const QString RFCommUUID;               //! RFComm UUID bei den SPX-Services
-    static const QBluetoothUuid SPX42ServiceUuid;  //! die SPX42 Service UUID
-    static const QString searchedServiceRegex;     //! Suchausdruck für SPX42 Service
+    static constexpr int BUFFER_LEN{1200};          //! Empfangspufferlänge
+    static constexpr int CXN_SUCCESS{0};            //! Winsock OK Value
+    static constexpr int CXN_ERROR{1};              //! Winsock ERROR Value
+    static constexpr int SOCK_BUFFLEN{128};         //! WINSOCK Pufferlänge (fuer BT)
+    static constexpr int CONFIG_WRITE_DELAY{3500};  //! waretn bis Konfiguration zum SPX geschrieben wird
+    static const QString RFCommUUID;                //! RFComm UUID bei den SPX-Services
+    static const QBluetoothUuid SPX42ServiceUuid;   //! die SPX42 Service UUID
+    static const QString searchedServiceRegex;      //! Suchausdruck für SPX42 Service
 
     //###########################################################################
     // Defaults für DEKOMPRESSIONS Einstellungen                             ####

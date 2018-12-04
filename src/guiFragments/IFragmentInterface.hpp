@@ -32,7 +32,7 @@ namespace spx
     signals:
     virtual void onWarningMessageSig( const QString &msg, bool asPopup = false ) = 0;  //! eine Warnmeldung soll das Main darstellen
     virtual void onErrorgMessageSig( const QString &msg, bool asPopup = false ) = 0;   //! eine Warnmeldung soll das Main darstellen
-    virtual void onAkkuValueChangedSlot( double aValue ) = 0;  //! signalisiert, dass der Akku eine Spannung hat
+    virtual void onAkkuValueChangedSig( double aValue ) = 0;  //! signalisiert, dass der Akku eine Spannung hat
 
     private slots:
     virtual void onCommandRecivedSlot( void ) = 0;  //! wenn ein Kommando empfangen wurde

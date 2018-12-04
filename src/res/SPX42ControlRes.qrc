@@ -34,6 +34,10 @@
         <file>ic_print_blue.png</file>
         <file>ic_settings_applications_blue.png</file>
         <file>ic_settings_blue.png</file>
+        <file alias="ic_spx_buffering">ic_spx_buffering.png</file>
+        <file alias="ic_spx_error">ic_spx_error.png</file>
+        <file alias="ic_spx_offline">ic_spx_offline.png</file>
+        <file alias="ic_spx_online">ic_spx_online.png</file>
     </qresource>
     <qresource prefix="/images">
         <file>SPX42.jpg</file>
@@ -42,7 +46,7 @@
         <file>logo_header450.png</file>
         <file>ic_bluetooth_black_24dp_1x.png</file>
     </qresource>
-    <qresource prefix="/" lang="de"/>
+    <qresource lang="de" prefix="/"/>
     <qresource prefix="/scanner">
         <file alias="bluetooth_black_normal">ic_bluetooth_black_24dp_1x.png</file>
         <file alias="bluetooth_black_gross">ic_bluetooth_black_24dp_2x.png</file>

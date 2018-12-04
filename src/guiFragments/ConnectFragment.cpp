@@ -27,6 +27,13 @@ namespace spx
     // merke mir ob das Programm das zum ersten mal macht...
     static bool isFirstStart{true};
     lg->debug( "ConnectFragment::ConnectFragment..." );
+    //
+    // Fragmenttitel Musterstring erzeugen
+    //
+    fragmentTitlePattern = tr( "CONNECTSTATE SPX42 Serial [%1] LIC: %2" );
+    //
+    // GUI machen
+    //
     ui->setupUi( this );
     ui->connectProgressBar->setVisible( false );
     ui->editAliasesTableView->setVisible( false );
@@ -34,7 +41,7 @@ namespace spx
     // geräte einlesen und combo liste füllen
     // hashliste mac, <name,alias>
     //
-    devices = database->getDeviceAliasHash();
+    spxDevicesAliasHash = database->getDeviceAliasHash();
     //
     onConfLicChangedSlot();
     //
@@ -53,10 +60,6 @@ namespace spx
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onSocketErrorSig, this, &ConnectFragment::onSocketErrorSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onCommandRecivedSig, this, &ConnectFragment::onCommandRecivedSlot );
     //
-    // Fragmenttitel Musterstring erzeugen
-    //
-    fragmentTitlePattern = tr( "CONNECTSTATE SPX42 Serial [%1] LIC: %2" );
-    //
     // setzte den Connectionsstatus
     //
     setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
@@ -68,10 +71,7 @@ namespace spx
     }
     else
     {
-      for ( auto deviceInfo : ConnectFragment::spx42Devices )
-      {
-        addDeviceComboEntry( deviceInfo );
-      }
+      fillDeviceCombo();
     }
   }
 
@@ -103,6 +103,40 @@ namespace spx
   {
     setGuiConnected( ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED ) ||
                      remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTING );
+    //
+    // gibt es den verbundenen Computer schon in der Datenbank
+    //
+    QString addr( remoteSPX42->getRemoteConnected() );
+    if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
+    {
+      //
+      // wenn der alias nicht in der Liste ist, in die Datenbank damit
+      //
+      if ( !spxDevicesAliasHash.contains( addr ) )
+      {
+        lg->debug( QString( "ConnectFragment::onOnlineStatusChangedSlot -> connected, add device %1 in database" ).arg( addr ) );
+        auto descr = ConnectFragment::spx42Devices.value( addr );
+        //
+        // und rein damit
+        //
+        database->addAlias( descr.first, descr.second, descr.second, true );
+        //
+        // ein kleiner einzeiler zum update der Device-Box
+        //
+        QTimer::singleShot( 50, [this] {
+          this->spxDevicesAliasHash = this->database->getDeviceAliasHash();
+          fillDeviceCombo();
+        } );
+      }
+      else
+      {
+        //
+        // der ist schon in der Datenbank
+        // setzte als letzte Verbindung
+        //
+        database->setLastConnected( addr );
+      }
+    }
     // TODO: evtl mehr machen
   }
 
@@ -185,7 +219,8 @@ namespace spx
       //
       // jetzt das remote objekt arbeiten lassen
       //
-      discoverObj->stopDiscover();
+      // programm schmiert ab, ursache noch nicht geklärt
+      // discoverObj->stopDiscover();
       remoteSPX42->endConnection();
       remoteSPX42->startConnection( remoteMac );
     }
@@ -234,6 +269,7 @@ namespace spx
     // geprüft hat
     //
     addDeviceComboEntry( deviceInfo );
+    trySetIndex();
   }
 
   /**
@@ -243,7 +279,7 @@ namespace spx
   {
     lg->debug( "ConnectFragment::onDiscoverScanFinishedSlot-> discovering finished..." );
     ui->discoverPushButton->setEnabled( true );
-    // TODO: massnahmen ergreifen
+    trySetIndex();
   }
 
   /**
@@ -283,7 +319,7 @@ namespace spx
           // PX => Angabe HEX in Milivolt vom Akku
           lg->debug( "ConnectFragment::onDatagramRecivedSlot -> alive/acku..." );
           ackuVal = ( recCommand->getValueAt( SPXCmdParam::ALIVE_POWER ) / 100.0 );
-          emit onAkkuValueChangedSlot( ackuVal );
+          emit onAkkuValueChangedSig( ackuVal );
           break;
         case SPX42CommandDef::SPX_APPLICATION_ID:
           // Kommando APPLICATION_ID (VERSION)
@@ -361,14 +397,13 @@ namespace spx
     //
     QString title = addr;  // TODO: aus den Aliasen was bauen
 
-    if ( devices.contains( addr ) )
+    if ( spxDevicesAliasHash.contains( addr ) )
     {
       //
       // ein alias ist vorhanden!
-      // hash: <MAC<NAME,ALIAS>>
       //
-      auto alp = devices.take( addr );
-      title = QString( "%1 (%2)" ).arg( alp.second ).arg( alp.first );
+      auto localSpxDevice = spxDevicesAliasHash.value( addr );
+      title = QString( "%1 (%2)" ).arg( localSpxDevice.alias ).arg( localSpxDevice.name );
     }
     else
     {
@@ -378,5 +413,56 @@ namespace spx
       title = QString( "%1 (%2)" ).arg( deviceInfo.second ).arg( addr );
     }
     ui->deviceComboBox->addItem( title, addr );
+  }
+
+  void ConnectFragment::fillDeviceCombo()
+  {
+    //
+    ui->deviceComboBox->clear();
+    for ( auto deviceInfo : ConnectFragment::spx42Devices )
+    {
+      addDeviceComboEntry( deviceInfo );
+    }
+    trySetIndex();
+  }
+
+  void ConnectFragment::trySetIndex()
+  {
+    //
+    // wer ist verbunden
+    //
+    QString mac;
+    lg->debug( "ConnectFragment::trySetIndex..." );
+    mac = remoteSPX42->getRemoteConnected();
+    if ( mac.isEmpty() )
+    {
+      //
+      // nichts verbunden
+      // gucke ob ich das zulettz verbundene Gerät finde
+      //
+      lg->debug( "ConnectFragment::trySetIndex -> not connected, try last connected..." );
+      mac = database->getLastConnected();
+    }
+    if ( !mac.isEmpty() )
+    {
+      lg->debug( QString( "ConnectFragment::trySetIndex -> last connected was: " ).append( mac ) );
+      //
+      // verbunden oder nicht, versuche etwas zu selektiern
+      //
+      // suche nach diesem Eintrag...
+      //
+      int index = ui->deviceComboBox->findData( mac );
+      if ( index != ui->deviceComboBox->currentIndex() && index != -1 )
+      {
+        lg->debug( QString( "ConnectFragment::trySetIndex -> found at idx %1, set to idx" ).arg( index ) );
+        //
+        // -1 for not found
+        // und der index ist nicht schon auf diesen Wert gesetzt
+        // also, wenn gefunden, selektiere diesen Eintrag
+        //
+        ui->deviceComboBox->setCurrentIndex( index );
+      }
+    }
+    lg->debug( "ConnectFragment::trySetIndex...OK" );
   }
 }  // namespace spx

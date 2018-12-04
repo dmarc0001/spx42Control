@@ -7,6 +7,7 @@
 #include <QDebug>
 #include <QFont>
 #include <QFontDatabase>
+#include <QIcon>
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QPalette>
@@ -23,7 +24,6 @@
 #include "guiFragments/GasFragment.hpp"
 #include "guiFragments/LogFragment.hpp"
 #include "logging/Logger.hpp"
-#include "spx42/SPX42Commands.hpp"
 #include "spx42/SPX42Config.hpp"
 #include "utils/AboutDialog.hpp"
 
@@ -41,26 +41,30 @@ namespace spx
   {
     private:
     Q_OBJECT
+    static const CmdMarker marker;                      //! zur initialisierung von Einträgen
+    static const QByteArray ar;                         //! zur initialisierung von Einträgen
     std::unique_ptr< Ui::SPX42ControlMainWin > ui;      //! das GUI Objekt
     std::shared_ptr< Logger > lg;                       //! Loggerobjekt für Logs
     const std::shared_ptr< SPX42Config > spx42Config;   //! Konfiguration des verbundenen SPX42
     std::shared_ptr< SPX42RemotBtDevice > remoteSPX42;  //! Objekt des entfernten SPX42 (verbunden oder nicht verbunden)
     std::shared_ptr< SPX42Database > spx42Database;     //! Datenbankobjekt zur Speicherung der SPX Daten/Einstellungen
-    std::shared_ptr< SPX42Commands > spx42Commands;     //! erzeugen von Kommandotelegrams für den SPX42
     std::unique_ptr< QLabel > onlineLabel;              //! Label signalisiert online oder offline
     std::unique_ptr< QLabel > akkuLabel;                //! Label signalisiert online oder offline
+    std::unique_ptr< QLabel > waitForWriteLabel;        //! Label zeigt an, wenn noch Daten zum Schreiben offen sind
     QStringList tabTitle;                               //! Tab Titel (nicht statisch, das Objekt gibts eh nur einmal)
     AppConfigClass cf;                                  //! Konfiguration aus Datei
     QTimer watchdog;                                    //! Wachhund für Timeouts
-    ApplicationStat currentStatus;                      //! welchen Status hat die App?
-    qint16 watchdogCounter;                             //! Zeitspanne zum Timeout
-    qint16 zyclusCounter;                               //! zählt die Timerzyklen
-    ApplicationTab currentTab;                          //! welcher Tab ist aktiv?
-    QPalette offlinePalette;                            //! Pallette für offline Schrift
-    QPalette onlinePalette;                             //! Pallette für offline Schrift
-    QPalette busyPalette;                               //! Pallette für "offline Schrift"ist beschäftigt"
-    QPalette connectingPalette;                         //! Pallette für verbinden
-    QPalette errorPalette;                              //! Pallette für den Fehlerfall
+    QTimer configWriteTimer;        //! Nach Änderungen der Konfiguration zurück zum SPX schreiben (etwas verzögert)
+    QStringList spx42GasHashes;     //! Hashwerte der Gaseinstellungen (acht Stück)
+    ApplicationStat currentStatus;  //! welchen Status hat die App?
+    qint16 watchdogCounter;         //! Zeitspanne zum Timeout
+    qint16 zyclusCounter;           //! zählt die Timerzyklen
+    ApplicationTab currentTab;      //! welcher Tab ist aktiv?
+    QPalette offlinePalette;        //! Pallette für offline Schrift
+    QPalette onlinePalette;         //! Pallette für offline Schrift
+    QPalette busyPalette;           //! Pallette für "offline Schrift"ist beschäftigt"
+    QPalette connectingPalette;     //! Pallette für verbinden
+    QPalette errorPalette;          //! Pallette für den Fehlerfall
 
     public:
     explicit SPX42ControlMainWin( QWidget *parent = nullptr );
@@ -87,6 +91,8 @@ namespace spx
     void onOnlineStatusChangedSlot( bool isOnline );                        //! Wenn sich der Onlinestatus des SPX42 ändert
     void onWarningMessageSlot( const QString &msg, bool asPopup = false );  //! eine Warnmeldung soll das Main darstellen
     void onErrorgMessageSlot( const QString &msg, bool asPopup = false );   //! eine Warnmeldung soll das Main darstellen
+    void onConfigWasChangedSlot( void );                                    //! Signal empfangen, dass config geschrieben wurde
+    void onConfigWriteBackSlot( void );                                     //! timer wenn configs zurück geschrieben werden müssen
   };
 }  // namespace spx42
 

@@ -1,9 +1,11 @@
 ﻿#ifndef SPX42CONFIG_HPP
 #define SPX42CONFIG_HPP
 
+#include <QCryptographicHash>
 #include <QHash>
 #include <QObject>
 #include <QString>
+#include <QStringList>
 #include <QtGlobal>
 
 #include "SPX42Gas.hpp"
@@ -20,13 +22,13 @@ namespace spx
     bool isValid;                                       //! Ist das Objekt gültig?
     SPX42FirmwareVersions spxFirmwareVersion;           //! welche Firmwareversion?
     SPX42License spxLicense;                            //! SPX42 Lizenz
-    QString serialNumber;                               //! Seriennummer des aktuellen SPX42
+    QString spxSerialNumber;                            //! Seriennummer des aktuellen SPX42
     SPX42Gas gasList[ 8 ];                              //! Gasliste des aktuellen SPX42
-    DecompressionPreset currentPreset;                  //! Aktueller Typ der Dekompressionsgradienten
+    DecompressionPreset decoCurrentPreset;              //! Aktueller Typ der Dekompressionsgradienten
     DecoGradientHash decoPresets;                       //! Hashliste der DECO-Presets (incl. CUSTOM == variabel)
     DecompressionDynamicGradient decoDynamicGradient;   //! dynamische Gradienten erlaubt
     DecompressionDeepstops decoDeepstopsEnabled;        //! sind deepstops erlaubt/an
-    DecoLastStop lastDecoStop;                          //! wo ist der letzte DECO Stop (3 oder 6 Meter)
+    DecoLastStop decoLastStop;                          //! wo ist der letzte DECO Stop (3 oder 6 Meter)
     DisplayBrightness displayBrightness;                //! Display Helligkeit
     DisplayOrientation displayOrientation;              //! Ausrichtung des Displays
     DeviceTemperaturUnit unitTemperature;               //! Einheit der Tempteratur
@@ -47,18 +49,34 @@ namespace spx
     bool isOldParamSorting;                             //! alte Versionen haben andre Reihenfolge der Parameter
     bool isNewerDisplayBrightness;                      //! neue Version Helligkeit
     bool isSixMetersAutoSetpoint;                       //! Autosetpoint alt deact, 6, 10, 15, 20 NEU 6, 10, 15
+    QCryptographicHash qhash;                           //! hasobjekt erzeugen
+    QString currentGasHashes[ 8 ];                      //! Hashes für gesetzte Gaase
+    QString currentSpxHash;                             //! Hash über Hauptwerte
+    QString currentDecoHash;                            //! Hash über Dekompressionswerte
+    QString currentDisplayHash;                         //! Hashwert über Displaywerte
+    QString currentUnitHash;                            //! Hash über unit einstellungen
+    QString currentSetpointHash;                        //! Hash über setpoint Einstellungen
+    QString currentIndividualHash;                      //! Hash über Inidividual einstellungen
+    QString savedGasHashes[ 8 ];                        //! Hashes für gesetzte Gaase
+    QString savedSpxHash;                               //! Hash über Hauptwerte
+    QString savedDecoHash;                              //! Hash über Dekompressionswerte
+    QString savedDisplayHash;                           //! Hashwert über Displaywerte
+    QString savedUnitHash;                              //! Hash über unit einstellungen
+    QString savedSetpointHash;                          //! Hash über setpoint Einstellungen
+    QString savedIndividualHash;                        //! Hash über Inidividual einstellungen
 
     public:
-    SPX42Config();                                                    //! Der Konstruktor
-    SPX42License &getLicense( void );                                 //! Lizenz des aktuellen SPX42
-    void setLicense( const LicenseType value );                       //! Lizenz des aktuellen SPX42 merken
-    void setLicense( const IndividualLicense value );                 //! Lizenz des aktuellen SPX42 merken
-    void setLicense( const QByteArray &lic, const QByteArray &ind );  //! Lizenz aus dem Kommando vom SPX lesen
-    QString getLicName( void ) const;                                 //! Textliche Darstellung der Lizenz
-    SPX42Gas &getGasAt( int num );                                    //! Gib ein Gas mit der Nummer num vom SPX42 zurück
-    void reset( void );                                               //! Resetiere das Objekt
-    QString getSerialNumber( void ) const;                            //! Seriennummer des aktuellen SPX42 zurückgeben
-    void setSerialNumber( const QString &serial );                    //! Seriennumemr des aktuellen SPX42 speichern
+    SPX42Config();                                                       //! Der Konstruktor
+    SPX42License &getLicense( void );                                    //! Lizenz des aktuellen SPX42
+    void setLicense( const LicenseType value );                          //! Lizenz des aktuellen SPX42 merken
+    void setLicense( const IndividualLicense value );                    //! Lizenz des aktuellen SPX42 merken
+    void setLicense( const QByteArray &lic, const QByteArray &ind );     //! Lizenz aus dem Kommando vom SPX lesen
+    QString getLicName( void ) const;                                    //! Textliche Darstellung der Lizenz
+    SPX42Gas &getGasAt( int num );                                       //! Gib ein Gas mit der Nummer num vom SPX42 zurück
+    void setGasAt( int num, SPX42Gas gas );                              //! setzte Gas mit der Nummer xxx in die Config
+    void resetConfig( quint8 classes = SPX42ConfigClass::CFCLASS_ALL );  //! Resetiere das Objekt
+    QString getSerialNumber( void ) const;                               //! Seriennummer des aktuellen SPX42 zurückgeben
+    void setSerialNumber( const QString &serial );                       //! Seriennumemr des aktuellen SPX42 speichern
     void setCurrentPreset( DecompressionPreset presetType,
                            qint8 low = 0,
                            qint8 high = 0 );  //! Aktuelle Gradienteneinstellungen merken
@@ -111,13 +129,24 @@ namespace spx
     bool getIsOldParamSorting() const;                                         //! alte Parameterordnung?
     bool getIsNewerDisplayBrightness() const;                                  //! neuere Helligkeitsabstufungen
     bool getIsSixMetersAutoSetpoint() const;                                   //! fünf oder sechs meter autosetpoint
+    void freezeConfigs( quint8 changed = SPX42ConfigClass::CFCLASS_ALL );      //! setzte die aktuelle Konfiguration als "gesichert"
+    quint8 getChangedConfig( void );                                           //! was ist geändert?
+    QString geteUnitHashes( void );
+
+    private:
+    QString makeSpxHash( void );         //! Hash über die globalen Einstellungen
+    QString makeDecoHash( void );        //! Hash über Dekompressionseinstellungen
+    QString makeDisplayHash( void );     //! Hash über displayvariable
+    QString makeUnitsHash( void );       //! Hash über einheiten Einstellungen
+    QString makeSetpointHash( void );    //! Hash über setpointeinstellungen
+    QString makeIndividualHash( void );  //! Hash über individual Einstellungen
 
     private slots:
     // void licenseChangedPrivateSlot( SPX42License& lic );
 
     signals:
-    void licenseChangedSig( const SPX42License &lic );           //! Signal wenn die lizenz verändert wird
-    void serialNumberChangedSig( const QString &serialNumber );  //! Signal wenn die Seriennummer neu gesetzt wird
+    void licenseChangedSig( const SPX42License &lic );              //! Signal wenn die lizenz verändert wird
+    void serialNumberChangedSig( const QString &spxSerialNumber );  //! Signal wenn die Seriennummer neu gesetzt wird
     // DEKOMPRESSIONSEINSTELLUNGEN
     void decoGradientChangedSig(
         const DecoGradient &preset );  //! Signal wird gesendet wenn Gradienten verändert sind ( nutze: Qt::QueuedConnection )

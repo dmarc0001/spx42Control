@@ -1,5 +1,7 @@
 ﻿#include "SPX42Config.hpp"
 
+// TODO: hashes wieder nur bei bedarf machen
+
 namespace spx
 {
   /**
@@ -10,11 +12,11 @@ namespace spx
       , sendSignals( true )
       , isValid( false )
       , spxFirmwareVersion( SPX42FirmwareVersions::FIRMWARE_UNKNOWN )
-      , serialNumber()
-      , currentPreset()
+      , spxSerialNumber()
+      , decoCurrentPreset()
       , decoDynamicGradient()
       , decoDeepstopsEnabled()
-      , lastDecoStop()
+      , decoLastStop()
       , displayBrightness()
       , displayOrientation()
       , unitTemperature()
@@ -35,8 +37,9 @@ namespace spx
       , isOldParamSorting( false )
       , isNewerDisplayBrightness( false )
       , isSixMetersAutoSetpoint( false )
+      , qhash( QCryptographicHash::Md5 )
   {
-    reset();
+    resetConfig( SPX42ConfigClass::CFCLASS_ALL );
     // connect( &spxLicense, &SPX42License::licenseChangedPrivateSig, this, &SPX42Config::licenseChangedPrivateSlot );
     //
     // DECO Presets füllen
@@ -123,6 +126,7 @@ namespace spx
         isSixMetersAutoSetpoint = true;
         break;
     }
+    currentSpxHash = makeSpxHash();
   }
 
   /**
@@ -154,6 +158,7 @@ namespace spx
       setSpxFirmwareVersion( SPX42FirmwareVersions::FIRMWARE_2_7x );
     else
       setSpxFirmwareVersion( SPX42FirmwareVersions::FIRMWARE_UNKNOWN );
+    currentSpxHash = makeSpxHash();
   }
 
   /**
@@ -164,6 +169,7 @@ namespace spx
   {
     QString versionString( value );
     setSpxFirmwareVersion( versionString );
+    currentSpxHash = makeSpxHash();
   }
 
   /**
@@ -189,6 +195,8 @@ namespace spx
         emit licenseChangedSig( spxLicense );
       }
     }
+    // immer setzten
+    currentSpxHash = makeSpxHash();
   }
 
   /**
@@ -205,6 +213,8 @@ namespace spx
         emit licenseChangedSig( spxLicense );
       }
     }
+    // immer setzten
+    currentSpxHash = makeSpxHash();
   }
 
   /**
@@ -254,6 +264,8 @@ namespace spx
         setLicense( LicenseType::LIC_MIL );
         break;
     }
+    // immer setzten
+    currentSpxHash = makeSpxHash();
   }
 
   /**
@@ -295,35 +307,93 @@ namespace spx
     return ( gasList[ num ] );
   }
 
+  void SPX42Config::setGasAt( int num, SPX42Gas gas )
+  {
+    if ( num < 0 || num > 7 )
+    {
+      return;
+    }
+    //
+    // Gas setzten und hash berechnen
+    //
+    gasList[ num ] = gas;
+    QByteArray serialized = gasList[ num ].serialize();
+    qhash.reset();
+    qhash.addData( serialized );
+    currentGasHashes[ num ] = qhash.result();
+  }
+
   /**
    * @brief Setze das Objekt auf einen definierten Grundzustand
    */
-  void SPX42Config::reset()
+  void SPX42Config::resetConfig( quint8 classes )
   {
     isValid = false;
-    spxLicense.setLicType( LicenseType::LIC_NITROX );
-    spxLicense.setLicInd( IndividualLicense::LIC_NONE );
-    serialNumber = "0000000000";
-    for ( int i = 0; i < 8; i++ )
+    if ( classes & SPX42ConfigClass::CFCLASS_SPX )
     {
-      gasList[ 0 ].reset();
+      spxLicense.setLicType( LicenseType::LIC_NITROX );
+      spxLicense.setLicInd( IndividualLicense::LIC_NONE );
+      spxSerialNumber = "0000000000";
+      hasFahrenheidBug = false;
+      canSetDate = false;
+      hasSixValuesIndividual = true;
+      isFirmwareSupported = false;
+      isOldParamSorting = false;
+      isNewerDisplayBrightness = true;
+      isSixMetersAutoSetpoint = true;
+      currentSpxHash.clear();
+      savedSpxHash.clear();
     }
-    currentPreset = DecompressionPreset::DECO_KEY_CONSERVATIVE;
-    decoDeepstopsEnabled = DecompressionDeepstops::DEEPSTOPS_ENABLED;
-    decoDynamicGradient = DecompressionDynamicGradient::DYNAMIC_GRADIENT_ON;
-    displayBrightness = DisplayBrightness::BRIGHT_100;
-    displayOrientation = DisplayOrientation::LANDSCAPE;
-    unitTemperature = DeviceTemperaturUnit::CELSIUS;
-    unitLength = DeviceLenghtUnit::METRIC;
-    unitWaterType = DeviceWaterType::FRESHWATER;
-    setpointAuto = DeviceSetpointAuto::AUTO_06;
-    setpointValue = DeviceSetpointValue::SETPOINT_10;
-    individualSensorsOn = DeviceIndividualSensors::SENSORS_ON;
-    individualPSCROn = DeviceIndividualPSCR::PSCR_OFF;
-    individualSensorCount = DeviceIndividualSensorCount::SENSOR_COUNT_03;
-    individualAcustic = DeviceIndividualAcoustic::ACOUSTIC_ON;
-    individualLogInterval = DeviceIndividualLogInterval::INTERVAL_20;
-    individualTempStick = DeviceIndividualTempstick::TEMPSTICK01;
+    if ( classes & SPX42ConfigClass::CFCLASS_GASES )
+    {
+      for ( int i = 0; i < 8; i++ )
+      {
+        gasList[ i ].reset();
+        currentGasHashes[ i ].clear();
+        savedGasHashes[ i ].clear();
+      }
+    }
+    if ( classes & SPX42ConfigClass::CFCLASS_DECO )
+    {
+      decoCurrentPreset = DecompressionPreset::DECO_KEY_CONSERVATIVE;
+      decoDeepstopsEnabled = DecompressionDeepstops::DEEPSTOPS_ENABLED;
+      decoDynamicGradient = DecompressionDynamicGradient::DYNAMIC_GRADIENT_ON;
+      currentDecoHash.clear();
+      savedDecoHash.clear();
+    }
+    if ( classes & SPX42ConfigClass::CFCLASS_DISPLAY )
+    {
+      displayBrightness = DisplayBrightness::BRIGHT_100;
+      displayOrientation = DisplayOrientation::LANDSCAPE;
+      currentDisplayHash.clear();
+      savedDisplayHash.clear();
+    }
+    if ( classes & SPX42ConfigClass::CFCLASS_UNITS )
+    {
+      unitTemperature = DeviceTemperaturUnit::CELSIUS;
+      unitLength = DeviceLenghtUnit::METRIC;
+      unitWaterType = DeviceWaterType::FRESHWATER;
+      currentUnitHash.clear();
+      savedUnitHash.clear();
+    }
+    if ( classes & SPX42ConfigClass::CFCLASS_SETPOINT )
+    {
+      setpointAuto = DeviceSetpointAuto::AUTO_06;
+      setpointValue = DeviceSetpointValue::SETPOINT_10;
+      currentSetpointHash.clear();
+      savedSetpointHash.clear();
+    }
+    if ( classes & SPX42ConfigClass::CFCLASS_INDIVIDUAL )
+    {
+      individualSensorsOn = DeviceIndividualSensors::SENSORS_ON;
+      individualPSCROn = DeviceIndividualPSCR::PSCR_OFF;
+      individualSensorCount = DeviceIndividualSensorCount::SENSOR_COUNT_03;
+      individualAcustic = DeviceIndividualAcoustic::ACOUSTIC_ON;
+      individualLogInterval = DeviceIndividualLogInterval::INTERVAL_20;
+      individualTempStick = DeviceIndividualTempstick::TEMPSTICK01;
+      currentIndividualHash.clear();
+      savedIndividualHash.clear();
+    }
     emit licenseChangedSig( spxLicense );
   }
 
@@ -333,7 +403,9 @@ namespace spx
    */
   QString SPX42Config::getSerialNumber() const
   {
-    return ( serialNumber );
+    if ( spxSerialNumber.isEmpty() || spxSerialNumber.isNull() )
+      return ( "000000" );
+    return ( spxSerialNumber );
   }
 
   /**
@@ -342,14 +414,16 @@ namespace spx
    */
   void SPX42Config::setSerialNumber( const QString &serial )
   {
-    if ( serialNumber != serial )
+    if ( spxSerialNumber != serial )
     {
-      serialNumber = serial;
+      spxSerialNumber = serial;
       if ( sendSignals )
       {
-        emit serialNumberChangedSig( serialNumber );
+        emit serialNumberChangedSig( spxSerialNumber );
       }
     }
+    // immer setzten
+    currentSpxHash = makeSpxHash();
   }
 
   /**
@@ -360,33 +434,7 @@ namespace spx
    */
   void SPX42Config::setCurrentPreset( DecompressionPreset presetType, qint8 low, qint8 high )
   {
-    //
-    // wenn CUSTOM gegeben ist, dann die Werte eintragen
-    //
-    if ( presetType == DecompressionPreset::DECO_KEY_CUSTOM )
-    {
-      //
-      // insert macht ein update....
-      //
-      decoPresets.insert( static_cast< int >( DecompressionPreset::DECO_KEY_CUSTOM ), DecoGradient( low, high ) );
-      if ( sendSignals )
-      {
-        emit decoGradientChangedSig( getCurrentDecoGradientValue() );
-      }
-      return;
-    }
-    //
-    // oder wenn sich der Typ geändert hat
-    //
-    if ( currentPreset != presetType )
-    {
-      currentPreset = presetType;
-      if ( sendSignals )
-      {
-        emit decoGradientChangedSig( getCurrentDecoGradientValue() );
-      }
-    }
-    // oder nix geändert, nix machen
+    setCurrentPreset( presetType, DecoGradient( low, high ) );
   }
 
   /**
@@ -404,25 +452,26 @@ namespace spx
       //
       // insert macht ein update....
       //
-      decoPresets.insert( static_cast< int >( DecompressionPreset::DECO_KEY_CUSTOM ), dGradient );
+      decoPresets.insert( static_cast< int >( DecompressionPreset::DECO_KEY_CUSTOM ),
+                          DecoGradient( dGradient.first, dGradient.second ) );
+      decoCurrentPreset = presetType;
       if ( sendSignals )
       {
         emit decoGradientChangedSig( getCurrentDecoGradientValue() );
       }
-      return;
     }
-    //
-    // oder wenn sich der Typ geändert hat
-    //
-    if ( currentPreset != presetType )
+    else
     {
-      currentPreset = presetType;
+      //
+      // ein PRESET ausgewählt werte verwerfen...
+      //
+      decoCurrentPreset = presetType;
       if ( sendSignals )
       {
         emit decoGradientChangedSig( getCurrentDecoGradientValue() );
       }
     }
-    // oder nix geändert, nix machen
+    currentDecoHash = makeDecoHash();
   }
 
   /**
@@ -431,7 +480,7 @@ namespace spx
    */
   DecompressionPreset SPX42Config::getCurrentDecoGradientPresetType()
   {
-    return ( currentPreset );
+    return ( decoCurrentPreset );
   }
 
   /**
@@ -440,7 +489,7 @@ namespace spx
    */
   DecoGradient SPX42Config::getCurrentDecoGradientValue() const
   {
-    return ( decoPresets.value( static_cast< int >( currentPreset ) ) );
+    return ( decoPresets.value( static_cast< int >( decoCurrentPreset ) ) );
   }
 
   /**
@@ -475,21 +524,6 @@ namespace spx
   }
 
   /**
-   * @brief Slot, wenn sich die Lizenz geändert hat
-   */
-  // void SPX42Config::licenseChangedPrivateSlot(SPX42License &lic)
-  //{
-  //  if( spxLicense != lic )
-  //  {
-  //    spxLicense = lic;
-  //    if( sendSignals )
-  //    {
-  //      emit licenseChangedSig( spxLicense );
-  //    }
-  //  }
-  //}
-
-  /**
    * @brief gib aktuelle dynamische Gradienten zurück
    * @return Gradientenobjekt
    */
@@ -512,6 +546,7 @@ namespace spx
         emit decoDynamicGradientStateChangedSig( decoDynamicGradient );
       }
     }
+    currentDecoHash = makeDecoHash();
   }
 
   /**
@@ -537,6 +572,7 @@ namespace spx
         emit decoDeepStopsEnabledSig( decoDeepstopsEnabled );
       }
     }
+    currentDecoHash = makeDecoHash();
   }
 
   /**
@@ -545,7 +581,7 @@ namespace spx
    */
   DecoLastStop SPX42Config::getLastDecoStop( void )
   {
-    return ( lastDecoStop );
+    return ( decoLastStop );
   }
 
   /**
@@ -554,14 +590,15 @@ namespace spx
    */
   void SPX42Config::setLastDecoStop( DecoLastStop lastStop )
   {
-    if ( lastStop != lastDecoStop )
+    if ( lastStop != decoLastStop )
     {
-      lastDecoStop = lastStop;
+      decoLastStop = lastStop;
       if ( sendSignals )
       {
-        emit decoLastStopSig( lastDecoStop );
+        emit decoLastStopSig( decoLastStop );
       }
     }
+    currentDecoHash = makeDecoHash();
   }
 
   /**
@@ -587,6 +624,7 @@ namespace spx
         emit displayBrightnessChangedSig( displayBrightness );
       }
     }
+    currentDisplayHash = makeDisplayHash();
   }
 
   /**
@@ -598,6 +636,10 @@ namespace spx
     return ( displayOrientation );
   }
 
+  /**
+   * @brief SPX42Config::setDisplayOrientation
+   * @param orientation
+   */
   void SPX42Config::setDisplayOrientation( DisplayOrientation orientation )
   {
     if ( displayOrientation != orientation )
@@ -608,6 +650,7 @@ namespace spx
         emit displayOrientationChangedSig( displayOrientation );
       }
     }
+    currentDisplayHash = makeDisplayHash();
   }
 
   /**
@@ -633,6 +676,7 @@ namespace spx
         emit unitsTemperaturChangedSig( unitTemperature );
       }
     }
+    currentUnitHash = makeUnitsHash();
   }
 
   /**
@@ -658,6 +702,7 @@ namespace spx
         emit unitsLengtChangedSig( unitLength );
       }
     }
+    currentUnitHash = makeUnitsHash();
   }
 
   /**
@@ -683,6 +728,7 @@ namespace spx
         emit untisWaterTypeChangedSig( unitWaterType );
       }
     }
+    currentUnitHash = makeUnitsHash();
   }
 
   /**
@@ -708,6 +754,8 @@ namespace spx
         emit setpointAutoChangeSig( setpointAuto );
       }
     }
+    // mach hier den hash immer
+    currentSetpointHash = makeSetpointHash();
   }
 
   /**
@@ -733,6 +781,8 @@ namespace spx
         emit setpointValueChangedSig( setpointValue );
       }
     }
+    // mache den Hash immer
+    currentSetpointHash = makeSetpointHash();
   }
 
   /**
@@ -758,6 +808,7 @@ namespace spx
         emit individualSensorsOnChangedSig( individualSensorsOn );
       }
     }
+    currentIndividualHash = makeIndividualHash();
   }
 
   /**
@@ -782,6 +833,7 @@ namespace spx
         emit individualPscrModeChangedSig( individualPSCROn );
       }
     }
+    currentIndividualHash = makeIndividualHash();
   }
 
   /**
@@ -806,6 +858,7 @@ namespace spx
         emit individualSensorsCountChangedSig( individualSensorCount );
       }
     }
+    currentIndividualHash = makeIndividualHash();
   }
 
   /**
@@ -831,6 +884,7 @@ namespace spx
         emit individualAcousticChangedSig( individualAcustic );
       }
     }
+    currentIndividualHash = makeIndividualHash();
   }
 
   /**
@@ -856,6 +910,7 @@ namespace spx
         emit individualLogIntervalChangedSig( individualLogInterval );
       }
     }
+    currentIndividualHash = makeIndividualHash();
   }
 
   /**
@@ -881,6 +936,7 @@ namespace spx
         emit individualTempstickChangedSig( individualTempStick );
       }
     }
+    currentIndividualHash = makeIndividualHash();
   }
 
   /**
@@ -946,4 +1002,170 @@ namespace spx
     return isSixMetersAutoSetpoint;
   }
 
+  /**
+   * @brief SPX42Config::makeSpxHash
+   * @return
+   */
+  QString SPX42Config::makeSpxHash()
+  {
+    QByteArray serialized;
+    serialized.append( QString( "firmware version (enum): %1\n" ).arg( static_cast< int >( spxFirmwareVersion ) ) );
+    serialized.append( spxLicense.serialize() );
+    serialized.append( QString( "serial number: %1" ).arg( spxSerialNumber ) );
+    qhash.reset();
+    qhash.addData( serialized );
+    return ( QString( qhash.result().toBase64() ) );
+  }
+
+  /**
+   * @brief SPX42Config::makeDecoHash
+   * @return
+   */
+  QString SPX42Config::makeDecoHash()
+  {
+    QByteArray serialized;
+    serialized.append( QString( "deco preset (enum): %1" ).arg( static_cast< int >( decoCurrentPreset ) ) );
+    serialized.append(
+        QString( "low gradient: %1" ).arg( decoPresets.value( static_cast< int >( decoCurrentPreset ) ).first, 2, 10, QChar( '0' ) ) );
+    serialized.append( QString( "high gradient: %1" )
+                           .arg( decoPresets.value( static_cast< int >( decoCurrentPreset ) ).second, 2, 10, QChar( '0' ) ) );
+    serialized.append( QString( "dynamic gradients: %1" ).arg( static_cast< bool >( decoDynamicGradient ) ) );
+    serialized.append( QString( "deep stops enabled: %1" ).arg( static_cast< bool >( decoDeepstopsEnabled ) ) );
+    serialized.append( QString( "last deco stop (enum): %1" ).arg( static_cast< int >( decoLastStop ) ) );
+    qhash.reset();
+    qhash.addData( serialized );
+    return ( QString( qhash.result().toBase64() ) );
+  }
+
+  /**
+   * @brief SPX42Config::makeDisplayHash
+   * @return
+   */
+  QString SPX42Config::makeDisplayHash()
+  {
+    QByteArray serialized;
+    serialized.append(
+        QString( "display brightness (enum): %1" ).arg( static_cast< int >( displayBrightness ), 2, 10, QChar( '0' ) ) );
+    serialized.append(
+        QString( "display orientation (enum): %1" ).arg( static_cast< int >( displayOrientation ), 2, 10, QChar( '0' ) ) );
+    qhash.reset();
+    qhash.addData( serialized );
+    return ( QString( qhash.result().toBase64() ) );
+  }
+
+  /**
+   * @brief SPX42Config::makeUnitsHash
+   * @return
+   */
+  QString SPX42Config::makeUnitsHash()
+  {
+    QByteArray serialized;
+    serialized.append(
+        QString( "unit for temperature (enum): %1" ).arg( static_cast< int >( unitTemperature ), 2, 10, QChar( '0' ) ) );
+    serialized.append( QString( "unit for lenght (enum): %1" ).arg( static_cast< int >( unitLength ), 2, 10, QChar( '0' ) ) );
+    serialized.append( QString( "water type (enum): %1" ).arg( static_cast< int >( unitWaterType ), 2, 10, QChar( '0' ) ) );
+    qhash.reset();
+    qhash.addData( serialized );
+    return ( QString( qhash.result().toBase64() ) );
+  }
+
+  /**
+   * @brief SPX42Config::makeSetpointHash
+   * @return
+   */
+  QString SPX42Config::makeSetpointHash()
+  {
+    QByteArray serialized;
+    serialized.append( QString( "auto setpoint value (enum): %1" ).arg( static_cast< int >( setpointAuto ), 2, 10, QChar( '0' ) ) );
+    serialized.append( QString( "setpoint value (enum): %1" ).arg( static_cast< int >( setpointValue ), 2, 10, QChar( '0' ) ) );
+    qhash.reset();
+    qhash.addData( serialized );
+    return ( QString( qhash.result().toBase64() ) );
+  }
+
+  /**
+   * @brief SPX42Config::makeIndividualHash
+   * @return
+   */
+  QString SPX42Config::makeIndividualHash()
+  {
+    QByteArray serialized;
+    serialized.append( QString( "individual sensors on: %1" ).arg( static_cast< bool >( individualSensorsOn ) ) );
+    serialized.append( QString( "indiovidual pscr on: %1" ).arg( static_cast< bool >( individualPSCROn ) ) );
+    serialized.append(
+        QString( "individual sensors count: %1" ).arg( static_cast< int >( individualSensorCount ), 2, 10, QChar( '0' ) ) + 1 );
+    serialized.append( QString( "individual acoustic warnings on: %1" ).arg( static_cast< bool >( individualAcustic ) ) );
+    serialized.append( QString( "individual log interval: %1" )
+                           .arg( ( static_cast< int >( individualLogInterval ) + 1 ) * 10, 2, 10, QChar( '0' ) ) );
+    serialized.append(
+        QString( "individual temp stick type (enum): %1" ).arg( static_cast< int >( individualTempStick ), 2, 10, QChar( '0' ) ) );
+    qhash.reset();
+    qhash.addData( serialized );
+    return ( QString( qhash.result().toBase64() ) );
+  }
+
+  /**
+   * @brief SPX42Config::freezeConfigs
+   */
+  void SPX42Config::freezeConfigs( quint8 changed )
+  {
+    //
+    // was soll gefrostet werden?
+    //
+    if ( changed & SPX42ConfigClass::CFCLASS_SPX )
+      savedSpxHash = currentSpxHash;
+    if ( changed & SPX42ConfigClass::CFCLASS_DECO )
+      savedDecoHash = currentDecoHash;
+    if ( changed & SPX42ConfigClass::CFCLASS_GASES )
+    {
+      for ( int i = 0; i < 8; i++ )
+      {
+        savedGasHashes[ i ] = currentGasHashes[ i ];
+      }
+    }
+    if ( changed & SPX42ConfigClass::CFCLASS_DISPLAY )
+      savedDisplayHash = currentDisplayHash;
+    if ( changed & SPX42ConfigClass::CFCLASS_UNITS )
+      savedUnitHash = currentUnitHash;
+    if ( changed & SPX42ConfigClass::CFCLASS_SETPOINT )
+      savedSetpointHash = currentSetpointHash;
+    if ( changed & SPX42ConfigClass::CFCLASS_INDIVIDUAL )
+      savedIndividualHash = currentIndividualHash;
+  }
+
+  /**
+   * @brief SPX42Config::getChangedConfig
+   * @return
+   */
+  quint8 SPX42Config::getChangedConfig( void )
+  {
+    quint8 result = 0;
+    if ( currentSpxHash != savedSpxHash )
+      result |= SPX42ConfigClass::CFCLASS_SPX;
+    if ( currentDecoHash != savedDecoHash )
+      result |= SPX42ConfigClass::CFCLASS_DECO;
+    if ( currentDisplayHash != savedDisplayHash )
+      result |= SPX42ConfigClass::CFCLASS_DISPLAY;
+    if ( currentSetpointHash != savedSetpointHash )
+      result |= SPX42ConfigClass::CFCLASS_SETPOINT;
+    if ( currentUnitHash != savedUnitHash )
+      result |= SPX42ConfigClass::CFCLASS_UNITS;
+    if ( currentIndividualHash != savedIndividualHash )
+      result |= SPX42ConfigClass::CFCLASS_INDIVIDUAL;
+    for ( int i = 0; i < 8; i++ )
+    {
+      if ( savedGasHashes[ i ] != currentGasHashes[ i ] )
+      {
+        result |= SPX42ConfigClass::CFCLASS_GASES;
+        // schleife verlassen
+        break;
+      }
+    }
+    return ( result );
+  }
+
+  QString SPX42Config::geteUnitHashes( void )
+  {
+    return ( QString( "unit current hash: %1, unit saved hash: %2" ).arg( currentUnitHash ).arg( savedUnitHash ) );
+  }
 }  // namespace spx

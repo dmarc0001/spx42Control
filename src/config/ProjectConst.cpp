@@ -36,6 +36,6 @@ namespace spx
   const QColor ProjectConst::COLOR_OFFLINE{128, 128, 128, 255};
   const QColor ProjectConst::COLOR_ONLINE{0, 220, 0, 255};
   const QColor ProjectConst::COLOR_CONNECTING{242, 135, 68, 255};
-  const QColor ProjectConst::COLOR_BUSY{0, 220, 0, 128};
+  const QColor ProjectConst::COLOR_BUSY{180, 20, 20, 128};
   const QColor ProjectConst::COLOR_ERROR{255, 20, 20, 180};
 }

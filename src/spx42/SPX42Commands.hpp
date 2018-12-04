@@ -5,15 +5,29 @@
 #include <QDateTime>
 #include <QList>
 #include "SPX42CommandDef.hpp"
+#include "SPX42Config.hpp"
 #include "config/ProjectConst.hpp"
 
 namespace spx
 {
+  class CmdMarker
+  {
+    public:
+    char cmd;
+    bool waitFor;
+    bool wasSend;
+    QTime sendTime;
+    explicit CmdMarker( char _cmd, bool _waitFor = false, bool _wasSend = false );
+  };
+
+  // mach das lesbar im Code
+  using SendListEntry = QPair< CmdMarker, QByteArray >;
+
   class SPX42Commands
   {
     private:
-    QByteArray cmd;
-    void makeSipleCommand( char commandChar );
+    // CmdMarker marker;
+    void makeSipleCommand( char commandChar, QByteArray &cmd );
 
     protected:
     QList< QByteArray > params;
@@ -21,19 +35,41 @@ namespace spx
     public:
     SPX42Commands() = default;
     // Kommandos an den SPX zusammenstellen
-    QByteArray &askForManufacturers( void );                  //! Hersteller anfragen 0x01
-    QByteArray &askForSerialNumber( void );                   //! Noch nicht ganz klar, was das ist (Daniel fragen) 0x02
-    QByteArray &aksForAliveSignal( void );                    //! Sende ein Lebenszeichen 0x03
-    QByteArray &askForFirmwareVersion( void );                //! Firmwareversion erfragen 0x04
-    QByteArray &askForLicenseState( void );                   //! erfrage Lizenzstatus 0x46
-    QByteArray &askForConfig( void );                         //! erfrage die Konfiguration des SPX42
-    QByteArray &setDateTime( const QDateTime &nowDateTime );  //! setzte im SPX DAtum und Zeit, sofern seine Firmware das kann
-    QByteArray &sendStartYModem( void );                      //! Schalte SPX auf YMODEM-Betrieb!
-    QByteArray &sendStartProgramming( void );                 //! sag dem SPX42, er soll die Firmware flashen
-    QByteArray &shutdownSPX42( void );                        //! fahre den SPX42 runter
-    // empfangene Daten auf Kommandos hin untersuchen
-    char decodeCommand( const QByteArray &pdu );  //! erkenne die PDU, lagere Parameter hier im Objekt
-    QByteArray getParameter( int index );         //! gib Parameter mit Index index zurück, 0 == Command
+
+    //! Hersteller anfragen 0x01
+    SendListEntry askForManufacturers( void );
+    //! Noch nicht ganz klar, was das ist (Daniel fragen) 0x02
+    SendListEntry askForSerialNumber( void );
+    //! Sende ein Lebenszeichen 0x03
+    SendListEntry aksForAliveSignal( void );
+    //! Firmwareversion erfragen 0x04
+    SendListEntry askForFirmwareVersion( void );
+    //! erfrage Lizenzstatus 0x46
+    SendListEntry askForLicenseState( void );
+    //! erfrage die Konfiguration des SPX42
+    SendListEntry askForConfig( void );
+    //! setzte im SPX DAtum und Zeit, sofern seine Firmware das kann
+    SendListEntry setDateTime( const QDateTime &nowDateTime );
+    // Schalte SPX auf YMODEM-Betrieb!
+    // SendListEntry sendStartYModem( void );
+    // sag dem SPX42, er soll die Firmware flashen
+    // SendListEntry sendStartProgramming( void );
+    //! fahre den SPX42 runter
+    SendListEntry shutdownSPX42( void );
+    //! erkenne die PDU, lagere Parameter hier im Objekt
+    char decodeCommand( const QByteArray &pdu );
+    //! gib Parameter mit Index index zurück, 0 == Command
+    QByteArray getParameter( int index );
+    //! send command zum deco setzten
+    SendListEntry sendDecoParams( SPX42Config &cfg );
+    //! sende Kommando zu setzten der Setpoints
+    SendListEntry sendSetpointParams( SPX42Config &cfg );
+    //! sende Kommando zu setzten der Displayeinstellungen
+    SendListEntry sendDisplayParams( SPX42Config &cfg );
+    //! sende Einheiten Einstellungen zum SPX
+    SendListEntry sendUnitsParams( SPX42Config &cfg );
+    //! sende individual Einstellungen zum SPX
+    SendListEntry sendCustomParams( SPX42Config &cfg );
   };
 }
 #endif  // SPX42COMMANDS_HPP

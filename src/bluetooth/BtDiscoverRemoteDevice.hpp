@@ -1,5 +1,5 @@
-﻿#ifndef BTDISCOVEROBJECT_HPP
-#define BTDISCOVEROBJECT_HPP
+﻿#ifndef BTDISCOVERREMOTEDEVICE_HPP
+#define BTDISCOVERREMOTEDEVICE_HPP
 
 #include <QBluetoothDeviceDiscoveryAgent>
 #include <QBluetoothLocalDevice>
@@ -37,4 +37,4 @@ namespace spx
     void onDiscoveredDeviceSlot( const SPXDeviceDescr & );
   };
 }
-#endif  // BTDISCOVEROBJECT_HPP
+#endif  // BTDISCOVERREMOTEDEVICE_HPP

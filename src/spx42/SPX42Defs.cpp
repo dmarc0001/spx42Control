@@ -73,4 +73,13 @@ namespace spx
     licInd = value;
     // emit licenseChangedPrivateSig( this );
   }
+
+  QByteArray SPX42License::serialize()
+  {
+    QByteArray serialized;
+
+    serialized.append( QString( "license (enum): %1" ).arg( static_cast< int >( licType ) ) );
+    serialized.append( QString( "license individual (bool): %1" ).arg( static_cast< int >( licInd ) ) );
+    return ( serialized );
+  }
 }

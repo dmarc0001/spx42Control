@@ -1229,12 +1229,12 @@
                     </property>
                     <item>
                      <property name="text">
-                      <string>FRESH</string>
+                      <string>SALT</string>
                      </property>
                     </item>
                     <item>
                      <property name="text">
-                      <string>SALT</string>
+                      <string>FRESH</string>
                      </property>
                     </item>
                    </widget>
@@ -1475,7 +1475,7 @@
                  </property>
                  <layout class="QHBoxLayout" name="individualLogIntervalHorizontalLayout_2">
                   <item>
-                   <widget class="QLabel" name="individualTEmpStickLabel">
+                   <widget class="QLabel" name="individualTempStickLabel">
                     <property name="text">
                      <string>TEMPSTICK TYPE</string>
                     </property>

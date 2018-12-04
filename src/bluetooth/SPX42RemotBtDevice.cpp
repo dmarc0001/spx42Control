@@ -55,9 +55,11 @@ namespace spx
     // TODO: wenn verbunden, trennen oder was?
     if ( socket != nullptr )
     {
+      lg->debug( "SPX42RemotBtDevice::startConnection -> disconnect/remove old connection..." );
       endConnection();
-      delete socket;
+      socket->deleteLater();
       socket = nullptr;
+      lg->debug( "SPX42RemotBtDevice::startConnection -> disconnect/remove old connection...OK" );
     }
     // merken der Daten
     remoteAddr = QBluetoothAddress( mac );
@@ -103,6 +105,7 @@ namespace spx
         lg->info( "close bluethooth connection" );
         socket->close();
       }
+      QThread::msleep( 120 );
       if ( socket->state() != QBluetoothSocket::UnconnectedState )
       {
         socket->abort();
@@ -111,15 +114,28 @@ namespace spx
   }
 
   /**
+   * @brief SPX42RemotBtDevice::getRemoteConnected
+   * @return
+   */
+  QString SPX42RemotBtDevice::getRemoteConnected()
+  {
+    if ( socket != nullptr && socket->state() == QBluetoothSocket::ConnectedState )
+    {
+      return ( remoteAddr.toString() );
+    }
+    return ( QString() );
+  }
+
+  /**
    * @brief SPX42RemotBtDevice::sendCommand
    * @param telegram
    */
-  void SPX42RemotBtDevice::sendCommand( const QByteArray &telegram )
+  void SPX42RemotBtDevice::sendCommand( const SendListEntry &entry )
   {
     //
     // in die sendequeue packen
     //
-    sendQueue.enqueue( telegram );
+    sendList.append( entry );
   }
 
   /**
@@ -204,8 +220,6 @@ namespace spx
    */
   void SPX42RemotBtDevice::onStateChangedSlot( QBluetoothSocket::SocketState state )
   {
-    // TODO: drum kümmern
-    // lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth onlinestatus has changed..." );
     switch ( state )
     {
       case QBluetoothSocket::UnconnectedState:
@@ -225,7 +239,7 @@ namespace spx
         // Voreinstellungen machen
         //
         wasSocketError = false;
-        sendQueue.clear();
+        sendList.clear();
         recQueue.clear();
         rCmdQueue.clear();
         if ( !sendTimer.isActive() )
@@ -284,7 +298,8 @@ namespace spx
         {
           // so wie es soll, das Ende ist nach dem Anfang
           // ich kopiere mir nun das Datagramm
-          QByteArray _datagramm = recBuffer.mid( idxOfSTX + 1, idxOfETX - 2 );
+          // dei Länge ergibt sich aus dem Ende minus das 0x03 und minus Anfang
+          QByteArray _datagramm = recBuffer.mid( idxOfSTX + 1, ( idxOfETX - idxOfSTX ) - 1 );
 #ifdef DEBUG
           lg->debug( QString( "SPX42RemotBtDevice::onReadSocketSlot -> datagram:: <%1>" ).arg( QString( _datagramm ) ) );
 #endif
@@ -329,14 +344,14 @@ namespace spx
   {
     if ( ignoreTimer )
       return;
-    if ( ( socket != nullptr ) && ( socket->state() == QBluetoothSocket::ConnectedState ) && !sendQueue.isEmpty() )
+    if ( ( socket != nullptr ) && ( socket->state() == QBluetoothSocket::ConnectedState ) && !sendList.isEmpty() )
     {
       ignoreTimer = true;
-      QByteArray telegram( sendQueue.dequeue() );
+      SendListEntry entry( sendList.takeFirst() );
 #ifdef DEBUG
-      lg->debug( QString( "SPX42RemotBtDevice::onSendSocketTimerSlot -> send telegram <%1>..." ).arg( QString( telegram ) ) );
+      lg->debug( QString( "SPX42RemotBtDevice::onSendSocketTimerSlot -> send telegram <%1>..." ).arg( QString( entry.second ) ) );
 #endif
-      socket->write( telegram );
+      socket->write( entry.second );
       // Wartezeit startet neu
       sendTimer.start();
       ignoreTimer = false;

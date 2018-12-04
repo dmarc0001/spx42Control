@@ -66,7 +66,7 @@
        <enum>QTabWidget::West</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -88,7 +88,7 @@
      <x>0</x>
      <y>0</y>
      <width>1024</width>
-     <height>22</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -150,6 +150,8 @@
    <addaction name="actionConnectBluetooth"/>
    <addaction name="actionSettings"/>
    <addaction name="actionAbout"/>
+   <addaction name="separator"/>
+   <addaction name="actionSPX_STATE"/>
   </widget>
   <widget class="QStatusBar" name="mainStatusBar"/>
   <action name="actionQUIT">
@@ -301,6 +303,30 @@
    </property>
    <property name="text">
     <string>INDIVIDUAL-LIC</string>
+   </property>
+  </action>
+  <action name="actionSPX_STATE">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../res/SPX42ControlRes.qrc">
+     <normaloff>:/icons/ic_spx_offline.png</normaloff>
+     <normalon>:/icons/ic_spx_online.png</normalon>
+     <disabledoff>:/icons/ic_spx_error.png</disabledoff>
+     <activeon>:/icons/ic_spx_buffering.png</activeon>:/icons/ic_spx_offline.png</iconset>
+   </property>
+   <property name="text">
+    <string>SPX STATE</string>
+   </property>
+   <property name="statusTip">
+    <string>state of the connected spx42</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
  </widget>
