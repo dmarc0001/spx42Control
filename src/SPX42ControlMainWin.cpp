@@ -268,6 +268,15 @@ namespace spx
         close();
       } );
       //
+      // der SPX42 Onlinestatusbutton
+      //
+      connect( ui->actionSPX_STATE, &QAction::triggered, [this] {
+        if ( this->remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
+        {
+          this->remoteSPX42->endConnection();
+        }
+      } );
+      //
       // TAB wurde gewechselt
       //
       connect( ui->areaTabWidget, &QTabWidget::currentChanged, this, &SPX42ControlMainWin::onTabCurrentChangedSlot );
@@ -486,6 +495,8 @@ namespace spx
         online = tr( "SPX42 OFFLINE" );
         onlineLabel->setPalette( offlinePalette );
         waitForWriteLabel->setPalette( offlinePalette );
+        ui->actionSPX_STATE->setIcon( QIcon( ":/icons/ic_spx_offline" ) );
+        ui->actionSPX_STATE->setStatusTip( tr( "spx42 is offline..." ) );
         break;
       case SPX42RemotBtDevice::SPX42_CONNECTED:
         //
@@ -494,6 +505,9 @@ namespace spx
         online = tr( "SPX42 ONLINE" );
         onlineLabel->setPalette( onlinePalette );
         waitForWriteLabel->setPalette( onlinePalette );
+        ui->actionSPX_STATE->setEnabled( true );
+        ui->actionSPX_STATE->setIcon( QIcon( ":/icons/ic_spx_online" ) );
+        ui->actionSPX_STATE->setStatusTip( tr( "spx42 is online, click for disconnect..." ) );
         break;
       case SPX42RemotBtDevice::SPX42_CONNECTING:
         //
@@ -508,6 +522,8 @@ namespace spx
         //
         online = tr( "SPX42 OFFLINE/ERROR" );
         onlineLabel->setPalette( errorPalette );
+        ui->actionSPX_STATE->setIcon( QIcon( ":/icons/ic_spx_error" ) );
+        ui->actionSPX_STATE->setStatusTip( tr( "spx42 had connection error..." ) );
         break;
     }
     onlineLabel->setFont( font );
@@ -530,7 +546,7 @@ namespace spx
   void SPX42ControlMainWin::onWatchdogTimerSlot()
   {
     //
-    // Falls der Wachhunf aktiv ist
+    // Falls der Wachhund aktiv ist
     //
     if ( watchdogCounter > 0 )
     {
@@ -896,6 +912,8 @@ namespace spx
     waitForWriteLabel->setFont( font );
     waitForWriteLabel->setPalette( onlinePalette );
     waitForWriteLabel->setText( tr( "CLEAR" ) );
+    ui->actionSPX_STATE->setIcon( QIcon( ":/icons/ic_spx_online" ) );
+    ui->actionSPX_STATE->setStatusTip( tr( "spx42 is online, click for disconnect..." ) );
   }
 
   /**
@@ -917,5 +935,7 @@ namespace spx
     waitForWriteLabel->setFont( font );
     waitForWriteLabel->setPalette( busyPalette );
     waitForWriteLabel->setText( tr( "BUSY" ) );
+    ui->actionSPX_STATE->setIcon( QIcon( ":/icons/ic_spx_buffering" ) );
+    ui->actionSPX_STATE->setStatusTip( tr( "spx42 is online and wait for write config data..." ) );
   }
 }  // namespace spx

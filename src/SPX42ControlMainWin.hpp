@@ -7,6 +7,7 @@
 #include <QDebug>
 #include <QFont>
 #include <QFontDatabase>
+#include <QIcon>
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QPalette>
