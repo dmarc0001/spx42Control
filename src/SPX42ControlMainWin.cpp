@@ -603,6 +603,8 @@ namespace spx
         currentTab = ApplicationTab::CONFIG_TAB;
         connect( dynamic_cast< DeviceConfigFragment * >( currObj ), &DeviceConfigFragment::onConfigWasChangedSig, this,
                  &SPX42ControlMainWin::onConfigWasChangedSlot );
+        connect( dynamic_cast< DeviceConfigFragment * >( currObj ), &DeviceConfigFragment::onAkkuValueChangedSig, this,
+                 &SPX42ControlMainWin::onAkkuValueChangedSlot );
         break;
 
       case static_cast< int >( ApplicationTab::GAS_TAB ):
@@ -613,6 +615,8 @@ namespace spx
         currentTab = ApplicationTab::GAS_TAB;
         connect( dynamic_cast< GasFragment * >( currObj ), &GasFragment::onConfigWasChangedSig, this,
                  &SPX42ControlMainWin::onConfigWasChangedSlot );
+        connect( dynamic_cast< GasFragment * >( currObj ), &GasFragment::onAkkuValueChangedSig, this,
+                 &SPX42ControlMainWin::onAkkuValueChangedSlot );
         break;
 
       case static_cast< int >( ApplicationTab::LOG_TAB ):
@@ -621,6 +625,8 @@ namespace spx
         currObj->setObjectName( "spx42log" );
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::LOG_TAB ) ) );
         currentTab = ApplicationTab::LOG_TAB;
+        connect( dynamic_cast< LogFragment * >( currObj ), &LogFragment::onAkkuValueChangedSig, this,
+                 &SPX42ControlMainWin::onAkkuValueChangedSlot );
         break;
 
       case static_cast< int >( ApplicationTab::CHART_TAB ):
@@ -629,6 +635,8 @@ namespace spx
         currObj->setObjectName( "spx42charts" );
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::CHART_TAB ) ) );
         currentTab = ApplicationTab::CHART_TAB;
+        connect( dynamic_cast< ChartsFragment * >( currObj ), &ChartsFragment::onAkkuValueChangedSig, this,
+                 &SPX42ControlMainWin::onAkkuValueChangedSlot );
         break;
     }
     ui->areaTabWidget->setCurrentIndex( idx );
@@ -820,7 +828,7 @@ namespace spx
         // sende neue DECO Einstellungen
         //
         sendCommand = remoteSPX42->sendDecoParams( *spx42Config );
-        lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> write <%1> old order: %2" )
+        lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> deco write <%1> old order: %2" )
                        .arg( QString( sendCommand.second ) )
                        .arg( ( spx42Config->getIsOldParamSorting() ? "true" : "false" ) ) );
         remoteSPX42->sendCommand( sendCommand );
@@ -831,7 +839,8 @@ namespace spx
         // sende neue Display einstellungen
         //
         sendCommand = remoteSPX42->sendDisplayParams( *spx42Config );
-        lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> write <%1>" ).arg( QString( sendCommand.second ) ) );
+        lg->debug(
+            QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> display write <%1>" ).arg( QString( sendCommand.second ) ) );
         remoteSPX42->sendCommand( sendCommand );
       }
       if ( changed & SPX42ConfigClass::CFCLASS_SETPOINT )
@@ -840,7 +849,7 @@ namespace spx
         // setpoint Einstellungen senden
         //
         sendCommand = remoteSPX42->sendSetpointParams( *spx42Config );
-        lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> write <%1> old order: %2" )
+        lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> setpoint write <%1> old order: %2" )
                        .arg( QString( sendCommand.second ) )
                        .arg( ( spx42Config->getIsOldParamSorting() ? "true" : "false" ) ) );
         remoteSPX42->sendCommand( sendCommand );
@@ -851,7 +860,7 @@ namespace spx
         // einheiten senden
         //
         sendCommand = remoteSPX42->sendUnitsParams( *spx42Config );
-        lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> write <%1>" ).arg( QString( sendCommand.second ) ) );
+        lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> units write <%1>" ).arg( QString( sendCommand.second ) ) );
         remoteSPX42->sendCommand( sendCommand );
       }
       if ( changed & SPX42ConfigClass::CFCLASS_INDIVIDUAL )
@@ -859,6 +868,9 @@ namespace spx
         //
         // individual einstellungen senden
         //
+        sendCommand = remoteSPX42->sendCustomParams( *spx42Config );
+        lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> custom write <%1>" ).arg( QString( sendCommand.second ) ) );
+        remoteSPX42->sendCommand( sendCommand );
       }
       if ( changed & SPX42ConfigClass::CFCLASS_GASES )
       {
