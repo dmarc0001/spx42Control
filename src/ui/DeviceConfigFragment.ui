@@ -1475,7 +1475,7 @@
                  </property>
                  <layout class="QHBoxLayout" name="individualLogIntervalHorizontalLayout_2">
                   <item>
-                   <widget class="QLabel" name="individualTEmpStickLabel">
+                   <widget class="QLabel" name="individualTempStickLabel">
                     <property name="text">
                      <string>TEMPSTICK TYPE</string>
                     </property>
