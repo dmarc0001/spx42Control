@@ -68,6 +68,8 @@ namespace spx
     SendListEntry sendDisplayParams( SPX42Config &cfg );
     //! sende Einheiten Einstellungen zum SPX
     SendListEntry sendUnitsParams( SPX42Config &cfg );
+    //! sende individual Einstellungen zum SPX
+    SendListEntry sendCustomParams( SPX42Config &cfg );
   };
 }
 #endif  // SPX42COMMANDS_HPP

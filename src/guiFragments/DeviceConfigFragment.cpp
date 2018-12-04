@@ -466,6 +466,12 @@ namespace spx
       ui->displayBrightnessComboBox->clear();
       ui->displayBrightnessComboBox->addItems( oldDisplayBrightness );
     }
+    //
+    // hat das Ding einen Tempstick?
+    //
+    ui->individualTempStickComboBox->setVisible( spxConfig->getHasSixValuesIndividual() );
+    ui->individualTempStickComboBox->setEnabled( spxConfig->getHasSixValuesIndividual() );
+    ui->individualTempStickLabel->setVisible( spxConfig->getHasSixValuesIndividual() );
   }
 
   void DeviceConfigFragment::onCommandRecivedSlot()
@@ -771,6 +777,20 @@ namespace spx
           // TS: ab Version 2.7_H_r83 Tempstick Version
           //
           disconnectSlots( SIGNALS_INDIVIDUAL );
+          // CONFIG einstellen
+          spxConfig->setIndividualSensorsOn(
+              static_cast< DeviceIndividualSensors >( recCommand->getValueAt( SPXCmdParam::INDIVIDUAL_SENSORSENABLED ) ) );
+          spxConfig->setIndividualPscrMode(
+              static_cast< DeviceIndividualPSCR >( recCommand->getValueAt( SPXCmdParam::INDIVIDUAL_PASSIVEMODE ) ) );
+          spxConfig->setIndividualSensorsCount(
+              static_cast< DeviceIndividualSensorCount >( recCommand->getValueAt( SPXCmdParam::INDIVIDUAL_SENSORCOUNT ) ) );
+          spxConfig->setIndividualAcoustic(
+              static_cast< DeviceIndividualAcoustic >( recCommand->getValueAt( SPXCmdParam::INDIVIDUAL_SOUND_ONOFF ) ) );
+          spxConfig->setIndividualLogInterval(
+              static_cast< DeviceIndividualLogInterval >( recCommand->getValueAt( SPXCmdParam::INDIVIDUAL_LOGINTERVAL ) ) );
+          spxConfig->setIndividualTempStick(
+              static_cast< DeviceIndividualTempstick >( recCommand->getValueAt( SPXCmdParam::INDIVIDUAL_TEMPSTICK ) ) );
+          // GUI
           // sensor enable
           if ( recCommand->getValueAt( SPXCmdParam::INDIVIDUAL_SENSORSENABLED ) )
             ui->individualSeonsorsOnCheckBox->setCheckState( Qt::CheckState::Unchecked );

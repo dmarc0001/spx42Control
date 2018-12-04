@@ -265,7 +265,7 @@ namespace spx
                     .toLatin1() );
     cmd.append( &SPX42CommandDef::ETX, 1 );
     // erwarte Quittung! (true)
-    return ( SendListEntry( CmdMarker( SPX42CommandDef::SPX_SET_SETUP_SETPOINT, true ), cmd ) );
+    return ( SendListEntry( CmdMarker( SPX42CommandDef::SPX_SET_SETUP_DISPLAYSETTINGS, true ), cmd ) );
   }
 
   SendListEntry SPX42Commands::sendUnitsParams( SPX42Config &cfg )
@@ -287,6 +287,56 @@ namespace spx
                     .toLatin1() );
     cmd.append( &SPX42CommandDef::ETX, 1 );
     // erwarte Quittung! (true)
-    return ( SendListEntry( CmdMarker( SPX42CommandDef::SPX_SET_SETUP_SETPOINT, true ), cmd ) );
+    return ( SendListEntry( CmdMarker( SPX42CommandDef::SPX_SET_SETUP_UNITS, true ), cmd ) );
+  }
+
+  SendListEntry SPX42Commands::sendCustomParams( SPX42Config &cfg )
+  {
+    QByteArray code;
+    QByteArray cmd;
+    cmd.append( &SPX42CommandDef::STX, 1 );
+    cmd.append( "~" );
+    code.append( &SPX42CommandDef::SPX_SET_SETUP_INDIVIDUAL, 1 );
+    cmd.append( code.toHex() );
+    // Kommando SPX_SET_SETUP_INDIVIDUAL
+    // ~33:SM:PS:SC:AC:LT:TS
+    // SM = 0-> Sensoren ON, 1-> No Sensor
+    // PS = PSCR Mode 0->off; 1->ON (sollte eigentlich immer off (0 ) sein)
+    // SC = SensorsCount 0->1 Sensor, 1->2 sensoren, 2->3 Sensoren
+    // AC = acoustic 0->off, 1->on
+    // LT = Logbook Timeinterval 0->10s, 1->30s, 2->60s
+    // Ab Version 2.7_H_R_83ce
+    // TS : TempStick == 0
+    if ( cfg.getHasSixValuesIndividual() )
+    {
+      //
+      // ab version 2.7_H_R_83ce sechs parameter (TEMPSTICK)
+      //
+      cmd.append( QString( ":%1:%2:%3:%4:%5:%6" )
+                      .arg( static_cast< int >( cfg.getIndividualSensorsOn() ), 1, 16 )
+                      .arg( static_cast< int >( cfg.getIndividualPscrMode() ), 1, 16 )
+                      .arg( static_cast< int >( cfg.getIndividualSensorsCount() ), 1, 16 )
+                      .arg( static_cast< int >( cfg.getIndividualAcoustic() ), 1, 16 )
+                      .arg( static_cast< int >( cfg.getIndividualLogInterval() ), 1, 16 )
+                      .arg( static_cast< int >( cfg.getIndividualTempStick() ), 1, 16 )
+                      .toLatin1() );
+    }
+    else
+    {
+      //
+      // fünf Parameter
+      //
+      cmd.append( QString( ":%1:%2:%3:%4:%5" )
+                      .arg( static_cast< int >( cfg.getIndividualSensorsOn() ), 1, 16 )
+                      .arg( static_cast< int >( cfg.getIndividualPscrMode() ), 1, 16 )
+                      .arg( static_cast< int >( cfg.getIndividualSensorsCount() ), 1, 16 )
+                      .arg( static_cast< int >( cfg.getIndividualAcoustic() ), 1, 16 )
+                      .arg( static_cast< int >( cfg.getIndividualLogInterval() ), 1, 16 )
+                      .toLatin1() );
+    }
+
+    cmd.append( &SPX42CommandDef::ETX, 1 );
+    // erwarte Quittung! (true)
+    return ( SendListEntry( CmdMarker( SPX42CommandDef::SPX_SET_SETUP_INDIVIDUAL, true ), cmd ) );
   }
 }
