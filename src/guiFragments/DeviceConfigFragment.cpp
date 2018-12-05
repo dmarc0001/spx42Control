@@ -242,6 +242,9 @@ namespace spx
       ui->individualGroupBox->setEnabled( true );
     else
       ui->individualGroupBox->setEnabled( false );
+    // die Überschrift sicherheitshalber auc noch
+    ui->tabHeaderLabel->setText(
+        QString( tr( "SETTINGS SPX42 SERIAL [%1] LIC: %2" ).arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
   }
 
   /**
