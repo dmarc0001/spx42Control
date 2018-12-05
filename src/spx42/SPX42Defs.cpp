@@ -6,7 +6,7 @@ namespace spx
   {
   }
 
-  SPX42License::SPX42License( SPX42License &lic )
+  SPX42License::SPX42License( SPX42License &lic ) : QObject( lic.parent() )
   {
     licType = lic.licType;
     licInd = lic.licInd;
@@ -82,4 +82,4 @@ namespace spx
     serialized.append( QString( "license individual (bool): %1" ).arg( static_cast< int >( licInd ) ) );
     return ( serialized );
   }
-}
+}  // namespace spx
