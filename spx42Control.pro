@@ -47,6 +47,11 @@ CONFIG(debug, debug|release) {
   QMAKE_CXXFLAGS += -MP
 }
 
+unix {
+    # benutze ccache
+    QMAKE_CXX                          = ccache g++
+}
+
 SOURCES                 += \
     src/SPX42ControlMainWin.cpp \
     src/ControlMain.cpp \
