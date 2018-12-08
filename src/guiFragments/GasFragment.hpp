@@ -57,7 +57,6 @@ namespace spx
     void connectSlots( void );                                     //! verbinde Slots mit Signalen
     void disconnectSlots( void );                                  //! trenne Slots von Signalen
     void connectGasSlots( void );                                  //! GUI events machen
-    void disconnectGasSlots( void );                               //! Gas GUI elemente trennen (keine events)
     void updateCurrGasGUI( int gasNum, bool withCurrent = true );  //! gui nach aktuellem Gas aktualisieren
     void gasSelect( int gasNum, bool isSelected );
 
@@ -77,8 +76,9 @@ namespace spx
     void onSpinO2ValueChangedSlot( int o2Val );                                      //! O2 Wert eines Gases hat sich verändert
     void onSpinHeValueChangedSlot( int heVal );                                      //! HE Wert eines Gases hat sich verändert
     void onDiluentUseChangeSlot( int state, DiluentType which );                     //! wenn sich das Diluent ändert
-    void onBaCheckChangeSlot( int state );                                           //! wenn sich das Bailout ändert
+    void onBailoutCheckChangeSlot( int state );                                      //! wenn sich das Bailout ändert
     void onWaterTypeChanged( int state );                                            //! wenn sich der wassertyp zum berechnen ändert
+    void onSetActiveGas( int index );
   };
 }
 #endif  // GASFORM_HPP

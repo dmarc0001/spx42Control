@@ -301,7 +301,7 @@ namespace spx
    */
   SPX42Gas &SPX42Config::getGasAt( int num )
   {
-    if ( num < 0 || num > 7 )
+    if ( num < 0 || num > GASES )
     {
       return ( gasList[ 0 ] );
     }
@@ -328,20 +328,24 @@ namespace spx
    * @brief SPX42Config::getCurrentGas
    * @return
    */
-  int SPX42Config::getCurrentGas( void )
+  int SPX42Config::getActiveGas( void )
   {
     return ( currentGas );
   }
 
   /**
-   * @brief SPX42Config::setCurrentGas
+   * @brief SPX42Config::setActieGas
    * @param newCurrentGas
    * @return
    */
-  int SPX42Config::setCurrentGas( int newCurrentGas )
+  int SPX42Config::setActieGas( int newCurrentGas )
   {
     int oldCurrent = currentGas;
     currentGas = newCurrentGas;
+    QByteArray serialized = ( QString( "avtive gas: %1" ).arg( currentGas, 2, 10, QChar( '0' ) ) ).toLatin1();
+    qhash.reset();
+    qhash.addData( serialized );
+    currentGasHashes[ GAS_HASHES - 1 ] = qhash.result();
     return ( oldCurrent );
   }
 
@@ -368,7 +372,7 @@ namespace spx
     }
     if ( classes & SPX42ConfigClass::CFCLASS_GASES )
     {
-      for ( int i = 0; i < 8; i++ )
+      for ( int i = 0; i < GAS_HASHES; i++ )
       {
         gasList[ i ].reset();
         currentGasHashes[ i ].clear();
@@ -1140,7 +1144,7 @@ namespace spx
       savedDecoHash = currentDecoHash;
     if ( changed & SPX42ConfigClass::CFCLASS_GASES )
     {
-      for ( int i = 0; i < 8; i++ )
+      for ( int i = 0; i < GAS_HASHES; i++ )
       {
         savedGasHashes[ i ] = currentGasHashes[ i ];
       }
@@ -1174,7 +1178,7 @@ namespace spx
       result |= SPX42ConfigClass::CFCLASS_UNITS;
     if ( currentIndividualHash != savedIndividualHash )
       result |= SPX42ConfigClass::CFCLASS_INDIVIDUAL;
-    for ( int i = 0; i < 8; i++ )
+    for ( int i = 0; i < GAS_HASHES; i++ )
     {
       if ( savedGasHashes[ i ] != currentGasHashes[ i ] )
       {
