@@ -13,6 +13,7 @@ namespace spx
       , isValid( false )
       , spxFirmwareVersion( SPX42FirmwareVersions::FIRMWARE_UNKNOWN )
       , spxSerialNumber()
+      , currentGas( 0 )
       , decoCurrentPreset()
       , decoDynamicGradient()
       , decoDeepstopsEnabled()
@@ -307,7 +308,7 @@ namespace spx
     return ( gasList[ num ] );
   }
 
-  void SPX42Config::setGasAt( int num, SPX42Gas gas )
+  void SPX42Config::setGasAt( int num, const SPX42Gas &gas )
   {
     if ( num < 0 || num > 7 )
     {
@@ -321,6 +322,27 @@ namespace spx
     qhash.reset();
     qhash.addData( serialized );
     currentGasHashes[ num ] = qhash.result();
+  }
+
+  /**
+   * @brief SPX42Config::getCurrentGas
+   * @return
+   */
+  int SPX42Config::getCurrentGas( void )
+  {
+    return ( currentGas );
+  }
+
+  /**
+   * @brief SPX42Config::setCurrentGas
+   * @param newCurrentGas
+   * @return
+   */
+  int SPX42Config::setCurrentGas( int newCurrentGas )
+  {
+    int oldCurrent = currentGas;
+    currentGas = newCurrentGas;
+    return ( oldCurrent );
   }
 
   /**

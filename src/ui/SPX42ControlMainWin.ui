@@ -32,6 +32,7 @@
    <font>
     <family>DejaVu Sans Mono</family>
     <pointsize>11</pointsize>
+    <stylestrategy>PreferAntialias</stylestrategy>
    </font>
   </property>
   <property name="windowTitle">
@@ -88,7 +89,7 @@
      <x>0</x>
      <y>0</y>
      <width>1024</width>
-     <height>20</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -313,7 +314,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="../res/SPX42ControlRes.qrc">
+    <iconset>
      <normaloff>:/icons/ic_spx_offline.png</normaloff>
      <normalon>:/icons/ic_spx_online.png</normalon>
      <disabledoff>:/icons/ic_spx_error.png</disabledoff>

@@ -24,6 +24,7 @@ namespace spx
     SPX42License spxLicense;                            //! SPX42 Lizenz
     QString spxSerialNumber;                            //! Seriennummer des aktuellen SPX42
     SPX42Gas gasList[ 8 ];                              //! Gasliste des aktuellen SPX42
+    int currentGas;                                     //! welches Gas ist das aktuelle im SPX
     DecompressionPreset decoCurrentPreset;              //! Aktueller Typ der Dekompressionsgradienten
     DecoGradientHash decoPresets;                       //! Hashliste der DECO-Presets (incl. CUSTOM == variabel)
     DecompressionDynamicGradient decoDynamicGradient;   //! dynamische Gradienten erlaubt
@@ -73,7 +74,9 @@ namespace spx
     void setLicense( const QByteArray &lic, const QByteArray &ind );     //! Lizenz aus dem Kommando vom SPX lesen
     QString getLicName( void ) const;                                    //! Textliche Darstellung der Lizenz
     SPX42Gas &getGasAt( int num );                                       //! Gib ein Gas mit der Nummer num vom SPX42 zurück
-    void setGasAt( int num, SPX42Gas gas );                              //! setzte Gas mit der Nummer xxx in die Config
+    void setGasAt( int num, const SPX42Gas &gas );                       //! setzte Gas mit der Nummer xxx in die Config
+    int getCurrentGas( void );                                           //! welches ist das aktuelle Gas
+    int setCurrentGas( int newCurrentGas );                              //! mache neues aktuelles gas
     void resetConfig( quint8 classes = SPX42ConfigClass::CFCLASS_ALL );  //! Resetiere das Objekt
     QString getSerialNumber( void ) const;                               //! Seriennummer des aktuellen SPX42 zurückgeben
     void setSerialNumber( const QString &serial );                       //! Seriennumemr des aktuellen SPX42 speichern

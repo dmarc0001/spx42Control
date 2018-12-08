@@ -17,6 +17,7 @@ namespace spx
     constexpr quint8 CFCLASS_SETPOINT{0x20};
     constexpr quint8 CFCLASS_INDIVIDUAL{0x40};
     constexpr quint8 CFCLASS_ALL{0xff};
+    constexpr double MAX_PPO2{1.60};
   }
   //
   // Aufzählungen, einige sind eigentlich nur für die bessere Lesbarkeitdes Codes

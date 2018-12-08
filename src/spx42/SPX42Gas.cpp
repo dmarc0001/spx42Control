@@ -43,9 +43,14 @@ namespace spx
       // weiter bei höheren Lizenzen, da darf O2 kleiner 21 und He darf auch
       case static_cast< qint8 >( LicenseType::LIC_FULLTMX ):
       case static_cast< qint8 >( LicenseType::LIC_MIL ):
+        if ( O2 < ProjectConst::SPX_MINIMUM_O2 )
+        {
+          // Minimum...
+          O2 = ProjectConst::SPX_MINIMUM_O2;
+        }
         // Priorität hat O2, helium runter, wenn es nicht passt
-        int n2 = ( 100 - O2 - He );
-        if ( n2 < 0 )
+        int N2 = ( 100 - O2 - He );
+        if ( N2 < 0 )
         {
           He = 100 - O2;
         }
@@ -79,6 +84,11 @@ namespace spx
       // weiter bei höheren Lizenzen, da darf O2 kleiner 21 und He darf auch
       case static_cast< qint8 >( LicenseType::LIC_FULLTMX ):
       case static_cast< qint8 >( LicenseType::LIC_MIL ):
+        if ( O2 < ProjectConst::SPX_MINIMUM_O2 )
+        {
+          // Minimum...
+          O2 = ProjectConst::SPX_MINIMUM_O2;
+        }
         // Priorität hat O2, helium runter, wenn es nicht passt
         int n2 = ( 100 - O2 - He );
         if ( n2 < 0 )
@@ -142,16 +152,78 @@ namespace spx
     return ( QString( QObject::tr( "TX%1/%2" ) ).arg( O2, 2, 10, QChar( '0' ) ).arg( He, 2, 10, QChar( '0' ) ) );
   }
 
-  qint16 SPX42Gas::getMOD()
+  qint16 SPX42Gas::getMOD( DeviceWaterType wType )
   {
-    // FIXME: Berechne MOD
-    return ( 0 );
+    //
+    // Berechne MOD für 1.6 Bar PPO2
+    //
+    // Salzwasser: 9,7 Meter per Bar
+    // Süsswasser: 10,0 Meter per Bar
+    //
+    if ( wType == DeviceWaterType::SALTWATER )
+    {
+      //
+      // Errechnen der Maximalen Einsatztiefe bei 1.6 Bar PPO2
+      //
+      double mod_d = 9.7 * ( ( SPX42ConfigClass::MAX_PPO2 / ( O2 / 100.0 ) ) - 1 );
+      //
+      // umrechnen in qint16, d.h. nur ganze Meter
+      //
+      return ( static_cast< qint16 >( std::floor( mod_d ) ) );
+    }
+    else
+    {
+      //
+      // Errechnen der Maximalen Einsatztiefe bei 1.6 Bar PPO2
+      //
+      double mod_d = 10.0 * ( ( SPX42ConfigClass::MAX_PPO2 / ( O2 / 100.0 ) ) - 1 );
+      //
+      // umrechnen in qint16, d.h. nur ganze Meter
+      //
+      return ( static_cast< qint16 >( std::floor( mod_d ) ) );
+    }
   }
 
-  qint16 SPX42Gas::getEAD()
+  qint16 SPX42Gas::getEAD( qint16 depth, DeviceWaterType wType )
   {
-    // FIXME: Berechne EAD
-    return ( 0 );
+    // Berechne EAD
+    //
+    // Salzwasser: 9,7 Meter per Bar
+    // Süsswasser: 10,0 Meter per Bar
+    //
+    double pDepth;
+    if ( wType == DeviceWaterType::SALTWATER )
+    {
+      pDepth = ( 9.7 * depth ) + 1;
+      //
+      // wirkicher N2 Partialdruck in der Tiefe
+      //
+      double p_n2 = pDepth * ( getN2() / 100.0 );
+      //
+      // in welcher Tiefe wäre der Partialdruck mit Luft genauso?
+      //
+      double p_ead = p_n2 / 0.79;
+      //
+      // und welche Tiefe wäre das nun?
+      //
+      return ( static_cast< qint16 >( std::round( p_ead - 1.0 ) / 9.7 ) );
+    }
+    else
+    {
+      pDepth = ( 10.0 * depth ) + 1;
+      //
+      // wirkicher N2 Partialdruck in der Tiefe
+      //
+      double p_n2 = pDepth * ( getN2() / 100.0 );
+      //
+      // in welcher Tiefe wäre der Partialdruck mit Luft genauso?
+      //
+      double p_ead = p_n2 / 0.79;
+      //
+      // und welche Tiefe wäre das nun?
+      //
+      return ( static_cast< qint16 >( std::round( p_ead - 1.0 ) / 10.0 ) );
+    }
   }
 
   void SPX42Gas::reset()

@@ -479,7 +479,6 @@ namespace spx
 
   void DeviceConfigFragment::onCommandRecivedSlot()
   {
-    // TODO: implementieren
     spSingleCommand recCommand;
     QDateTime nowDateTime;
     QByteArray value;
@@ -1359,6 +1358,6 @@ namespace spx
     // SPX42ControlMainWin abgefragt...
     SendListEntry sendCommand = remoteSPX42->askForConfig();
     remoteSPX42->sendCommand( sendCommand );
-    lg->debug( "DeviceConfigFragment::onConfigUpdateSlot -> send cmd decoinfos..." );
+    lg->debug( "DeviceConfigFragment::onConfigUpdateSlot -> send cmd config..." );
   }
 }  // namespace spx

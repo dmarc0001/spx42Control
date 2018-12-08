@@ -104,6 +104,13 @@ namespace spx
     return ( SendListEntry( CmdMarker( SPX42CommandDef::SPX_GET_SETUP_DEKO ), cmd ) );
   }
 
+  SendListEntry SPX42Commands::askForGasList()
+  {
+    QByteArray cmd;
+    makeSipleCommand( SPX42CommandDef::SPX_GET_SETUP_GASLIST, cmd );
+    return ( SendListEntry( CmdMarker( SPX42CommandDef::SPX_GET_SETUP_GASLIST ), cmd ) );
+  }
+
   SendListEntry SPX42Commands::setDateTime( const QDateTime &nowDateTime )
   {
     //

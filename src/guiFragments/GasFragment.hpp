@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QList>
+#include <QRadioButton>
 #include <QRegExp>
 #include <QSpinBox>
 #include <QWidget>
@@ -27,35 +28,19 @@ namespace spx
 {
 #define QSpinboxIntValueChanged static_cast< void ( QSpinBox::* )( int ) >( &QSpinBox::valueChanged )
 
-  class GasFragmentGuiRef
-  {
-    public:
-    QSpinBox *o2Spin;
-    QSpinBox *heSpin;
-    QLineEdit *n2Line;
-    QLabel *gasName;
-    QCheckBox *dil1CheckBox;
-    QCheckBox *dil2CheckBox;
-    QCheckBox *baCheckBox;
-    explicit GasFragmentGuiRef( QSpinBox *o2SpinBox,
-                                QSpinBox *heSpinBox,
-                                QLineEdit *n2LineEdit,
-                                QLabel *gasNameLabel,
-                                QCheckBox *dil1,
-                                QCheckBox *dil2,
-                                QCheckBox *ba );
-    ~GasFragmentGuiRef() = default;
-  };
-
   class GasFragment : public QWidget, IFragmentInterface
   {
     private:
     Q_OBJECT
     Q_INTERFACES( spx::IFragmentInterface )
-    std::unique_ptr< Ui::GasForm > ui;                           //! Zeiger auf GUI-Objekte
-    bool areSlotsConnected;                                      //! Ich merke mir, ob die Slots verbunden sind
-    std::array< std::unique_ptr< GasFragmentGuiRef >, 8 > gRef;  //! Referenzen für acht GUI-Objekte
-    // std::unique_ptr< GasFragmentGuiRef > gRef[ 8 ];  //! Referenzen für acht GUI-Objekte TODO: std::array machen
+    std::unique_ptr< Ui::GasForm > ui;   //! Zeiger auf GUI-Objekte
+    bool areSlotsConnected;              //! Ich merke mir, ob die Slots verbunden sind
+    QString gasSummaryTemplate;          //! gasliste
+    QString gasCurrentBoxTitleTemplate;  //! Titel der aktuellen bearbeitung
+    int currentGasNum;                   //! aktuelles Gas (1 bis 8)
+    bool ignoreGasGuiEvents;             //! ignoriere, wenn ich das gas via programm setzte
+    DeviceWaterType waterCompute;        //! rechnen wir mit Süßwasser?
+    QList< QRadioButton * > gasRadios;   //! Gas Radiobuttons
 
     public:
     explicit GasFragment( QWidget *parent,
@@ -67,11 +52,14 @@ namespace spx
     virtual void deactivateTab( void ) override;                             //! deaktiviere eventuelle signale
 
     private:
-    void fillReferences( void );     //! fülle die indizies mit Referenzen
-    void initGuiWithConfig( void );  //! Initialisiere die GUI mit Werten aus der Config
-    void connectSlots( void );       //! verbinde Slots mit Signalen
-    void disconnectSlots( void );    //! trenne Slots von Signalen
-    void checkGases( void );         //! Alle Gase nach Lizenzwechsel testen
+    void initGuiWithConfig( void );                                //! Initialisiere die GUI mit Werten aus der Config
+    void setGuiConnected( bool connected );                        //! verbunden oder nicht
+    void connectSlots( void );                                     //! verbinde Slots mit Signalen
+    void disconnectSlots( void );                                  //! trenne Slots von Signalen
+    void connectGasSlots( void );                                  //! GUI events machen
+    void disconnectGasSlots( void );                               //! Gas GUI elemente trennen (keine events)
+    void updateCurrGasGUI( int gasNum, bool withCurrent = true );  //! gui nach aktuellem Gas aktualisieren
+    void gasSelect( int gasNum, bool isSelected );
 
     signals:
     void onWarningMessageSig( const QString &msg, bool asPopup = false ) override;  //! eine Warnmeldung soll das Main darstellen
@@ -85,10 +73,12 @@ namespace spx
     virtual void onConfLicChangedSlot( void ) override;                              //! Wenn sich die Lizenz ändert
     virtual void onCloseDatabaseSlot( void ) override;                               //! wenn die Datenbank geschlosen wird
     virtual void onCommandRecivedSlot( void ) override;                              //! wenn ein Datentelegramm empfangen wurde
-    void onSpinO2ValueChangedSlot( int index, int o2Val );                           //! O2 Wert eines Gases hat sich verändert
-    void onSpinHeValueChangedSlot( int index, int heVal );                           //! HE Wert eines Gases hat sich verändert
-    void onGasUseTypChangeSlot( int index, DiluentType which, int state );           //! wenn sich das Diluent ändert
-    void onBaCheckChangeSlot( int index, int state );                                //! wenn sich das Bailout ändert
+    void onGasConfigUpdateSlot( void );                                              //! Konfiguration abrufen
+    void onSpinO2ValueChangedSlot( int o2Val );                                      //! O2 Wert eines Gases hat sich verändert
+    void onSpinHeValueChangedSlot( int heVal );                                      //! HE Wert eines Gases hat sich verändert
+    void onDiluentUseChangeSlot( int state, DiluentType which );                     //! wenn sich das Diluent ändert
+    void onBaCheckChangeSlot( int state );                                           //! wenn sich das Bailout ändert
+    void onWaterTypeChanged( int state );                                            //! wenn sich der wassertyp zum berechnen ändert
   };
 }
 #endif  // GASFORM_HPP

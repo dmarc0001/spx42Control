@@ -48,6 +48,8 @@ namespace spx
     SendListEntry askForLicenseState( void );
     //! erfrage die Konfiguration des SPX42
     SendListEntry askForConfig( void );
+    //! frage alle Gaase ab
+    SendListEntry askForGasList( void );
     //! setzte im SPX DAtum und Zeit, sofern seine Firmware das kann
     SendListEntry setDateTime( const QDateTime &nowDateTime );
     // Schalte SPX auf YMODEM-Betrieb!

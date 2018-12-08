@@ -137,7 +137,9 @@ DISTFILES               += \
     src/res/Hack-BoldItalic.ttf \
     src/res/Hack-Italic.ttf \
     src/res/Hack-Regular.ttf \
-    src/res/spx42Control.css
+    src/res/spx42Control.css \
+    src/res/spx42ControlMac.css \
+    src/res/TlwgTypewriter.ttf
 
 
 ###############################################################################

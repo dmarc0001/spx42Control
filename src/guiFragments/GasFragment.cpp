@@ -3,34 +3,6 @@
 
 namespace spx
 {
-  GasFragmentGuiRef::GasFragmentGuiRef( QSpinBox *o2SpinBox,
-                                        QSpinBox *heSpinBox,
-                                        QLineEdit *n2LineEdit,
-                                        QLabel *gasNameLabel,
-                                        QCheckBox *dil1,
-                                        QCheckBox *dil2,
-                                        QCheckBox *ba )
-      : o2Spin( o2SpinBox )
-      , heSpin( heSpinBox )
-      , n2Line( n2LineEdit )
-      , gasName( gasNameLabel )
-      , dil1CheckBox( dil1 )
-      , dil2CheckBox( dil2 )
-      , baCheckBox( ba )
-  {
-    if ( o2Spin != Q_NULLPTR )
-    {
-      if ( o2Spin->value() == 0 )
-      {
-        o2Spin->setValue( 21 );
-      }
-      if ( n2LineEdit != Q_NULLPTR && heSpin != Q_NULLPTR )
-      {
-        n2LineEdit->setText( QString( "%1" ).arg( ( 100 - o2Spin->value() - heSpin->value() ), 2, 10, QChar( '0' ) ) );
-      }
-    }
-  }
-
   GasFragment::GasFragment( QWidget *parent,
                             std::shared_ptr< Logger > logger,
                             std::shared_ptr< SPX42Database > spx42Database,
@@ -40,15 +12,23 @@ namespace spx
       , IFragmentInterface( logger, spx42Database, spxCfg, remSPX42 )
       , ui( new Ui::GasForm )
       , areSlotsConnected( false )
+      , currentGasNum( 0 )
+      , ignoreGasGuiEvents( false )
+      , waterCompute( DeviceWaterType::FRESHWATER )
   {
     lg->debug( "GasFragment::GasFragment..." );
+    gasSummaryTemplate = tr( "GAS #%1 HE:%2 O2:%3 N2:%4 DIL1 [%5] DIL2 [%6] BO [%7]" );
+    gasCurrentBoxTitleTemplate = tr( "GAS #%1" );
     ui->setupUi( this );
     ui->transferProgressBar->setVisible( false );
-    fillReferences();
     initGuiWithConfig();
     onConfLicChangedSlot();
     connectSlots();
+    connectGasSlots();
     connect( spxConfig.get(), &SPX42Config::licenseChangedSig, this, &GasFragment::onConfLicChangedSlot );
+    setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
+    if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
+      QTimer::singleShot( 250, this, &GasFragment::onGasConfigUpdateSlot );
   }
 
   GasFragment::~GasFragment()
@@ -63,38 +43,6 @@ namespace spx
     disconnect( spxConfig.get(), nullptr, this, nullptr );
   }
 
-  void GasFragment::fillReferences()
-  {
-    //
-    // Referenzen auf die GUI-Objekte in Arrays ablegen,
-    // damit ich indiziert zugreifen kann
-    //
-    gRef.at( 0 ) = std::unique_ptr< GasFragmentGuiRef >(
-        new GasFragmentGuiRef( ui->gas01O2spinBox, ui->gas01HESpinBox, ui->gas01N2LineEdit, ui->gas01NameLabel, ui->gas01dil01CheckBox,
-                               ui->gas01dil02CheckBox, ui->gas01bailoutCheckBox ) );
-    gRef.at( 1 ) = std::unique_ptr< GasFragmentGuiRef >(
-        new GasFragmentGuiRef( ui->gas02O2spinBox, ui->gas02HESpinBox, ui->gas02N2LineEdit, ui->gas02NameLabel, ui->gas02dil01CheckBox,
-                               ui->gas02dil02CheckBox, ui->gas02bailoutCheckBox ) );
-    gRef.at( 2 ) = std::unique_ptr< GasFragmentGuiRef >(
-        new GasFragmentGuiRef( ui->gas03O2spinBox, ui->gas03HESpinBox, ui->gas03N2LineEdit, ui->gas03NameLabel, ui->gas03dil01CheckBox,
-                               ui->gas03dil02CheckBox, ui->gas03bailoutCheckBox ) );
-    gRef.at( 3 ) = std::unique_ptr< GasFragmentGuiRef >(
-        new GasFragmentGuiRef( ui->gas04O2spinBox, ui->gas04HESpinBox, ui->gas04N2LineEdit, ui->gas04NameLabel, ui->gas04dil01CheckBox,
-                               ui->gas04dil02CheckBox, ui->gas04bailoutCheckBox ) );
-    gRef.at( 4 ) = std::unique_ptr< GasFragmentGuiRef >(
-        new GasFragmentGuiRef( ui->gas05O2spinBox, ui->gas05HESpinBox, ui->gas05N2LineEdit, ui->gas05NameLabel, ui->gas05dil01CheckBox,
-                               ui->gas05dil02CheckBox, ui->gas05bailoutCheckBox ) );
-    gRef.at( 5 ) = std::unique_ptr< GasFragmentGuiRef >(
-        new GasFragmentGuiRef( ui->gas06O2spinBox, ui->gas06HESpinBox, ui->gas06N2LineEdit, ui->gas06NameLabel, ui->gas06dil01CheckBox,
-                               ui->gas06dil02CheckBox, ui->gas06bailoutCheckBox ) );
-    gRef.at( 6 ) = std::unique_ptr< GasFragmentGuiRef >(
-        new GasFragmentGuiRef( ui->gas07O2spinBox, ui->gas07HESpinBox, ui->gas07N2LineEdit, ui->gas07NameLabel, ui->gas07dil01CheckBox,
-                               ui->gas07dil02CheckBox, ui->gas07bailoutCheckBox ) );
-    gRef.at( 7 ) = std::unique_ptr< GasFragmentGuiRef >(
-        new GasFragmentGuiRef( ui->gas08O2spinBox, ui->gas08HESpinBox, ui->gas08N2LineEdit, ui->gas08NameLabel, ui->gas08dil01CheckBox,
-                               ui->gas08dil02CheckBox, ui->gas08bailoutCheckBox ) );
-  }
-
   void GasFragment::initGuiWithConfig()
   {
     bool wasSlotsConnected = areSlotsConnected;
@@ -106,215 +54,308 @@ namespace spx
     if ( wasSlotsConnected )
     {
       disconnectSlots();
+      disconnectGasSlots();
     }
-    ui->tabHeaderLabel->setText(
-        QString( tr( "GASLIST SPX42 SERIAL [%1] LIC: %2" ).arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
-    for ( quint64 i = 0; i < 8; i++ )
-    {
-      SPX42Gas &currGas = spxConfig->getGasAt( static_cast< int >( i ) );
-      gRef.at( i )->o2Spin->setValue( currGas.getO2() );
-      gRef.at( i )->heSpin->setValue( currGas.getHe() );
-      gRef.at( i )->n2Line->setText( QString( "%1" ).arg( currGas.getN2(), 2, 10, QChar( '0' ) ) );
-      gRef.at( i )->gasName->setText( currGas.getGasName() );
-    }
+    //
+    // gas listen
+    //
+    gasRadios.insert( 0, ui->gas01RadioButton );
+    gasRadios.insert( 1, ui->gas02RadioButton );
+    gasRadios.insert( 2, ui->gas03RadioButton );
+    gasRadios.insert( 3, ui->gas04RadioButton );
+    gasRadios.insert( 4, ui->gas05RadioButton );
+    gasRadios.insert( 5, ui->gas06RadioButton );
+    gasRadios.insert( 6, ui->gas07RadioButton );
+    gasRadios.insert( 7, ui->gas08RadioButton );
+    //
+    // Voreinstellung
+    //
+    ui->currWaterTypeCheckBox->setChecked( true );
+    ui->currWaterTypeCheckBox->setText( tr( "COMPUTE FRESHWATER" ) );
+    //
     if ( wasSlotsConnected )
     {
       connectSlots();
+      connectGasSlots();
     }
+    //
+    // Onlinestsatus
+    //
+    setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
+  }
+
+  void GasFragment::setGuiConnected( bool connected )
+  {
+    disconnectSlots();
+    disconnectGasSlots();
+    ui->tabHeaderLabel->setText(
+        QString( tr( "GASLIST SPX42 SERIAL [%1] LIC: %2" ).arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
+    if ( connected )
+      currentGasNum = 0;
+    else
+      spxConfig->setLicense( LicenseType::LIC_FULLTMX );
+    //
+    // GUI ist ONLINE/OFFLINE
+    //
+    for ( auto i = 0; i < 8; i++ )
+    {
+      gasRadios.at( i )->setVisible( connected );
+    }
+    gasRadios.at( currentGasNum )->setChecked( true );
+    if ( connected )
+    {
+      //
+      // ist nur online zu sehen, also auch nicht zu updaten
+      //
+      for ( auto i = 0; i < 8; i++ )
+      {
+        if ( currentGasNum == i )
+          continue;
+        else
+          updateCurrGasGUI( i, false );
+      }
+    }
+    updateCurrGasGUI( currentGasNum );
+    ui->currdil01CheckBox->setEnabled( connected );
+    ui->currdil02CheckBox->setEnabled( connected );
+    ui->currbailoutCheckBox->setEnabled( connected );
+    connectSlots();
+    connectGasSlots();
   }
 
   void GasFragment::connectSlots()
   {
     //
-    // Alle Spinboxen mit Lambdafunktionen zum eintragen der Werte
-    // und dann ausführen der change-Funktion
-    // dann de DIL-Checkboxen mit Labdas versehen (DIL1 xor DIL2)
+    // die Gase zum auswählen via radio box
     //
-    for ( quint64 i = 0; i < 8; i++ )
-    {
-      connect( gRef.at( i )->heSpin, QSpinboxIntValueChanged, this,
-               [=]( int val ) { onSpinHeValueChangedSlot( static_cast< int >( i ), val ); } );
-      connect( gRef.at( i )->o2Spin, QSpinboxIntValueChanged, this,
-               [=]( int val ) { onSpinO2ValueChangedSlot( static_cast< int >( i ), val ); } );
-      connect( gRef.at( i )->dil1CheckBox, &QCheckBox::stateChanged, this,
-               [=]( int state ) { onGasUseTypChangeSlot( static_cast< int >( i ), DiluentType::DIL_01, state ); } );
-      connect( gRef.at( i )->dil2CheckBox, &QCheckBox::stateChanged, this,
-               [=]( int state ) { onGasUseTypChangeSlot( static_cast< int >( i ), DiluentType::DIL_02, state ); } );
-      connect( gRef.at( i )->baCheckBox, &QCheckBox::stateChanged, this,
-               [=]( int state ) { onBaCheckChangeSlot( static_cast< int >( i ), state ); } );
-    }
+    connect( ui->gas01RadioButton, &QRadioButton::toggled, [=]( bool isSelected ) { this->gasSelect( 0, isSelected ); } );
+    connect( ui->gas02RadioButton, &QRadioButton::toggled, [=]( bool isSelected ) { this->gasSelect( 1, isSelected ); } );
+    connect( ui->gas03RadioButton, &QRadioButton::toggled, [=]( bool isSelected ) { this->gasSelect( 2, isSelected ); } );
+    connect( ui->gas04RadioButton, &QRadioButton::toggled, [=]( bool isSelected ) { this->gasSelect( 3, isSelected ); } );
+    connect( ui->gas05RadioButton, &QRadioButton::toggled, [=]( bool isSelected ) { this->gasSelect( 4, isSelected ); } );
+    connect( ui->gas06RadioButton, &QRadioButton::toggled, [=]( bool isSelected ) { this->gasSelect( 5, isSelected ); } );
+    connect( ui->gas07RadioButton, &QRadioButton::toggled, [=]( bool isSelected ) { this->gasSelect( 6, isSelected ); } );
+    connect( ui->gas08RadioButton, &QRadioButton::toggled, [=]( bool isSelected ) { this->gasSelect( 7, isSelected ); } );
+    // Lizenz
+    connect( spxConfig.get(), &SPX42Config::licenseChangedSig, this, &GasFragment::onConfLicChangedSlot );
+    // CONFIG
+    connect( remoteSPX42.get(), &SPX42RemotBtDevice::onStateChangedSig, this, &GasFragment::onOnlineStatusChangedSlot );
+    connect( remoteSPX42.get(), &SPX42RemotBtDevice::onSocketErrorSig, this, &GasFragment::onSocketErrorSlot );
+    connect( remoteSPX42.get(), &SPX42RemotBtDevice::onCommandRecivedSig, this, &GasFragment::onCommandRecivedSlot );
   }
 
   void GasFragment::disconnectSlots()
   {
     //
-    // Alle Spinboxen trennen
+    // Alle radios trennen
     //
-    for ( auto &i : gRef )
-    {
-      disconnect( i->heSpin );
-      disconnect( i->o2Spin );
-    }
+    disconnect( ui->gas01RadioButton, nullptr, nullptr, nullptr );
+    disconnect( ui->gas02RadioButton, nullptr, nullptr, nullptr );
+    disconnect( ui->gas03RadioButton, nullptr, nullptr, nullptr );
+    disconnect( ui->gas04RadioButton, nullptr, nullptr, nullptr );
+    disconnect( ui->gas05RadioButton, nullptr, nullptr, nullptr );
+    disconnect( ui->gas06RadioButton, nullptr, nullptr, nullptr );
+    disconnect( ui->gas07RadioButton, nullptr, nullptr, nullptr );
+    disconnect( ui->gas08RadioButton, nullptr, nullptr, nullptr );
+    // Lizenz
+    disconnect( spxConfig.get(), nullptr, this, nullptr );
+    // CONFIG
+    disconnect( remoteSPX42.get(), nullptr, this, nullptr );
   }
 
-  void GasFragment::onSpinO2ValueChangedSlot( int index, int o2Val )
+  void GasFragment::connectGasSlots( void )
   {
-    volatile static int whereIgnored = -1;
-    auto g_idx = static_cast< quint64 >( index );
+    //
+    // die gas spinbioxen für das aktuelle gas
+    //
+    connect( ui->currO2spinBox, QSpinboxIntValueChanged, this, &GasFragment::onSpinO2ValueChangedSlot );
+    connect( ui->currHESpinBox, QSpinboxIntValueChanged, this, &GasFragment::onSpinHeValueChangedSlot );
+    connect( ui->currWaterTypeCheckBox, &QCheckBox::stateChanged, this, &GasFragment::onWaterTypeChanged );
+    connect( ui->currbailoutCheckBox, &QCheckBox::stateChanged, this, &GasFragment::onBaCheckChangeSlot );
+    connect( ui->currdil01CheckBox, &QCheckBox::stateChanged,
+             [=]( int state ) { this->onDiluentUseChangeSlot( state, DiluentType::DIL_01 ); } );
+    connect( ui->currdil02CheckBox, &QCheckBox::stateChanged,
+             [=]( int state ) { this->onDiluentUseChangeSlot( state, DiluentType::DIL_02 ); } );
+  }
 
-    if ( whereIgnored == index )
-    {
-      //
-      // hier soll ich das ignorieren!
-      //
-      return;
-    }
-    lg->debug(
-        QString( "GasFragment::onSpinO2ValueChangedSlot -> gas nr <%1> was changed..." ).arg( index + 1, 2, 10, QChar( '0' ) ) );
+  void GasFragment::disconnectGasSlots( void )
+  {
+    //
+    // die gas spinbioxen für das aktuelle gas
+    //
+    disconnect( ui->currO2spinBox, nullptr, nullptr, nullptr );
+    disconnect( ui->currHESpinBox, nullptr, nullptr, nullptr );
+    disconnect( ui->currWaterTypeCheckBox, nullptr, nullptr, nullptr );
+    disconnect( ui->currbailoutCheckBox, nullptr, nullptr, nullptr );
+    disconnect( ui->currdil01CheckBox, nullptr, nullptr, nullptr );
+    disconnect( ui->currdil02CheckBox, nullptr, nullptr, nullptr );
+  }
+
+  void GasFragment::onSpinO2ValueChangedSlot( int o2Val )
+  {
+    lg->debug( QString( "GasFragment::onSpinO2ValueChangedSlot -> gas nr <%1> was changed..." )
+                   .arg( currentGasNum + 1, 2, 10, QChar( '0' ) ) );
     //
     // Gas setzen, Plausibilität prüfen, ggf korrigieren
     //
-    SPX42Gas &currGas = spxConfig->getGasAt( index );
+    SPX42Gas &currGas = spxConfig->getGasAt( currentGasNum );
     currGas.setO2( static_cast< quint8 >( o2Val ), spxConfig->getLicense().getLicType() );
-    whereIgnored = index;  // igfnorieren weitere Aufrufe für diesen index, GUI verändern
-    gRef.at( g_idx )->o2Spin->setValue( currGas.getO2() );
-    gRef.at( g_idx )->heSpin->setValue( currGas.getHe() );
-    whereIgnored = -1;
-    gRef.at( g_idx )->n2Line->setText( QString( "%1" ).arg( currGas.getN2(), 2, 10, QChar( '0' ) ) );
-    gRef.at( g_idx )->gasName->setText( currGas.getGasName() );
-    // TODO: Gas noch färben, je nach O2-Level
-    emit onConfigWasChangedSig();
+    if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
+      emit onConfigWasChangedSig();
+    disconnectGasSlots();
+    updateCurrGasGUI( currentGasNum );
+    connectGasSlots();
   }
 
-  void GasFragment::onSpinHeValueChangedSlot( int index, int heVal )
+  void GasFragment::onSpinHeValueChangedSlot( int heVal )
   {
-    volatile static int whereIgnored = -1;
-    auto g_idx = static_cast< quint64 >( index );
-
-    if ( whereIgnored == index )
-    {
-      //
-      // hier soll ich das ignorieren!
-      //
-      return;
-    }
-    lg->debug(
-        QString( "GasFragment::onSpinHeValueChangedSlot -> gas nr <%1> was changed..." ).arg( index + 1, 2, 10, QChar( '0' ) ) );
+    lg->debug( QString( "GasFragment::onSpinHeValueChangedSlot -> gas nr <%1> was changed..." )
+                   .arg( currentGasNum + 1, 2, 10, QChar( '0' ) ) );
     //
     // Gas setzen, Plausibilität prüfen, ggf korrigieren
     //
-    SPX42Gas &currGas = spxConfig->getGasAt( index );
+    SPX42Gas &currGas = spxConfig->getGasAt( currentGasNum );
     currGas.setHe( static_cast< quint8 >( heVal ), spxConfig->getLicense().getLicType() );
-    whereIgnored = index;  // igfnorieren weitere Aufrufe für diesen index, GUI verändern
-    gRef.at( g_idx )->o2Spin->setValue( currGas.getO2() );
-    gRef.at( g_idx )->heSpin->setValue( currGas.getHe() );
-    whereIgnored = -1;
-    gRef.at( g_idx )->n2Line->setText( QString( "%1" ).arg( currGas.getN2(), 2, 10, QChar( '0' ) ) );
-    gRef.at( g_idx )->gasName->setText( currGas.getGasName() );
-    // TODO: Gas noch färben, je nach O2-Level
-    emit onConfigWasChangedSig();
+    if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
+      emit onConfigWasChangedSig();
+    disconnectGasSlots();
+    updateCurrGasGUI( currentGasNum );
+    connectGasSlots();
   }
 
-  void GasFragment::checkGases()
+  void GasFragment::updateCurrGasGUI( int gasNum, bool withCurrent )
   {
-    for ( quint64 i = 0; i < 8; i++ )
+    //
+    // Plausibilität checken, GUI korrigieren
+    //
+    SPX42Gas spxGas = spxConfig->getGasAt( gasNum );
+    int currO2 = spxGas.getO2();
+    int currHe = spxGas.getHe();
+    int currN2 = spxGas.getN2();
+    //"GAS #%1 HE:%2 O2:%3 N2:%4 DIL1 [%5] DIL2 [%6] BO [%7]"
+    gasRadios.at( gasNum )->setText( gasSummaryTemplate.arg( gasNum + 1, 2, 10, QChar( '0' ) )
+                                         .arg( currHe, 2, 10, QChar( '0' ) )
+                                         .arg( currO2, 2, 10, QChar( '0' ) )
+                                         .arg( currN2, 2, 10, QChar( '0' ) )
+                                         .arg( spxGas.getDiluentType() == DiluentType::DIL_01 ? "X" : " " )
+                                         .arg( spxGas.getDiluentType() == DiluentType::DIL_02 ? "X" : " " )
+                                         .arg( spxGas.getBailout() ? "X" : " " ) );
+    //
+    // da hier nur wenn der aktuelle teil auch aktualisiert werden soll
+    // (ist default)
+    //
+    if ( withCurrent )
     {
-      SPX42Gas &currGas = spxConfig->getGasAt( static_cast< int >( i ) );
-      int currHe = currGas.getHe();
-      int currO2 = currGas.getO2();
-      //
-      int current = currGas.setHe( currGas.getHe(), spxConfig->getLicense().getLicType() );
-      if ( currHe != current )
-      {
-        // GUI setzten
-        gRef[ i ]->heSpin->setValue( current );
-      }
-
-      current = currGas.setO2( currGas.getO2(), spxConfig->getLicense().getLicType() );
-      if ( currO2 != current )
-      {
-        // GUI setzten
-        gRef[ i ]->o2Spin->setValue( current );
-      }
+      ui->currGasGroupBox->setTitle( gasCurrentBoxTitleTemplate.arg( gasNum + 1, 2, 10, QChar( '0' ) ) );
+      ui->currN2LineEdit->setText( QString( "%1" ).arg( currN2, 2, 10, QChar( '0' ) ) );
+      ui->currNameLabel->setText( spxGas.getGasName() );
+      if ( ui->currO2spinBox->value() != currO2 )
+        ui->currO2spinBox->setValue( currO2 );
+      if ( ui->currHESpinBox->value() != currHe )
+        ui->currHESpinBox->setValue( currHe );
+      qint16 mod = spxGas.getMOD( waterCompute );
+      ui->currentMODLabel->setText( tr( "MOD: %1m" ).arg( mod, 2, 10, QChar( '0' ) ) );
+      ui->currentEADLabel->setText( tr( "EAD: %1m" ).arg( spxGas.getEAD( mod, waterCompute ), 2, 10, QChar( '0' ) ) );
+      ui->currdil01CheckBox->setChecked( spxGas.getDiluentType() == DiluentType::DIL_01 ? true : false );
+      ui->currdil02CheckBox->setChecked( spxGas.getDiluentType() == DiluentType::DIL_02 ? true : false );
+      ui->currbailoutCheckBox->setChecked( spxGas.getBailout() );
     }
   }
 
-  void GasFragment::onGasUseTypChangeSlot( int index, DiluentType which, int state )
+  void GasFragment::onDiluentUseChangeSlot( int state, DiluentType which )
   {
-    const auto g_idx = static_cast< quint64 >( index );
     //
-    // FIXME: Alle anderen Gase dürfen dann NICHT which sein!
+    // Alle anderen Gase dürfen dann NICHT which sein!
     // Nur ein DIL1, beliegig DIL2 aber nicht DIL1 == DIL2
     //
-    volatile static int whereIgnored = -1;
-    if ( whereIgnored == index )
-    {
-      //
-      // hier soll ich das ignorieren!
-      //
-      return;
-    }
-    lg->debug( QString( "GasFragment::onGasUseTypChangeSlot -> gas nr <%1> , DIL <%2> was changed to <%3>..." )
-                   .arg( index + 1, 2, 10, QChar( '0' ) )
+    lg->debug( QString( "GasFragment::onDiluentUseChangeSlot -> gas nr <%1> , DIL <%2> was changed to <%3>..." )
+                   .arg( currentGasNum + 1, 2, 10, QChar( '0' ) )
                    .arg( static_cast< int >( which ), 2, 10, QChar( '0' ) )
                    .arg( state, 2, 10, QChar( '0' ) ) );
-    SPX42Gas &currGas = spxConfig->getGasAt( index );
     //
-    // ich nehme den Fall, dass ein DIL gesetzt wird
-    // daher setzten und prüfen dass das andere DIL gelöscht wird
+    // setzten oder löschen des Gases?
     //
     if ( state == Qt::Checked )
     {
-      currGas.setDiluentType( which );
+      //
+      // Gas setzten
+      // welches GAS
+      //
       if ( which == DiluentType::DIL_01 )
       {
-        for ( quint64 dil1Nr = 0; dil1Nr < 8; dil1Nr++ )
+        // alle DIL_01 löschen, nur meins bleibt aktiv
+        for ( auto i = 0; i < 8; i++ )
         {
-          if ( g_idx != dil1Nr )
+          if ( spxConfig->getGasAt( i ).getDiluentType() == DiluentType::DIL_01 )
           {
-            // alle anderen DIL1 löschen!
-            whereIgnored = static_cast< int >( dil1Nr );
-            lg->debug( QString( "GasFragment::onGasUseTypChangeSlot: uncheck DIL1 Nr <%1>" ).arg( dil1Nr ) );
-            gRef[ dil1Nr ]->dil1CheckBox->setCheckState( Qt::Unchecked );
+            spxConfig->getGasAt( i ).setDiluentType( DiluentType::DIL_NONE );
           }
         }
-        whereIgnored = index;
-        gRef[ g_idx ]->dil2CheckBox->setCheckState( Qt::Unchecked );
-        whereIgnored = -1;
+        spxConfig->getGasAt( currentGasNum ).setDiluentType( DiluentType::DIL_01 );
       }
-      if ( which == DiluentType::DIL_02 )
+      else if ( which == DiluentType::DIL_02 )
       {
-        whereIgnored = index;
-        gRef[ g_idx ]->dil1CheckBox->setCheckState( Qt::Unchecked );
-        whereIgnored = -1;
+        spxConfig->getGasAt( currentGasNum ).setDiluentType( DiluentType::DIL_02 );
       }
-      emit onConfigWasChangedSig();
-      return;
-    }
-    //
-    // state == 0
-    // dann kann (siehe oben) die andere Box nicht markiert sein
-    //
-    currGas.setDiluentType( DiluentType::DIL_NONE );
-    whereIgnored = index;
-    gRef[ g_idx ]->dil2CheckBox->setCheckState( Qt::Unchecked );
-    gRef[ g_idx ]->dil2CheckBox->setCheckState( Qt::Unchecked );
-    whereIgnored = -1;
-    emit onConfigWasChangedSig();
-  }
-
-  void GasFragment::onBaCheckChangeSlot( int index, int state )
-  {
-    lg->debug( QString( "GasFragment::onBaCheckChangeSlot -> gas nr <%1> was changed..." ).arg( index + 1, 2, 10, QChar( '0' ) ) );
-    if ( state == Qt::Checked )
-    {
-      spxConfig->getGasAt( index ).setBailout( true );
     }
     else
     {
-      spxConfig->getGasAt( index ).setBailout( false );
+      //
+      // unset DILUENT
+      //
+      spxConfig->getGasAt( currentGasNum ).setDiluentType( DiluentType::DIL_NONE );
     }
-    emit onConfigWasChangedSig();
+    //
+    // jetzt noch gewährleisten, dass mindestens ein DIL1 da ist
+    //
+    bool setGas01ToDIL1 = true;
+    for ( auto i = 0; i < 8; i++ )
+    {
+      if ( spxConfig->getGasAt( i ).getDiluentType() == DiluentType::DIL_01 )
+      {
+        setGas01ToDIL1 = false;
+        break;
+      }
+    }
+    //
+    // wenn nun kein DIL1 mehr vorhanden war, setzte GAS01 als DIL1
+    //
+    if ( setGas01ToDIL1 )
+      spxConfig->getGasAt( 0 ).setDiluentType( DiluentType::DIL_01 );
+    //
+    // GUI update
+    //
+    disconnectGasSlots();
+    for ( auto i = 0; i < 8; i++ )
+    {
+      if ( currentGasNum == i )
+        continue;
+      else
+        updateCurrGasGUI( i, false );
+    }
+    if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
+      emit onConfigWasChangedSig();
+    updateCurrGasGUI( currentGasNum );
+    connectGasSlots();
+  }
+
+  void GasFragment::onBaCheckChangeSlot( int state )
+  {
+    lg->debug(
+        QString( "GasFragment::onBaCheckChangeSlot -> gas nr <%1> was changed..." ).arg( currentGasNum + 1, 2, 10, QChar( '0' ) ) );
+    if ( state == Qt::Checked )
+    {
+      spxConfig->getGasAt( currentGasNum ).setBailout( true );
+    }
+    else
+    {
+      spxConfig->getGasAt( currentGasNum ).setBailout( false );
+    }
+    if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
+      emit onConfigWasChangedSig();
+    disconnectGasSlots();
+    updateCurrGasGUI( currentGasNum );
+    connectGasSlots();
   }
 
   void GasFragment::onConfLicChangedSlot()
@@ -323,8 +364,6 @@ namespace spx
         QString( "GasFragment::onConfLicChangedSlot -> set: %1" ).arg( static_cast< int >( spxConfig->getLicense().getLicType() ) ) );
     ui->tabHeaderLabel->setText(
         QString( tr( "GASLIST SPX42 Serial [%1] Lic: %2" ).arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
-    checkGases();
-    // TODO: GUI überarbeiten!
   }
 
   void GasFragment::onOnlineStatusChangedSlot( bool )
@@ -344,7 +383,151 @@ namespace spx
 
   void GasFragment::onCommandRecivedSlot()
   {
-    // TODO: implementieren
+    spSingleCommand recCommand;
+    QDateTime nowDateTime;
+    QByteArray value;
+    SPX42Gas recGas;
+    int recGasNumber, n2, he, o2;
+
+    char kdo;
+    //
+    lg->debug( "GasFragment::onCommandRecivedSlot..." );
+    //
+    // alle abholen...
+    //
+    while ( ( recCommand = remoteSPX42->getNextRecCommand() ) )
+    {
+      // ja, es gab ein Datagram zum abholen
+      kdo = recCommand->getCommand();
+      switch ( kdo )
+      {
+        case SPX42CommandDef::SPX_ALIVE:
+          // Kommando ALIVE liefert zurück:
+          // ~03:PW
+          // PX => Angabe HEX in Milivolt vom Akku
+          lg->debug( "GasFragment::onCommandRecivedSlot -> alive/acku..." );
+          ackuVal = ( recCommand->getValueAt( SPXCmdParam::ALIVE_POWER ) / 100.0 );
+          emit onAkkuValueChangedSig( ackuVal );
+          break;
+        case SPX42CommandDef::SPX_APPLICATION_ID:
+          // Kommando APPLICATION_ID (VERSION)
+          // ~04:NR -> VERSION als String
+          lg->debug( "GasFragment::onCommandRecivedSlot -> firmwareversion..." );
+          // Setzte die Version in die Config
+          spxConfig->setSpxFirmwareVersion( recCommand->getParamAt( SPXCmdParam::FIRMWARE_VERSION ) );
+          // Geht das Datum zu setzen?
+          if ( spxConfig->getCanSetDate() )
+          {
+            // ja der kann das Datum online setzten
+            nowDateTime = QDateTime::currentDateTime();
+            // sende das Datum an den SPX
+            remoteSPX42->setDateTime( nowDateTime );
+          }
+          break;
+        case SPX42CommandDef::SPX_SERIAL_NUMBER:
+          // Kommando SERIAL NUMBER
+          // ~07:XXX -> Seriennummer als String
+          lg->debug( "GasFragment::onCommandRecivedSlot -> serialnumber..." );
+          spxConfig->setSerialNumber( recCommand->getParamAt( SPXCmdParam::SERIAL_NUMBER ) );
+          setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
+          break;
+        case SPX42CommandDef::SPX_LICENSE_STATE:
+          // Kommando SPX_LICENSE_STATE
+          // komplett: <~45:LS:CE>
+          // übergeben LS,CE
+          // LS : License State 0=Nitrox,1=Normoxic Trimix,2=Full Trimix
+          // CE : Custom Enabled 0= disabled, 1=enabled
+          lg->debug( "GasFragment::onCommandRecivedSlot -> license state..." );
+          spxConfig->setLicense( recCommand->getParamAt( SPXCmdParam::LICENSE_STATE ),
+                                 recCommand->getParamAt( SPXCmdParam::LICENSE_INDIVIDUAL ) );
+          setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
+          break;
+        case SPX42CommandDef::SPX_GET_SETUP_GASLIST:
+          // Kommando GET_SETUP_GASLIST
+          // <~39:NR:ST:HE:BA:AA:CG>
+          // NR: Numer des Gases
+          // ST Stickstoff in Prozent (hex)
+          // HELIUM
+          // Bailout
+          // AA Diluent 1 oder 2 oder keins
+          // CG curent Gas
+          recGasNumber = static_cast< int >( recCommand->getValueAt( SPXCmdParam::GASLIST_GAS_NUMBER ) );
+          n2 = static_cast< int >( recCommand->getValueAt( SPXCmdParam::GASLIST_N2 ) );
+          he = static_cast< int >( recCommand->getValueAt( SPXCmdParam::GASLIST_HE ) );
+          o2 = 100 - ( n2 + he );
+          //
+          // DEBUG
+          //
+          lg->debug( QString( "############# GAS: %1 N2: %2, HE: %3, O2 %4" )
+                         .arg( recGasNumber, 2, 10, QChar( '0' ) )
+                         .arg( n2, 2, 10, QChar( '0' ) )
+                         .arg( he, 2, 10, QChar( '0' ) )
+                         .arg( o2, 2, 10, QChar( '0' ) ) );
+          //
+          // DEBUG
+          //
+          lg->debug( QString( "GasFragment::onCommandRecivedSlot -> gas #%1..." ).arg( recGasNumber, 2, 10, QChar( '0' ) ) );
+          // CONFIG speichern
+          disconnectSlots();
+          recGas.reset();
+          recGas.setO2( static_cast< quint8 >( o2 ) );
+          recGas.setHe( static_cast< quint8 >( he ) );
+          recGas.setBailout( recCommand->getValueAt( SPXCmdParam::GASLIST_BAILOUT ) == 0 ? false : true );
+          recGas.setDiluentType( static_cast< DiluentType >( recCommand->getValueAt( SPXCmdParam::GASLIST_DILUENT ) ) );
+          spxConfig->setGasAt( recGasNumber, recGas );
+          if ( recCommand->getValueAt( SPXCmdParam::GASLIST_IS_CURRENT ) > 0 )
+          {
+            spxConfig->setCurrentGas( recGasNumber );
+          }
+          // GUI update
+          updateCurrGasGUI( recGasNumber );
+          connectSlots();
+          break;
+      }
+    }
   }
 
+  void GasFragment::onGasConfigUpdateSlot()
+  {
+    //
+    // rufe alle gase vom computer ab
+    //
+    SendListEntry sendCommand = remoteSPX42->askForGasList();
+    remoteSPX42->sendCommand( sendCommand );
+    lg->debug( "GasFragment::onGasConfigUpdateSlot -> send cmd all gases..." );
+  }
+
+  void GasFragment::gasSelect( int gasNum, bool isSelected )
+  {
+    if ( isSelected )
+    {
+      //
+      // welche Nummer bearbeiten?
+      //
+      currentGasNum = gasNum;
+      // sag bescheid
+      lg->debug( QString( "GasFragment::gasSelect -> gas #%1" ).arg( gasNum + 1, 2, 10, QChar( '0' ) ) );
+    }
+    //
+    //"GAS #%1 HE:%2 O2:%3 N2:%4 DIL1 [%5] DIL2 [%6] BO [%7]"
+    // für micht anzeigen
+    updateCurrGasGUI( currentGasNum );
+  }
+
+  void GasFragment::onWaterTypeChanged( int state )
+  {
+    if ( state )
+    {
+      ui->currWaterTypeCheckBox->setText( tr( "COMPUTE FRESHWATER" ) );
+      waterCompute = DeviceWaterType::FRESHWATER;
+    }
+    else
+    {
+      ui->currWaterTypeCheckBox->setText( tr( "COMPUTE SALTWATER" ) );
+      waterCompute = DeviceWaterType::SALTWATER;
+    }
+    disconnectGasSlots();
+    updateCurrGasGUI( currentGasNum );
+    connectGasSlots();
+  }
 }  // namespace spx
