@@ -115,8 +115,6 @@ namespace spx
     ui->currdil01CheckBox->setEnabled( connected );
     ui->currdil02CheckBox->setEnabled( connected );
     ui->currbailoutCheckBox->setEnabled( connected );
-    ui->activeGasWidget->setVisible( connected );
-    // ui->activeGasSpinBox->setVisible( connected );
     connectSlots();
   }
 
@@ -150,7 +148,6 @@ namespace spx
              [=]( int state ) { this->onDiluentUseChangeSlot( state, DiluentType::DIL_01 ); } );
     connect( ui->currdil02CheckBox, &QCheckBox::stateChanged,
              [=]( int state ) { this->onDiluentUseChangeSlot( state, DiluentType::DIL_02 ); } );
-    connect( ui->activeGasSpinBox, QSpinboxIntValueChanged, this, &GasFragment::onSetActiveGas );
   }
 
   void GasFragment::disconnectSlots()
@@ -179,7 +176,6 @@ namespace spx
     disconnect( ui->currbailoutCheckBox, nullptr, nullptr, nullptr );
     disconnect( ui->currdil01CheckBox, nullptr, nullptr, nullptr );
     disconnect( ui->currdil02CheckBox, nullptr, nullptr, nullptr );
-    disconnect( ui->activeGasSpinBox, nullptr, nullptr, nullptr );
   }
 
   void GasFragment::onSpinO2ValueChangedSlot( int o2Val )
@@ -233,7 +229,6 @@ namespace spx
                                          .arg( spxGas.getDiluentType() == DiluentType::DIL_01 ? "X" : " " )
                                          .arg( spxGas.getDiluentType() == DiluentType::DIL_02 ? "X" : " " )
                                          .arg( spxGas.getBailout() ? "X" : " " ) );
-    ui->activeGasSpinBox->setValue( spxConfig->getActiveGas() );
     //
     // da hier nur wenn der aktuelle teil auch aktualisiert werden soll
     // (ist default)
@@ -486,7 +481,7 @@ namespace spx
           spxConfig->setGasAt( recGasNumber, recGas );
           if ( recCommand->getValueAt( SPXCmdParam::GASLIST_IS_CURRENT ) > 0 )
           {
-            spxConfig->setActieGas( recGasNumber );
+            // current parameter ist hier immer 0
           }
           spxConfig->freezeConfigs( SPX42ConfigClass::CFCLASS_GASES );
           // GUI update
@@ -543,11 +538,4 @@ namespace spx
     connectSlots();
   }
 
-  void GasFragment::onSetActiveGas( int index )
-  {
-    spxConfig->setActieGas( index );
-    lg->debug( QString( "active gas changed to %1" ).arg( index ) );
-    if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
-      emit onConfigWasChangedSig();
-  }
 }  // namespace spx

@@ -386,7 +386,7 @@ namespace spx
                       .arg( static_cast< int >( cGas.getHe() ), 1, 16 )
                       .arg( cGas.getBailout() ? "1" : "0" )
                       .arg( static_cast< int >( cGas.getDiluentType() ), 1, 16 )
-                      .arg( cfg.getActiveGas() == gasNum ? "1" : "0" ) );
+                      .arg( 0 ) );
     }
     else
     {
@@ -399,7 +399,7 @@ namespace spx
                       .arg( static_cast< int >( cGas.getHe() ), 1, 16 )
                       .arg( cGas.getBailout() ? "1" : "0" )
                       .arg( static_cast< int >( cGas.getDiluentType() ), 1, 16 )
-                      .arg( cfg.getActiveGas() == gasNum ? "1" : "0" ) );
+                      .arg( 0 ) );
     }
     cmd.append( &SPX42CommandDef::ETX, 1 );
     // erwarte Quittung! (true)

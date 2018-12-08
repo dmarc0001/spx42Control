@@ -13,7 +13,6 @@ namespace spx
       , isValid( false )
       , spxFirmwareVersion( SPX42FirmwareVersions::FIRMWARE_UNKNOWN )
       , spxSerialNumber()
-      , currentGas( 0 )
       , decoCurrentPreset()
       , decoDynamicGradient()
       , decoDeepstopsEnabled()
@@ -322,31 +321,6 @@ namespace spx
     qhash.reset();
     qhash.addData( serialized );
     currentGasHashes[ num ] = qhash.result();
-  }
-
-  /**
-   * @brief SPX42Config::getCurrentGas
-   * @return
-   */
-  int SPX42Config::getActiveGas( void )
-  {
-    return ( currentGas );
-  }
-
-  /**
-   * @brief SPX42Config::setActieGas
-   * @param newCurrentGas
-   * @return
-   */
-  int SPX42Config::setActieGas( int newCurrentGas )
-  {
-    int oldCurrent = currentGas;
-    currentGas = newCurrentGas;
-    QByteArray serialized = ( QString( "avtive gas: %1" ).arg( currentGas, 2, 10, QChar( '0' ) ) ).toLatin1();
-    qhash.reset();
-    qhash.addData( serialized );
-    currentGasHashes[ GAS_HASHES - 1 ] = qhash.result();
-    return ( oldCurrent );
   }
 
   /**

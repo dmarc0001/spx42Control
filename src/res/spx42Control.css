@@ -64,8 +64,6 @@ QGroupBox#currGasGroupBox>QLabel
 QGroupBox#currGasGroupBox>QWidget>QLabel,
  QGroupBox#currGasGroupBox>QWidget>QCheckBox ,
  QGroupBox#currGasGroupBox>QWidget>QSpinBox,
- QGroupBox#gasesGroupBox>QWidget#activeGasWidget,
- QGroupBox#gasesGroupBox>QWidget>QSpinBox,
  QGroupBox#currGasGroupBox>QWidget>QLineEdit,
  QLabel#currNameLabel
 {

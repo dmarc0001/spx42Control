@@ -78,7 +78,6 @@ namespace spx
     void onDiluentUseChangeSlot( int state, DiluentType which );                     //! wenn sich das Diluent ändert
     void onBailoutCheckChangeSlot( int state );                                      //! wenn sich das Bailout ändert
     void onWaterTypeChanged( int state );                                            //! wenn sich der wassertyp zum berechnen ändert
-    void onSetActiveGas( int index );
   };
 }
 #endif  // GASFORM_HPP
