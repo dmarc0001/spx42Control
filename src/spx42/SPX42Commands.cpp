@@ -346,4 +346,63 @@ namespace spx
     // erwarte Quittung! (true)
     return ( SendListEntry( CmdMarker( SPX42CommandDef::SPX_SET_SETUP_INDIVIDUAL, true ), cmd ) );
   }
+
+  SendListEntry SPX42Commands::sendGas( int gasNum, SPX42Config &cfg )
+  {
+    QByteArray code;
+    QByteArray cmd;
+    SPX42Gas cGas = cfg.getGasAt( gasNum );
+    cmd.append( &SPX42CommandDef::STX, 1 );
+    cmd.append( "~" );
+    code.append( &SPX42CommandDef::SPX_SET_SETUP_GASLIST, 1 );
+    cmd.append( code.toHex() );
+    // ############ Alte Parameter Reihenfolge
+    // Kommando SPX_SET_SETUP_GASLIST
+    // ~40:NR:HE:N2:BO:DI:CU
+    // NR -> Gas Nummer
+    // HE -> Heliumanteil
+    // N2 -> Stickstoffanteil
+    // BO -> Bailoutgas? (3?)
+    // DI -> Diluent ( 0, 1 oder 2 )
+    // CU Current Gas (0 oder 1)
+    // ############ NEUE Parameter Reihenfolge
+    // Kommando SPX_SET_SETUP_GASLIST
+    // ~40:NR:N2:HE:BO:DI:CU
+    // NR: Nummer des Gases 0..7
+    // N2: Sticksoff in %
+    // HE: Heluim in %
+    // BO: Bailout (Werte 0,1 und 3 gefunden, 0 kein BO, 3 BO Wert 1 unbekannt?)
+    // DI: Diluent 1 oder 2
+    // CU: Current Gas
+    //
+    if ( cfg.getIsOldParamSorting() )
+    {
+      //
+      // Alte Parameterreihenfolge
+      //
+      cmd.append( QString( ":%1:%3:%2:%4:%5:%6" )
+                      .arg( static_cast< int >( gasNum ), 1, 16 )
+                      .arg( static_cast< int >( cGas.getN2() ), 1, 16 )
+                      .arg( static_cast< int >( cGas.getHe() ), 1, 16 )
+                      .arg( cGas.getBailout() ? "1" : "0" )
+                      .arg( static_cast< int >( cGas.getDiluentType() ), 1, 16 )
+                      .arg( cfg.getActiveGas() == gasNum ? "1" : "0" ) );
+    }
+    else
+    {
+      //
+      // Neue Parameter reiehenfolge
+      //
+      cmd.append( QString( ":%1:%2:%3:%4:%5:%6" )
+                      .arg( static_cast< int >( gasNum ), 1, 16 )
+                      .arg( static_cast< int >( cGas.getN2() ), 1, 16 )
+                      .arg( static_cast< int >( cGas.getHe() ), 1, 16 )
+                      .arg( cGas.getBailout() ? "1" : "0" )
+                      .arg( static_cast< int >( cGas.getDiluentType() ), 1, 16 )
+                      .arg( cfg.getActiveGas() == gasNum ? "1" : "0" ) );
+    }
+    cmd.append( &SPX42CommandDef::ETX, 1 );
+    // erwarte Quittung! (true)
+    return ( SendListEntry( CmdMarker( SPX42CommandDef::SPX_SET_SETUP_GASLIST, true ), cmd ) );
+  }
 }

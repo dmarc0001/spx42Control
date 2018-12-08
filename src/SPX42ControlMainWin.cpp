@@ -891,8 +891,73 @@ namespace spx
       if ( changed & SPX42ConfigClass::CFCLASS_GASES )
       {
         //
-        // TODO: gase senden (nur die, welche verändert sind)
+        // gase senden (nur die, welche verändert sind)
         //
+        quint8 changedGases = spx42Config->getChangedGases();
+        if ( changedGases & SPX42ConfigClass::CF_GAS01 )
+        {
+          sendCommand = remoteSPX42->sendGas( 0, *spx42Config );
+          lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 0%1 write <%2>" )
+                         .arg( 1 )
+                         .arg( QString( sendCommand.second ) ) );
+          remoteSPX42->sendCommand( sendCommand );
+        }
+        if ( changedGases & SPX42ConfigClass::CF_GAS02 )
+        {
+          sendCommand = remoteSPX42->sendGas( 1, *spx42Config );
+          lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 0%1 write <%2>" )
+                         .arg( 2 )
+                         .arg( QString( sendCommand.second ) ) );
+          remoteSPX42->sendCommand( sendCommand );
+        }
+        if ( changedGases & SPX42ConfigClass::CF_GAS03 )
+        {
+          sendCommand = remoteSPX42->sendGas( 2, *spx42Config );
+          lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 0%1 write <%2>" )
+                         .arg( 3 )
+                         .arg( QString( sendCommand.second ) ) );
+          remoteSPX42->sendCommand( sendCommand );
+        }
+        if ( changedGases & SPX42ConfigClass::CF_GAS04 )
+        {
+          sendCommand = remoteSPX42->sendGas( 3, *spx42Config );
+          lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 0%1 write <%2>" )
+                         .arg( 4 )
+                         .arg( QString( sendCommand.second ) ) );
+          remoteSPX42->sendCommand( sendCommand );
+        }
+        if ( changedGases & SPX42ConfigClass::CF_GAS05 )
+        {
+          sendCommand = remoteSPX42->sendGas( 4, *spx42Config );
+          lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 0%1 write <%2>" )
+                         .arg( 4 )
+                         .arg( QString( sendCommand.second ) ) );
+          remoteSPX42->sendCommand( sendCommand );
+        }
+        if ( changedGases & SPX42ConfigClass::CF_GAS06 )
+        {
+          sendCommand = remoteSPX42->sendGas( 5, *spx42Config );
+          lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 0%1 write <%2>" )
+                         .arg( 5 )
+                         .arg( QString( sendCommand.second ) ) );
+          remoteSPX42->sendCommand( sendCommand );
+        }
+        if ( changedGases & SPX42ConfigClass::CF_GAS07 )
+        {
+          sendCommand = remoteSPX42->sendGas( 6, *spx42Config );
+          lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 0%1 write <%2>" )
+                         .arg( 6 )
+                         .arg( QString( sendCommand.second ) ) );
+          remoteSPX42->sendCommand( sendCommand );
+        }
+        if ( changedGases & SPX42ConfigClass::CF_GAS08 )
+        {
+          sendCommand = remoteSPX42->sendGas( 7, *spx42Config );
+          lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 0%1 write <%2>" )
+                         .arg( 7 )
+                         .arg( QString( sendCommand.second ) ) );
+          remoteSPX42->sendCommand( sendCommand );
+        }
       }
     }
     else

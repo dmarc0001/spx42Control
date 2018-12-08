@@ -17,6 +17,16 @@ namespace spx
     constexpr quint8 CFCLASS_SETPOINT{0x20};
     constexpr quint8 CFCLASS_INDIVIDUAL{0x40};
     constexpr quint8 CFCLASS_ALL{0xff};
+    //
+    constexpr quint8 CF_GAS01{0x01};
+    constexpr quint8 CF_GAS02{0x02};
+    constexpr quint8 CF_GAS03{0x04};
+    constexpr quint8 CF_GAS04{0x08};
+    constexpr quint8 CF_GAS05{0x10};
+    constexpr quint8 CF_GAS06{0x20};
+    constexpr quint8 CF_GAS07{0x40};
+    constexpr quint8 CF_GAS08{0x80};
+    //
     constexpr double MAX_PPO2{1.60};
   }
   //

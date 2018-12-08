@@ -72,6 +72,8 @@ namespace spx
     SendListEntry sendUnitsParams( SPX42Config &cfg );
     //! sende individual Einstellungen zum SPX
     SendListEntry sendCustomParams( SPX42Config &cfg );
+    //! sende gas an den SPX42
+    SendListEntry sendGas( int gasNum, SPX42Config &cfg );
   };
 }
 #endif  // SPX42COMMANDS_HPP

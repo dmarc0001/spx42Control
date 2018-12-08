@@ -287,12 +287,23 @@ namespace spx
             spxConfig->setGasAt( i, chGas );
           }
         }
-        spxConfig->getGasAt( currentGasNum ).setDiluentType( DiluentType::DIL_01 );
+        SPX42Gas chGas( spxConfig->getGasAt( currentGasNum ) );
+        chGas.setDiluentType( DiluentType::DIL_01 );
+        spxConfig->setGasAt( currentGasNum, chGas );
       }
       else if ( which == DiluentType::DIL_02 )
       {
         SPX42Gas chGas( spxConfig->getGasAt( currentGasNum ) );
         chGas.setDiluentType( DiluentType::DIL_02 );
+        spxConfig->setGasAt( currentGasNum, chGas );
+      }
+      else
+      {
+        //
+        // eigentlich obsolte...
+        //
+        SPX42Gas chGas( spxConfig->getGasAt( currentGasNum ) );
+        chGas.setDiluentType( DiluentType::DIL_NONE );
         spxConfig->setGasAt( currentGasNum, chGas );
       }
     }
@@ -374,7 +385,7 @@ namespace spx
 
   void GasFragment::onOnlineStatusChangedSlot( bool )
   {
-    // TODO: was machen
+    setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
   }
 
   void GasFragment::onSocketErrorSlot( QBluetoothSocket::SocketError )

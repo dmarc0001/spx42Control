@@ -137,6 +137,7 @@ namespace spx
     bool getIsSixMetersAutoSetpoint() const;                                   //! fünf oder sechs meter autosetpoint
     void freezeConfigs( quint8 changed = SPX42ConfigClass::CFCLASS_ALL );      //! setzte die aktuelle Konfiguration als "gesichert"
     quint8 getChangedConfig( void );                                           //! was ist geändert?
+    quint8 getChangedGases( void );                                            //! welches Gas wurde geändert?
     QString geteUnitHashes( void );
 
     private:
