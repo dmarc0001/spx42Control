@@ -47,8 +47,8 @@ CONFIG(debug, debug|release) {
   QMAKE_CXXFLAGS += -MP
 }
 
-unix {
-    # benutze ccache
+unix:!macos {
+    # benutze ccache aber nicht auf mac
     QMAKE_CXX                          = ccache g++
 }
 
