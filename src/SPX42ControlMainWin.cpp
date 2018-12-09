@@ -459,9 +459,6 @@ namespace spx
       if ( !QString( currObj->metaObject()->className() ).startsWith( "QWidget" ) )
       {
         lg->debug( QString( "SPX42ControlMainWin::clearApplicationTabs -> <%1> should delete" ).arg( currObj->objectName() ) );
-#ifdef DEBUG
-        QString title = ui->areaTabWidget->tabText( i ).append( "-D" );
-#endif
         auto *oldFragment = reinterpret_cast< IFragmentInterface * >( currObj );
         if ( nullptr != oldFragment )
         {
@@ -480,7 +477,9 @@ namespace spx
         currObj = new QWidget();
         currObj->setObjectName( "DUMMY" );
 #ifdef DEBUG
-        ui->areaTabWidget->insertTab( i, currObj, title );
+        ui->areaTabWidget->insertTab( i, currObj, QString( tabTitle.at( i ) ).append( "-D" ) );
+#else
+        ui->areaTabWidget->insertTab( i, currObj, tabTitle.at( i ) );
 #endif
       }
     }
