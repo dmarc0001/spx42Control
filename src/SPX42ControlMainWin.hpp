@@ -82,6 +82,7 @@ namespace spx
     void simulateLicenseChanged( LicenseType lType );        //! Simuliere lizenzwechsel
     ApplicationTab getApplicationTab( void );                //! Welcher Tab war noch aktiv?
     void setOnlineStatusMessage( const QString &msg = "" );  //! setze eine Meldung in den Fenstertitel
+    void makeOnlineStatus( void );                           //! Mache einen Online Status
 
     private slots:
     void onWatchdogTimerSlot( void );                                       //! timer für zyklische Sachen, watchdog...
@@ -93,6 +94,7 @@ namespace spx
     void onErrorgMessageSlot( const QString &msg, bool asPopup = false );   //! eine Warnmeldung soll das Main darstellen
     void onConfigWasChangedSlot( void );                                    //! Signal empfangen, dass config geschrieben wurde
     void onConfigWriteBackSlot( void );                                     //! timer wenn configs zurück geschrieben werden müssen
+    void onGetHelpForUser( void );                                          //! Hilfe anzeigen
   };
 }  // namespace spx42
 

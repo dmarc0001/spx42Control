@@ -38,6 +38,7 @@ namespace spx
     static constexpr int CXN_ERROR{1};              //! Winsock ERROR Value
     static constexpr int SOCK_BUFFLEN{128};         //! WINSOCK Pufferlänge (fuer BT)
     static constexpr int CONFIG_WRITE_DELAY{3500};  //! waretn bis Konfiguration zum SPX geschrieben wird
+    static constexpr int SPX_MINIMUM_O2{2};         //! Minimaler Sauerstoffanteil
     static const QString RFCommUUID;                //! RFComm UUID bei den SPX-Services
     static const QBluetoothUuid SPX42ServiceUuid;   //! die SPX42 Service UUID
     static const QString searchedServiceRegex;      //! Suchausdruck für SPX42 Service

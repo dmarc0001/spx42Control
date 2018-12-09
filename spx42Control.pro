@@ -47,6 +47,11 @@ CONFIG(debug, debug|release) {
   QMAKE_CXXFLAGS += -MP
 }
 
+unix:!macos {
+    # benutze ccache aber nicht auf mac
+    QMAKE_CXX                          = ccache g++
+}
+
 SOURCES                 += \
     src/SPX42ControlMainWin.cpp \
     src/ControlMain.cpp \
@@ -132,7 +137,9 @@ DISTFILES               += \
     src/res/Hack-BoldItalic.ttf \
     src/res/Hack-Italic.ttf \
     src/res/Hack-Regular.ttf \
-    src/res/spx42Control.css
+    src/res/spx42Control.css \
+    src/res/spx42ControlMac.css \
+    src/res/TlwgTypewriter.ttf
 
 
 ###############################################################################

@@ -14,6 +14,9 @@
 
 namespace spx
 {
+  constexpr int GAS_HASHES{9};
+  constexpr int GASES{8};
+
   class SPX42Config : public QObject
   {
     private:
@@ -23,7 +26,7 @@ namespace spx
     SPX42FirmwareVersions spxFirmwareVersion;           //! welche Firmwareversion?
     SPX42License spxLicense;                            //! SPX42 Lizenz
     QString spxSerialNumber;                            //! Seriennummer des aktuellen SPX42
-    SPX42Gas gasList[ 8 ];                              //! Gasliste des aktuellen SPX42
+    SPX42Gas gasList[ GASES ];                          //! Gasliste des aktuellen SPX42
     DecompressionPreset decoCurrentPreset;              //! Aktueller Typ der Dekompressionsgradienten
     DecoGradientHash decoPresets;                       //! Hashliste der DECO-Presets (incl. CUSTOM == variabel)
     DecompressionDynamicGradient decoDynamicGradient;   //! dynamische Gradienten erlaubt
@@ -50,14 +53,14 @@ namespace spx
     bool isNewerDisplayBrightness;                      //! neue Version Helligkeit
     bool isSixMetersAutoSetpoint;                       //! Autosetpoint alt deact, 6, 10, 15, 20 NEU 6, 10, 15
     QCryptographicHash qhash;                           //! hasobjekt erzeugen
-    QString currentGasHashes[ 8 ];                      //! Hashes für gesetzte Gaase
+    QString currentGasHashes[ GAS_HASHES ];             //! Hashes für gesetzte Gaase
     QString currentSpxHash;                             //! Hash über Hauptwerte
     QString currentDecoHash;                            //! Hash über Dekompressionswerte
     QString currentDisplayHash;                         //! Hashwert über Displaywerte
     QString currentUnitHash;                            //! Hash über unit einstellungen
     QString currentSetpointHash;                        //! Hash über setpoint Einstellungen
     QString currentIndividualHash;                      //! Hash über Inidividual einstellungen
-    QString savedGasHashes[ 8 ];                        //! Hashes für gesetzte Gaase
+    QString savedGasHashes[ GAS_HASHES ];               //! Hashes für gesetzte Gaase
     QString savedSpxHash;                               //! Hash über Hauptwerte
     QString savedDecoHash;                              //! Hash über Dekompressionswerte
     QString savedDisplayHash;                           //! Hashwert über Displaywerte
@@ -73,7 +76,7 @@ namespace spx
     void setLicense( const QByteArray &lic, const QByteArray &ind );     //! Lizenz aus dem Kommando vom SPX lesen
     QString getLicName( void ) const;                                    //! Textliche Darstellung der Lizenz
     SPX42Gas &getGasAt( int num );                                       //! Gib ein Gas mit der Nummer num vom SPX42 zurück
-    void setGasAt( int num, SPX42Gas gas );                              //! setzte Gas mit der Nummer xxx in die Config
+    void setGasAt( int num, const SPX42Gas &gas );                       //! setzte Gas mit der Nummer xxx in die Config
     void resetConfig( quint8 classes = SPX42ConfigClass::CFCLASS_ALL );  //! Resetiere das Objekt
     QString getSerialNumber( void ) const;                               //! Seriennummer des aktuellen SPX42 zurückgeben
     void setSerialNumber( const QString &serial );                       //! Seriennumemr des aktuellen SPX42 speichern
@@ -131,6 +134,7 @@ namespace spx
     bool getIsSixMetersAutoSetpoint() const;                                   //! fünf oder sechs meter autosetpoint
     void freezeConfigs( quint8 changed = SPX42ConfigClass::CFCLASS_ALL );      //! setzte die aktuelle Konfiguration als "gesichert"
     quint8 getChangedConfig( void );                                           //! was ist geändert?
+    quint8 getChangedGases( void );                                            //! welches Gas wurde geändert?
     QString geteUnitHashes( void );
 
     private:

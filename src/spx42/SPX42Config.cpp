@@ -300,14 +300,14 @@ namespace spx
    */
   SPX42Gas &SPX42Config::getGasAt( int num )
   {
-    if ( num < 0 || num > 7 )
+    if ( num < 0 || num > GASES )
     {
       return ( gasList[ 0 ] );
     }
     return ( gasList[ num ] );
   }
 
-  void SPX42Config::setGasAt( int num, SPX42Gas gas )
+  void SPX42Config::setGasAt( int num, const SPX42Gas &gas )
   {
     if ( num < 0 || num > 7 )
     {
@@ -346,7 +346,7 @@ namespace spx
     }
     if ( classes & SPX42ConfigClass::CFCLASS_GASES )
     {
-      for ( int i = 0; i < 8; i++ )
+      for ( int i = 0; i < GAS_HASHES; i++ )
       {
         gasList[ i ].reset();
         currentGasHashes[ i ].clear();
@@ -1118,7 +1118,7 @@ namespace spx
       savedDecoHash = currentDecoHash;
     if ( changed & SPX42ConfigClass::CFCLASS_GASES )
     {
-      for ( int i = 0; i < 8; i++ )
+      for ( int i = 0; i < GAS_HASHES; i++ )
       {
         savedGasHashes[ i ] = currentGasHashes[ i ];
       }
@@ -1152,7 +1152,7 @@ namespace spx
       result |= SPX42ConfigClass::CFCLASS_UNITS;
     if ( currentIndividualHash != savedIndividualHash )
       result |= SPX42ConfigClass::CFCLASS_INDIVIDUAL;
-    for ( int i = 0; i < 8; i++ )
+    for ( int i = 0; i < GAS_HASHES; i++ )
     {
       if ( savedGasHashes[ i ] != currentGasHashes[ i ] )
       {
@@ -1161,6 +1161,28 @@ namespace spx
         break;
       }
     }
+    return ( result );
+  }
+
+  quint8 SPX42Config::getChangedGases()
+  {
+    quint8 result = 0;
+    if ( savedGasHashes[ 0 ] != currentGasHashes[ 0 ] )
+      result |= SPX42ConfigClass::CF_GAS01;
+    if ( savedGasHashes[ 1 ] != currentGasHashes[ 1 ] )
+      result |= SPX42ConfigClass::CF_GAS02;
+    if ( savedGasHashes[ 2 ] != currentGasHashes[ 2 ] )
+      result |= SPX42ConfigClass::CF_GAS03;
+    if ( savedGasHashes[ 3 ] != currentGasHashes[ 3 ] )
+      result |= SPX42ConfigClass::CF_GAS04;
+    if ( savedGasHashes[ 4 ] != currentGasHashes[ 4 ] )
+      result |= SPX42ConfigClass::CF_GAS05;
+    if ( savedGasHashes[ 5 ] != currentGasHashes[ 5 ] )
+      result |= SPX42ConfigClass::CF_GAS06;
+    if ( savedGasHashes[ 6 ] != currentGasHashes[ 6 ] )
+      result |= SPX42ConfigClass::CF_GAS07;
+    if ( savedGasHashes[ 7 ] != currentGasHashes[ 7 ] )
+      result |= SPX42ConfigClass::CF_GAS08;
     return ( result );
   }
 

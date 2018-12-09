@@ -78,6 +78,12 @@ namespace spx
     constexpr int INDIVIDUAL_SOUND_ONOFF{4};     //! Akustische Warnungen an/aus
     constexpr int INDIVIDUAL_LOGINTERVAL{5};     //! Loginterval 10, 20 oder 30 Sekunden
     constexpr int INDIVIDUAL_TEMPSTICK{6};       //! Tempstickversion
+    constexpr int GASLIST_GAS_NUMBER{1};         //! Nummer des Gases
+    constexpr int GASLIST_N2{2};                 //! Stickstoffanteil
+    constexpr int GASLIST_HE{3};                 //! Heliumanteil
+    constexpr int GASLIST_BAILOUT{4};            //! ist das Gas Bailout
+    constexpr int GASLIST_DILUENT{5};            //! ist es DIL01, DIL02 oder Nix davon
+    constexpr int GASLIST_IS_CURRENT{6};         //! ist es das aktuelle Gas
   }
 }
 

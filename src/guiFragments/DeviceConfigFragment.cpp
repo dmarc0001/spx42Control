@@ -21,6 +21,7 @@ namespace spx
       , oldAutoSetpoint()
       , newAutoSetpoint()
   {
+    configHeadlineTemplate = tr( "CONFIG SPX42 SERIAL [%1] LIC: %2" );
     lg->debug( QString( "DeviceConfigFragment::DeviceConfigFragment -> device connected: %1..." )
                    .arg( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED ) );
     ui->setupUi( this );
@@ -61,7 +62,7 @@ namespace spx
     // Initialisiere die GUI
     //
     ui->tabHeaderLabel->setText(
-        QString( tr( "SETTINGS SPX42 SERIAL [%1] LIC: %2" ).arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
+        QString( configHeadlineTemplate.arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
     //
     // Dekompression
     //
@@ -164,7 +165,7 @@ namespace spx
 
     lg->debug( QString( "DeviceConfigFragment::licChangedSlot -> set: %1" ).arg( static_cast< int >( lic.getLicType() ) ) );
     ui->tabHeaderLabel->setText(
-        QString( tr( "SETTINGS SPX42 SERIAL [%1] LIC: %2" ).arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
+        QString( configHeadlineTemplate.arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
     if ( lic.getLicInd() == IndividualLicense::LIC_INDIVIDUAL )
     {
       // der darf das!
@@ -242,6 +243,9 @@ namespace spx
       ui->individualGroupBox->setEnabled( true );
     else
       ui->individualGroupBox->setEnabled( false );
+    // die Überschrift sicherheitshalber auc noch
+    ui->tabHeaderLabel->setText(
+        QString( configHeadlineTemplate.arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
   }
 
   /**
@@ -476,7 +480,6 @@ namespace spx
 
   void DeviceConfigFragment::onCommandRecivedSlot()
   {
-    // TODO: implementieren
     spSingleCommand recCommand;
     QDateTime nowDateTime;
     QByteArray value;
@@ -509,6 +512,7 @@ namespace spx
           lg->debug( "DeviceConfigFragment::onDatagramRecivedSlot -> firmwareversion..." );
           // Setzte die Version in die Config
           spxConfig->setSpxFirmwareVersion( recCommand->getParamAt( SPXCmdParam::FIRMWARE_VERSION ) );
+          spxConfig->freezeConfigs( SPX42ConfigClass::CFCLASS_SPX );
           // Geht das Datum zu setzen?
           if ( spxConfig->getCanSetDate() )
           {
@@ -524,6 +528,7 @@ namespace spx
           // ~07:XXX -> Seriennummer als String
           lg->debug( "DeviceConfigFragment::onDatagramRecivedSlot -> serialnumber..." );
           spxConfig->setSerialNumber( recCommand->getParamAt( SPXCmdParam::SERIAL_NUMBER ) );
+          spxConfig->freezeConfigs( SPX42ConfigClass::CFCLASS_SPX );
           setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
           break;
         case SPX42CommandDef::SPX_LICENSE_STATE:
@@ -535,6 +540,7 @@ namespace spx
           lg->debug( "DeviceConfigFragment::onDatagramRecivedSlot -> license state..." );
           spxConfig->setLicense( recCommand->getParamAt( SPXCmdParam::LICENSE_STATE ),
                                  recCommand->getParamAt( SPXCmdParam::LICENSE_INDIVIDUAL ) );
+          spxConfig->freezeConfigs( SPX42ConfigClass::CFCLASS_SPX );
           setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
           break;
         case SPX42CommandDef::SPX_GET_SETUP_DEKO:
@@ -1356,6 +1362,6 @@ namespace spx
     // SPX42ControlMainWin abgefragt...
     SendListEntry sendCommand = remoteSPX42->askForConfig();
     remoteSPX42->sendCommand( sendCommand );
-    lg->debug( "DeviceConfigFragment::onConfigUpdateSlot -> send cmd decoinfos..." );
+    lg->debug( "DeviceConfigFragment::onConfigUpdateSlot -> send cmd config..." );
   }
 }  // namespace spx

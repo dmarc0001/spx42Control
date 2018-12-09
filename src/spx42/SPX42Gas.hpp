@@ -4,7 +4,8 @@
 #include <QObject>
 #include <QString>
 #include <QtGlobal>
-
+#include <cmath>
+#include "config/ProjectConst.hpp"
 #include "spx42/SPX42Defs.hpp"
 
 namespace spx
@@ -29,17 +30,17 @@ namespace spx
                   LicenseType licType = LicenseType::LIC_NITROX );  //! Sauerstoff setzten
     quint8 getHe( void );                                           //! Heliumanteil zurück geben
     quint8 setHe( quint8 value,
-                  LicenseType licType = LicenseType::LIC_NITROX );  //! Heliumanteil setzten
-    quint8 getN2( void );                                           //! Stickstoffanteil zurückgeben
-    DiluentType setDiluentType( DiluentType dType );                //! setzte den Typ des Diluents
-    DiluentType getDiluentType( void );                             //! erfrage den Diluenttyp
-    bool setBailout( bool isBailout );                              //! setzte das Gas als Bailout
-    bool getBailout( void );                                        //! Ist das Gas Bailout?
-    QString getGasName( void ) const;                               //! Klarnamen des Gases
-    qint16 getMOD( void );                                          //! Maximal Oxigen Depth
-    qint16 getEAD( void );                                          //! Equivalent Air Depth
-    void reset( void );                                             //! Alles auf Voreinstellung
-    QByteArray serialize( void );                                   //! serialize
+                  LicenseType licType = LicenseType::LIC_NITROX );                       //! Heliumanteil setzten
+    quint8 getN2( void );                                                                //! Stickstoffanteil zurückgeben
+    DiluentType setDiluentType( DiluentType dType );                                     //! setzte den Typ des Diluents
+    DiluentType getDiluentType( void );                                                  //! erfrage den Diluenttyp
+    bool setBailout( bool isBailout );                                                   //! setzte das Gas als Bailout
+    bool getBailout( void );                                                             //! Ist das Gas Bailout?
+    QString getGasName( void ) const;                                                    //! Klarnamen des Gases
+    qint16 getMOD( DeviceWaterType wType );                                              //! Maximal Oxigen Depth
+    qint16 getEAD( qint16 depth, DeviceWaterType wType = DeviceWaterType::FRESHWATER );  //! Equivalent Air Depth
+    void reset( void );                                                                  //! Alles auf Voreinstellung
+    QByteArray serialize( void );                                                        //! serialize
   };
 }
 #endif  //   SPX42GAS_HPP

@@ -91,18 +91,7 @@ namespace spx
     //
     // einen onlineindikator in die Statusleiste bauen
     //
-    onlinePalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_ONLINE );
-    busyPalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_BUSY );
-    offlinePalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_OFFLINE );
-    connectingPalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_CONNECTING );
-    errorPalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_ERROR );
-    onlineLabel->setIndent( 25 );
-    this->statusBar()->addWidget( onlineLabel.get(), 250 );
-    this->statusBar()->addWidget( waitForWriteLabel.get(), 40 );
-    this->statusBar()->addWidget( akkuLabel.get(), 40 );
-    onlineLabel->setPalette( offlinePalette );
-    akkuLabel->setPalette( offlinePalette );
-    waitForWriteLabel->setPalette( offlinePalette );
+    makeOnlineStatus();
     //
     fillTabTitleArray();
     //
@@ -119,10 +108,19 @@ namespace spx
     ui->areaTabWidget->setCurrentIndex( 0 );
     onTabCurrentChangedSlot( 0 );
     connectActions();
+    QString mainTitleString;
+#ifdef TESTVERSION
+#ifdef DEBUG
+    setWindowTitle( QString( "%1 - %2 - %3" ).arg( ProjectConst::MAIN_TITLE ).arg( "TESTVERSION" ).arg( "DEBUG" ) );
+#else
+    setWindowTitle( QString( "%1 - %2" ).arg( ProjectConst::MAIN_TITLE ).arg( "TESTVERSION" ) );
+#endif
+#else
 #ifdef DEBUG
     setWindowTitle( QString( "%1 - %2" ).arg( ProjectConst::MAIN_TITLE ).arg( "DEBUG" ) );
 #else
     setWindowTitle( ProjectConst::MAIN_TITLE );
+#endif
 #endif
     setOnlineStatusMessage();
     connect( &watchdog, &QTimer::timeout, this, &SPX42ControlMainWin::onWatchdogTimerSlot );
@@ -174,6 +172,25 @@ namespace spx
     event->accept();
     disconnectActions();
     QMainWindow::closeEvent( event );
+  }
+
+  /**
+   * @brief SPX42ControlMainWin::makeOnlineStatus
+   */
+  void SPX42ControlMainWin::makeOnlineStatus()
+  {
+    onlinePalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_ONLINE );
+    busyPalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_BUSY );
+    offlinePalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_OFFLINE );
+    connectingPalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_CONNECTING );
+    errorPalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_ERROR );
+    onlineLabel->setIndent( 25 );
+    this->statusBar()->addWidget( onlineLabel.get(), 250 );
+    this->statusBar()->addWidget( waitForWriteLabel.get(), 40 );
+    this->statusBar()->addWidget( akkuLabel.get(), 40 );
+    onlineLabel->setPalette( offlinePalette );
+    akkuLabel->setPalette( offlinePalette );
+    waitForWriteLabel->setPalette( offlinePalette );
   }
 
   /**
@@ -276,6 +293,7 @@ namespace spx
           this->remoteSPX42->endConnection();
         }
       } );
+      connect( ui->actionGetHelp, &QAction::triggered, this, &SPX42ControlMainWin::onGetHelpForUser );
       //
       // TAB wurde gewechselt
       //
@@ -891,8 +909,73 @@ namespace spx
       if ( changed & SPX42ConfigClass::CFCLASS_GASES )
       {
         //
-        // TODO: gase senden (nur die, welche verändert sind)
+        // gase senden (nur die, welche verändert sind)
         //
+        quint8 changedGases = spx42Config->getChangedGases();
+        if ( changedGases & SPX42ConfigClass::CF_GAS01 )
+        {
+          sendCommand = remoteSPX42->sendGas( 0, *spx42Config );
+          lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 0%1 write <%2>" )
+                         .arg( 1 )
+                         .arg( QString( sendCommand.second ) ) );
+          remoteSPX42->sendCommand( sendCommand );
+        }
+        if ( changedGases & SPX42ConfigClass::CF_GAS02 )
+        {
+          sendCommand = remoteSPX42->sendGas( 1, *spx42Config );
+          lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 0%1 write <%2>" )
+                         .arg( 2 )
+                         .arg( QString( sendCommand.second ) ) );
+          remoteSPX42->sendCommand( sendCommand );
+        }
+        if ( changedGases & SPX42ConfigClass::CF_GAS03 )
+        {
+          sendCommand = remoteSPX42->sendGas( 2, *spx42Config );
+          lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 0%1 write <%2>" )
+                         .arg( 3 )
+                         .arg( QString( sendCommand.second ) ) );
+          remoteSPX42->sendCommand( sendCommand );
+        }
+        if ( changedGases & SPX42ConfigClass::CF_GAS04 )
+        {
+          sendCommand = remoteSPX42->sendGas( 3, *spx42Config );
+          lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 0%1 write <%2>" )
+                         .arg( 4 )
+                         .arg( QString( sendCommand.second ) ) );
+          remoteSPX42->sendCommand( sendCommand );
+        }
+        if ( changedGases & SPX42ConfigClass::CF_GAS05 )
+        {
+          sendCommand = remoteSPX42->sendGas( 4, *spx42Config );
+          lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 0%1 write <%2>" )
+                         .arg( 4 )
+                         .arg( QString( sendCommand.second ) ) );
+          remoteSPX42->sendCommand( sendCommand );
+        }
+        if ( changedGases & SPX42ConfigClass::CF_GAS06 )
+        {
+          sendCommand = remoteSPX42->sendGas( 5, *spx42Config );
+          lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 0%1 write <%2>" )
+                         .arg( 5 )
+                         .arg( QString( sendCommand.second ) ) );
+          remoteSPX42->sendCommand( sendCommand );
+        }
+        if ( changedGases & SPX42ConfigClass::CF_GAS07 )
+        {
+          sendCommand = remoteSPX42->sendGas( 6, *spx42Config );
+          lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 0%1 write <%2>" )
+                         .arg( 6 )
+                         .arg( QString( sendCommand.second ) ) );
+          remoteSPX42->sendCommand( sendCommand );
+        }
+        if ( changedGases & SPX42ConfigClass::CF_GAS08 )
+        {
+          sendCommand = remoteSPX42->sendGas( 7, *spx42Config );
+          lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 0%1 write <%2>" )
+                         .arg( 7 )
+                         .arg( QString( sendCommand.second ) ) );
+          remoteSPX42->sendCommand( sendCommand );
+        }
       }
     }
     else
@@ -937,5 +1020,10 @@ namespace spx
     waitForWriteLabel->setText( tr( "BUSY" ) );
     ui->actionSPX_STATE->setIcon( QIcon( ":/icons/ic_spx_buffering" ) );
     ui->actionSPX_STATE->setStatusTip( tr( "spx42 is online and wait for write config data..." ) );
+  }
+
+  void SPX42ControlMainWin::onGetHelpForUser()
+  {
+    lg->debug( "SPX42ControlMainWin::onGetHelpForUser..." );
   }
 }  // namespace spx

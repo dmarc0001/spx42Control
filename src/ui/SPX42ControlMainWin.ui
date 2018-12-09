@@ -32,6 +32,7 @@
    <font>
     <family>DejaVu Sans Mono</family>
     <pointsize>11</pointsize>
+    <stylestrategy>PreferAntialias</stylestrategy>
    </font>
   </property>
   <property name="windowTitle">
@@ -95,7 +96,6 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionOpenDB"/>
     <addaction name="actionActionPrint"/>
     <addaction name="separator"/>
     <addaction name="actionQUIT"/>
@@ -105,6 +105,7 @@
      <string>Help</string>
     </property>
     <addaction name="actionAbout"/>
+    <addaction name="actionGetHelp"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -313,7 +314,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="../res/SPX42ControlRes.qrc">
+    <iconset>
      <normaloff>:/icons/ic_spx_offline.png</normaloff>
      <normalon>:/icons/ic_spx_online.png</normalon>
      <disabledoff>:/icons/ic_spx_error.png</disabledoff>
@@ -327,6 +328,14 @@
    </property>
    <property name="menuRole">
     <enum>QAction::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionGetHelp">
+   <property name="text">
+    <string>Get Help...</string>
+   </property>
+   <property name="statusTip">
+    <string>help für using this program...</string>
    </property>
   </action>
  </widget>

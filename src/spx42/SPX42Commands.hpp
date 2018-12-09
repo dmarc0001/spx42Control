@@ -48,6 +48,8 @@ namespace spx
     SendListEntry askForLicenseState( void );
     //! erfrage die Konfiguration des SPX42
     SendListEntry askForConfig( void );
+    //! frage alle Gaase ab
+    SendListEntry askForGasList( void );
     //! setzte im SPX DAtum und Zeit, sofern seine Firmware das kann
     SendListEntry setDateTime( const QDateTime &nowDateTime );
     // Schalte SPX auf YMODEM-Betrieb!
@@ -70,6 +72,8 @@ namespace spx
     SendListEntry sendUnitsParams( SPX42Config &cfg );
     //! sende individual Einstellungen zum SPX
     SendListEntry sendCustomParams( SPX42Config &cfg );
+    //! sende gas an den SPX42
+    SendListEntry sendGas( int gasNum, SPX42Config &cfg );
   };
 }
 #endif  // SPX42COMMANDS_HPP

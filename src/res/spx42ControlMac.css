@@ -8,7 +8,7 @@ QWidget
 {
   font-family: "DejaVu Sans Mono";
   font-style: normal;
-  font-size: 14pt;
+  font-size: 16pt;
 }
 
 QPushButton
@@ -35,6 +35,7 @@ QPushButton:hover:pressed
   border: 2px solid red;
 }
 
+/* kopf überschriften in den TABS */
 QLabel#tabHeaderLabel
 {
   font-style: bold;
@@ -42,3 +43,52 @@ QLabel#tabHeaderLabel
   color: red;
 }
 
+/*
+##################################################################
+#  Gas Tab - current gas edit                                    #
+##################################################################
+*/
+QGroupBox#currGasGroupBox>QWidget
+{
+  background-color: silver;
+}
+
+QGroupBox#currGasGroupBox>QLabel
+{
+  background-color: none;
+  color:blue;
+}
+
+QGroupBox#currGasGroupBox>QWidget>QLabel,
+ QGroupBox#currGasGroupBox>QWidget>QCheckBox ,
+ QGroupBox#currGasGroupBox>QWidget>QSpinBox,
+ QGroupBox#currGasGroupBox>QWidget>QLineEdit,
+ QLabel#currNameLabel
+{
+  font-style: bold;
+  font-size: 22pt;
+  color:gray;
+  background-color: silver;
+}
+
+QGroupBox#currGasGroupBox>QWidget>QCheckBox#currWaterTypeCheckBox
+{
+  color:#6060ff;
+  font-size: 14pt;
+}
+
+QGroupBox#gasesGroupBox>QRadioButton
+{
+  color:gray;
+  font-size:14pt;
+}
+
+QGroupBox#gasesGroupBox>QRadioButton:checked
+{
+  color:red;
+}
+
+QGroupBox#gasesGroupBox>QRadioButton:hover
+{
+  color:#ff8080;
+}
