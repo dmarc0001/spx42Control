@@ -1025,5 +1025,7 @@ namespace spx
   void SPX42ControlMainWin::onGetHelpForUser()
   {
     lg->debug( "SPX42ControlMainWin::onGetHelpForUser..." );
+    HelpDialog helpDial( currentTab, this, lg );
+    helpDial.exec();
   }
 }  // namespace spx
