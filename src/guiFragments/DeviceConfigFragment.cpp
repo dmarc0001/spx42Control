@@ -21,6 +21,7 @@ namespace spx
       , oldAutoSetpoint()
       , newAutoSetpoint()
   {
+    configHeadlineTemplate = tr( "CONFIG SPX42 SERIAL [%1] LIC: %2" );
     lg->debug( QString( "DeviceConfigFragment::DeviceConfigFragment -> device connected: %1..." )
                    .arg( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED ) );
     ui->setupUi( this );
@@ -61,7 +62,7 @@ namespace spx
     // Initialisiere die GUI
     //
     ui->tabHeaderLabel->setText(
-        QString( tr( "SETTINGS SPX42 SERIAL [%1] LIC: %2" ).arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
+        QString( configHeadlineTemplate.arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
     //
     // Dekompression
     //
@@ -164,7 +165,7 @@ namespace spx
 
     lg->debug( QString( "DeviceConfigFragment::licChangedSlot -> set: %1" ).arg( static_cast< int >( lic.getLicType() ) ) );
     ui->tabHeaderLabel->setText(
-        QString( tr( "SETTINGS SPX42 SERIAL [%1] LIC: %2" ).arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
+        QString( configHeadlineTemplate.arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
     if ( lic.getLicInd() == IndividualLicense::LIC_INDIVIDUAL )
     {
       // der darf das!
@@ -244,7 +245,7 @@ namespace spx
       ui->individualGroupBox->setEnabled( false );
     // die Überschrift sicherheitshalber auc noch
     ui->tabHeaderLabel->setText(
-        QString( tr( "SETTINGS SPX42 SERIAL [%1] LIC: %2" ).arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
+        QString( configHeadlineTemplate.arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
   }
 
   /**

@@ -91,18 +91,7 @@ namespace spx
     //
     // einen onlineindikator in die Statusleiste bauen
     //
-    onlinePalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_ONLINE );
-    busyPalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_BUSY );
-    offlinePalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_OFFLINE );
-    connectingPalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_CONNECTING );
-    errorPalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_ERROR );
-    onlineLabel->setIndent( 25 );
-    this->statusBar()->addWidget( onlineLabel.get(), 250 );
-    this->statusBar()->addWidget( waitForWriteLabel.get(), 40 );
-    this->statusBar()->addWidget( akkuLabel.get(), 40 );
-    onlineLabel->setPalette( offlinePalette );
-    akkuLabel->setPalette( offlinePalette );
-    waitForWriteLabel->setPalette( offlinePalette );
+    makeOnlineStatus();
     //
     fillTabTitleArray();
     //
@@ -119,10 +108,19 @@ namespace spx
     ui->areaTabWidget->setCurrentIndex( 0 );
     onTabCurrentChangedSlot( 0 );
     connectActions();
+    QString mainTitleString;
+#ifdef TESTVERSION
+#ifdef DEBUG
+    setWindowTitle( QString( "%1 - %2 - %3" ).arg( ProjectConst::MAIN_TITLE ).arg( "TESTVERSION" ).arg( "DEBUG" ) );
+#else
+    setWindowTitle( QString( "%1 - %2" ).arg( ProjectConst::MAIN_TITLE ).arg( "TESTVERSION" ) );
+#endif
+#else
 #ifdef DEBUG
     setWindowTitle( QString( "%1 - %2" ).arg( ProjectConst::MAIN_TITLE ).arg( "DEBUG" ) );
 #else
     setWindowTitle( ProjectConst::MAIN_TITLE );
+#endif
 #endif
     setOnlineStatusMessage();
     connect( &watchdog, &QTimer::timeout, this, &SPX42ControlMainWin::onWatchdogTimerSlot );
@@ -174,6 +172,25 @@ namespace spx
     event->accept();
     disconnectActions();
     QMainWindow::closeEvent( event );
+  }
+
+  /**
+   * @brief SPX42ControlMainWin::makeOnlineStatus
+   */
+  void SPX42ControlMainWin::makeOnlineStatus()
+  {
+    onlinePalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_ONLINE );
+    busyPalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_BUSY );
+    offlinePalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_OFFLINE );
+    connectingPalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_CONNECTING );
+    errorPalette.setColor( onlineLabel->foregroundRole(), ProjectConst::COLOR_ERROR );
+    onlineLabel->setIndent( 25 );
+    this->statusBar()->addWidget( onlineLabel.get(), 250 );
+    this->statusBar()->addWidget( waitForWriteLabel.get(), 40 );
+    this->statusBar()->addWidget( akkuLabel.get(), 40 );
+    onlineLabel->setPalette( offlinePalette );
+    akkuLabel->setPalette( offlinePalette );
+    waitForWriteLabel->setPalette( offlinePalette );
   }
 
   /**
@@ -276,6 +293,7 @@ namespace spx
           this->remoteSPX42->endConnection();
         }
       } );
+      connect( ui->actionGetHelp, &QAction::triggered, this, &SPX42ControlMainWin::onGetHelpForUser );
       //
       // TAB wurde gewechselt
       //
@@ -1002,5 +1020,10 @@ namespace spx
     waitForWriteLabel->setText( tr( "BUSY" ) );
     ui->actionSPX_STATE->setIcon( QIcon( ":/icons/ic_spx_buffering" ) );
     ui->actionSPX_STATE->setStatusTip( tr( "spx42 is online and wait for write config data..." ) );
+  }
+
+  void SPX42ControlMainWin::onGetHelpForUser()
+  {
+    lg->debug( "SPX42ControlMainWin::onGetHelpForUser..." );
   }
 }  // namespace spx

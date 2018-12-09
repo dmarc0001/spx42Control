@@ -48,6 +48,7 @@ namespace spx
     QStringList newAutoSetpoint;             //! Liste mit Einträgen für Combobox für neuere Firmware
     QStringList oldDisplayBrightness;        //! alte Helligkeitswerte
     QStringList newDisplayBrightness;        //! neue Helligkeitswerte
+    QString configHeadlineTemplate;          //! Template für die Überschrift
 
     public:
     explicit DeviceConfigFragment( QWidget *parent,
