@@ -10,8 +10,8 @@ win32:QMAKE_TARGET_COMPANY             = submatix.com
 win32:QMAKE_TARGET_COPYRIGHT           = D. Marciniak
 win32:QMAKE_TARGET_PRODUCT             = SPX42 BT-Controller
 win32:RC_ICONS                         = src/res/programIcon.ico
-win32:VERSION                          = 0.4.1.0  # major.minor.patch.build
-else:VERSION                           = 0.4.1    # major.minor.patch
+win32:VERSION                          = 0.5.1.0  # major.minor.patch.build
+else:VERSION                           = 0.5.1    # major.minor.patch
 macx:ICON                              = src/res/programIcon.ico
 #
 TARGET                                 = spx42Control
@@ -25,6 +25,7 @@ QT                                     += sql
 QT                                     += charts
 CONFIG                                 += stl
 CONFIG                                 += c++14
+CONFIG                                 += lrelease
 INCLUDEPATH                            += src
 DESTDIR                                = out
 MOC_DIR                                = moc
@@ -32,6 +33,11 @@ RCC_DIR                                = rcc
 UI_DIR                                 = ui
 
 # %{CurrentProject:NativePath}/%{CurrentKit:FileSystemName}/%{CurrentBuild:Name}
+
+#
+# momentan noch als TESTVERSION markieren
+#
+DEFINES                                += TESTVERSION
 
 CONFIG(debug, debug|release) {
   DEFINES                              += DEBUG
@@ -78,7 +84,8 @@ SOURCES                 += \
     src/bluetooth/BtDiscoverRemoteDevice.cpp \
     src/bluetooth/BtDiscoverRemoteService.cpp \
     src/bluetooth/SPX42BtDevicesManager.cpp \
-    src/spx42/SPX42SingleCommand.cpp
+    src/spx42/SPX42SingleCommand.cpp \
+    src/utils/HelpDialog.cpp
 
 HEADERS                 += \
     src/SPX42ControlMainWin.hpp \
@@ -109,7 +116,8 @@ HEADERS                 += \
     src/bluetooth/BtDiscoverRemoteDevice.hpp \
     src/bluetooth/BtDiscoverRemoteService.hpp \
     src/bluetooth/SPX42BtDevicesManager.hpp \
-    src/spx42/SPX42SingleCommand.hpp
+    src/spx42/SPX42SingleCommand.hpp \
+    src/utils/HelpDialog.hpp
 
 FORMS                   += \
     src/ui/SPX42ControlMainWin.ui \
@@ -118,7 +126,8 @@ FORMS                   += \
     src/ui/LogFragment.ui \
     src/ui/DeviceConfigFragment.ui \
     src/ui/ChartsFragment.ui \
-    src/ui/ConnectFragment.ui
+    src/ui/ConnectFragment.ui \
+    src/ui/HelpDialog.ui
 
 RESOURCES               = \
     src/res/SPX42ControlRes.qrc

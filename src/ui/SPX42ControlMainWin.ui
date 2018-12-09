@@ -150,7 +150,7 @@
    <addaction name="actionActionPrint"/>
    <addaction name="actionConnectBluetooth"/>
    <addaction name="actionSettings"/>
-   <addaction name="actionAbout"/>
+   <addaction name="actionGetHelp"/>
    <addaction name="separator"/>
    <addaction name="actionSPX_STATE"/>
   </widget>
@@ -175,11 +175,6 @@
    </property>
   </action>
   <action name="actionAbout">
-   <property name="icon">
-    <iconset resource="../res/SPX42ControlRes.qrc">
-     <normaloff>:/icons/ic_help_outline.png</normaloff>
-     <activeoff>:/icons/ic_help_outline_blue.png</activeoff>:/icons/ic_help_outline.png</iconset>
-   </property>
    <property name="text">
     <string>About...</string>
    </property>
@@ -331,6 +326,11 @@
    </property>
   </action>
   <action name="actionGetHelp">
+   <property name="icon">
+    <iconset resource="../res/SPX42ControlRes.qrc">
+     <normaloff>:/icons/ic_help_outline.png</normaloff>
+     <activeoff>:/icons/ic_help_outline_blue.png</activeoff>:/icons/ic_help_outline.png</iconset>
+   </property>
    <property name="text">
     <string>Get Help...</string>
    </property>

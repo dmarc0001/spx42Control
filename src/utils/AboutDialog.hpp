@@ -1,12 +1,10 @@
 ﻿#ifndef ABOUTDIALOG_HPP
 #define ABOUTDIALOG_HPP
 
-#include <memory>
-
 #include <QDialog>
 #include <QPalette>
 #include <QString>
-
+#include <memory>
 #include "config/AppConfigClass.hpp"
 #include "logging/Logger.hpp"
 #include "ui_AboutDialog.h"
