@@ -221,11 +221,11 @@ namespace spx
   void SPX42ControlMainWin::fillTabTitleArray()
   {
     tabTitle.clear();
-    tabTitle << tr( "Connection" );    // CONNECT_TAB
-    tabTitle << tr( "SPX42 Config" );  // CONFIG_TAB
-    tabTitle << tr( "Gas Lists" );     // GAS_TAB
-    tabTitle << tr( "Diving Log" );    // Logger-Tab
-    tabTitle << tr( "Log Charts" );    // Loggiing CHARTS
+    tabTitle << tr( "CONNECTION" );  // CONNECT_TAB
+    tabTitle << tr( "CONFIG" );      // CONFIG_TAB
+    tabTitle << tr( "GAS" );         // GAS_TAB
+    tabTitle << tr( "LOG" );         // Logger-Tab
+    tabTitle << tr( "CHARTS" );      // Loggiing CHARTS
   }
 
   /**
@@ -415,37 +415,38 @@ namespace spx
       ui->areaTabWidget->removeTab( 0 );
       delete canDel;
     }
+
     //
     // der Connect Tab Platzhalter
     // ACHTUNG: tabTitle hat eine Grösse, bein einfügen tabTitle erweitern
     //
     wg = new QWidget();
     wg->setObjectName( "DUMMY" );
-    ui->areaTabWidget->addTab( wg, tabTitle.at( 0 ) );
+    ui->areaTabWidget->addTab( wg, tabTitle.at( static_cast< int >( ApplicationTab::CONNECT_TAB ) ) );
     //
     // der CONFIG-Platzhalter
     //
     wg = new QWidget();
     wg->setObjectName( "DUMMY" );
-    ui->areaTabWidget->addTab( wg, tabTitle.at( 1 ) );
+    ui->areaTabWidget->addTab( wg, tabTitle.at( static_cast< int >( ApplicationTab::CONFIG_TAB ) ) );
     //
     // der Gaslisten-Platzhalter
     //
     wg = new QWidget();
     wg->setObjectName( "DUMMY" );
-    ui->areaTabWidget->addTab( wg, tabTitle.at( 2 ) );
+    ui->areaTabWidget->addTab( wg, tabTitle.at( static_cast< int >( ApplicationTab::GAS_TAB ) ) );
     //
     // der Logging-Platzhalter
     //
     wg = new QWidget();
     wg->setObjectName( "DUMMY" );
-    ui->areaTabWidget->addTab( wg, tabTitle.at( 3 ) );
+    ui->areaTabWidget->addTab( wg, tabTitle.at( static_cast< int >( ApplicationTab::LOG_TAB ) ) );
     //
     // der Chart Platzhalter
     //
     wg = new QWidget();
     wg->setObjectName( "DUMMY" );
-    ui->areaTabWidget->addTab( wg, tabTitle.at( 4 ) );
+    ui->areaTabWidget->addTab( wg, tabTitle.at( static_cast< int >( ApplicationTab::CHART_TAB ) ) );
   }
 
   /**
