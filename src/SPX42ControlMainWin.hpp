@@ -20,6 +20,7 @@
 #include "guiFragments/ChartsFragment.hpp"
 #include "guiFragments/ConnectFragment.hpp"
 #include "guiFragments/DeviceConfigFragment.hpp"
+#include "guiFragments/DeviceInfoFragment.hpp"
 #include "guiFragments/GasFragment.hpp"
 #include "guiFragments/LogFragment.hpp"
 #include "logging/Logger.hpp"

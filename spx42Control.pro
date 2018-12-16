@@ -85,7 +85,8 @@ SOURCES                 += \
     src/bluetooth/BtDiscoverRemoteService.cpp \
     src/bluetooth/SPX42BtDevicesManager.cpp \
     src/spx42/SPX42SingleCommand.cpp \
-    src/utils/HelpDialog.cpp
+    src/utils/HelpDialog.cpp \
+    src/guiFragments/DeviceInfoFragment.cpp
 
 HEADERS                 += \
     src/SPX42ControlMainWin.hpp \
@@ -108,7 +109,6 @@ HEADERS                 += \
     src/guiFragments/ChartsFragment.hpp \
     src/spx42/SPX42Commands.hpp \
     src/database/SPX42Database.hpp \
-    src/config/currBuildDef.hpp \
     src/bluetooth/SPX42RemotBtDevice.hpp \
     src/bluetooth/BtTypes.hpp \
     src/spx42/SPX42CommandDef.hpp \
@@ -117,7 +117,9 @@ HEADERS                 += \
     src/bluetooth/BtDiscoverRemoteService.hpp \
     src/bluetooth/SPX42BtDevicesManager.hpp \
     src/spx42/SPX42SingleCommand.hpp \
-    src/utils/HelpDialog.hpp
+    src/utils/HelpDialog.hpp \
+    src/guiFragments/DeviceInfoFragment.hpp \
+    src/config/CurrBuildDef.hpp
 
 FORMS                   += \
     src/ui/SPX42ControlMainWin.ui \
@@ -127,7 +129,8 @@ FORMS                   += \
     src/ui/DeviceConfigFragment.ui \
     src/ui/ChartsFragment.ui \
     src/ui/ConnectFragment.ui \
-    src/ui/HelpDialog.ui
+    src/ui/HelpDialog.ui \
+    src/ui/DeviceInfoFragment.ui
 
 RESOURCES               = \
     src/res/SPX42ControlRes.qrc

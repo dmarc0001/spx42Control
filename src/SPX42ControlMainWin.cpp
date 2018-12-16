@@ -72,13 +72,17 @@ namespace spx
     //
     int id1 = QFontDatabase::addApplicationFont( ":/fonts/Hack-Regular.ttf" );
     int id2 = QFontDatabase::addApplicationFont( ":/fonts/DejaVuSansMono.ttf" );
-    if ( id1 < 0 || id2 < 0 )
+    int id3 = QFontDatabase::addApplicationFont( ":/fonts/Hack-Bold.ttf" );
+    int id4 = QFontDatabase::addApplicationFont( ":/fonts/Hack-Italic.ttf" );
+    int id5 = QFontDatabase::addApplicationFont( ":/fonts/Hack-BoldItalic.ttf" );
+    if ( id1 < 0 || id2 < 0 || id3 < 0 || id4 < 0 || id5 < 0 )
     {
       QMessageBox::critical( this, tr( "CRITICAL" ), tr( "internal font can't load!" ) );
     }
     else
     {
-      setFont( QFont( "DejaVu Sans Mono" ) );
+      // setFont( QFont( "DejaVu Sans Mono" ) );
+      setFont( QFont( "Hack" ) );
     }
       //
       // das folgende wird nur kompiliert, wenn DEBUG NICHT konfiguriert ist
@@ -222,6 +226,7 @@ namespace spx
   {
     tabTitle.clear();
     tabTitle << tr( "CONNECTION" );  // CONNECT_TAB
+    tabTitle << tr( "INFO" );        // DEVICE_INFO_TAB
     tabTitle << tr( "CONFIG" );      // CONFIG_TAB
     tabTitle << tr( "GAS" );         // GAS_TAB
     tabTitle << tr( "LOG" );         // Logger-Tab
@@ -420,9 +425,16 @@ namespace spx
     // der Connect Tab Platzhalter
     // ACHTUNG: tabTitle hat eine Grösse, bein einfügen tabTitle erweitern
     //
+    //
     wg = new QWidget();
     wg->setObjectName( "DUMMY" );
     ui->areaTabWidget->addTab( wg, tabTitle.at( static_cast< int >( ApplicationTab::CONNECT_TAB ) ) );
+    //
+    // der DEVINFO-Platzhalter
+    //
+    wg = new QWidget();
+    wg->setObjectName( "DUMMY" );
+    ui->areaTabWidget->addTab( wg, tabTitle.at( static_cast< int >( ApplicationTab::DEVICE_INFO_TAB ) ) );
     //
     // der CONFIG-Platzhalter
     //
@@ -626,6 +638,16 @@ namespace spx
         connect( dynamic_cast< ConnectFragment * >( currObj ), &ConnectFragment::onWarningMessageSig, this,
                  &SPX42ControlMainWin::onWarningMessageSlot );
         connect( dynamic_cast< ConnectFragment * >( currObj ), &ConnectFragment::onAkkuValueChangedSig, this,
+                 &SPX42ControlMainWin::onAkkuValueChangedSlot );
+        break;
+
+      case static_cast< int >( ApplicationTab::DEVICE_INFO_TAB ):
+        lg->debug( "SPX42ControlMainWin::setApplicationTab -> Device INFO TAB..." );
+        currObj = new DeviceInfoFragment( this, lg, spx42Database, spx42Config, remoteSPX42 );
+        currObj->setObjectName( "spx42DeviceInfo" );
+        ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::DEVICE_INFO_TAB ) ) );
+        currentTab = ApplicationTab::DEVICE_INFO_TAB;
+        connect( dynamic_cast< DeviceInfoFragment * >( currObj ), &DeviceInfoFragment::onAkkuValueChangedSig, this,
                  &SPX42ControlMainWin::onAkkuValueChangedSlot );
         break;
 
