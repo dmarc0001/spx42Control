@@ -855,7 +855,7 @@ namespace spx
     {
       lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> write back config, changed value: <0x%1> (bitwhise)" )
                      .arg( static_cast< int >( changed & 0xff ), 2, 16, QChar( '0' ) ) );
-      if ( changed & SPX42ConfigClass::CFCLASS_DECO )
+      if ( changed & SPX42ConfigClass::CF_CLASS_DECO )
       {
         //
         // sende neue DECO Einstellungen
@@ -866,7 +866,7 @@ namespace spx
                        .arg( ( spx42Config->getIsOldParamSorting() ? "true" : "false" ) ) );
         remoteSPX42->sendCommand( sendCommand );
       }
-      if ( changed & SPX42ConfigClass::CFCLASS_DISPLAY )
+      if ( changed & SPX42ConfigClass::CF_CLASS_DISPLAY )
       {
         //
         // sende neue Display einstellungen
@@ -876,7 +876,7 @@ namespace spx
             QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> display write <%1>" ).arg( QString( sendCommand.second ) ) );
         remoteSPX42->sendCommand( sendCommand );
       }
-      if ( changed & SPX42ConfigClass::CFCLASS_SETPOINT )
+      if ( changed & SPX42ConfigClass::CF_CLASS_SETPOINT )
       {
         //
         // setpoint Einstellungen senden
@@ -887,7 +887,7 @@ namespace spx
                        .arg( ( spx42Config->getIsOldParamSorting() ? "true" : "false" ) ) );
         remoteSPX42->sendCommand( sendCommand );
       }
-      if ( changed & SPX42ConfigClass::CFCLASS_UNITS )
+      if ( changed & SPX42ConfigClass::CF_CLASS_UNITS )
       {
         //
         // einheiten senden
@@ -896,7 +896,7 @@ namespace spx
         lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> units write <%1>" ).arg( QString( sendCommand.second ) ) );
         remoteSPX42->sendCommand( sendCommand );
       }
-      if ( changed & SPX42ConfigClass::CFCLASS_INDIVIDUAL )
+      if ( changed & SPX42ConfigClass::CF_CLASS_INDIVIDUAL )
       {
         //
         // individual einstellungen senden
@@ -905,7 +905,7 @@ namespace spx
         lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> custom write <%1>" ).arg( QString( sendCommand.second ) ) );
         remoteSPX42->sendCommand( sendCommand );
       }
-      if ( changed & SPX42ConfigClass::CFCLASS_GASES )
+      if ( changed & SPX42ConfigClass::CF_CLASS_GASES )
       {
         //
         // gase senden (nur die, welche verändert sind)
