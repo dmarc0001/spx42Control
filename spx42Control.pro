@@ -85,7 +85,6 @@ SOURCES                 += \
     src/bluetooth/BtDiscoverRemoteService.cpp \
     src/bluetooth/SPX42BtDevicesManager.cpp \
     src/spx42/SPX42SingleCommand.cpp \
-    src/utils/HelpDialog.cpp
     src/utils/HelpDialog.cpp \
     src/guiFragments/DeviceInfoFragment.cpp
 
