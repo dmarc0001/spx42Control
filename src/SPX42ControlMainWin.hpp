@@ -1,8 +1,6 @@
 ﻿#ifndef SPX42CONTROLMAINWIN_HPP
 #define SPX42CONTROLMAINWIN_HPP
 
-#include <memory>
-
 #include <QCloseEvent>
 #include <QDebug>
 #include <QFont>
@@ -14,6 +12,7 @@
 #include <QStringList>
 #include <QTabWidget>
 #include <QTimer>
+#include <memory>
 #include "bluetooth/SPX42RemotBtDevice.hpp"
 #include "config/AppConfigClass.hpp"
 #include "config/ProjectConst.hpp"
@@ -26,6 +25,7 @@
 #include "logging/Logger.hpp"
 #include "spx42/SPX42Config.hpp"
 #include "utils/AboutDialog.hpp"
+#include "utils/HelpDialog.hpp"
 
 namespace Ui
 {

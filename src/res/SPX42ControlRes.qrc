@@ -46,7 +46,6 @@
         <file>logo_header450.png</file>
         <file>ic_bluetooth_black_24dp_1x.png</file>
     </qresource>
-    <qresource lang="de" prefix="/"/>
     <qresource prefix="/scanner">
         <file alias="bluetooth_black_normal">ic_bluetooth_black_24dp_1x.png</file>
         <file alias="bluetooth_black_gross">ic_bluetooth_black_24dp_2x.png</file>
@@ -57,5 +56,8 @@
         <file alias="defaultStyle.css">spx42Control.css</file>
         <file alias="defaultStyleMac.css">spx42ControlMac.css</file>
         <file alias="defaultStyleUx.css">spx42ControlUx.css</file>
+    </qresource>
+    <qresource prefix="/help">
+        <file>help_en.html</file>
     </qresource>
 </RCC>
