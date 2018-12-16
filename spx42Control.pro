@@ -78,7 +78,8 @@ SOURCES                 += \
     src/bluetooth/BtDiscoverRemoteDevice.cpp \
     src/bluetooth/BtDiscoverRemoteService.cpp \
     src/bluetooth/SPX42BtDevicesManager.cpp \
-    src/spx42/SPX42SingleCommand.cpp
+    src/spx42/SPX42SingleCommand.cpp \
+    src/utils/HelpDialog.cpp
 
 HEADERS                 += \
     src/SPX42ControlMainWin.hpp \
@@ -109,7 +110,8 @@ HEADERS                 += \
     src/bluetooth/BtDiscoverRemoteDevice.hpp \
     src/bluetooth/BtDiscoverRemoteService.hpp \
     src/bluetooth/SPX42BtDevicesManager.hpp \
-    src/spx42/SPX42SingleCommand.hpp
+    src/spx42/SPX42SingleCommand.hpp \
+    src/utils/HelpDialog.hpp
 
 FORMS                   += \
     src/ui/SPX42ControlMainWin.ui \
@@ -118,7 +120,8 @@ FORMS                   += \
     src/ui/LogFragment.ui \
     src/ui/DeviceConfigFragment.ui \
     src/ui/ChartsFragment.ui \
-    src/ui/ConnectFragment.ui
+    src/ui/ConnectFragment.ui \
+    src/ui/HelpDialog.ui
 
 RESOURCES               = \
     src/res/SPX42ControlRes.qrc
