@@ -12,6 +12,7 @@ namespace spx
       , sendSignals( true )
       , isValid( false )
       , spxFirmwareVersion( SPX42FirmwareVersions::FIRMWARE_UNKNOWN )
+      , spxFirmwareVersionString( "unknown" )
       , spxSerialNumber()
       , decoCurrentPreset()
       , decoDynamicGradient()
@@ -39,7 +40,7 @@ namespace spx
       , isSixMetersAutoSetpoint( false )
       , qhash( QCryptographicHash::Md5 )
   {
-    resetConfig( SPX42ConfigClass::CFCLASS_ALL );
+    resetConfig( SPX42ConfigClass::CF_CLASS_ALL );
     // connect( &spxLicense, &SPX42License::licenseChangedPrivateSig, this, &SPX42Config::licenseChangedPrivateSlot );
     //
     // DECO Presets füllen
@@ -59,6 +60,15 @@ namespace spx
   SPX42FirmwareVersions SPX42Config::getSpxFirmwareVersion() const
   {
     return spxFirmwareVersion;
+  }
+
+  /**
+   * @brief SPX42Config::getSpxFirmwareVersionString
+   * @return
+   */
+  QString SPX42Config::getSpxFirmwareVersionString()
+  {
+    return ( spxFirmwareVersionString );
   }
 
   /**
@@ -136,6 +146,7 @@ namespace spx
    */
   void SPX42Config::setSpxFirmwareVersion( const QString &value )
   {
+    spxFirmwareVersionString = value;
     //
     // vergleiche die im Programm unterstützten Versionen und setzte
     // dann alle Kompatibilitätswerte
@@ -329,7 +340,7 @@ namespace spx
   void SPX42Config::resetConfig( quint8 classes )
   {
     isValid = false;
-    if ( classes & SPX42ConfigClass::CFCLASS_SPX )
+    if ( classes & SPX42ConfigClass::CF_CLASS_SPX )
     {
       spxLicense.setLicType( LicenseType::LIC_NITROX );
       spxLicense.setLicInd( IndividualLicense::LIC_NONE );
@@ -344,7 +355,7 @@ namespace spx
       currentSpxHash.clear();
       savedSpxHash.clear();
     }
-    if ( classes & SPX42ConfigClass::CFCLASS_GASES )
+    if ( classes & SPX42ConfigClass::CF_CLASS_GASES )
     {
       for ( int i = 0; i < GAS_HASHES; i++ )
       {
@@ -353,7 +364,7 @@ namespace spx
         savedGasHashes[ i ].clear();
       }
     }
-    if ( classes & SPX42ConfigClass::CFCLASS_DECO )
+    if ( classes & SPX42ConfigClass::CF_CLASS_DECO )
     {
       decoCurrentPreset = DecompressionPreset::DECO_KEY_CONSERVATIVE;
       decoDeepstopsEnabled = DecompressionDeepstops::DEEPSTOPS_ENABLED;
@@ -361,14 +372,14 @@ namespace spx
       currentDecoHash.clear();
       savedDecoHash.clear();
     }
-    if ( classes & SPX42ConfigClass::CFCLASS_DISPLAY )
+    if ( classes & SPX42ConfigClass::CF_CLASS_DISPLAY )
     {
       displayBrightness = DisplayBrightness::BRIGHT_100;
       displayOrientation = DisplayOrientation::LANDSCAPE;
       currentDisplayHash.clear();
       savedDisplayHash.clear();
     }
-    if ( classes & SPX42ConfigClass::CFCLASS_UNITS )
+    if ( classes & SPX42ConfigClass::CF_CLASS_UNITS )
     {
       unitTemperature = DeviceTemperaturUnit::CELSIUS;
       unitLength = DeviceLenghtUnit::METRIC;
@@ -376,14 +387,14 @@ namespace spx
       currentUnitHash.clear();
       savedUnitHash.clear();
     }
-    if ( classes & SPX42ConfigClass::CFCLASS_SETPOINT )
+    if ( classes & SPX42ConfigClass::CF_CLASS_SETPOINT )
     {
       setpointAuto = DeviceSetpointAuto::AUTO_06;
       setpointValue = DeviceSetpointValue::SETPOINT_10;
       currentSetpointHash.clear();
       savedSetpointHash.clear();
     }
-    if ( classes & SPX42ConfigClass::CFCLASS_INDIVIDUAL )
+    if ( classes & SPX42ConfigClass::CF_CLASS_INDIVIDUAL )
     {
       individualSensorsOn = DeviceIndividualSensors::SENSORS_ON;
       individualPSCROn = DeviceIndividualPSCR::PSCR_OFF;
@@ -1112,24 +1123,24 @@ namespace spx
     //
     // was soll gefrostet werden?
     //
-    if ( changed & SPX42ConfigClass::CFCLASS_SPX )
+    if ( changed & SPX42ConfigClass::CF_CLASS_SPX )
       savedSpxHash = currentSpxHash;
-    if ( changed & SPX42ConfigClass::CFCLASS_DECO )
+    if ( changed & SPX42ConfigClass::CF_CLASS_DECO )
       savedDecoHash = currentDecoHash;
-    if ( changed & SPX42ConfigClass::CFCLASS_GASES )
+    if ( changed & SPX42ConfigClass::CF_CLASS_GASES )
     {
       for ( int i = 0; i < GAS_HASHES; i++ )
       {
         savedGasHashes[ i ] = currentGasHashes[ i ];
       }
     }
-    if ( changed & SPX42ConfigClass::CFCLASS_DISPLAY )
+    if ( changed & SPX42ConfigClass::CF_CLASS_DISPLAY )
       savedDisplayHash = currentDisplayHash;
-    if ( changed & SPX42ConfigClass::CFCLASS_UNITS )
+    if ( changed & SPX42ConfigClass::CF_CLASS_UNITS )
       savedUnitHash = currentUnitHash;
-    if ( changed & SPX42ConfigClass::CFCLASS_SETPOINT )
+    if ( changed & SPX42ConfigClass::CF_CLASS_SETPOINT )
       savedSetpointHash = currentSetpointHash;
-    if ( changed & SPX42ConfigClass::CFCLASS_INDIVIDUAL )
+    if ( changed & SPX42ConfigClass::CF_CLASS_INDIVIDUAL )
       savedIndividualHash = currentIndividualHash;
   }
 
@@ -1141,22 +1152,22 @@ namespace spx
   {
     quint8 result = 0;
     if ( currentSpxHash != savedSpxHash )
-      result |= SPX42ConfigClass::CFCLASS_SPX;
+      result |= SPX42ConfigClass::CF_CLASS_SPX;
     if ( currentDecoHash != savedDecoHash )
-      result |= SPX42ConfigClass::CFCLASS_DECO;
+      result |= SPX42ConfigClass::CF_CLASS_DECO;
     if ( currentDisplayHash != savedDisplayHash )
-      result |= SPX42ConfigClass::CFCLASS_DISPLAY;
+      result |= SPX42ConfigClass::CF_CLASS_DISPLAY;
     if ( currentSetpointHash != savedSetpointHash )
-      result |= SPX42ConfigClass::CFCLASS_SETPOINT;
+      result |= SPX42ConfigClass::CF_CLASS_SETPOINT;
     if ( currentUnitHash != savedUnitHash )
-      result |= SPX42ConfigClass::CFCLASS_UNITS;
+      result |= SPX42ConfigClass::CF_CLASS_UNITS;
     if ( currentIndividualHash != savedIndividualHash )
-      result |= SPX42ConfigClass::CFCLASS_INDIVIDUAL;
+      result |= SPX42ConfigClass::CF_CLASS_INDIVIDUAL;
     for ( int i = 0; i < GAS_HASHES; i++ )
     {
       if ( savedGasHashes[ i ] != currentGasHashes[ i ] )
       {
-        result |= SPX42ConfigClass::CFCLASS_GASES;
+        result |= SPX42ConfigClass::CF_CLASS_GASES;
         // schleife verlassen
         break;
       }

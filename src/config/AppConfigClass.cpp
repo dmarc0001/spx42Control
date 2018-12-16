@@ -3,7 +3,7 @@
 #include <QSettings>
 
 #include "AppConfigClass.hpp"
-#include "currBuildDef.hpp"
+#include "CurrBuildDef.hpp"
 
 namespace spx
 {

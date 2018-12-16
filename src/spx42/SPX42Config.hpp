@@ -24,6 +24,7 @@ namespace spx
     volatile bool sendSignals;                          //! sollen beim stzen von Eigenschaften Signale gesendet werden?
     bool isValid;                                       //! Ist das Objekt gültig?
     SPX42FirmwareVersions spxFirmwareVersion;           //! welche Firmwareversion?
+    QString spxFirmwareVersionString;                   //! Firmwareversion im Original
     SPX42License spxLicense;                            //! SPX42 Lizenz
     QString spxSerialNumber;                            //! Seriennummer des aktuellen SPX42
     SPX42Gas gasList[ GASES ];                          //! Gasliste des aktuellen SPX42
@@ -69,17 +70,17 @@ namespace spx
     QString savedIndividualHash;                        //! Hash über Inidividual einstellungen
 
     public:
-    SPX42Config();                                                       //! Der Konstruktor
-    SPX42License &getLicense( void );                                    //! Lizenz des aktuellen SPX42
-    void setLicense( const LicenseType value );                          //! Lizenz des aktuellen SPX42 merken
-    void setLicense( const IndividualLicense value );                    //! Lizenz des aktuellen SPX42 merken
-    void setLicense( const QByteArray &lic, const QByteArray &ind );     //! Lizenz aus dem Kommando vom SPX lesen
-    QString getLicName( void ) const;                                    //! Textliche Darstellung der Lizenz
-    SPX42Gas &getGasAt( int num );                                       //! Gib ein Gas mit der Nummer num vom SPX42 zurück
-    void setGasAt( int num, const SPX42Gas &gas );                       //! setzte Gas mit der Nummer xxx in die Config
-    void resetConfig( quint8 classes = SPX42ConfigClass::CFCLASS_ALL );  //! Resetiere das Objekt
-    QString getSerialNumber( void ) const;                               //! Seriennummer des aktuellen SPX42 zurückgeben
-    void setSerialNumber( const QString &serial );                       //! Seriennumemr des aktuellen SPX42 speichern
+    SPX42Config();                                                        //! Der Konstruktor
+    SPX42License &getLicense( void );                                     //! Lizenz des aktuellen SPX42
+    void setLicense( const LicenseType value );                           //! Lizenz des aktuellen SPX42 merken
+    void setLicense( const IndividualLicense value );                     //! Lizenz des aktuellen SPX42 merken
+    void setLicense( const QByteArray &lic, const QByteArray &ind );      //! Lizenz aus dem Kommando vom SPX lesen
+    QString getLicName( void ) const;                                     //! Textliche Darstellung der Lizenz
+    SPX42Gas &getGasAt( int num );                                        //! Gib ein Gas mit der Nummer num vom SPX42 zurück
+    void setGasAt( int num, const SPX42Gas &gas );                        //! setzte Gas mit der Nummer xxx in die Config
+    void resetConfig( quint8 classes = SPX42ConfigClass::CF_CLASS_ALL );  //! Resetiere das Objekt
+    QString getSerialNumber( void ) const;                                //! Seriennummer des aktuellen SPX42 zurückgeben
+    void setSerialNumber( const QString &serial );                        //! Seriennumemr des aktuellen SPX42 speichern
     void setCurrentPreset( DecompressionPreset presetType,
                            qint8 low = 0,
                            qint8 high = 0 );  //! Aktuelle Gradienteneinstellungen merken
@@ -121,7 +122,8 @@ namespace spx
     void setIndividualLogInterval( DeviceIndividualLogInterval logInterval );  //! setze das Log interval
     DeviceIndividualTempstick getIndividualTempStick( void );                  //! welcher Temperatur Stick ist eingebaut?
     void setIndividualTempStick( DeviceIndividualTempstick tStick );           //! setze den eingebauten TemperaturStick
-    SPX42FirmwareVersions getSpxFirmwareVersion() const;                       //! gibt die Version der Firmware als enum zurück
+    SPX42FirmwareVersions getSpxFirmwareVersion( void ) const;                 //! gibt die Version der Firmware als enum zurück
+    QString getSpxFirmwareVersionString( void );                               //! gibt die Version der Firmware als string zurück
     void setSpxFirmwareVersion( SPX42FirmwareVersions value );                 //! setzt die Firmwareversion
     void setSpxFirmwareVersion( const QString &value );                        //! setzt die Firmwareversion
     void setSpxFirmwareVersion( const QByteArray &value );                     //! setzt die Firmwareversion
@@ -132,7 +134,7 @@ namespace spx
     bool getIsOldParamSorting() const;                                         //! alte Parameterordnung?
     bool getIsNewerDisplayBrightness() const;                                  //! neuere Helligkeitsabstufungen
     bool getIsSixMetersAutoSetpoint() const;                                   //! fünf oder sechs meter autosetpoint
-    void freezeConfigs( quint8 changed = SPX42ConfigClass::CFCLASS_ALL );      //! setzte die aktuelle Konfiguration als "gesichert"
+    void freezeConfigs( quint8 changed = SPX42ConfigClass::CF_CLASS_ALL );     //! setzte die aktuelle Konfiguration als "gesichert"
     quint8 getChangedConfig( void );                                           //! was ist geändert?
     quint8 getChangedGases( void );                                            //! welches Gas wurde geändert?
     QString geteUnitHashes( void );
