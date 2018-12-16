@@ -45,6 +45,7 @@ namespace spx
   enum class ApplicationTab : int
   {
     CONNECT_TAB,
+    DEVICE_INFO_TAB,
     CONFIG_TAB,
     GAS_TAB,
     LOG_TAB,

@@ -12,6 +12,7 @@ namespace spx
       , sendSignals( true )
       , isValid( false )
       , spxFirmwareVersion( SPX42FirmwareVersions::FIRMWARE_UNKNOWN )
+      , spxFirmwareVersionString( "unknown" )
       , spxSerialNumber()
       , decoCurrentPreset()
       , decoDynamicGradient()
@@ -59,6 +60,15 @@ namespace spx
   SPX42FirmwareVersions SPX42Config::getSpxFirmwareVersion() const
   {
     return spxFirmwareVersion;
+  }
+
+  /**
+   * @brief SPX42Config::getSpxFirmwareVersionString
+   * @return
+   */
+  QString SPX42Config::getSpxFirmwareVersionString()
+  {
+    return ( spxFirmwareVersionString );
   }
 
   /**
@@ -136,6 +146,7 @@ namespace spx
    */
   void SPX42Config::setSpxFirmwareVersion( const QString &value )
   {
+    spxFirmwareVersionString = value;
     //
     // vergleiche die im Programm unterstützten Versionen und setzte
     // dann alle Kompatibilitätswerte

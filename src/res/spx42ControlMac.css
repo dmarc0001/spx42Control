@@ -45,6 +45,36 @@ QLabel#tabHeaderLabel
 
 /*
 ##################################################################
+#  Device Info Tab                                               #
+##################################################################
+*/
+
+QWidget#deviceInfoBodyWidget>QLabel
+{
+  font-family: "Hack";
+  font-style: bold;
+  font-size: 22pt;
+  color:gray;
+  background-color: silver;
+}
+
+QGroupBox#firmwarePartGroupBox>QLabel
+{
+  font-style: italic;
+  font-size: 12pt;
+  color:gray;
+}
+
+QGroupBox#firmwarePartGroupBox>QLabel:enabled
+{
+  font-style: bold;
+  font-size: 12pt;
+  color:green;
+}
+
+
+/*
+##################################################################
 #  Gas Tab - current gas edit                                    #
 ##################################################################
 */

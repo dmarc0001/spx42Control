@@ -490,6 +490,10 @@ namespace spx
           break;
       }
     }
+    //
+    // falls es mehr gibt, lass dem Rest der App auch eine Chance
+    //
+    QCoreApplication::processEvents();
   }
 
   void GasFragment::onGasConfigUpdateSlot()
