@@ -302,7 +302,7 @@
                <string>device has an old firmware with bug in communiacation for temperature units...</string>
               </property>
               <property name="locale">
-               <locale language="English" country="Europe"/>
+               <locale language="English" country="UnitedKingdom"/>
               </property>
               <property name="text">
                <string>HAS FAHRENHEID BUG</string>
@@ -340,7 +340,7 @@
                <string>device can/can't set date and time via communication interface...</string>
               </property>
               <property name="locale">
-               <locale language="English" country="Europe"/>
+               <locale language="English" country="UnitedKingdom"/>
               </property>
               <property name="text">
                <string>CAN SET DATE</string>
@@ -378,7 +378,7 @@
                <string>device has six parameters für communication for individuals config...</string>
               </property>
               <property name="locale">
-               <locale language="English" country="Europe"/>
+               <locale language="English" country="UnitedKingdom"/>
               </property>
               <property name="text">
                <string>HAS SIX PARAMETER INDIVIDUAL</string>
@@ -416,7 +416,7 @@
                <string>is the firmware supported for this software...</string>
               </property>
               <property name="locale">
-               <locale language="English" country="Europe"/>
+               <locale language="English" country="UnitedKingdom"/>
               </property>
               <property name="text">
                <string>IS FIRMWARE SUPPORTED</string>
@@ -454,7 +454,7 @@
                <string>communication interface with older or newer parametr sorting...</string>
               </property>
               <property name="locale">
-               <locale language="English" country="Europe"/>
+               <locale language="English" country="UnitedKingdom"/>
               </property>
               <property name="text">
                <string>IS OLDER PARAMETERS SORT</string>
@@ -492,7 +492,7 @@
                <string>display brightness ar newer or older type...</string>
               </property>
               <property name="locale">
-               <locale language="English" country="Europe"/>
+               <locale language="English" country="UnitedKingdom"/>
               </property>
               <property name="text">
                <string>IS NEWER DISPLAY BRIGHTNESS</string>
@@ -530,7 +530,7 @@
                <string>is autosetpoint by five or six meters...</string>
               </property>
               <property name="locale">
-               <locale language="English" country="Europe"/>
+               <locale language="English" country="UnitedKingdom"/>
               </property>
               <property name="text">
                <string>IS SIX METERS AUTOSETPOINT</string>
