@@ -68,11 +68,21 @@ then
 fi
 
 #
+# übersetzungen machen und kopieren
+# TODO: Übersetzung updaten...
+#
+echo "kopiere translations ($TRANSLATION\*.qm)..."
+if [ -e $TRANSLATION/*.qm ] 
+then
+  cp -f $TRANSLATION/*.qm out/
+fi
+
+
+#
 # jettz deployment...
 #
 echo "Deployment..."
 MAKE_DONE=false
-# cd out
 pwd
 $DEPLOY  out/spx42Control.app -verbose=1 -always-overwrite -appstore-compliant  && MAKE_DONE=true
 
