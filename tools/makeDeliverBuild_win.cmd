@@ -1,25 +1,26 @@
 @echo off
 :: erzeuge ein Build zum ausliefern
 ::
-
 :: Definitionen
-SET PROJECTBASE=C:/DATEN/Entwicklung/QT-Projekte/spx42Control
-SET PROJECTFILE=%PROJECTBASE%/spx42Control.pro
+SET ARCH_PREFIX=0.5.2
+SET QT_PREFIX=5.12.0
+SET PROJECTBASE=C:\DATEN\Entwicklung\QT-Projekte\spx42Control
+SET PROJECTFILE=%PROJECTBASE%\spx42Control.pro
 SET PROJECTBUILDDIR=DEPLOYDIR
 SET PROJECTTYPE=debug
-SET TRANSLATION=%PROJECTBASE%/src/translations
-SET INSTALLERBASE=%PROJECTBASE%/installer
-SET APP_INSTALLER_FILE=spx42Control.7z
-SET APP_INSTALLER_FILE_PATH=%INSTALLERBASE%/packages/app/data/
-SET RUNTIME_INSTALLER_FILE=qtRuntime_5120.7z
-SET RUNTIME_INSTALLER_FILE_PATH=%INSTALLERBASE%/packages/runtime/data/
+SET TRANSLATION=%PROJECTBASE%\src\translations
+SET INSTALLERBASE=%PROJECTBASE%\installer
+SET APP_INSTALLER_FILE=%ARCH_PREFIX%spx42Control.7z
+SET APP_INSTALLER_FILE_PATH=%INSTALLERBASE%\packages\app\data\
+SET RUNTIME_INSTALLER_FILE=%QT_PREFIX%qtRuntime_5120.7z
+SET RUNTIME_INSTALLER_FILE_PATH=%INSTALLERBASE%\packages\qtRuntime\data\
 
-SET QT_BASEDIR=C:/Qt/5.12.0/msvc2017_64/bin
-SET QT_QMAKE=%QT_BASEDIR%/qmake.exe
-SET QT_JOM=C:/Qt/Tools/QtCreator/bin/jom.exe
-SET WINDEPLOY=C:/Qt/5.11.2/msvc2017_64/bin/windeployqt.exe
-SET ARCHIVEGEN=C:/Qt/Tools/QtInstallerFramework/3.0/bin/archivegen.exe
-SET BINARYCREATOR=C:/Qt/Tools/QtInstallerFramework/3.0/bin/binarycreator.exe
+SET QT_BASEDIR=C:\Qt\%QT_PREFIX%\msvc2017_64\bin
+SET QT_QMAKE=%QT_BASEDIR%\qmake.exe
+SET QT_JOM=C:\Qt\Tools\QtCreator\bin\jom.exe
+SET WINDEPLOY=C:\Qt\%QT_PREFIX%\msvc2017_64\bin\windeployqt.exe
+SET ARCHIVEGEN=C:\Qt\Tools\QtInstallerFramework\3.0\bin\archivegen.exe
+SET BINARYCREATOR=C:\Qt\Tools\QtInstallerFramework\3.0\bin\binarycreator.exe
 SET MAKE_DONE=false
 
 echo.
@@ -55,9 +56,9 @@ SET MAKE_DONE=false
 if "%MAKE_DONE%" == "false" goto false_end
 
 :: Sprachdateien kopieren
-echo kopiere translations (%TRANSLATION%/*.qm)  ...
-if exist "%TRANSLATION%/*.qm" (
-  copy /Y  "%TRANSLATION%/*.qm"  "./out/"
+echo kopiere translations (%TRANSLATION%\*.qm)  ...
+if exist "%TRANSLATION%\*.qm" (
+  copy /Y  "%TRANSLATION%\*.qm"  ".\out\"
 )
 
 cd out
@@ -70,9 +71,9 @@ if exist "%APP_INSTALLER_FILE_PATH%%APP_INSTALLER_FILE%" (
 
 SET MAKE_DONE=false
 :: BUGFIX von visual studio/qt deploy
-cp -f %INSTALLERBASE%/ucrtbased.dll ucrtbased.dll
-echo %ARCHIVEGEN% %APP_INSTALLER_FILE_PATH%/%APP_INSTALLER_FILE% *.exe *.qm *.ilk *.pdb ucrtbased.dll
-%ARCHIVEGEN% %APP_INSTALLER_FILE_PATH%/%APP_INSTALLER_FILE% *.exe *.qm *.ilk *.pdb ucrtbased.dll && SET MAKE_DONE=true
+cp -f %INSTALLERBASE%\ucrtbased.dll ucrtbased.dll
+echo %ARCHIVEGEN% %APP_INSTALLER_FILE_PATH%\%APP_INSTALLER_FILE% *.exe *.qm *.ilk *.pdb ucrtbased.dll
+%ARCHIVEGEN% %APP_INSTALLER_FILE_PATH%\%APP_INSTALLER_FILE% *.exe *.qm *.ilk *.pdb ucrtbased.dll && SET MAKE_DONE=true
 
 timeout /t 120
 
@@ -82,7 +83,7 @@ if "%MAKE_DONE%" == "false" goto false_end
 del /f /q  spx42Control.*
 del /f /q  *.qm
 del /f /q ucrtbased.dll
-del /f /q %RUNTIME_INSTALLER_FILE_PATH%%RUNTIME_INSTALLER_FILE%
+del /f /q "%RUNTIME_INSTALLER_FILE_PATH%%RUNTIME_INSTALLER_FILE%"
 
 SET MAKE_DONE=false
 echo erzeuge runtime package (%RUNTIME_INSTALLER_FILE_PATH%%RUNTIME_INSTALLER_FILE%)...
