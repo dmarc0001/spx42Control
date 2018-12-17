@@ -1,26 +1,28 @@
 @echo off
 :: erzeuge ein Build zum ausliefern
 ::
-:: Definitionen
+:: Definitionen/Verzeichnisse
 SET ARCH_PREFIX=0.5.2
 SET QT_PREFIX=5.12.0
 SET PROJECTBASE=C:\DATEN\Entwicklung\QT-Projekte\spx42Control
-SET PROJECTFILE=%PROJECTBASE%\spx42Control.pro
+SET QT_DIR=C:\Qt
+SET QT_BASEDIR=%QT_DIR%\%QT_PREFIX%\msvc2017_64\bin
+SET QT_TOOLS=%QT_DIR%\Tools
 SET PROJECTBUILDDIR=DEPLOYDIR
-SET PROJECTTYPE=debug
 SET TRANSLATION=%PROJECTBASE%\src\translations
 SET INSTALLERBASE=%PROJECTBASE%\installer
-SET APP_INSTALLER_FILE=%ARCH_PREFIX%spx42Control.7z
 SET APP_INSTALLER_FILE_PATH=%INSTALLERBASE%\packages\app\data\
-SET RUNTIME_INSTALLER_FILE=%QT_PREFIX%qtRuntime_5120.7z
 SET RUNTIME_INSTALLER_FILE_PATH=%INSTALLERBASE%\packages\qtRuntime\data\
 
-SET QT_BASEDIR=C:\Qt\%QT_PREFIX%\msvc2017_64\bin
+SET PROJECTTYPE=release
+SET PROJECTFILE=%PROJECTBASE%\spx42Control.pro
+SET APP_INSTALLER_FILE=%ARCH_PREFIX%spx42Control.7z
+SET RUNTIME_INSTALLER_FILE=%QT_PREFIX%qtRuntime_5120.7z
 SET QT_QMAKE=%QT_BASEDIR%\qmake.exe
-SET QT_JOM=C:\Qt\Tools\QtCreator\bin\jom.exe
-SET WINDEPLOY=C:\Qt\%QT_PREFIX%\msvc2017_64\bin\windeployqt.exe
-SET ARCHIVEGEN=C:\Qt\Tools\QtInstallerFramework\3.0\bin\archivegen.exe
-SET BINARYCREATOR=C:\Qt\Tools\QtInstallerFramework\3.0\bin\binarycreator.exe
+SET QT_JOM=%QT_TOOLS%\QtCreator\bin\jom.exe
+SET DEPLOY=%QT_DIR%\%QT_PREFIX%\msvc2017_64\bin\windeployqt.exe
+SET ARCHIVEGEN=%QT_TOOLS%\QtInstallerFramework\3.0\bin\archivegen.exe
+SET BINARYCREATOR=%QT_TOOLS%\QtInstallerFramework\3.0\bin\binarycreator.exe
 SET MAKE_DONE=false
 
 echo.
@@ -50,7 +52,7 @@ if "%MAKE_DONE%" == "false" goto false_end
 
 echo Deployment... 
 SET MAKE_DONE=false
-%WINDEPLOY% --%PROJECTTYPE% --no-quick-import --no-system-d3d-compiler --compiler-runtime --no-opengl-sw "out" && SET MAKE_DONE=true
+%DEPLOY% --%PROJECTTYPE% --no-quick-import --no-system-d3d-compiler --compiler-runtime --no-opengl-sw "out" && SET MAKE_DONE=true
 
 :: falls das falsch ist, zum Ende kommen
 if "%MAKE_DONE%" == "false" goto false_end
@@ -74,8 +76,6 @@ SET MAKE_DONE=false
 cp -f %INSTALLERBASE%\ucrtbased.dll ucrtbased.dll
 echo %ARCHIVEGEN% %APP_INSTALLER_FILE_PATH%\%APP_INSTALLER_FILE% *.exe *.qm *.ilk *.pdb ucrtbased.dll
 %ARCHIVEGEN% %APP_INSTALLER_FILE_PATH%\%APP_INSTALLER_FILE% *.exe *.qm *.ilk *.pdb ucrtbased.dll && SET MAKE_DONE=true
-
-timeout /t 120
 
 :: falls das falsch ist, zum Ende kommen
 if "%MAKE_DONE%" == "false" goto false_end
