@@ -1226,30 +1226,30 @@
     <message>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="29"/>
         <source>5 METERS</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">6 Meter {5 ?}</translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="29"/>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="30"/>
         <source>10 METERS</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">6 Meter {10 ?}</translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="29"/>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="30"/>
         <source>15 METERS</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">6 Meter {15 ?}</translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="29"/>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="30"/>
         <source>20 METERS</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">6 Meter {20 ?}</translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="30"/>
         <source>6 METERS</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">6 Meter</translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="31"/>
