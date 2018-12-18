@@ -765,32 +765,15 @@ namespace spx
         //
         //
         // Frage nach dem Hersteller
-        //
-        SendListEntry sendCommand = remoteSPX42->askForManufacturers();
-        lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd manufacturer..." );
-        remoteSPX42->sendCommand( sendCommand );
-        lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd manufacturer...OK" );
-        //
         // gleich danach Frage nach der Seriennummer
-        //
-        sendCommand = remoteSPX42->askForSerialNumber();
-        lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd serialnumber..." );
-        remoteSPX42->sendCommand( sendCommand );
-        lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd serialnumber...OK" );
-        //
         // und dann noch Frage nach der Firmwareversion
-        //
-        sendCommand = remoteSPX42->askForFirmwareVersion();
-        lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd firmwareversion..." );
-        remoteSPX42->sendCommand( sendCommand );
-        lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd firmwareversion...OK" );
-        //
         // und lizenz nicht vergessen
+        // und alive
         //
-        sendCommand = remoteSPX42->askForLicenseState();
-        lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd license status..." );
+        SendListEntry sendCommand = remoteSPX42->askWhileStartup();
+        lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> ask params while startup..." );
         remoteSPX42->sendCommand( sendCommand );
-        lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> send cmd license status...OK" );
+        lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> ask params while startup...OK" );
         break;
     }
   }

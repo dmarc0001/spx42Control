@@ -111,6 +111,28 @@ namespace spx
     return ( SendListEntry( CmdMarker( SPX42CommandDef::SPX_GET_SETUP_GASLIST ), cmd ) );
   }
 
+  SendListEntry SPX42Commands::askWhileStartup( void )
+  {
+    QByteArray code;
+    QByteArray cmd;
+    // Prefix
+    cmd.append( &SPX42CommandDef::STX, 1 );
+
+    // Frage nach dem Hersteller
+    // gleich danach Frage nach der Seriennummer
+    // und dann noch Frage nach der Firmwareversion
+    // und lizenz nicht vergessen
+    cmd.append( QString( "~%1~%2~%3~%4~%5" )
+                    .arg( static_cast< int >( SPX42CommandDef::SPX_MANUFACTURERS ), 2, 16, QChar( '0' ) )
+                    .arg( static_cast< int >( SPX42CommandDef::SPX_SERIAL_NUMBER ), 2, 16, QChar( '0' ) )
+                    .arg( static_cast< int >( SPX42CommandDef::SPX_APPLICATION_ID ), 2, 16, QChar( '0' ) )
+                    .arg( static_cast< int >( SPX42CommandDef::SPX_LICENSE_STATE ), 2, 16, QChar( '0' ) )
+                    .arg( static_cast< int >( SPX42CommandDef::SPX_ALIVE ), 2, 16, QChar( '0' ) ) );
+    // Postfix
+    cmd.append( &SPX42CommandDef::ETX, 1 );
+    return ( SendListEntry( CmdMarker( SPX42CommandDef::SPX_SERIAL_NUMBER ), cmd ) );
+  }
+
   SendListEntry SPX42Commands::setDateTime( const QDateTime &nowDateTime )
   {
     //

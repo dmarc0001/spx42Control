@@ -50,7 +50,13 @@ namespace spx
     SendListEntry askForConfig( void );
     //! frage alle Gaase ab
     SendListEntry askForGasList( void );
-    //! setzte im SPX DAtum und Zeit, sofern seine Firmware das kann
+    //! Erster Kontakt, einstellungen abfragen
+    // Frage nach dem Hersteller
+    // gleich danach Frage nach der Seriennummer
+    // und dann noch Frage nach der Firmwareversion
+    // und lizenz nicht vergessen
+    SendListEntry askWhileStartup( void );
+    //! setzte im SPX Datum und Zeit, sofern seine Firmware das kann
     SendListEntry setDateTime( const QDateTime &nowDateTime );
     // Schalte SPX auf YMODEM-Betrieb!
     // SendListEntry sendStartYModem( void );
