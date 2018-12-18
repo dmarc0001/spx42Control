@@ -87,11 +87,27 @@ namespace spx
   void LogFragment::onReadLogDirectorySlot()
   {
     lg->debug( "LogFragment::onReadLogDirectorySlot: ..." );
-    // DEBUG: erzeuge einfach Einträge bei Jedem Click
-    static int entry = 0;
-    QString newEntry = QString( "ENTRY: %1" ).arg( ++entry );
-    onAddLogdirEntrySlot( newEntry );
-    //
+    if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
+    {
+      //
+      // Liste löschen
+      //
+      spxConfig->resetConfig( SPX42ConfigClass::CF_CLASS_LOG );
+      //
+      // rufe die Liste der Einträge vom Computer ab
+      //
+      SendListEntry sendCommand = remoteSPX42->askForLogDir();
+      remoteSPX42->sendCommand( sendCommand );
+      lg->debug( "LogFragment::onReadLogDirectorySlot -> send cmd get log directory..." );
+
+      /*
+      // DEBUG: erzeuge einfach Einträge bei Jedem Click
+      static int entry = 0;
+      QString newEntry = QString( "ENTRY: %1" ).arg( ++entry );
+      onAddLogdirEntrySlot( newEntry );
+      //
+      */
+    }
   }
 
   /**

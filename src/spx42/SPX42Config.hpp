@@ -7,8 +7,8 @@
 #include <QString>
 #include <QStringList>
 #include <QtGlobal>
-
 #include "SPX42Gas.hpp"
+#include "SPX42LogDirectoryEntry.hpp"
 #include "config/ProjectConst.hpp"
 #include "spx42/SPX42Defs.hpp"
 
@@ -46,6 +46,7 @@ namespace spx
     DeviceIndividualAcoustic individualAcustic;         //! sollen akustische Warnunge ausggeben werden
     DeviceIndividualLogInterval individualLogInterval;  //! welches Interval zum loggen
     DeviceIndividualTempstick individualTempStick;      //! welcher Tempstick wird genutzt?
+    QVector< SPX42LogDirectoryEntry > logDirectory;     //! Liste mit Einträgen im Verzeichnis
     bool hasFahrenheidBug;                              //! bug bei der darstellung
     bool canSetDate;                                    //! kann diese Version das Datum setzten?
     bool hasSixValuesIndividual;                        //! beiindividual anzehl der Werte
@@ -137,7 +138,8 @@ namespace spx
     void freezeConfigs( quint8 changed = SPX42ConfigClass::CF_CLASS_ALL );     //! setzte die aktuelle Konfiguration als "gesichert"
     quint8 getChangedConfig( void );                                           //! was ist geändert?
     quint8 getChangedGases( void );                                            //! welches Gas wurde geändert?
-    QString geteUnitHashes( void );
+    QString getUnitHashes( void );                                             //! gib dieu Unit-Hashes zurück
+    QVector< SPX42LogDirectoryEntry > &getLogDirectory( void );                //! Verzeichis ausgeben
 
     private:
     QString makeSpxHash( void );         //! Hash über die globalen Einstellungen

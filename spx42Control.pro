@@ -86,7 +86,8 @@ SOURCES                 += \
     src/bluetooth/SPX42BtDevicesManager.cpp \
     src/spx42/SPX42SingleCommand.cpp \
     src/utils/HelpDialog.cpp \
-    src/guiFragments/DeviceInfoFragment.cpp
+    src/guiFragments/DeviceInfoFragment.cpp \
+    src/spx42/SPX42LogDirectoryEntry.cpp
 
 HEADERS                 += \
     src/SPX42ControlMainWin.hpp \
@@ -119,7 +120,8 @@ HEADERS                 += \
     src/spx42/SPX42SingleCommand.hpp \
     src/utils/HelpDialog.hpp \
     src/guiFragments/DeviceInfoFragment.hpp \
-    src/config/CurrBuildDef.hpp
+    src/config/CurrBuildDef.hpp \
+    src/spx42/SPX42LogDirectoryEntry.hpp
 
 FORMS                   += \
     src/ui/SPX42ControlMainWin.ui \

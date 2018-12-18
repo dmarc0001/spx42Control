@@ -111,7 +111,14 @@ namespace spx
     return ( SendListEntry( CmdMarker( SPX42CommandDef::SPX_GET_SETUP_GASLIST ), cmd ) );
   }
 
-  SendListEntry SPX42Commands::askWhileStartup( void )
+  SendListEntry SPX42Commands::askForLogDir()
+  {
+    QByteArray cmd;
+    makeSipleCommand( SPX42CommandDef::SPX_GET_LOG_INDEX, cmd );
+    return ( SendListEntry( CmdMarker( SPX42CommandDef::SPX_GET_LOG_INDEX ), cmd ) );
+  }
+
+  SendListEntry SPX42Commands::askWhileStartup()
   {
     QByteArray code;
     QByteArray cmd;

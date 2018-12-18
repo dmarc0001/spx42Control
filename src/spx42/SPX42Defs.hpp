@@ -16,6 +16,7 @@ namespace spx
     constexpr quint8 CF_CLASS_UNITS{0x10};
     constexpr quint8 CF_CLASS_SETPOINT{0x20};
     constexpr quint8 CF_CLASS_INDIVIDUAL{0x40};
+    constexpr quint8 CF_CLASS_LOG{0x80};
     constexpr quint8 CF_CLASS_ALL{0xff};
     //
     constexpr quint8 CF_GAS01{0x01};
@@ -29,6 +30,7 @@ namespace spx
     //
     constexpr double MAX_PPO2{1.60};
   }
+
   //
   // Aufzählungen, einige sind eigentlich nur für die bessere Lesbarkeitdes Codes
   //

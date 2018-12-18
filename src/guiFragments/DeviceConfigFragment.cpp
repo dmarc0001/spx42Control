@@ -1165,7 +1165,6 @@ namespace spx
     }
     spxConfig->setUnitsWaterType( static_cast< DeviceWaterType >( index ) );
     emit onConfigWasChangedSig();
-    lg->debug( QString( "######## UNIT HASHES: %1" ).arg( spxConfig->geteUnitHashes() ) );
   }
 
   /**

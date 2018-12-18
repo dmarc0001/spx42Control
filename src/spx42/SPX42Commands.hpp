@@ -50,6 +50,8 @@ namespace spx
     SendListEntry askForConfig( void );
     //! frage alle Gaase ab
     SendListEntry askForGasList( void );
+    //! Frage nach Log Verzeichnis
+    SendListEntry askForLogDir( void );
     //! Erster Kontakt, einstellungen abfragen
     // Frage nach dem Hersteller
     // gleich danach Frage nach der Seriennummer

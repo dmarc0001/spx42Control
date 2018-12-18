@@ -405,6 +405,10 @@ namespace spx
       currentIndividualHash.clear();
       savedIndividualHash.clear();
     }
+    if ( classes & SPX42ConfigClass::CF_CLASS_LOG )
+    {
+      logDirectory.clear();
+    }
     emit licenseChangedSig( spxLicense );
   }
 
@@ -1197,8 +1201,13 @@ namespace spx
     return ( result );
   }
 
-  QString SPX42Config::geteUnitHashes( void )
+  QString SPX42Config::getUnitHashes( void )
   {
     return ( QString( "unit current hash: %1, unit saved hash: %2" ).arg( currentUnitHash ).arg( savedUnitHash ) );
+  }
+
+  QVector< SPX42LogDirectoryEntry > &SPX42Config::getLogDirectory()
+  {
+    return ( logDirectory );
   }
 }  // namespace spx
