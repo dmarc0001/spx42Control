@@ -16,6 +16,7 @@
 #include "logging/Logger.hpp"
 #include "spx42/SPX42Config.hpp"
 #include "spx42/SPX42Defs.hpp"
+#include "spx42/SPX42LogDirectoryEntry.hpp"
 #include "ui_LogFragment.h"
 #include "utils/DebugDataSeriesGenerator.hpp"
 #include "utils/DiveDataSeriesGenerator.hpp"
@@ -39,6 +40,7 @@ namespace spx
     QtCharts::QChart *dummyChart;               //! Zeiger auf das weisse, leere chart
     QtCharts::QChartView *chartView;            //! Zeiger auf das ChartView
     QtCharts::QCategoryAxis *axisY;             //! Y-Achse für Chart
+    QString fragmentTitlePattern;               //! das Muster (lokalisierungsfähig) für Fragmentüberschrift
     QString diveNumberStr;
     QString diveDateStr;
     QString diveDepthStr;
@@ -58,6 +60,7 @@ namespace spx
     private:
     void prepareMiniChart( void );
     void showDiveDataForGraph( int deviceId, int diveNum );
+    void setGuiConnected( bool isConnected );
     float getMinYValue( const QLineSeries *series );
     float getMaxYValue( const QLineSeries *series );
 

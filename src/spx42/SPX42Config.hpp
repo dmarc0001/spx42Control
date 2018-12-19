@@ -140,6 +140,7 @@ namespace spx
     quint8 getChangedGases( void );                                            //! welches Gas wurde geändert?
     QString getUnitHashes( void );                                             //! gib dieu Unit-Hashes zurück
     QVector< SPX42LogDirectoryEntry > &getLogDirectory( void );                //! Verzeichis ausgeben
+    int addDirectoryEntry( const SPX42LogDirectoryEntry &entry );              //! Einen Eintrag zufügen
 
     private:
     QString makeSpxHash( void );         //! Hash über die globalen Einstellungen

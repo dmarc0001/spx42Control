@@ -42,12 +42,18 @@ namespace spx
     QTime diveTime( dateTimeList.at( 3 ).toInt(), dateTimeList.at( 4 ).toInt(), dateTimeList.at( 5 ).toInt() );
     diveDateTime = QDateTime( diveDate, diveTime, QTimeZone::systemTimeZone() );
     // TODO: Konfigurierbar via locale!
-    dateTimeString = diveDateTime.toString( "YYYY/MM/dd hh:mm:ss" );
+    dateTimeString = diveDateTime.toString( "yyyy/MM/dd hh:mm:ss" );
+    diveId = QString( "%1-%2" ).arg( num, 4, 10, QChar( '0' ) ).arg( diveDateTime.toString( "yyyyMMddhhmmss" ) );
     // dateTimeString = diveDateTime.toString( "dd.MM.YYYY HH:mm:ss " );
   }
 
-  QString &SPX42LogDirectoryEntry::getDateTimeStr( void )
+  QString &SPX42LogDirectoryEntry::getDateTimeStr()
   {
     return ( dateTimeString );
+  }
+
+  QString &SPX42LogDirectoryEntry::getDiveId()
+  {
+    return ( diveId );
   }
 }

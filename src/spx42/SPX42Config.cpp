@@ -1210,4 +1210,10 @@ namespace spx
   {
     return ( logDirectory );
   }
+
+  int SPX42Config::addDirectoryEntry( const SPX42LogDirectoryEntry &entry )
+  {
+    logDirectory.append( entry );
+    return ( logDirectory.size() );
+  }
 }  // namespace spx

@@ -84,6 +84,9 @@ namespace spx
     constexpr int GASLIST_BAILOUT{4};            //! ist das Gas Bailout
     constexpr int GASLIST_DILUENT{5};            //! ist es DIL01, DIL02 oder Nix davon
     constexpr int GASLIST_IS_CURRENT{6};         //! ist es das aktuelle Gas
+    constexpr int LOGDIR_CURR_NUMBER{1};         //! Nummer des Log verzeichnis eintrages
+    constexpr int LOGDIR_FILENAME{2};            //! Dateiname auf dem Gerät und Angabe der Zeit und des Datums
+    constexpr int LOGDIR_MAXNUMBER{3};           //! Höchste Nummer...
   }
 }
 

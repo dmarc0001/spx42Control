@@ -29,6 +29,8 @@ namespace spx
     ui->logentryListView->setModel( model.get() );
     ui->logentryListView->setEditTriggers( QAbstractItemView::NoEditTriggers );
     ui->logentryListView->setSelectionMode( QAbstractItemView::MultiSelection );
+    ui->logentryListView->setSpacing( 2 );
+    fragmentTitlePattern = tr( "LOGFILES SPX42 Serial [%1] LIC: %2" );
     diveNumberStr = tr( "DIVE NUMBER: %1" );
     diveDateStr = tr( "DIVE DATE: %1" );
     diveDepthStr = tr( "DIVE DEPTH: %1" );
@@ -38,12 +40,37 @@ namespace spx
     prepareMiniChart();
     // tausche den Platzhalter aus und entsorge den gleich
     delete ui->detailsGroupBox->layout()->replaceWidget( ui->diveProfileGraphicsView, chartView );
+    // GUI dem Onlinestatus entsprechend vorbereiten
+    setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
     //
+    // ist das Verzeichnis im cache?
+    //
+    if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
+    {
+      //
+      // wenn Einträge vorhanden sind
+      //
+      if ( spxConfig->getLogDirectory().size() > 0 )
+      {
+        const QVector< SPX42LogDirectoryEntry > &dirList = spxConfig->getLogDirectory();
+        lg->debug( QString( "LogFragment::LogFragment -> fill log directory list from cache..." ) );
+        //
+        // Alle Einträge in die Liste
+        //
+        for ( auto entr : dirList )
+        {
+          onAddLogdirEntrySlot( QString( "%1:[%2]" ).arg( entr.number, 2, 10, QChar( '0' ) ).arg( entr.getDateTimeStr() ) );
+        }
+      }
+    }
     onConfLicChangedSlot();
     connect( spxConfig.get(), &SPX42Config::licenseChangedSig, this, &LogFragment::onConfLicChangedSlot );
     connect( ui->readLogdirPushButton, &QPushButton::clicked, this, &LogFragment::onReadLogDirectorySlot );
     connect( ui->readLogContentPushButton, &QPushButton::clicked, this, &LogFragment::onReadLogContentSlot );
     connect( ui->logentryListView, &QAbstractItemView::clicked, this, &LogFragment::onLogListViewClickedSlot );
+    connect( remoteSPX42.get(), &SPX42RemotBtDevice::onStateChangedSig, this, &LogFragment::onOnlineStatusChangedSlot );
+    connect( remoteSPX42.get(), &SPX42RemotBtDevice::onSocketErrorSig, this, &LogFragment::onSocketErrorSlot );
+    connect( remoteSPX42.get(), &SPX42RemotBtDevice::onCommandRecivedSig, this, &LogFragment::onCommandRecivedSlot );
   }
 
   /**
@@ -62,6 +89,7 @@ namespace spx
   void LogFragment::deactivateTab()
   {
     disconnect( spxConfig.get(), nullptr, this, nullptr );
+    disconnect( remoteSPX42.get(), nullptr, this, nullptr );
   }
 
   /**
@@ -93,20 +121,18 @@ namespace spx
       // Liste löschen
       //
       spxConfig->resetConfig( SPX42ConfigClass::CF_CLASS_LOG );
+      // GUI löschen
+      model->setStringList( QStringList{} );
+      // preview löschen
+      ui->logentryListView->reset();
+      // Chart löschen
+      chart->removeAllSeries();
       //
       // rufe die Liste der Einträge vom Computer ab
       //
       SendListEntry sendCommand = remoteSPX42->askForLogDir();
       remoteSPX42->sendCommand( sendCommand );
       lg->debug( "LogFragment::onReadLogDirectorySlot -> send cmd get log directory..." );
-
-      /*
-      // DEBUG: erzeuge einfach Einträge bei Jedem Click
-      static int entry = 0;
-      QString newEntry = QString( "ENTRY: %1" ).arg( ++entry );
-      onAddLogdirEntrySlot( newEntry );
-      //
-      */
     }
   }
 
@@ -170,9 +196,17 @@ namespace spx
    */
   void LogFragment::onAddLogdirEntrySlot( const QString &entry )
   {
-    int row = model->rowCount();
-    model->insertRows( row, 1 );
-    QModelIndex index = model->index( row );
+    //
+    // älteste zuerst...
+    //
+    // int row = model->rowCount();
+    // model->insertRows( row, 1 );
+    // QModelIndex index = model->index( row );
+    //
+    // neueste zuerst
+    //
+    model->insertRows( 0, 1 );
+    QModelIndex index = model->index( 0 );
     model->setData( index, entry );
   }
 
@@ -301,7 +335,7 @@ namespace spx
 
   void LogFragment::onOnlineStatusChangedSlot( bool )
   {
-    // TODO: was machen
+    setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
   }
 
   void LogFragment::onSocketErrorSlot( QBluetoothSocket::SocketError )
@@ -324,7 +358,110 @@ namespace spx
 
   void LogFragment::onCommandRecivedSlot()
   {
-    // TODO: implementieren
+    spSingleCommand recCommand;
+    QDateTime nowDateTime;
+    QByteArray value;
+    char kdo;
+    //
+    lg->debug( "ConnectFragment::onDatagramRecivedSlot..." );
+    //
+    // alle abholen...
+    //
+    while ( ( recCommand = remoteSPX42->getNextRecCommand() ) )
+    {
+      // ja, es gab ein Datagram zum abholen
+      kdo = recCommand->getCommand();
+      switch ( kdo )
+      {
+        case SPX42CommandDef::SPX_ALIVE:
+          // Kommando ALIVE liefert zurück:
+          // ~03:PW
+          // PX => Angabe HEX in Milivolt vom Akku
+          lg->debug( "LogFragment::onDatagramRecivedSlot -> alive/acku..." );
+          ackuVal = ( recCommand->getValueAt( SPXCmdParam::ALIVE_POWER ) / 100.0 );
+          emit onAkkuValueChangedSig( ackuVal );
+          break;
+        case SPX42CommandDef::SPX_APPLICATION_ID:
+          // Kommando APPLICATION_ID (VERSION)
+          // ~04:NR -> VERSION als String
+          lg->debug( "LogFragment::onDatagramRecivedSlot -> firmwareversion..." );
+          // Setzte die Version in die Config
+          spxConfig->setSpxFirmwareVersion( recCommand->getParamAt( SPXCmdParam::FIRMWARE_VERSION ) );
+          spxConfig->freezeConfigs( SPX42ConfigClass::CF_CLASS_SPX );
+          // Geht das Datum zu setzen?
+          if ( spxConfig->getCanSetDate() )
+          {
+            // ja der kann das Datum online setzten
+            nowDateTime = QDateTime::currentDateTime();
+            // sende das Datum an den SPX
+            remoteSPX42->setDateTime( nowDateTime );
+          }
+          break;
+        case SPX42CommandDef::SPX_SERIAL_NUMBER:
+          // Kommando SERIAL NUMBER
+          // ~07:XXX -> Seriennummer als String
+          lg->debug( "LogFragment::onDatagramRecivedSlot -> serialnumber..." );
+          spxConfig->setSerialNumber( recCommand->getParamAt( SPXCmdParam::SERIAL_NUMBER ) );
+          spxConfig->freezeConfigs( SPX42ConfigClass::CF_CLASS_SPX );
+          setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
+          break;
+        case SPX42CommandDef::SPX_LICENSE_STATE:
+          // Kommando SPX_LICENSE_STATE
+          // komplett: <~45:LS:CE>
+          // übergeben LS,CE
+          // LS : License State 0=Nitrox,1=Normoxic Trimix,2=Full Trimix
+          // CE : Custom Enabled 0= disabled, 1=enabled
+          lg->debug( "LogFragment::onDatagramRecivedSlot -> license state..." );
+          spxConfig->setLicense( recCommand->getParamAt( SPXCmdParam::LICENSE_STATE ),
+                                 recCommand->getParamAt( SPXCmdParam::LICENSE_INDIVIDUAL ) );
+          spxConfig->freezeConfigs( SPX42ConfigClass::CF_CLASS_SPX );
+          setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
+          break;
+        case SPX42CommandDef::SPX_GET_LOG_INDEX:
+          // Kommando SPX_GET_LOG_INDEX
+          // <~41:NR:TT_MM_YY_hh_mm_ss.txt:MAX>
+          // NR: Nummer des Eintrages
+          // TT Tag des Tauchganges
+          // MM Monat des TG
+          // YY JAhr...
+          // hh Stunde...
+          // mm Minute
+          // Sekunde
+          // MAX höchste Nummer der Einträge ( NR == MAX ==> letzter Eintrag )
+          lg->debug( "LogFragment::onDatagramRecivedSlot -> log direntry..." );
+          // Das Ergebnis in die Liste der Config
+          SPX42LogDirectoryEntry newEntry( static_cast< int >( recCommand->getValueAt( SPXCmdParam::LOGDIR_CURR_NUMBER ) ),
+                                           static_cast< int >( recCommand->getValueAt( SPXCmdParam::LOGDIR_MAXNUMBER ) ),
+                                           recCommand->getParamAt( SPXCmdParam::LOGDIR_FILENAME ) );
+          spxConfig->addDirectoryEntry( newEntry );
+          QString newListEntry = QString( "%1:[%2]" ).arg( newEntry.number, 2, 10, QChar( '0' ) ).arg( newEntry.getDateTimeStr() );
+          onAddLogdirEntrySlot( newListEntry );
+          // setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
+          break;
+      }
+      //
+      // falls es mehr gibt, lass dem Rest der App auch eine Chance
+      //
+      QCoreApplication::processEvents();
+    }
+  }
+
+  void LogFragment::setGuiConnected( bool isConnected )
+  {
+    //
+    // setzte die GUI Elemente entsprechend des Online Status
+    //
+    ui->readLogdirPushButton->setEnabled( isConnected );
+    ui->readLogContentPushButton->setEnabled( isConnected );
+    ui->tabHeaderLabel->setText( fragmentTitlePattern.arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) );
+    chart->setVisible( isConnected );
+    if ( !isConnected )
+    {
+      model->setStringList( QStringList{} );
+      // preview löschen
+      ui->logentryListView->reset();
+      chart->removeAllSeries();
+    }
   }
 
 }  // namespace spx

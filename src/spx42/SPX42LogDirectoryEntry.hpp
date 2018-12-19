@@ -36,11 +36,13 @@ namespace spx
     QString fileName;
     QDateTime diveDateTime;
     QString dateTimeString;
-    int maxNumber;  // redundant, aber sicher ist sicher
+    int maxNumber;   // redundant, aber sicher ist sicher
+    QString diveId;  // eindeutige Kennung eines Tauchganges. Nummer und zeit/datum sollte einmalig sein
 
     SPX42LogDirectoryEntry( int num, int max, const QByteArray &cmd );
     SPX42LogDirectoryEntry();
     QString &getDateTimeStr( void );
+    QString &getDiveId( void );
   };
 }
 #endif  // SPX42LOGDIRECTORYENTRY_HPP
