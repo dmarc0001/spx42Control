@@ -18,7 +18,7 @@
       <DisplayName>SUBMATIX SPX42 Control Repository</DisplayName>
     </Repository>
     <Repository>
-      <Url>http://localhost/spx42Control</Url>
+      <Url>http://qtraspi.fritz.box/spx42Control</Url>
       <Enabled>0</Enabled>
       <DisplayName>TESTING Repository</DisplayName>
     </Repository>

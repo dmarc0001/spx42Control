@@ -4,16 +4,6 @@
     <Description>Binary runtime files for the spx42 control application.</Description> 
     <Description xml:lang="de_de">Binäre laufzeitdateien für das SPX42 Kontrollprogramm</Description>
     <Version>5.12.0</Version>
-    <ReleaseDate>2018-12-16</ReleaseDate> 
+    <ReleaseDate>2018-12-19</ReleaseDate> 
     <Default>true</Default>
-    <!--
-    <Licenses>
-        <License name="QT License" file="license.txt" />
-    </Licenses>
-    <Default>script</Default>
-    <Script>installscript.qs</Script>
-    <UserInterfaces>
-        <UserInterface>page.ui</UserInterface>
-    </UserInterfaces>
-    -->
 </Package>

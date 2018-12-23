@@ -85,6 +85,9 @@ namespace spx
     void setOnlineStatusMessage( const QString &msg = "" );  //! setze eine Meldung in den Fenstertitel
     void makeOnlineStatus( void );                           //! Mache einen Online Status
 
+    signals:
+    void onSendBufferStateChangedSig( bool isBusy );  //! statusänderungeen im Puffer oder rledigt
+
     private slots:
     void onWatchdogTimerSlot( void );                                       //! timer für zyklische Sachen, watchdog...
     void onTabCurrentChangedSlot( int idx );                                //! TAB Index gewechselt

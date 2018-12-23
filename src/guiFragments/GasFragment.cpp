@@ -21,6 +21,7 @@ namespace spx
     gasCurrentBoxTitleTemplate = tr( "GAS #%1" );
     ui->setupUi( this );
     ui->transferProgressBar->setVisible( false );
+    ui->transferProgressBar->setRange( 0, 0 );
     initGuiWithConfig();
     onConfLicChangedSlot();
     connectSlots();
@@ -176,6 +177,11 @@ namespace spx
     disconnect( ui->currbailoutCheckBox, nullptr, nullptr, nullptr );
     disconnect( ui->currdil01CheckBox, nullptr, nullptr, nullptr );
     disconnect( ui->currdil02CheckBox, nullptr, nullptr, nullptr );
+  }
+
+  void GasFragment::onSendBufferStateChangedSlot( bool isBusy )
+  {
+    ui->transferProgressBar->setVisible( isBusy );
   }
 
   void GasFragment::onSpinO2ValueChangedSlot( int o2Val )

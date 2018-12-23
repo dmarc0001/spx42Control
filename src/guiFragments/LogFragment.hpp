@@ -5,6 +5,7 @@
 #include <QMargins>
 #include <QStringList>
 #include <QStringListModel>
+#include <QTimer>
 #include <QWidget>
 #include <QtCharts>
 #include <algorithm>
@@ -29,6 +30,8 @@ namespace Ui
 
 namespace spx
 {
+  constexpr std::chrono::milliseconds TIMEOUTVAL = static_cast< std::chrono::milliseconds >( 1000 );
+
   class LogFragment : public QWidget, IFragmentInterface
   {
     private:
@@ -40,6 +43,7 @@ namespace spx
     QtCharts::QChart *dummyChart;               //! Zeiger auf das weisse, leere chart
     QtCharts::QChartView *chartView;            //! Zeiger auf das ChartView
     QtCharts::QCategoryAxis *axisY;             //! Y-Achse für Chart
+    QTimer transferTimeout;                     //! timer für timeout bei transfers
     QString fragmentTitlePattern;               //! das Muster (lokalisierungsfähig) für Fragmentüberschrift
     QString diveNumberStr;
     QString diveDateStr;
@@ -69,12 +73,16 @@ namespace spx
     void onErrorgMessageSig( const QString &msg, bool asPopup = false ) override;   //! eine Warnmeldung soll das Main darstellen
     void onAkkuValueChangedSig( double aValue ) override;                           //! signalisiert, dass der Akku eine Spanniung hat
 
+    public slots:
+    void onSendBufferStateChangedSlot( bool isBusy );
+
     private slots:
     virtual void onOnlineStatusChangedSlot( bool isOnline ) override;                //! Wenn sich der Onlinestatus des SPX42 ändert
     virtual void onSocketErrorSlot( QBluetoothSocket::SocketError error ) override;  //! wenn fehler in der BT VERbindung auftauchen
     virtual void onConfLicChangedSlot( void ) override;                              //! Wenn sich die Lizenz ändert
     virtual void onCloseDatabaseSlot( void ) override;                               //! wenn die Datenbank geschlosen wird
     virtual void onCommandRecivedSlot( void ) override;                              //! wenn ein Datentelegramm empfangen wurde
+    void onTransferTimeout( void );                                                  //! wenn der Transfer ausbleibt
     void onReadLogDirectorySlot( void );
     void onReadLogContentSlot( void );
     void onLogListViewClickedSlot( const QModelIndex &index );

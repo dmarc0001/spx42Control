@@ -1544,7 +1544,7 @@
      <property name="maximumSize">
       <size>
        <width>16777215</width>
-       <height>12</height>
+       <height>18</height>
       </size>
      </property>
      <property name="statusTip">

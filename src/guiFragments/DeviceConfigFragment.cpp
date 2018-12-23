@@ -26,6 +26,7 @@ namespace spx
                    .arg( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED ) );
     ui->setupUi( this );
     ui->transferProgressBar->setVisible( false );
+    ui->transferProgressBar->setRange( 0, 0 );
     oldAutoSetpoint << tr( "OFF" ) << tr( "5 METERS" ) << tr( "10 METERS" ) << tr( "15 METERS" ) << tr( "20 METERS" );
     newAutoSetpoint << tr( "OFF" ) << tr( "6 METERS" ) << tr( "10 METERS" ) << tr( "15 METERS" ) << tr( "20 METERS" );
     oldDisplayBrightness << tr( "10%" ) << tr( "50%" ) << tr( "100%" );
@@ -388,6 +389,11 @@ namespace spx
       connect( remoteSPX42.get(), &SPX42RemotBtDevice::onSocketErrorSig, this, &DeviceConfigFragment::onSocketErrorSlot );
       connect( remoteSPX42.get(), &SPX42RemotBtDevice::onCommandRecivedSig, this, &DeviceConfigFragment::onCommandRecivedSlot );
     }
+  }
+
+  void DeviceConfigFragment::onSendBufferStateChangedSlot( bool isBusy )
+  {
+    ui->transferProgressBar->setVisible( isBusy );
   }
 
   /**

@@ -3,6 +3,25 @@
 using namespace QtCharts;
 namespace spx
 {
+  /*
+     lineData = new LogLineDataObject();
+      // die Felder in Werte für die Datenbank umrechnen...
+      lineData.pressure = Integer.parseInt(fields[0].trim());
+      lineData.depth = Integer.parseInt(fields[1].trim());
+      lineData.temperature = Integer.parseInt(fields[2].trim());
+      lineData.acku = Double.parseDouble(fields[3].trim());
+      lineData.ppo2 = Double.parseDouble(fields[5].trim());
+      lineData.ppo2_1 = Double.parseDouble(fields[13].trim());
+      lineData.ppo2_2 = Double.parseDouble(fields[14].trim());
+      lineData.ppo2_3 = Double.parseDouble(fields[15].trim());
+      lineData.setpoint = Integer.parseInt(fields[6].trim());
+      lineData.n2 = Integer.parseInt(fields[16].trim());
+      lineData.he = Integer.parseInt(fields[17].trim());
+      lineData.zeroTime = Integer.parseInt(fields[20].trim());
+      lineData.nextStep = Integer.parseInt(fields[24].trim());
+
+   */
+
   /**
    * @brief Konstruktor für das Logfragment
    * @param parent Elternteil
@@ -26,6 +45,7 @@ namespace spx
     lg->debug( "LogFragment::LogFragment..." );
     ui->setupUi( this );
     ui->transferProgressBar->setVisible( false );
+    ui->transferProgressBar->setRange( 0, 0 );
     ui->logentryListView->setModel( model.get() );
     ui->logentryListView->setEditTriggers( QAbstractItemView::NoEditTriggers );
     ui->logentryListView->setSelectionMode( QAbstractItemView::MultiSelection );
@@ -71,6 +91,7 @@ namespace spx
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onStateChangedSig, this, &LogFragment::onOnlineStatusChangedSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onSocketErrorSig, this, &LogFragment::onSocketErrorSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onCommandRecivedSig, this, &LogFragment::onCommandRecivedSlot );
+    connect( &transferTimeout, &QTimer::timeout, this, &LogFragment::onTransferTimeout );
   }
 
   /**
@@ -92,6 +113,11 @@ namespace spx
     disconnect( remoteSPX42.get(), nullptr, this, nullptr );
   }
 
+  void LogFragment::onSendBufferStateChangedSlot( bool isBusy )
+  {
+    ui->transferProgressBar->setVisible( isBusy );
+  }
+
   /**
    * @brief Systemänderungen
    * @param e event
@@ -107,6 +133,14 @@ namespace spx
       default:
         break;
     }
+  }
+
+  void LogFragment::onTransferTimeout()
+  {
+    ui->transferProgressBar->setVisible( false );
+    lg->warn( "LogFragment::onTransferTimeout -> transfer timeout!!!" );
+    transferTimeout.stop();
+    // TODO: Warn oder Fehlermeldung ausgeben
   }
 
   /**
@@ -127,6 +161,9 @@ namespace spx
       ui->logentryListView->reset();
       // Chart löschen
       chart->removeAllSeries();
+      // Timeout starten
+      ui->transferProgressBar->setVisible( true );
+      transferTimeout.start( TIMEOUTVAOL );
       //
       // rufe die Liste der Einträge vom Computer ab
       //
@@ -157,6 +194,7 @@ namespace spx
     {
       lg->debug( QString( "LogFragment::onReadLogContentSlot: read %1 logs from spx42..." ).arg( indexList.count() ) );
       // TODO: tatsächlich anfragen....
+      transferTimeout.start( TIMEOUTVAOL );
     }
   }
 
@@ -436,6 +474,17 @@ namespace spx
           spxConfig->addDirectoryEntry( newEntry );
           QString newListEntry = QString( "%1:[%2]" ).arg( newEntry.number, 2, 10, QChar( '0' ) ).arg( newEntry.getDateTimeStr() );
           onAddLogdirEntrySlot( newListEntry );
+          if ( newEntry.number == newEntry.maxNumber )
+          {
+            // TODO: fertig Markieren
+            ui->transferProgressBar->setVisible( false );
+            transferTimeout.stop();
+          }
+          else
+          {
+            // Timer verlängern
+            transferTimeout.start( TIMEOUTVAOL );
+          }
           // setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
           break;
       }

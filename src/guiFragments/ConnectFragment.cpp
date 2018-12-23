@@ -210,9 +210,15 @@ namespace spx
       {
         lg->warn( "ConnectFragment::onConnectButtonSlot -> not an device delected!" );
         emit onWarningMessageSig( tr( "NOT SELECTED A DEVICE TO CONNECT" ), true );
+        return;
       }
       QString remoteMac = ui->deviceComboBox->itemData( ui->deviceComboBox->currentIndex() ).toString();
       lg->debug( QString( "ConnectFragment::onConnectButtonSlot -> connect to device <%1>" ).arg( remoteMac ) );
+      //
+      // die busy anzeige werkeln lassen
+      //
+      ui->connectProgressBar->setRange( 0, 0 );
+      ui->connectProgressBar->setVisible( true );
       //
       // blockiere mal die GUI solange
       // setGuiConnected( true );
@@ -320,6 +326,13 @@ namespace spx
           lg->debug( "ConnectFragment::onDatagramRecivedSlot -> alive/acku..." );
           ackuVal = ( recCommand->getValueAt( SPXCmdParam::ALIVE_POWER ) / 100.0 );
           emit onAkkuValueChangedSig( ackuVal );
+          if ( ui->connectProgressBar->isVisible() )
+          {
+            ui->connectProgressBar->setVisible( false );
+            //
+            // TODO: die tabs, welche nur inline sinnvoll sind entsperren
+            //
+          }
           break;
         case SPX42CommandDef::SPX_APPLICATION_ID:
           // Kommando APPLICATION_ID (VERSION)

@@ -244,21 +244,18 @@ namespace spx
       case ApplicationStat::STAT_OFFLINE:
         ui->actionAbout->setEnabled( true );
         ui->actionActionPrint->setEnabled( false );
-        ui->actionConnectBluetooth->setEnabled( true );
         ui->actionOpenDB->setEnabled( true );
         ui->actionSettings->setEnabled( true );
         break;
       case ApplicationStat::STAT_ONLINE:
         ui->actionAbout->setEnabled( true );
         ui->actionActionPrint->setEnabled( false );
-        ui->actionConnectBluetooth->setEnabled( false );
         ui->actionOpenDB->setEnabled( true );
         ui->actionSettings->setEnabled( true );
         break;
       case ApplicationStat::STAT_ERROR:
         ui->actionAbout->setEnabled( true );
         ui->actionActionPrint->setEnabled( false );
-        ui->actionConnectBluetooth->setEnabled( true );
         ui->actionOpenDB->setEnabled( false );
         ui->actionSettings->setEnabled( true );
         break;
@@ -661,6 +658,8 @@ namespace spx
                  &SPX42ControlMainWin::onConfigWasChangedSlot );
         connect( dynamic_cast< DeviceConfigFragment * >( currObj ), &DeviceConfigFragment::onAkkuValueChangedSig, this,
                  &SPX42ControlMainWin::onAkkuValueChangedSlot );
+        connect( this, &SPX42ControlMainWin::onSendBufferStateChangedSig, dynamic_cast< DeviceConfigFragment * >( currObj ),
+                 &DeviceConfigFragment::onSendBufferStateChangedSlot );
         break;
 
       case static_cast< int >( ApplicationTab::GAS_TAB ):
@@ -673,6 +672,8 @@ namespace spx
                  &SPX42ControlMainWin::onConfigWasChangedSlot );
         connect( dynamic_cast< GasFragment * >( currObj ), &GasFragment::onAkkuValueChangedSig, this,
                  &SPX42ControlMainWin::onAkkuValueChangedSlot );
+        connect( this, &SPX42ControlMainWin::onSendBufferStateChangedSig, dynamic_cast< GasFragment * >( currObj ),
+                 &GasFragment::onSendBufferStateChangedSlot );
         break;
 
       case static_cast< int >( ApplicationTab::LOG_TAB ):
@@ -683,6 +684,8 @@ namespace spx
         currentTab = ApplicationTab::LOG_TAB;
         connect( dynamic_cast< LogFragment * >( currObj ), &LogFragment::onAkkuValueChangedSig, this,
                  &SPX42ControlMainWin::onAkkuValueChangedSlot );
+        connect( this, &SPX42ControlMainWin::onSendBufferStateChangedSig, dynamic_cast< LogFragment * >( currObj ),
+                 &LogFragment::onSendBufferStateChangedSlot );
         break;
 
       case static_cast< int >( ApplicationTab::CHART_TAB ):
@@ -1002,6 +1005,7 @@ namespace spx
     waitForWriteLabel->setText( tr( "CLEAR" ) );
     ui->actionSPX_STATE->setIcon( QIcon( ":/icons/ic_spx_online" ) );
     ui->actionSPX_STATE->setStatusTip( tr( "spx42 is online, click for disconnect..." ) );
+    emit onSendBufferStateChangedSig( false );
   }
 
   /**
@@ -1025,6 +1029,7 @@ namespace spx
     waitForWriteLabel->setText( tr( "BUSY" ) );
     ui->actionSPX_STATE->setIcon( QIcon( ":/icons/ic_spx_buffering" ) );
     ui->actionSPX_STATE->setStatusTip( tr( "spx42 is online and wait for write config data..." ) );
+    emit onSendBufferStateChangedSig( true );
   }
 
   void SPX42ControlMainWin::onGetHelpForUser()

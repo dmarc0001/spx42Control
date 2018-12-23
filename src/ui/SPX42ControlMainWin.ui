@@ -64,7 +64,7 @@
        <string/>
       </property>
       <property name="tabPosition">
-       <enum>QTabWidget::West</enum>
+       <enum>QTabWidget::North</enum>
       </property>
       <property name="currentIndex">
        <number>0</number>
@@ -148,7 +148,6 @@
    <addaction name="actionQUIT"/>
    <addaction name="actionOpenDB"/>
    <addaction name="actionActionPrint"/>
-   <addaction name="actionConnectBluetooth"/>
    <addaction name="actionSettings"/>
    <addaction name="actionGetHelp"/>
    <addaction name="separator"/>
@@ -240,22 +239,6 @@
    </property>
    <property name="statusTip">
     <string>set application settings...</string>
-   </property>
-  </action>
-  <action name="actionConnectBluetooth">
-   <property name="icon">
-    <iconset resource="../res/SPX42ControlRes.qrc">
-     <normaloff>:/icons/ic_bluetooth_black_24dp_1x.png</normaloff>
-     <activeoff>:/icons/ic_bluetooth_black_24dp_1x_blue.png</activeoff>:/icons/ic_bluetooth_black_24dp_1x.png</iconset>
-   </property>
-   <property name="text">
-    <string>Bluetooth</string>
-   </property>
-   <property name="toolTip">
-    <string>Bluetooth</string>
-   </property>
-   <property name="statusTip">
-    <string>bluetooth switch and status...</string>
    </property>
   </action>
   <action name="actionNitrox">

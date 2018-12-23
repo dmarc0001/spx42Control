@@ -1097,7 +1097,7 @@
          </size>
         </property>
         <property name="title">
-         <string>[GASES]</string>
+         <string>[ GASES - EDIT ON LEFT ]</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
@@ -1373,7 +1373,7 @@
      <property name="maximumSize">
       <size>
        <width>16777215</width>
-       <height>12</height>
+       <height>18</height>
       </size>
      </property>
      <property name="statusTip">
