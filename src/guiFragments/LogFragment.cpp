@@ -4,7 +4,6 @@ using namespace QtCharts;
 namespace spx
 {
   /*
-     lineData = new LogLineDataObject();
       // die Felder in Werte für die Datenbank umrechnen...
       lineData.pressure = Integer.parseInt(fields[0].trim());
       lineData.depth = Integer.parseInt(fields[1].trim());
@@ -19,7 +18,6 @@ namespace spx
       lineData.he = Integer.parseInt(fields[17].trim());
       lineData.zeroTime = Integer.parseInt(fields[20].trim());
       lineData.nextStep = Integer.parseInt(fields[24].trim());
-
    */
 
   /**
@@ -163,7 +161,7 @@ namespace spx
       chart->removeAllSeries();
       // Timeout starten
       ui->transferProgressBar->setVisible( true );
-      transferTimeout.start( TIMEOUTVAOL );
+      transferTimeout.start( TIMEOUTVAL );
       //
       // rufe die Liste der Einträge vom Computer ab
       //
@@ -174,7 +172,7 @@ namespace spx
   }
 
   /**
-   * @brief Slot für das Signal vom button zum _Inhalt des Logs lesen
+   * @brief Slot für das Signal vom button zum Inhalt des Logs lesen
    */
   void LogFragment::onReadLogContentSlot()
   {
@@ -185,17 +183,32 @@ namespace spx
       lg->warn( "LogFragment::onReadLogContentSlot: no log entrys!" );
       return;
     }
+    //
+    // gibt es was zu tun?
+    //
     if ( indexList.isEmpty() )
     {
       lg->warn( "LogFragment::onReadLogContentSlot: nothing selected, read all?" );
       // TODO: Messagebox aufpoppen und Nutzer fragen
+      return;
     }
-    else
+    lg->debug( QString( "LogFragment::onReadLogContentSlot: read %1 logs from spx42..." ).arg( indexList.count() ) );
+    // TODO: tatsächlich anfragen....
+    if ( database->getLogTableName( remoteSPX42->getRemoteConnected() ).isEmpty() )
     {
-      lg->debug( QString( "LogFragment::onReadLogContentSlot: read %1 logs from spx42..." ).arg( indexList.count() ) );
-      // TODO: tatsächlich anfragen....
-      transferTimeout.start( TIMEOUTVAOL );
+      //
+      // OOPS, das solte nicht vorkommen, die verbundenen Geräte sollten in der DB stehen
+      //
+      lg->crit( "LogFragment::onReadLogContentSlot -> critical: connected device not in database found!" );
+      // TODO: Meldung an den User
+      emit onErrorgMessageSig( tr( "while read for log database error: not found device entry..." ) );
+      return;
     }
+    //
+    // OK, es gibt eine Tablelle
+    // prüfe ob der Tauchgang schon da ist oder ein update erfolgen soll
+    //
+    transferTimeout.start( TIMEOUTVAL );
   }
 
   /**
@@ -474,6 +487,9 @@ namespace spx
           spxConfig->addDirectoryEntry( newEntry );
           QString newListEntry = QString( "%1:[%2]" ).arg( newEntry.number, 2, 10, QChar( '0' ) ).arg( newEntry.getDateTimeStr() );
           onAddLogdirEntrySlot( newListEntry );
+          //
+          // war das der letzte Eintrag oder sollte noch mehr kommen
+          //
           if ( newEntry.number == newEntry.maxNumber )
           {
             // TODO: fertig Markieren
@@ -483,9 +499,8 @@ namespace spx
           else
           {
             // Timer verlängern
-            transferTimeout.start( TIMEOUTVAOL );
+            transferTimeout.start( TIMEOUTVAL );
           }
-          // setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
           break;
       }
       //
