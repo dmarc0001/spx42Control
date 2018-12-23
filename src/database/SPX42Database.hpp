@@ -30,6 +30,29 @@ namespace spx
     bool lastConnected;
   };
 
+  class DiveLogEntry
+  {
+    public:
+    int diveNum;      // Tauchgangsnummer laufend
+    int lfdNr;        // logeintrag nummer des Tauchganges
+    int pressure;     // Umgebungsdruck == Tiefe
+    int depth;        // Tiefe
+    int temperature;  // Temperatur Wasser
+    double acku;      // Akkuspannung
+    double ppo2;      // Sauerstoffpartioaldruck reslultierend
+    double ppo2_1;    // PPO2 Sensor 1
+    double ppo2_2;    // PPO2 Sensor 2
+    double ppo2_3;    // PPO2 Sensor 3
+    int setpoint;     // Setpoint PPO2
+    int n2;           // Stickstoff in prozent
+    int he;           // Helium in prozent
+    int zeroTime;     // Nullzeit zu diesem Zeitpunkt
+    int nextStep;     // nächster Logeintrag in zeitlichem Abstand
+    DiveLogEntry( void );
+    DiveLogEntry( int, int, int, int, int, double, double, double, double, double, int, int, int, int, int );
+    DiveLogEntry( const DiveLogEntry &en );
+  };
+
   /**
    * @brief The SPX42Database class
    */
@@ -41,12 +64,13 @@ namespace spx
     static const QString deviceTableName;   //! Name der Aliase für Geräte
 
     private:
-    std::shared_ptr< Logger > lg;         //! Zeiger auf ein Loggerobjekt
-    QSqlDatabase db;                      //! die lokale Datenbankinstanz
-    QString dbName;                       //! Name der Datenbank (sqlite dateiname)
-    QString currentConnectionName;        //! name der aktuellen Verbindung
-    static const QString sqlDriver;       //! name des SQL Treibers für SQLITE3
-    static const qint16 databaseVersion;  //! aktuelle Version der Datenbank (für spätere Versionen wichtig)
+    std::shared_ptr< Logger > lg;                //! Zeiger auf ein Loggerobjekt
+    QSqlDatabase db;                             //! die lokale Datenbankinstanz
+    QString dbName;                              //! Name der Datenbank (sqlite dateiname)
+    QString currentConnectionName;               //! name der aktuellen Verbindung
+    static const QString sqlDriver;              //! name des SQL Treibers für SQLITE3
+    static const qint16 databaseVersion;         //! aktuelle Version der Datenbank (für spätere Versionen wichtig)
+    static const QString loglineInsertTemplate;  //! das template für einen INSERT einer Logzeile
 
     public:
     explicit SPX42Database( std::shared_ptr< Logger > logger, const QString &databaseName, QObject *parent = nullptr );
@@ -65,14 +89,18 @@ namespace spx
     bool setAliasForName( const QString &name, const QString &alias );  //! setzte einen Aliasnamen für MAC
     bool setLastConnected( const QString &mac );                        //! setzte das Gerät auf "last connected"
     QString getLastConnected( void );                                   //! wer war der letzte?
+    QString getLogTableName( const QString &mac );  //! gib die Tabelle für das Gerät zurück, wenn Gerät in der Liste ist
+    bool insertLogentry( QString deviceMac, const DiveLogEntry &entr );  //! einen Logeintrag zufügen
 
     private:
-    bool existTable( const QString &tableName );  //! gibt es folgende Tabelle?
-    bool createAllTables( void );                 //! neue Datenbank, alleTabellen neu anlegen
-    qint16 getDatabaseVersion( void );            //! erfrage die Datenbankversion
-    bool createVersionTable( void );              //! erzeuge die Versionstabelle mit Versiuonsinhalt
-    bool checkOrCreateTables( void );             //! teste ob alle Tabellen vorhanden sind, wenn ncht erzeuge diese
-    bool createAliasTable( void );                //! erzeuge die ALIAS Tabelle
+    bool existTable( const QString &tableName );     //! gibt es folgende Tabelle?
+    bool createAliasTable( void );                   //! erzeuge die ALIAS Tabelle
+    bool alterAliasTableFrom1To2( void );            //! tabelle zu version 2 heben
+    bool createDeviceLogTable( QString deviceMac );  //! erzeuge /lösche und erzeuge eine Tablelle für Logdaten für ein Gerät
+    bool createAllTables( void );                    //! neue Datenbank, alleTabellen neu anlegen
+    qint16 getDatabaseVersion( void );               //! erfrage die Datenbankversion
+    bool createVersionTable( void );                 //! erzeuge die Versionstabelle mit Versiuonsinhalt
+    bool checkOrCreateTables( void );                //! teste ob alle Tabellen vorhanden sind, wenn ncht erzeuge diese
 
     // GETTER und SETTER
     bool isDbOpen() const;
