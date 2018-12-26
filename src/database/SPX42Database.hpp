@@ -95,7 +95,8 @@ namespace spx
     bool existDiveLogInBase( const QString &tableName, int diveNum );           //! existiert ein log mit der Nummer
     bool delDiveLogFromBase( const QString &tableName, int diveNum );           //! einen Tauchgang entfernen
     bool insertLogentry( const QString &tableName, const DiveLogEntry &entr );  //! einen Logeintrag zufügen
-    bool insertLogentry( const QString &tableName, spSingleCommand );
+    bool insertLogentry( const QString &tableName, spSingleCommand );           //! Logeintrag einfügen
+    int getMaxDepthFor( const QString &tableName, int diveNum );                //! maximale Tiefe für Tauchgang
 
     private:
     bool existTable( const QString &tableName );     //! gibt es folgende Tabelle?

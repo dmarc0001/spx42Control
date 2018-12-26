@@ -23,7 +23,7 @@ namespace spx
       , axisY( new QCategoryAxis() )
       , logWriter( this, logger, spx42Database )
       , savedIcon( ":/icons/saved_black" )
-      , nullIcon( /*":/icons/saved_white"*/ )
+      , nullIcon()
   {
     lg->debug( "LogFragment::LogFragment..." );
     ui->setupUi( this );
@@ -44,7 +44,7 @@ namespace spx
     fragmentTitlePattern = tr( "LOGFILES SPX42 Serial [%1] LIC: %2" );
     diveNumberStr = tr( "DIVE NUMBER: %1" );
     diveDateStr = tr( "DIVE DATE: %1" );
-    diveDepthStr = tr( "DIVE DEPTH: %1" );
+    diveDepthStr = tr( "DIVE DEPTH: %1m" );
     dbWriteNumTemplate = tr( "WRITE DIVE #%1..." );
     dbWriteNumIDLE = tr( "WAIT FOR START..." );
     ui->diveNumberLabel->setText( diveNumberStr.arg( "-" ) );
@@ -82,7 +82,7 @@ namespace spx
     connect( spxConfig.get(), &SPX42Config::licenseChangedSig, this, &LogFragment::onConfLicChangedSlot );
     connect( ui->readLogdirPushButton, &QPushButton::clicked, this, &LogFragment::onReadLogDirectorySlot );
     connect( ui->readLogContentPushButton, &QPushButton::clicked, this, &LogFragment::onReadLogContentSlot );
-    connect( ui->logentryTableWidget, &QAbstractItemView::clicked, this, &LogFragment::onLogListViewClickedSlot );
+    connect( ui->logentryTableWidget, &QAbstractItemView::clicked, this, &LogFragment::onLogListClickedSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onStateChangedSig, this, &LogFragment::onOnlineStatusChangedSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onSocketErrorSig, this, &LogFragment::onSocketErrorSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onCommandRecivedSig, this, &LogFragment::onCommandRecivedSlot );
@@ -279,30 +279,57 @@ namespace spx
    * @brief Slot für das Signal wenn auf einen Log Directory Eintrag geklickt wird
    * @param index welcher Index war es?
    */
-  void LogFragment::onLogListViewClickedSlot( const QModelIndex &index )
+  void LogFragment::onLogListClickedSlot( const QModelIndex &index )
   {
-    QString number = "-";
-    QString date = "-";
-    QString depth = "-";
+    QString depthStr = "-";
+    int diveNum = 0;
+    double depth = 0;
     int row = index.row();
-    QString entry = ui->logentryTableWidget->item( row, 0 )->text();
+    // items finden
+    QTableWidgetItem *clicked1stItem = ui->logentryTableWidget->item( row, 0 );
+    QTableWidgetItem *clicked2ndItem = ui->logentryTableWidget->item( row, 1 );
+    // Aus dem Text die Nummer extraieren
+    QString entry = clicked1stItem->text();
     lg->debug( QString( "LogFragment::onLogListViewClickedSlot: data: %1..." ).arg( entry ) );
+    // die Nummer des dives extraieren
+    // und den Datumsstring für die Anzeige extraieren
+    //
+    // [08.07.2012 12:13:46]
+    // oder
+    // [2012/07/08 12:13:46]
+    //
     QStringList pieces = entry.split( ':' );
-    number = pieces.at( 0 );
+    diveNum = pieces.at( 0 ).toInt();
     int start = entry.indexOf( '[' ) + 1;
     int end = entry.indexOf( ']' );
-    date = entry.mid( start, end - start );
+    ui->diveNumberLabel->setText( diveNumberStr.arg( diveNum, 3, 10, QChar( '0' ) ) );
+    ui->diveDateLabel->setText( diveDateStr.arg( entry.mid( start, end - start ) ) );
+    //
+    // ist ein icon da == gibt es eine Sicherung?
+    //
+    if ( clicked2ndItem->icon().isNull() )
+    {
+      ui->diveDepthLabel->setText( diveDepthStr.arg( depthStr ) );
+    }
+    else
+    {
+      //
+      // die Datenbank fragen, ob und wie tief
+      //
+      depth = ( database->getMaxDepthFor( remoteSPX42->getRemoteConnected().replace( ':', '-' ), diveNum ) / 10.0 );
+      if ( depth > 0 )
+      {
+        //
+        // tiefe eintragen
+        //
+        ui->diveDepthLabel->setText( diveDepthStr.arg( depth, 2, 'f', 1 ) );
+      }
+      else
+      {
+        ui->diveDepthLabel->setText( diveDepthStr.arg( depthStr ) );
+      }
+    }
 
-    /*
-    [08.07.2012 12:13:46]
-    oder
-    [2012/07/08 12:13:46]
-    */
-    // TODO: aus dem Eintrag die Nummer lesen
-    // TODO: TG in der Database -> Parameter auslesen und in die Labels eintragen
-    ui->diveNumberLabel->setText( diveNumberStr.arg( number ) );
-    ui->diveDateLabel->setText( diveDateStr.arg( date ) );
-    ui->diveDepthLabel->setText( diveDepthStr.arg( depth ) );
     //
     // Daten anzeigen, oder auch nicht
     // FIXME: zum testen nur gerade anzahl
@@ -328,7 +355,7 @@ namespace spx
     // neueste zuerst
     //
     QTableWidgetItem *itName = new QTableWidgetItem( entry );
-    QTableWidgetItem *itLoadet = new QTableWidgetItem( nullIcon, "" );
+    QTableWidgetItem *itLoadet = new QTableWidgetItem( "" );
     ui->logentryTableWidget->insertRow( 0 );
     ui->logentryTableWidget->setItem( 0, 0, itName );
     ui->logentryTableWidget->setItem( 0, 1, itLoadet );
@@ -685,12 +712,14 @@ namespace spx
         {
           lg->debug( QString( "LogFragment::testForSavedDetails -> saved in dive %1" ).arg( diveNum, 3, 10, QChar( '0' ) ) );
           QTableWidgetItem *itLoadet = new QTableWidgetItem( savedIcon, "" );
+          // itLoadet->setStatusTip( tr( "NEW STATUS TIP --SAVED --" ) );
           ui->logentryTableWidget->setItem( i, 1, itLoadet );
         }
         else
         {
           lg->debug( QString( "LogFragment::testForSavedDetails -> NOT saved in dive %1" ).arg( diveNum, 3, 10, QChar( '0' ) ) );
-          QTableWidgetItem *itLoadet = new QTableWidgetItem( nullIcon, "" );
+          QTableWidgetItem *itLoadet = new QTableWidgetItem( "" );
+          // itLoadet->setStatusTip( tr( "NEW STATUS TIP --UNSAVED --" ) );
           ui->logentryTableWidget->setItem( i, 1, itLoadet );
         }
       }

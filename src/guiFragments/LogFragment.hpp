@@ -98,7 +98,7 @@ namespace spx
     void onTransferTimeout( void );                                                  //! wenn der Transfer ausbleibt
     void onReadLogDirectorySlot( void );
     void onReadLogContentSlot( void );
-    void onLogListViewClickedSlot( const QModelIndex &index );
+    void onLogListClickedSlot( const QModelIndex &index );
     void onWriterDoneSlot( int _countProcessed );
     void onNewDiveStartSlot( int newDiveNum );
 

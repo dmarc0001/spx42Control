@@ -994,6 +994,36 @@ namespace spx
     return ( false );
   }
 
+  int SPX42Database::getMaxDepthFor( const QString &tableName, int diveNum )
+  {
+    int maxDepth = -1;
+    lg->debug( "SPX42Database::getMaxDepthFor..." );
+    if ( db.isValid() && db.isOpen() )
+    {
+      //
+      // versuche mal rauszubekommen wie tief das war
+      //
+      QSqlQuery query( QString( "select max(depth) from '%1' where divenum=%2" ).arg( tableName ).arg( diveNum ), db );
+      if ( !query.next() )
+      {
+        QSqlError err = db.lastError();
+        lg->warn( QString( "SPX42Database::getMaxDepthFor -> <%1>..." ).arg( err.text() ) );
+        return ( -1 );
+      }
+      //
+      // Abfrage korrekt bearbeitet
+      //
+      maxDepth = query.value( 0 ).toInt();
+      lg->debug( QString( "SPX42Database::getMaxDepthFor -> max depth: %1" ).arg( maxDepth ) );
+      return ( maxDepth );
+    }
+    else
+    {
+      lg->warn( "SPX42Database::getMaxDepthFor -> db is not valid or not opened." );
+      return ( -1 );
+    }
+  }
+
   // ##########################################################################
   // ### GETTER UND SETTER
   // ##########################################################################

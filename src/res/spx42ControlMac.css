@@ -122,3 +122,17 @@ QGroupBox#gasesGroupBox>QRadioButton:hover
 {
   color:#ff8080;
 }
+
+/*
+###############################################################################
+LOG TAB
+###############################################################################
+*/
+QGroupBox#logDetailsGroupBox>QLabel#dbWriteNumLabel
+{
+  font-size: 14pt;
+  font-style: bold;
+  color: rgb(182, 21, 133);
+  background-color: #D6D6D6;
+}
+

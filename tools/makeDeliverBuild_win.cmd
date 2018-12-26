@@ -10,8 +10,7 @@ SET OFFLINEINSTALLER=spx42ControlOfflineInstaller
 SET PACKAGES=packages
 SET PROJECTBASE=C:\DATEN\Entwicklung\QT-Projekte\spx42Control
 SET QT_DIR=C:\Qt
-SET QT_BASEDIR=%QT_DIR%\%QT_PREFIX%\msvc2015_64\bin
-::SET QT_BASEDIR=%QT_DIR%\%QT_PREFIX%\msvc2017_64\bin
+SET QT_BASEDIR=%QT_DIR%\%QT_PREFIX%\msvc2017_64\bin
 ::SET QT_BASEDIR=%QT_DIR%\%QT_PREFIX%\msvc2017\bin
 SET QT_TOOLS=%QT_DIR%\Tools
 SET QT_INSTALLER_DIR=%QT_TOOLS%\QtInstallerFramework\3.0\bin
@@ -54,9 +53,8 @@ cd %PROJECTBUILDDIR%
 echo directory %cd%
 
 echo Umgebung einrichten...
-call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
 SET PATH=%PATH%;C:\Program Files (x86)\Windows Kits\10\bin\10.0.17763.0\x64
-::call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
+call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
 ::call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community/VC\Auxiliary\Build\vcvars32.bat"
 
 echo.
