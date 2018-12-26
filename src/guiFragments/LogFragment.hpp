@@ -101,7 +101,7 @@ namespace spx
 
     public slots:
     void onAddLogdirEntrySlot( const QString &entry );
-    void onAddLogLineSlot( const QString &line );
+    // void onAddLogLineSlot( const QString &line );
   };
 }
 #endif  // LOGFORM_HPP

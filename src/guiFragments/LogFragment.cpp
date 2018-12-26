@@ -31,9 +31,11 @@ namespace spx
     ui->transferProgressBar->setRange( 0, 0 );
     ui->logentryListView->setModel( model.get() );
     ui->logentryListView->setEditTriggers( QAbstractItemView::NoEditTriggers );
-    // ui->logentryListView->setSelectionMode( QAbstractItemView::MultiSelection );
     ui->logentryListView->setSelectionMode( QAbstractItemView::ExtendedSelection );
     ui->logentryListView->setSpacing( 2 );
+    // füge eine weitere Spalte ein
+    // TODO:
+    ui->logentryListView->model()->insertColumn( 0 );
     ui->dbWriteNumLabel->setVisible( false );
     fragmentTitlePattern = tr( "LOGFILES SPX42 Serial [%1] LIC: %2" );
     diveNumberStr = tr( "DIVE NUMBER: %1" );
@@ -322,15 +324,6 @@ namespace spx
     model->insertRows( 0, 1 );
     QModelIndex index = model->index( 0 );
     model->setData( index, entry );
-  }
-
-  /**
-   * @brief Slot für ankommende Logdaten (für eine Logdatei)
-   * @param line die Logzeile
-   */
-  void LogFragment::onAddLogLineSlot( const QString &line )
-  {
-    lg->debug( QString( "LogFragment::onAddLogLineSlot: logline: <" ).append( line ).append( ">" ) );
   }
 
   void LogFragment::prepareMiniChart()
