@@ -1,6 +1,8 @@
 ﻿#ifndef SPXCOMMANDDEF_HPP
 #define SPXCOMMANDDEF_HPP
 
+#include <QByteArray>
+
 namespace spx
 {
   namespace SPX42CommandDef
@@ -51,6 +53,7 @@ namespace spx
     constexpr char SPX_START_EXEC_ADDR{0x69};            //! startet ab angegebener Addr *upload*
     constexpr char SPX_SET_UPDATE_ADDR{0x6a};            //! setzt die Addr, ab wlcher das Update geschrieben wird *upload*
     constexpr char SPX_CHECK_UPLOADED_FILE{0x6b};        //! gibt die übertragene Datei als Hexdump aus *upload*
+    constexpr char SPX_GET_LOG_DETAIL{0x70};             //! Logbuch detail senden
   }
 
   namespace SPXCmdParam
@@ -87,6 +90,21 @@ namespace spx
     constexpr int LOGDIR_CURR_NUMBER{1};         //! Nummer des Log verzeichnis eintrages
     constexpr int LOGDIR_FILENAME{2};            //! Dateiname auf dem Gerät und Angabe der Zeit und des Datums
     constexpr int LOGDIR_MAXNUMBER{3};           //! Höchste Nummer...
+    constexpr int LOGDETAIL_START_END{1};        //! Start oder Ende der Detailübertragung
+    constexpr int LOGDETAIL_NUMBER{2};           //! Nummer des Datensatzes deren Details gleich kommen
+    constexpr int LOGDETAIL_PRESSURE{0};         //! Logdetail eintrag Druck
+    constexpr int LOGDETAIL_DEPTH{1};            //! Logdetail tauchtiefe
+    constexpr int LOGDETAIL_TEMP{2};             //! Logdetail TEmperatur
+    constexpr int LOGDETAIL_ACKU{3};             //! Logdetail Ackuspannung
+    constexpr int LOGDETAIL_PPO2{5};             //! Logdetail Sauerstoff Partialdruck
+    constexpr int LOGDETAIL_PPO2_1{13};          //! Logdetail Sauerstoff Partioaldruck Sensor 1
+    constexpr int LOGDETAIL_PPO2_2{14};          //! Logdetail PPO2 Sensor 2
+    constexpr int LOGDETAIL_PPO2_3{15};          //! Logdetail PPO2 Sensor 3
+    constexpr int LOGDETAIL_SETPOINT{6};         //! Logdetail O2 Setpoint
+    constexpr int LOGDETAIL_N2{16};              //! Logdetail Stickstoff Prozent
+    constexpr int LOGDETAIL_HE{17};              //! Logdetail Helium Prozent
+    constexpr int LOGDETAIL_ZEROTIME{20};        //! Logdetail Nullzeit bis zur Dekopflicht
+    constexpr int LOGDETAIL_NEXT_STEP{24};       //! Logdetail Näschster Zeitschritt
   }
 }
 

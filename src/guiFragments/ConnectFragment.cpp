@@ -324,7 +324,7 @@ namespace spx
           // ~03:PW
           // PX => Angabe HEX in Milivolt vom Akku
           lg->debug( "ConnectFragment::onDatagramRecivedSlot -> alive/acku..." );
-          ackuVal = ( recCommand->getValueAt( SPXCmdParam::ALIVE_POWER ) / 100.0 );
+          ackuVal = ( recCommand->getValueFromHexAt( SPXCmdParam::ALIVE_POWER ) / 100.0 );
           emit onAkkuValueChangedSig( ackuVal );
           if ( ui->connectProgressBar->isVisible() )
           {

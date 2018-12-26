@@ -509,7 +509,7 @@ namespace spx
           // ~03:PW
           // PX => Angabe HEX in Milivolt vom Akku
           lg->debug( "DeviceConfigFragment::onDatagramRecivedSlot -> alive/acku..." );
-          ackuVal = ( recCommand->getValueAt( SPXCmdParam::ALIVE_POWER ) / 100.0 );
+          ackuVal = ( recCommand->getValueFromHexAt( SPXCmdParam::ALIVE_POWER ) / 100.0 );
           emit onAkkuValueChangedSig( ackuVal );
           break;
         case SPX42CommandDef::SPX_APPLICATION_ID:
@@ -560,18 +560,18 @@ namespace spx
           //
           // eintrag in GUI -> durch callback dann auch eintrag in config
           lg->debug( QString( "DeviceConfigFragment::onDatagramRecivedSlot -> LOW: %1 HIGH: %2" )
-                         .arg( recCommand->getValueAt( SPXCmdParam::DECO_GF_LOW ) )
-                         .arg( recCommand->getValueAt( SPXCmdParam::DECO_GF_HIGH ) ) );
+                         .arg( recCommand->getValueFromHexAt( SPXCmdParam::DECO_GF_LOW ) )
+                         .arg( recCommand->getValueFromHexAt( SPXCmdParam::DECO_GF_HIGH ) ) );
           // config speichern
           disconnectSlots( SIGNALS_DECOMPRESSION );
-          currentGradient.first = static_cast< qint8 >( recCommand->getValueAt( SPXCmdParam::DECO_GF_LOW ) );
-          currentGradient.second = static_cast< qint8 >( recCommand->getValueAt( SPXCmdParam::DECO_GF_HIGH ) );
+          currentGradient.first = static_cast< qint8 >( recCommand->getValueFromHexAt( SPXCmdParam::DECO_GF_LOW ) );
+          currentGradient.second = static_cast< qint8 >( recCommand->getValueFromHexAt( SPXCmdParam::DECO_GF_HIGH ) );
           preset = spxConfig->getPresetForGradient( currentGradient.first, currentGradient.second );
           spxConfig->setCurrentPreset( preset, currentGradient.first, currentGradient.second );
-          spxConfig->setIsDeepstopsEnabled( recCommand->getValueAt( SPXCmdParam::DECO_DEEPSTOPS ) == 1
+          spxConfig->setIsDeepstopsEnabled( recCommand->getValueFromHexAt( SPXCmdParam::DECO_DEEPSTOPS ) == 1
                                                 ? DecompressionDeepstops::DEEPSTOPS_ENABLED
                                                 : DecompressionDeepstops::DEEPSTOPS_DISABLED );
-          spxConfig->setIsDecoDynamicGradients( recCommand->getValueAt( SPXCmdParam::DECO_DYNGRADIENTS ) == 1
+          spxConfig->setIsDecoDynamicGradients( recCommand->getValueFromHexAt( SPXCmdParam::DECO_DYNGRADIENTS ) == 1
                                                     ? DecompressionDynamicGradient::DYNAMIC_GRADIENT_ON
                                                     : DecompressionDynamicGradient::DYNAMIC_GRADIENT_OFF );
           // GUI einrichten
@@ -579,10 +579,10 @@ namespace spx
           ui->gradientHighSpinBox->setValue( static_cast< int >( currentGradient.second ) );
           ui->conservatismComboBox->setCurrentIndex( static_cast< int >( preset ) );
           ui->deepStopOnCheckBox->setCheckState(
-              recCommand->getValueAt( SPXCmdParam::DECO_DEEPSTOPS ) == 1 ? Qt::CheckState::Checked : Qt::CheckState::Unchecked );
+              recCommand->getValueFromHexAt( SPXCmdParam::DECO_DEEPSTOPS ) == 1 ? Qt::CheckState::Checked : Qt::CheckState::Unchecked );
           ui->dynamicGradientsOnCheckBox->setCheckState(
-              recCommand->getValueAt( SPXCmdParam::DECO_DYNGRADIENTS ) == 1 ? Qt::CheckState::Checked : Qt::CheckState::Unchecked );
-          ui->lastDecoStopComboBox->setCurrentIndex( recCommand->getValueAt( SPXCmdParam::DECO_LASTSTOP ) == 1 ? 1 : 0 );
+              recCommand->getValueFromHexAt( SPXCmdParam::DECO_DYNGRADIENTS ) == 1 ? Qt::CheckState::Checked : Qt::CheckState::Unchecked );
+          ui->lastDecoStopComboBox->setCurrentIndex( recCommand->getValueFromHexAt( SPXCmdParam::DECO_LASTSTOP ) == 1 ? 1 : 0 );
           spxConfig->freezeConfigs( SPX42ConfigClass::CF_CLASS_DECO );
           connectSlots( SIGNALS_DECOMPRESSION );
           break;
@@ -594,14 +594,14 @@ namespace spx
           // A = Setpoint bei neue firmware (0,1,2) = (6,10,15)
           // P = Partialdruck (0..4) 1.0 .. 1.4
           lg->debug( QString( "DeviceConfigFragment::onDatagramRecivedSlot -> autosetpoint %1, setpoint 1.%2..." )
-                         .arg( recCommand->getValueAt( SPXCmdParam::SETPOINT_AUTO ) )
-                         .arg( recCommand->getValueAt( SPXCmdParam::SETPOINT_VALUE ) ) );
+                         .arg( recCommand->getValueFromHexAt( SPXCmdParam::SETPOINT_AUTO ) )
+                         .arg( recCommand->getValueFromHexAt( SPXCmdParam::SETPOINT_VALUE ) ) );
           disconnectSlots( SIGNALS_SETPOINT );
           // config speichern
-          spxConfig->setSetpointAuto( static_cast< DeviceSetpointAuto >( recCommand->getValueAt( SPXCmdParam::SETPOINT_AUTO ) ) );
-          spxConfig->setSetpointValue( static_cast< DeviceSetpointValue >( recCommand->getValueAt( SPXCmdParam::SETPOINT_VALUE ) ) );
+          spxConfig->setSetpointAuto( static_cast< DeviceSetpointAuto >( recCommand->getValueFromHexAt( SPXCmdParam::SETPOINT_AUTO ) ) );
+          spxConfig->setSetpointValue( static_cast< DeviceSetpointValue >( recCommand->getValueFromHexAt( SPXCmdParam::SETPOINT_VALUE ) ) );
           // GUI machen
-          switch ( recCommand->getValueAt( SPXCmdParam::SETPOINT_AUTO ) )
+          switch ( recCommand->getValueFromHexAt( SPXCmdParam::SETPOINT_AUTO ) )
           {
             // autosetpoint bei Tiefe....
             default:
@@ -621,7 +621,7 @@ namespace spx
               ui->setpointAutoOnComboBox->setCurrentIndex( 4 );
               break;
           }
-          switch ( recCommand->getValueAt( SPXCmdParam::SETPOINT_VALUE ) )
+          switch ( recCommand->getValueFromHexAt( SPXCmdParam::SETPOINT_VALUE ) )
           {
             // setpoint wert 1.0 bis 1.4
             default:
@@ -651,18 +651,18 @@ namespace spx
           // NEU: 0->20%, 1->40%, 2->60%, 3->80%, 4->100%
           // A= 0->Landscape 1->180Grad
           lg->debug( QString( "DeviceConfigFragment::onDatagramRecivedSlot -> display settings bright: %1 orient: %2..." )
-                         .arg( recCommand->getValueAt( SPXCmdParam::DISPLAY_BRIGHTNESS ) )
-                         .arg( recCommand->getValueAt( SPXCmdParam::DISPLAY_ORIENT ) ) );
+                         .arg( recCommand->getValueFromHexAt( SPXCmdParam::DISPLAY_BRIGHTNESS ) )
+                         .arg( recCommand->getValueFromHexAt( SPXCmdParam::DISPLAY_ORIENT ) ) );
           disconnectSlots( SIGNALS_DISPLAY );
           // config machen
           spxConfig->setDisplayBrightness(
-              static_cast< DisplayBrightness >( recCommand->getValueAt( SPXCmdParam::DISPLAY_BRIGHTNESS ) ) );
+              static_cast< DisplayBrightness >( recCommand->getValueFromHexAt( SPXCmdParam::DISPLAY_BRIGHTNESS ) ) );
           spxConfig->setDisplayOrientation(
-              static_cast< DisplayOrientation >( recCommand->getValueAt( SPXCmdParam::DISPLAY_ORIENT ) ) );
+              static_cast< DisplayOrientation >( recCommand->getValueFromHexAt( SPXCmdParam::DISPLAY_ORIENT ) ) );
           // GUI
           if ( spxConfig->getIsNewerDisplayBrightness() )
           {
-            switch ( recCommand->getValueAt( SPXCmdParam::DISPLAY_BRIGHTNESS ) )
+            switch ( recCommand->getValueFromHexAt( SPXCmdParam::DISPLAY_BRIGHTNESS ) )
             {
               default:
               case 0:
@@ -684,7 +684,7 @@ namespace spx
           }
           else
           {
-            switch ( recCommand->getValueAt( SPXCmdParam::DISPLAY_BRIGHTNESS ) )
+            switch ( recCommand->getValueFromHexAt( SPXCmdParam::DISPLAY_BRIGHTNESS ) )
             {
               default:
               case 0:
@@ -698,7 +698,7 @@ namespace spx
                 break;
             }
           }
-          switch ( recCommand->getValueAt( SPXCmdParam::DISPLAY_ORIENT ) )
+          switch ( recCommand->getValueFromHexAt( SPXCmdParam::DISPLAY_ORIENT ) )
           {
             default:
             case 0:
@@ -718,19 +718,19 @@ namespace spx
           // UL= 0=metrisch 1=imperial
           // UW= 0->Salzwasser 1->Süßwasser
           lg->debug( QString( "DeviceConfigFragment::onDatagramRecivedSlot -> unit settings temp: %1 dimen: %2 water: %3..." )
-                         .arg( recCommand->getValueAt( SPXCmdParam::UNITS_TEMPERATURE ) )
-                         .arg( recCommand->getValueAt( SPXCmdParam::UNITS_METRIC_OR_IMPERIAL ) )
-                         .arg( recCommand->getValueAt( SPXCmdParam::UNITS_SALT_OR_FRESHWATER ) ) );
+                         .arg( recCommand->getValueFromHexAt( SPXCmdParam::UNITS_TEMPERATURE ) )
+                         .arg( recCommand->getValueFromHexAt( SPXCmdParam::UNITS_METRIC_OR_IMPERIAL ) )
+                         .arg( recCommand->getValueFromHexAt( SPXCmdParam::UNITS_SALT_OR_FRESHWATER ) ) );
           disconnectSlots( SIGNALS_UNITS );
           // CONFIG
           spxConfig->setUnitsTemperatur(
-              static_cast< DeviceTemperaturUnit >( recCommand->getValueAt( SPXCmdParam::UNITS_TEMPERATURE ) ) );
+              static_cast< DeviceTemperaturUnit >( recCommand->getValueFromHexAt( SPXCmdParam::UNITS_TEMPERATURE ) ) );
           spxConfig->setUnitsLength(
-              static_cast< DeviceLenghtUnit >( recCommand->getValueAt( SPXCmdParam::UNITS_METRIC_OR_IMPERIAL ) ) );
+              static_cast< DeviceLenghtUnit >( recCommand->getValueFromHexAt( SPXCmdParam::UNITS_METRIC_OR_IMPERIAL ) ) );
           spxConfig->setUnitsWaterType(
-              static_cast< DeviceWaterType >( recCommand->getValueAt( SPXCmdParam::UNITS_SALT_OR_FRESHWATER ) ) );
+              static_cast< DeviceWaterType >( recCommand->getValueFromHexAt( SPXCmdParam::UNITS_SALT_OR_FRESHWATER ) ) );
           // GUI
-          switch ( recCommand->getValueAt( SPXCmdParam::UNITS_TEMPERATURE ) )
+          switch ( recCommand->getValueFromHexAt( SPXCmdParam::UNITS_TEMPERATURE ) )
           {
             // Celsios oder Fahrenheid?
             default:
@@ -740,7 +740,7 @@ namespace spx
             case 1:
               ui->unitsTemperaturComboBox->setCurrentIndex( 1 );
           }
-          switch ( recCommand->getValueAt( SPXCmdParam::UNITS_METRIC_OR_IMPERIAL ) )
+          switch ( recCommand->getValueFromHexAt( SPXCmdParam::UNITS_METRIC_OR_IMPERIAL ) )
           {
             // Metrisch oder imperial
             default:
@@ -756,7 +756,7 @@ namespace spx
               }
               ui->unitsDeepComboBox->setCurrentIndex( 1 );
           }
-          switch ( recCommand->getValueAt( SPXCmdParam::UNITS_SALT_OR_FRESHWATER ) )
+          switch ( recCommand->getValueFromHexAt( SPXCmdParam::UNITS_SALT_OR_FRESHWATER ) )
           {
             // süß oder Salzwasser
             default:
@@ -773,12 +773,12 @@ namespace spx
         case SPX42CommandDef::SPX_GET_SETUP_INDIVIDUAL:
           lg->debug(
               QString( "DeviceConfigFragment::onDatagramRecivedSlot -> individual: se: %1 pscr: %2 sc: %3 snd: %4 li:%5 ??: %6..." )
-                  .arg( recCommand->getValueAt( SPXCmdParam::INDIVIDUAL_SENSORSENABLED ) )
-                  .arg( recCommand->getValueAt( SPXCmdParam::INDIVIDUAL_PASSIVEMODE ) )
-                  .arg( recCommand->getValueAt( SPXCmdParam::INDIVIDUAL_SENSORCOUNT ) )
-                  .arg( recCommand->getValueAt( SPXCmdParam::INDIVIDUAL_SOUND_ONOFF ) )
-                  .arg( recCommand->getValueAt( SPXCmdParam::INDIVIDUAL_LOGINTERVAL ) )
-                  .arg( recCommand->getValueAt( SPXCmdParam::INDIVIDUAL_TEMPSTICK ) ) );
+                  .arg( recCommand->getValueFromHexAt( SPXCmdParam::INDIVIDUAL_SENSORSENABLED ) )
+                  .arg( recCommand->getValueFromHexAt( SPXCmdParam::INDIVIDUAL_PASSIVEMODE ) )
+                  .arg( recCommand->getValueFromHexAt( SPXCmdParam::INDIVIDUAL_SENSORCOUNT ) )
+                  .arg( recCommand->getValueFromHexAt( SPXCmdParam::INDIVIDUAL_SOUND_ONOFF ) )
+                  .arg( recCommand->getValueFromHexAt( SPXCmdParam::INDIVIDUAL_LOGINTERVAL ) )
+                  .arg( recCommand->getValueFromHexAt( SPXCmdParam::INDIVIDUAL_TEMPSTICK ) ) );
           // Kommando GET_SETUP_INDIVIDUAL liefert
           // ~38:SE:PS:SC:SN:LI:TS
           // SE: Sensors 0->ON 1->OFF
@@ -791,30 +791,30 @@ namespace spx
           disconnectSlots( SIGNALS_INDIVIDUAL );
           // CONFIG einstellen
           spxConfig->setIndividualSensorsOn(
-              static_cast< DeviceIndividualSensors >( recCommand->getValueAt( SPXCmdParam::INDIVIDUAL_SENSORSENABLED ) ) );
+              static_cast< DeviceIndividualSensors >( recCommand->getValueFromHexAt( SPXCmdParam::INDIVIDUAL_SENSORSENABLED ) ) );
           spxConfig->setIndividualPscrMode(
-              static_cast< DeviceIndividualPSCR >( recCommand->getValueAt( SPXCmdParam::INDIVIDUAL_PASSIVEMODE ) ) );
+              static_cast< DeviceIndividualPSCR >( recCommand->getValueFromHexAt( SPXCmdParam::INDIVIDUAL_PASSIVEMODE ) ) );
           spxConfig->setIndividualSensorsCount(
-              static_cast< DeviceIndividualSensorCount >( recCommand->getValueAt( SPXCmdParam::INDIVIDUAL_SENSORCOUNT ) ) );
+              static_cast< DeviceIndividualSensorCount >( recCommand->getValueFromHexAt( SPXCmdParam::INDIVIDUAL_SENSORCOUNT ) ) );
           spxConfig->setIndividualAcoustic(
-              static_cast< DeviceIndividualAcoustic >( recCommand->getValueAt( SPXCmdParam::INDIVIDUAL_SOUND_ONOFF ) ) );
+              static_cast< DeviceIndividualAcoustic >( recCommand->getValueFromHexAt( SPXCmdParam::INDIVIDUAL_SOUND_ONOFF ) ) );
           spxConfig->setIndividualLogInterval(
-              static_cast< DeviceIndividualLogInterval >( recCommand->getValueAt( SPXCmdParam::INDIVIDUAL_LOGINTERVAL ) ) );
+              static_cast< DeviceIndividualLogInterval >( recCommand->getValueFromHexAt( SPXCmdParam::INDIVIDUAL_LOGINTERVAL ) ) );
           spxConfig->setIndividualTempStick(
-              static_cast< DeviceIndividualTempstick >( recCommand->getValueAt( SPXCmdParam::INDIVIDUAL_TEMPSTICK ) ) );
+              static_cast< DeviceIndividualTempstick >( recCommand->getValueFromHexAt( SPXCmdParam::INDIVIDUAL_TEMPSTICK ) ) );
           // GUI
           // sensor enable
-          if ( recCommand->getValueAt( SPXCmdParam::INDIVIDUAL_SENSORSENABLED ) )
+          if ( recCommand->getValueFromHexAt( SPXCmdParam::INDIVIDUAL_SENSORSENABLED ) )
             ui->individualSeonsorsOnCheckBox->setCheckState( Qt::CheckState::Unchecked );
           else
             ui->individualSeonsorsOnCheckBox->setCheckState( Qt::CheckState::Checked );
           // pscr mode
-          if ( recCommand->getValueAt( SPXCmdParam::INDIVIDUAL_PASSIVEMODE ) )
+          if ( recCommand->getValueFromHexAt( SPXCmdParam::INDIVIDUAL_PASSIVEMODE ) )
             ui->individualPSCRModeOnCheckBox->setCheckState( Qt::CheckState::Checked );
           else
             ui->individualPSCRModeOnCheckBox->setCheckState( Qt::CheckState::Unchecked );
           // sensor count
-          switch ( recCommand->getValueAt( SPXCmdParam::INDIVIDUAL_SENSORCOUNT ) )
+          switch ( recCommand->getValueFromHexAt( SPXCmdParam::INDIVIDUAL_SENSORCOUNT ) )
           {
             case 0:
               ui->individualSensorsCountComboBox->setCurrentIndex( 0 );
@@ -828,12 +828,12 @@ namespace spx
               break;
           }
           // sound warnings
-          if ( recCommand->getValueAt( SPXCmdParam::INDIVIDUAL_SOUND_ONOFF ) )
+          if ( recCommand->getValueFromHexAt( SPXCmdParam::INDIVIDUAL_SOUND_ONOFF ) )
             ui->individualAcousticWarningsOnCheckBox->setCheckState( Qt::CheckState::Checked );
           else
             ui->individualAcousticWarningsOnCheckBox->setCheckState( Qt::CheckState::Unchecked );
           // log interval
-          switch ( recCommand->getValueAt( SPXCmdParam::INDIVIDUAL_LOGINTERVAL ) )
+          switch ( recCommand->getValueFromHexAt( SPXCmdParam::INDIVIDUAL_LOGINTERVAL ) )
           {
             case 0:
               ui->individualLogIntervalComboBox->setCurrentIndex( 0 );
@@ -847,7 +847,7 @@ namespace spx
               break;
           }
           // tempstick
-          switch ( recCommand->getValueAt( SPXCmdParam::INDIVIDUAL_TEMPSTICK ) )
+          switch ( recCommand->getValueFromHexAt( SPXCmdParam::INDIVIDUAL_TEMPSTICK ) )
           {
             case 0:
             default:

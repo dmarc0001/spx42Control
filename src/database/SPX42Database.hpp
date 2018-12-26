@@ -8,6 +8,8 @@
 #include <QPair>
 #include <QtSql>
 #include <logging/Logger.hpp>
+#include "spx42/SPX42CommandDef.hpp"
+#include "spx42/SPX42SingleCommand.hpp"
 
 namespace spx
 {
@@ -90,7 +92,10 @@ namespace spx
     bool setLastConnected( const QString &mac );                        //! setzte das Gerät auf "last connected"
     QString getLastConnected( void );                                   //! wer war der letzte?
     QString getLogTableName( const QString &mac );  //! gib die Tabelle für das Gerät zurück, wenn Gerät in der Liste ist
-    bool insertLogentry( QString deviceMac, const DiveLogEntry &entr );  //! einen Logeintrag zufügen
+    bool existDiveLogInBase( const QString &tableName, int diveNum );           //! existiert ein log mit der Nummer
+    bool delDiveLogFromBase( const QString &tableName, int diveNum );           //! einen Tauchgang entfernen
+    bool insertLogentry( const QString &tableName, const DiveLogEntry &entr );  //! einen Logeintrag zufügen
+    bool insertLogentry( const QString &tableName, spSingleCommand );
 
     private:
     bool existTable( const QString &tableName );     //! gibt es folgende Tabelle?

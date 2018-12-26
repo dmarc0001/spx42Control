@@ -2,17 +2,21 @@
 #define LOGFORM_HPP
 
 #include <float.h>
+#include <QFuture>
 #include <QMargins>
+#include <QQueue>
 #include <QStringList>
 #include <QStringListModel>
 #include <QTimer>
 #include <QWidget>
 #include <QtCharts>
+#include <QtConcurrent>
 #include <algorithm>
 #include <memory>
 #include "IFragmentInterface.hpp"
 #include "bluetooth/SPX42RemotBtDevice.hpp"
 #include "config/ProjectConst.hpp"
+#include "database/LogDetailWriter.hpp"
 #include "database/SPX42Database.hpp"
 #include "logging/Logger.hpp"
 #include "spx42/SPX42Config.hpp"
@@ -30,7 +34,7 @@ namespace Ui
 
 namespace spx
 {
-  constexpr std::chrono::milliseconds TIMEOUTVAL = static_cast< std::chrono::milliseconds >( 1000 );
+  constexpr std::chrono::milliseconds TIMEOUTVAL = static_cast< std::chrono::milliseconds >( 2500 );
 
   class LogFragment : public QWidget, IFragmentInterface
   {
@@ -44,6 +48,9 @@ namespace spx
     QtCharts::QChartView *chartView;            //! Zeiger auf das ChartView
     QtCharts::QCategoryAxis *axisY;             //! Y-Achse für Chart
     QTimer transferTimeout;                     //! timer für timeout bei transfers
+    LogDetailWriter logWriter;                  //! schreibt logdetails queue in die DB
+    QFuture< int > dbWriterFuture;              //! nebenläufig daten in DB schreiben
+    QQueue< int > logDetailRead;                //! Liste mit zu lesenden Logdetails
     QString fragmentTitlePattern;               //! das Muster (lokalisierungsfähig) für Fragmentüberschrift
     QString diveNumberStr;
     QString diveDateStr;
@@ -65,6 +72,7 @@ namespace spx
     void prepareMiniChart( void );
     void showDiveDataForGraph( int deviceId, int diveNum );
     void setGuiConnected( bool isConnected );
+    void processLogDetails( void );  //! schreibe alle Daten aus der Queue in die Datenbank
     float getMinYValue( const QLineSeries *series );
     float getMaxYValue( const QLineSeries *series );
 
@@ -86,6 +94,7 @@ namespace spx
     void onReadLogDirectorySlot( void );
     void onReadLogContentSlot( void );
     void onLogListViewClickedSlot( const QModelIndex &index );
+    void onWriterDoneSlot( int _countProcessed );
 
     public slots:
     void onAddLogdirEntrySlot( const QString &entry );

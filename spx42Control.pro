@@ -23,6 +23,7 @@ QT                                     += widgets
 QT                                     += bluetooth
 QT                                     += sql
 QT                                     += charts
+QT                                     += concurrent
 CONFIG                                 += stl
 CONFIG                                 += c++14
 CONFIG                                 += lrelease
@@ -87,7 +88,8 @@ SOURCES                 += \
     src/spx42/SPX42SingleCommand.cpp \
     src/utils/HelpDialog.cpp \
     src/guiFragments/DeviceInfoFragment.cpp \
-    src/spx42/SPX42LogDirectoryEntry.cpp
+    src/spx42/SPX42LogDirectoryEntry.cpp \
+    src/database/LogDetailWriter.cpp
 
 HEADERS                 += \
     src/SPX42ControlMainWin.hpp \
@@ -121,7 +123,8 @@ HEADERS                 += \
     src/utils/HelpDialog.hpp \
     src/guiFragments/DeviceInfoFragment.hpp \
     src/config/CurrBuildDef.hpp \
-    src/spx42/SPX42LogDirectoryEntry.hpp
+    src/spx42/SPX42LogDirectoryEntry.hpp \
+    src/database/LogDetailWriter.hpp
 
 FORMS                   += \
     src/ui/SPX42ControlMainWin.ui \

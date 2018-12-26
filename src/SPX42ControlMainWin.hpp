@@ -38,6 +38,8 @@ namespace Ui
 
 namespace spx
 {
+  constexpr int MAIN_WATCHDOG_TIMERCOUNT = 1000;
+  constexpr int MAIN_ALIVE_TIMEVALUE = MAIN_WATCHDOG_TIMERCOUNT * 10;
   class SPX42ControlMainWin : public QMainWindow
   {
     private:

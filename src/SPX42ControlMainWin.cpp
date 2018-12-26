@@ -128,7 +128,7 @@ namespace spx
 #endif
     setOnlineStatusMessage();
     connect( &watchdog, &QTimer::timeout, this, &SPX42ControlMainWin::onWatchdogTimerSlot );
-    watchdog.start( 1000 );
+    watchdog.start( MAIN_WATCHDOG_TIMERCOUNT );
     connect( &configWriteTimer, &QTimer::timeout, this, &SPX42ControlMainWin::onConfigWriteBackSlot );
     configWriteTimer.stop();
   }
@@ -589,12 +589,21 @@ namespace spx
     {
       if ( --zyclusCounter < 0 )
       {
-        zyclusCounter = 6;
-        SendListEntry sendCommand = remoteSPX42->aksForAliveSignal();
+        //
+        // nächsten Zeitpunkt vorbereiten
+        //
+        zyclusCounter = MAIN_ALIVE_TIMEVALUE;
 #ifdef DEBUG
         lg->debug( "SPX42ControlMainWin::onWatchdogTimerSlot -> send cmd alive..." );
 #endif
-        remoteSPX42->sendCommand( sendCommand );
+        if ( remoteSPX42->getIsNormalCommandMode() )
+        {
+          //
+          // während der übertragung der logdetails NICHT nachd em Acku fragen
+          //
+          SendListEntry sendCommand = remoteSPX42->aksForAliveSignal();
+          remoteSPX42->sendCommand( sendCommand );
+        }
       }
     }
   }

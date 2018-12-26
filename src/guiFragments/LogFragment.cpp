@@ -3,23 +3,6 @@
 using namespace QtCharts;
 namespace spx
 {
-  /*
-      // die Felder in Werte für die Datenbank umrechnen...
-      lineData.pressure = Integer.parseInt(fields[0].trim());
-      lineData.depth = Integer.parseInt(fields[1].trim());
-      lineData.temperature = Integer.parseInt(fields[2].trim());
-      lineData.acku = Double.parseDouble(fields[3].trim());
-      lineData.ppo2 = Double.parseDouble(fields[5].trim());
-      lineData.ppo2_1 = Double.parseDouble(fields[13].trim());
-      lineData.ppo2_2 = Double.parseDouble(fields[14].trim());
-      lineData.ppo2_3 = Double.parseDouble(fields[15].trim());
-      lineData.setpoint = Integer.parseInt(fields[6].trim());
-      lineData.n2 = Integer.parseInt(fields[16].trim());
-      lineData.he = Integer.parseInt(fields[17].trim());
-      lineData.zeroTime = Integer.parseInt(fields[20].trim());
-      lineData.nextStep = Integer.parseInt(fields[24].trim());
-   */
-
   /**
    * @brief Konstruktor für das Logfragment
    * @param parent Elternteil
@@ -39,14 +22,17 @@ namespace spx
       , dummyChart( new QtCharts::QChart() )
       , chartView( new QtCharts::QChartView( dummyChart ) )
       , axisY( new QCategoryAxis() )
+      , logWriter( this, logger, spx42Database )
   {
     lg->debug( "LogFragment::LogFragment..." );
     ui->setupUi( this );
+    logWriter.reset();
     ui->transferProgressBar->setVisible( false );
     ui->transferProgressBar->setRange( 0, 0 );
     ui->logentryListView->setModel( model.get() );
     ui->logentryListView->setEditTriggers( QAbstractItemView::NoEditTriggers );
-    ui->logentryListView->setSelectionMode( QAbstractItemView::MultiSelection );
+    // ui->logentryListView->setSelectionMode( QAbstractItemView::MultiSelection );
+    ui->logentryListView->setSelectionMode( QAbstractItemView::ExtendedSelection );
     ui->logentryListView->setSpacing( 2 );
     fragmentTitlePattern = tr( "LOGFILES SPX42 Serial [%1] LIC: %2" );
     diveNumberStr = tr( "DIVE NUMBER: %1" );
@@ -90,6 +76,7 @@ namespace spx
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onSocketErrorSig, this, &LogFragment::onSocketErrorSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onCommandRecivedSig, this, &LogFragment::onCommandRecivedSlot );
     connect( &transferTimeout, &QTimer::timeout, this, &LogFragment::onTransferTimeout );
+    connect( &logWriter, &LogDetailWriter::onWriteDoneSig, this, &LogFragment::onWriterDoneSlot );
   }
 
   /**
@@ -137,8 +124,33 @@ namespace spx
   {
     ui->transferProgressBar->setVisible( false );
     lg->warn( "LogFragment::onTransferTimeout -> transfer timeout!!!" );
+    // logWriter.reset();
     transferTimeout.stop();
     // TODO: Warn oder Fehlermeldung ausgeben
+  }
+
+  void LogFragment::onWriterDoneSlot( int )
+  {
+    lg->debug( "LogFragment::onWriterDoneSlot..." );
+    // Writer ist fertig, es könnte weiter gehen
+    if ( dbWriterFuture.isFinished() )
+    {
+      logWriter.reset();
+      lg->debug( "LogFragment::onWriterDoneSlot -> writer finished!" );
+    }
+    //
+    // wenn in der Queue was drin ist UND der Writer bereits fertig ist.
+    // ISt er nicht fertig, wird er dieses beim Beenden selber noch einmal aufrufen
+    //
+    if ( !logDetailRead.isEmpty() && dbWriterFuture.isFinished() )
+    {
+      int logDetailNum = logDetailRead.dequeue();
+      SendListEntry sendCommand_d = remoteSPX42->askForLogDetailFor( logDetailNum );
+      remoteSPX42->sendCommand( sendCommand_d );
+      lg->debug( "LogFragment::onWriterDoneSlot -> start writer thread..." );
+      dbWriterFuture = QtConcurrent::run( &this->logWriter, &LogDetailWriter::writeLogDataToDatabase,
+                                          remoteSPX42->getRemoteConnected(), logDetailNum );
+    }
   }
 
   /**
@@ -193,22 +205,29 @@ namespace spx
       return;
     }
     lg->debug( QString( "LogFragment::onReadLogContentSlot: read %1 logs from spx42..." ).arg( indexList.count() ) );
-    // TODO: tatsächlich anfragen....
-    if ( database->getLogTableName( remoteSPX42->getRemoteConnected() ).isEmpty() )
+    //
+    // so, fülle mal die Queue mit den zu lesenden Nummern
+    //
+    logDetailRead.clear();
+    for ( auto idxEntry : indexList )
     {
-      //
-      // OOPS, das solte nicht vorkommen, die verbundenen Geräte sollten in der DB stehen
-      //
-      lg->crit( "LogFragment::onReadLogContentSlot -> critical: connected device not in database found!" );
-      // TODO: Meldung an den User
-      emit onErrorgMessageSig( tr( "while read for log database error: not found device entry..." ) );
-      return;
+      QStringList el = idxEntry.data().toString().split( ':' );
+      logDetailRead.enqueue( el.at( 0 ).toInt() );
     }
     //
-    // OK, es gibt eine Tablelle
-    // prüfe ob der Tauchgang schon da ist oder ein update erfolgen soll
+    // und nu simuliere ich den "FERTIG" Ruf des Writers...
     //
+    onWriterDoneSlot( 0 );
+    /*
+    logWriter.reset();
+    SendListEntry sendCommand_d = remoteSPX42->askForLogDetailFor( 3 );
+    remoteSPX42->sendCommand( sendCommand_d );
+    lg->debug( "LogFragment::onReadLogContentSlot -> start writer thread..." );
+    dbWriterFuture =
+        QtConcurrent::run( &this->logWriter, &LogDetailWriter::writeLogDataToDatabase, remoteSPX42->getRemoteConnected(), 3 );
+    // TODO: mehrfach starten verboten!
     transferTimeout.start( TIMEOUTVAL );
+    */
   }
 
   /**
@@ -217,10 +236,22 @@ namespace spx
    */
   void LogFragment::onLogListViewClickedSlot( const QModelIndex &index )
   {
+    QString entry = index.data().toString();
     QString number = "-";
     QString date = "-";
     QString depth = "-";
-    lg->debug( QString( "LogFragment::onLogListViewClickedSlot: data: %1..." ).arg( index.data().toString() ) );
+    lg->debug( QString( "LogFragment::onLogListViewClickedSlot: data: %1..." ).arg( entry ) );
+    QStringList pieces = index.data().toString().split( ':' );
+    number = pieces.at( 0 );
+    int start = entry.indexOf( '[' ) + 1;
+    int end = entry.indexOf( ']' );
+    date = entry.mid( start, end - start );
+
+    /*
+    [08.07.2012 12:13:46]
+    oder
+    [2012/07/08 12:13:46]
+    */
     // TODO: aus dem Eintrag die Nummer lesen
     // TODO: TG in der Database -> Parameter auslesen und in die Labels eintragen
     ui->diveNumberLabel->setText( diveNumberStr.arg( number ) );
@@ -387,6 +418,9 @@ namespace spx
   void LogFragment::onOnlineStatusChangedSlot( bool )
   {
     setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
+
+    if ( remoteSPX42->getConnectionStatus() != SPX42RemotBtDevice::SPX42_CONNECTED )
+      logWriter.reset();
   }
 
   void LogFragment::onSocketErrorSlot( QBluetoothSocket::SocketError )
@@ -412,7 +446,10 @@ namespace spx
     spSingleCommand recCommand;
     QDateTime nowDateTime;
     QByteArray value;
+    QString newListEntry;
+    SPX42LogDirectoryEntry newEntry;
     char kdo;
+    int logNumber;
     //
     lg->debug( "ConnectFragment::onDatagramRecivedSlot..." );
     //
@@ -429,7 +466,7 @@ namespace spx
           // ~03:PW
           // PX => Angabe HEX in Milivolt vom Akku
           lg->debug( "LogFragment::onDatagramRecivedSlot -> alive/acku..." );
-          ackuVal = ( recCommand->getValueAt( SPXCmdParam::ALIVE_POWER ) / 100.0 );
+          ackuVal = ( recCommand->getValueFromHexAt( SPXCmdParam::ALIVE_POWER ) / 100.0 );
           emit onAkkuValueChangedSig( ackuVal );
           break;
         case SPX42CommandDef::SPX_APPLICATION_ID:
@@ -481,11 +518,11 @@ namespace spx
           // MAX höchste Nummer der Einträge ( NR == MAX ==> letzter Eintrag )
           lg->debug( "LogFragment::onDatagramRecivedSlot -> log direntry..." );
           // Das Ergebnis in die Liste der Config
-          SPX42LogDirectoryEntry newEntry( static_cast< int >( recCommand->getValueAt( SPXCmdParam::LOGDIR_CURR_NUMBER ) ),
-                                           static_cast< int >( recCommand->getValueAt( SPXCmdParam::LOGDIR_MAXNUMBER ) ),
-                                           recCommand->getParamAt( SPXCmdParam::LOGDIR_FILENAME ) );
+          newEntry = SPX42LogDirectoryEntry( static_cast< int >( recCommand->getValueFromHexAt( SPXCmdParam::LOGDIR_CURR_NUMBER ) ),
+                                             static_cast< int >( recCommand->getValueFromHexAt( SPXCmdParam::LOGDIR_MAXNUMBER ) ),
+                                             recCommand->getParamAt( SPXCmdParam::LOGDIR_FILENAME ) );
           spxConfig->addDirectoryEntry( newEntry );
-          QString newListEntry = QString( "%1:[%2]" ).arg( newEntry.number, 2, 10, QChar( '0' ) ).arg( newEntry.getDateTimeStr() );
+          newListEntry = QString( "%1:[%2]" ).arg( newEntry.number, 2, 10, QChar( '0' ) ).arg( newEntry.getDateTimeStr() );
           onAddLogdirEntrySlot( newListEntry );
           //
           // war das der letzte Eintrag oder sollte noch mehr kommen
@@ -501,6 +538,40 @@ namespace spx
             // Timer verlängern
             transferTimeout.start( TIMEOUTVAL );
           }
+          break;
+        case SPX42CommandDef::SPX_GET_LOG_NUMBER_SE:
+          // Start oder Ende Logdetails...
+          // welches startet?
+          logNumber = static_cast< int >( recCommand->getValueFromHexAt( SPXCmdParam::LOGDETAIL_NUMBER ) );
+          lg->debug( QString( "LogFragment::onDatagramRecivedSlot -> log detail %1 for dive number %2..." )
+                         .arg( recCommand->getValueFromHexAt( SPXCmdParam::LOGDETAIL_NUMBER ) )
+                         .arg( recCommand->getValueFromHexAt( SPXCmdParam::LOGDETAIL_START_END ) == 0 ? "STOP" : "START" ) );
+          //
+          // Start oder Ende Signal?
+          //
+          if ( recCommand->getValueFromHexAt( SPXCmdParam::LOGDETAIL_START_END ) == 1 )
+          {
+            // START der Details...
+            logWriter.clear();
+            // Timer verlängern
+            transferTimeout.start( TIMEOUTVAL );
+          }
+          else
+          {
+            // ENDE der Details
+            logWriter.addDetail( recCommand );
+            // Timer ist auch zu stoppen!
+            transferTimeout.stop();
+          }
+          break;
+        case SPX42CommandDef::SPX_GET_LOG_DETAIL:
+          // Datensatz in die Wartschlange
+          logWriter.addDetail( recCommand );
+          lg->debug( QString( "LogFragment::onDatagramRecivedSlot -> log detail %1 for dive number %2..." )
+                         .arg( logWriter.getGlobal() )
+                         .arg( recCommand->getTag() ) );
+          // Timer verlängern
+          transferTimeout.start( TIMEOUTVAL );
           break;
       }
       //
