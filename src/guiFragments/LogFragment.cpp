@@ -17,7 +17,6 @@ namespace spx
       : QWidget( parent )
       , IFragmentInterface( logger, spx42Database, spxCfg, remSPX42 )
       , ui( new Ui::LogFragment() )
-      , model( new QStandardItemModel( 1, 2, this ) )
       , chart( new QtCharts::QChart() )
       , dummyChart( new QtCharts::QChart() )
       , chartView( new QtCharts::QChartView( dummyChart ) )
@@ -29,18 +28,16 @@ namespace spx
     logWriter.reset();
     ui->transferProgressBar->setVisible( false );
     ui->transferProgressBar->setRange( 0, 0 );
-    ui->logentryTableView->setModel( model.get() );
-    ui->logentryTableView->setEditTriggers( QAbstractItemView::NoEditTriggers );
-    ui->logentryTableView->setSelectionMode( QAbstractItemView::ExtendedSelection );
-    ui->logentryTableView->setGridStyle( Qt::PenStyle::DotLine );
-    ui->logentryTableView->showGrid();
-    int listWith = ui->logentryTableView->width();
-
-    lg->debug( QString( "############## listWith = %1 ################" ).arg( listWith ) );
-    ui->logentryTableView->horizontalHeader()->setDefaultSectionSize( listWith - 35 );
-    ui->logentryTableView->setColumnWidth( 1, 25 );
-    ui->logentryTableView->horizontalHeader()->setStretchLastSection( true );
-
+    // tableview zurecht machen
+    ui->logentryTableWidget->setEditTriggers( QAbstractItemView::NoEditTriggers );
+    ui->logentryTableWidget->setSelectionMode( QAbstractItemView::ExtendedSelection );
+    ui->logentryTableWidget->setGridStyle( Qt::PenStyle::DotLine );
+    ui->logentryTableWidget->showGrid();
+    ui->logentryTableWidget->setColumnCount( 2 );
+    ui->logentryTableWidget->horizontalHeader()->setSectionResizeMode( 0, QHeaderView::Stretch );
+    ui->logentryTableWidget->setColumnWidth( 1, 25 );
+    ui->logentryTableWidget->setSelectionBehavior( QAbstractItemView::SelectRows );
+    //
     ui->dbWriteNumLabel->setVisible( false );
     fragmentTitlePattern = tr( "LOGFILES SPX42 Serial [%1] LIC: %2" );
     diveNumberStr = tr( "DIVE NUMBER: %1" );
@@ -82,7 +79,7 @@ namespace spx
     connect( spxConfig.get(), &SPX42Config::licenseChangedSig, this, &LogFragment::onConfLicChangedSlot );
     connect( ui->readLogdirPushButton, &QPushButton::clicked, this, &LogFragment::onReadLogDirectorySlot );
     connect( ui->readLogContentPushButton, &QPushButton::clicked, this, &LogFragment::onReadLogContentSlot );
-    connect( ui->logentryTableView, &QAbstractItemView::clicked, this, &LogFragment::onLogListViewClickedSlot );
+    connect( ui->logentryTableWidget, &QAbstractItemView::clicked, this, &LogFragment::onLogListViewClickedSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onStateChangedSig, this, &LogFragment::onOnlineStatusChangedSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onSocketErrorSig, this, &LogFragment::onSocketErrorSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onCommandRecivedSig, this, &LogFragment::onCommandRecivedSlot );
@@ -100,7 +97,7 @@ namespace spx
     // setze wieder den Dummy ein und lasse den
     // uniqe_ptr die Objekte im ChartView entsorgen
     chartView->setChart( dummyChart );
-    ui->logentryTableView->setModel( Q_NULLPTR );
+    // ui->logentryTableWidget->setModel( Q_NULLPTR );
     deactivateTab();
   }
 
@@ -194,9 +191,9 @@ namespace spx
       //
       spxConfig->resetConfig( SPX42ConfigClass::CF_CLASS_LOG );
       // GUI löschen
-      model->clear();
+      ui->logentryTableWidget->clear();
       // preview löschen
-      // ui->logentryTableView->reset();
+      // ui->logentryTableWidget->reset();
       // Chart löschen
       chart->removeAllSeries();
       // Timeout starten
@@ -217,8 +214,8 @@ namespace spx
   void LogFragment::onReadLogContentSlot()
   {
     lg->debug( "LogFragment::onReadLogContentSlot: ..." );
-    QModelIndexList indexList = ui->logentryTableView->selectionModel()->selectedIndexes();
-    if ( model->rowCount() == 0 )
+    QModelIndexList indexList = ui->logentryTableWidget->selectionModel()->selectedIndexes();
+    if ( ui->logentryTableWidget->rowCount() == 0 )
     {
       lg->warn( "LogFragment::onReadLogContentSlot -> no log entrys!" );
       return;
@@ -320,19 +317,11 @@ namespace spx
     //
     // neueste zuerst
     //
-
-    /*
-        if ( ui->logentryTableView->model()->rowCount() < 1 )
-        {
-          int listWith = ui->logentryTableView->width();
-          ui->logentryTableView->setColumnWidth( 0, listWith - 25 );
-          ui->logentryTableView->setColumnWidth( 1, 20 );
-        }
-        */
-    QStandardItem *it1 = new QStandardItem( entry );
-    QStandardItem *it2 = new QStandardItem( "X" );
-    QList< QStandardItem * > list{it1, it2};
-    model->insertRow( 0, list );
+    QTableWidgetItem *itName = new QTableWidgetItem( entry );
+    QTableWidgetItem *itLoadet = new QTableWidgetItem( "x" );  // TODO: später icon!
+    ui->logentryTableWidget->insertRow( 0 );
+    ui->logentryTableWidget->setItem( 0, 0, itName );
+    ui->logentryTableWidget->setItem( 0, 1, itLoadet );
   }
 
   void LogFragment::prepareMiniChart()
@@ -658,8 +647,7 @@ namespace spx
     chart->setVisible( isConnected );
     if ( !isConnected )
     {
-      model->clear();
-      // ui->logentryTableView->reset();
+      ui->logentryTableWidget->clear();
       // preview löschen
       chart->removeAllSeries();
     }

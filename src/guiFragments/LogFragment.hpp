@@ -2,12 +2,12 @@
 #define LOGFORM_HPP
 
 #include <float.h>
+#include <QAbstractItemView>
 #include <QFuture>
 #include <QMargins>
 #include <QQueue>
-#include <QStandardItem>
-#include <QStandardItemModel>
 #include <QStringList>
+#include <QTableWidget>
 #include <QTimer>
 #include <QWidget>
 #include <QtCharts>
@@ -42,17 +42,16 @@ namespace spx
     private:
     Q_OBJECT
     Q_INTERFACES( spx::IFragmentInterface )
-    std::unique_ptr< Ui::LogFragment > ui;        //! Zeiger auf GUI-Objekte
-    std::unique_ptr< QStandardItemModel > model;  //! Zeiger auf mein Modell
-    std::unique_ptr< QtCharts::QChart > chart;    //! Zeiger auf das Chart
-    QtCharts::QChart *dummyChart;                 //! Zeiger auf das weisse, leere chart
-    QtCharts::QChartView *chartView;              //! Zeiger auf das ChartView
-    QtCharts::QCategoryAxis *axisY;               //! Y-Achse für Chart
-    QTimer transferTimeout;                       //! timer für timeout bei transfers
-    LogDetailWriter logWriter;                    //! schreibt logdetails queue in die DB
-    QFuture< int > dbWriterFuture;                //! nebenläufig daten in DB schreiben
-    QQueue< int > logDetailRead;                  //! Liste mit zu lesenden Logdetails
-    QString fragmentTitlePattern;                 //! das Muster (lokalisierungsfähig) für Fragmentüberschrift
+    std::unique_ptr< Ui::LogFragment > ui;      //! Zeiger auf GUI-Objekte
+    std::unique_ptr< QtCharts::QChart > chart;  //! Zeiger auf das Chart
+    QtCharts::QChart *dummyChart;               //! Zeiger auf das weisse, leere chart
+    QtCharts::QChartView *chartView;            //! Zeiger auf das ChartView
+    QtCharts::QCategoryAxis *axisY;             //! Y-Achse für Chart
+    QTimer transferTimeout;                     //! timer für timeout bei transfers
+    LogDetailWriter logWriter;                  //! schreibt logdetails queue in die DB
+    QFuture< int > dbWriterFuture;              //! nebenläufig daten in DB schreiben
+    QQueue< int > logDetailRead;                //! Liste mit zu lesenden Logdetails
+    QString fragmentTitlePattern;               //! das Muster (lokalisierungsfähig) für Fragmentüberschrift
     QString diveNumberStr;
     QString diveDateStr;
     QString diveDepthStr;
