@@ -23,7 +23,7 @@ namespace spx
       , axisY( new QCategoryAxis() )
       , logWriter( this, logger, spx42Database )
       , savedIcon( ":/icons/saved_black" )
-      , nullIcon( ":/icons/saved_white" )
+      , nullIcon( /*":/icons/saved_white"*/ )
   {
     lg->debug( "LogFragment::LogFragment..." );
     ui->setupUi( this );
@@ -239,7 +239,13 @@ namespace spx
     logDetailRead.clear();
     for ( auto idxEntry : indexList )
     {
-      QStringList el = idxEntry.data().toString().split( ':' );
+      //
+      // die spalte 0 finden, da steht die Lognummer
+      //
+      int row = idxEntry.row();
+      QString entry = ui->logentryTableWidget->item( row, 0 )->text();
+      QStringList el = entry.split( ':' );
+      // in die Liste kommt die Nummer!
       logDetailRead.enqueue( el.at( 0 ).toInt() );
     }
     //
