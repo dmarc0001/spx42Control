@@ -136,10 +136,10 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QListView" name="logentryListView">
+       <widget class="QTableView" name="logentryTableView">
         <property name="minimumSize">
          <size>
-          <width>350</width>
+          <width>250</width>
           <height>0</height>
          </size>
         </property>
@@ -163,6 +163,24 @@
         <property name="frameShadow">
          <enum>QFrame::Plain</enum>
         </property>
+        <property name="sizeAdjustPolicy">
+         <enum>QAbstractScrollArea::AdjustIgnored</enum>
+        </property>
+        <attribute name="horizontalHeaderVisible">
+         <bool>false</bool>
+        </attribute>
+        <attribute name="horizontalHeaderDefaultSectionSize">
+         <number>150</number>
+        </attribute>
+        <attribute name="horizontalHeaderMinimumSectionSize">
+         <number>25</number>
+        </attribute>
+        <attribute name="verticalHeaderVisible">
+         <bool>false</bool>
+        </attribute>
+        <attribute name="verticalHeaderDefaultSectionSize">
+         <number>35</number>
+        </attribute>
        </widget>
       </item>
       <item>
