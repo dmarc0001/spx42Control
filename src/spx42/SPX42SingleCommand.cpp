@@ -8,7 +8,7 @@ namespace spx
    * @param params
    */
   SPX42SingleCommand::SPX42SingleCommand( char cmd, const QList< QByteArray > &params, int tag, int seq )
-      : command( cmd ), params( params ), tag( tag ), sequence( seq )
+      : command( cmd ), params( params ), diveNum( tag ), sequence( seq )
   {
   }
 
@@ -76,9 +76,9 @@ namespace spx
     return ( static_cast< double >( std::numeric_limits< double >::max() ) );
   }
 
-  int SPX42SingleCommand::getTag()
+  int SPX42SingleCommand::getDiveNum()
   {
-    return ( tag );
+    return ( diveNum );
   }
 
   int SPX42SingleCommand::getSequence()
