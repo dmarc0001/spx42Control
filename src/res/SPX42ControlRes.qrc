@@ -38,6 +38,8 @@
         <file alias="ic_spx_error">ic_spx_error.png</file>
         <file alias="ic_spx_offline">ic_spx_offline.png</file>
         <file alias="ic_spx_online">ic_spx_online.png</file>
+        <file alias="saved_black">outline_assignment_turned_in_black_24dp.png</file>
+        <file alias="saved_white">outline_assignment_turned_in_white_24dp.png</file>
     </qresource>
     <qresource prefix="/images">
         <file>SPX42.jpg</file>
@@ -47,8 +49,6 @@
         <file>ic_bluetooth_black_24dp_1x.png</file>
     </qresource>
     <qresource prefix="/scanner">
-        <file alias="bluetooth_black_normal">ic_bluetooth_black_24dp_1x.png</file>
-        <file alias="bluetooth_black_gross">ic_bluetooth_black_24dp_2x.png</file>
         <file alias="worker">no_working.gif</file>
         <file alias="workerAnimation">working.gif</file>
     </qresource>
