@@ -56,6 +56,7 @@ namespace spx
     QString diveDateStr;
     QString diveDepthStr;
     QString dbWriteNumTemplate;
+    QString dbWriteNumIDLE;
 
     public:
     explicit LogFragment( QWidget *parent,
