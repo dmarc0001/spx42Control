@@ -34,16 +34,20 @@ namespace spx
     // ui->logentryListView->setSelectionMode( QAbstractItemView::MultiSelection );
     ui->logentryListView->setSelectionMode( QAbstractItemView::ExtendedSelection );
     ui->logentryListView->setSpacing( 2 );
+    ui->dbWriteNumLabel->setVisible( false );
     fragmentTitlePattern = tr( "LOGFILES SPX42 Serial [%1] LIC: %2" );
     diveNumberStr = tr( "DIVE NUMBER: %1" );
     diveDateStr = tr( "DIVE DATE: %1" );
     diveDepthStr = tr( "DIVE DEPTH: %1" );
+    dbWriteNumTemplate = tr( "WRITE DIVE #%1..." );
+    dbWriteNumIDLE = tr( "WAIT FOR START..." );
     ui->diveNumberLabel->setText( diveNumberStr.arg( "-" ) );
     ui->diveDateLabel->setText( diveDateStr.arg( "-" ) );
     ui->diveDepthLabel->setText( diveDepthStr.arg( "-" ) );
+    ui->dbWriteNumLabel->setText( dbWriteNumIDLE );
     prepareMiniChart();
     // tausche den Platzhalter aus und entsorge den gleich
-    delete ui->detailsGroupBox->layout()->replaceWidget( ui->diveProfileGraphicsView, chartView );
+    delete ui->logDetailsGroupBox->layout()->replaceWidget( ui->diveProfileGraphicsView, chartView );
     // GUI dem Onlinestatus entsprechend vorbereiten
     setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
     //
@@ -77,6 +81,7 @@ namespace spx
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onCommandRecivedSig, this, &LogFragment::onCommandRecivedSlot );
     connect( &transferTimeout, &QTimer::timeout, this, &LogFragment::onTransferTimeout );
     connect( &logWriter, &LogDetailWriter::onWriteDoneSig, this, &LogFragment::onWriterDoneSlot );
+    connect( &logWriter, &LogDetailWriter::onNewDiveStartSig, this, &LogFragment::onNewDiveStartSlot );
   }
 
   /**
@@ -122,14 +127,15 @@ namespace spx
 
   void LogFragment::onTransferTimeout()
   {
-    lg->warn( "LogFragment::onTransferTimeout -> transfer timeout!!!" );
     //
     // wenn der Writer noch läuft, dann noch nicht den Balken ausblenden
     //
     if ( dbWriterFuture.isFinished() )
     {
       ui->transferProgressBar->setVisible( false );
+      ui->dbWriteNumLabel->setText( dbWriteNumIDLE );
       transferTimeout.stop();
+      lg->warn( "LogFragment::onTransferTimeout -> transfer timeout!!!" );
       // TODO: Warn oder Fehlermeldung ausgeben
     }
   }
@@ -143,6 +149,8 @@ namespace spx
       logWriter.reset();
       lg->debug( "LogFragment::onWriterDoneSlot -> writer finished!" );
       ui->transferProgressBar->setVisible( false );
+      ui->dbWriteNumLabel->setVisible( false );
+      ui->dbWriteNumLabel->setText( dbWriteNumIDLE );
       // TODO: Auswerten der Ergebnisse
       // int result = dbWriterFuture.result();
     }
@@ -153,9 +161,17 @@ namespace spx
     if ( !logDetailRead.isEmpty() && dbWriterFuture.isFinished() )
     {
       lg->debug( "LogFragment::onWriterDoneSlot -> start writer thread again..." );
+      ui->dbWriteNumLabel->setVisible( true );
       dbWriterFuture =
           QtConcurrent::run( &this->logWriter, &LogDetailWriter::writeLogDataToDatabase, remoteSPX42->getRemoteConnected() );
     }
+  }
+
+  void LogFragment::onNewDiveStartSlot( int newDiveNum )
+  {
+    ui->dbWriteNumLabel->setText( dbWriteNumTemplate.arg( newDiveNum, 3, 10, QChar( '0' ) ) );
+    lg->debug(
+        QString( "LogFragment::onNewDiveStartSlot -> write dive number #%1 to database..." ).arg( newDiveNum, 3, 10, QChar( '0' ) ) );
   }
 
   /**
@@ -240,6 +256,7 @@ namespace spx
       transferTimeout.start( TIMEOUTVAL * 8 );
       logWriter.reset();
       lg->debug( QString( "LogFragment::onReadLogContentSlot -> request  %1 logs from spx42..." ).arg( logDetailNum ) );
+      ui->dbWriteNumLabel->setVisible( true );
       dbWriterFuture =
           QtConcurrent::run( &this->logWriter, &LogDetailWriter::writeLogDataToDatabase, remoteSPX42->getRemoteConnected() );
     }
@@ -574,6 +591,7 @@ namespace spx
               lg->debug( "LogFragment::onDatagramRecivedSlot -> start writer thread again..." );
               dbWriterFuture =
                   QtConcurrent::run( &this->logWriter, &LogDetailWriter::writeLogDataToDatabase, remoteSPX42->getRemoteConnected() );
+              ui->dbWriteNumLabel->setVisible( true );
             }
             // Timer verlängern
             transferTimeout.start( TIMEOUTVAL );
@@ -599,6 +617,7 @@ namespace spx
                 lg->debug( QString( "LogFragment::onReadLogContentSlot -> request  %1 logs from spx42..." ).arg( logDetailNum ) );
                 dbWriterFuture =
                     QtConcurrent::run( &this->logWriter, &LogDetailWriter::writeLogDataToDatabase, remoteSPX42->getRemoteConnected() );
+                ui->dbWriteNumLabel->setVisible( true );
               }
             }
             else

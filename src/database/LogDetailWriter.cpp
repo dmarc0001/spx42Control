@@ -103,6 +103,7 @@ namespace spx
               return ( -1 );
             }
           }
+          emit onNewDiveStartSig( diveNum );
         }
         // zähle die Datensätze
         processed++;

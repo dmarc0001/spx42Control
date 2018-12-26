@@ -55,6 +55,7 @@ namespace spx
     QString diveNumberStr;
     QString diveDateStr;
     QString diveDepthStr;
+    QString dbWriteNumTemplate;
 
     public:
     explicit LogFragment( QWidget *parent,
@@ -95,6 +96,7 @@ namespace spx
     void onReadLogContentSlot( void );
     void onLogListViewClickedSlot( const QModelIndex &index );
     void onWriterDoneSlot( int _countProcessed );
+    void onNewDiveStartSlot( int newDiveNum );
 
     public slots:
     void onAddLogdirEntrySlot( const QString &entry );

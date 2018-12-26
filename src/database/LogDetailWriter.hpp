@@ -38,7 +38,8 @@ namespace spx
     int writeLogDataToDatabase( const QString &deviceMac );
 
     signals:
-    void onWriteDoneSig( int );
+    void onWriteDoneSig( int _overallResult );
+    void onNewDiveStartSig( int newDiveNum );
 
     public slots:
   };
