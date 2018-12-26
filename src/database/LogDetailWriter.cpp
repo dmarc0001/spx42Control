@@ -3,7 +3,13 @@
 namespace spx
 {
   LogDetailWriter::LogDetailWriter( QObject *parent, std::shared_ptr< Logger > logger, std::shared_ptr< SPX42Database > _database )
-      : QObject( parent ), lg( logger ), database( _database ), shouldRunning( true ), processed( 0 ), overAll( 0 )
+      : QObject( parent )
+      , lg( logger )
+      , database( _database )
+      , shouldRunning( true )
+      , processed( 0 )
+      , forThisDiveProcessed( 0 )
+      , overAll( 0 )
   {
   }
 
@@ -18,11 +24,12 @@ namespace spx
     shouldRunning = false;
   }
 
-  void LogDetailWriter::clear()
+  void LogDetailWriter::nowait( bool _shouldNoWait )
   {
-    detailQueue.clear();
-    processed = 0;
-    overAll = 0;
+    if ( _shouldNoWait )
+      maxTimeoutVal = 0;
+    else
+      maxTimeoutVal = waitTimeout;
   }
 
   int LogDetailWriter::getProcessed()
@@ -40,12 +47,14 @@ namespace spx
     return ( detailQueue.count() );
   }
 
-  int LogDetailWriter::writeLogDataToDatabase( const QString &deviceMac, int diveNum )
+  int LogDetailWriter::writeLogDataToDatabase( const QString &deviceMac )
   {
+    int diveNum = -1;
     shouldRunning = true;
+    forThisDiveProcessed = 0;
     processed = 0;
     qint64 timeoutVal = 0;
-    qint64 maxTimeoutVal = waitFirstTimeout;
+    maxTimeoutVal = waitTimeout;
     //
     // zuerst: ist die Tabelle da/wurde angelegt?
     //
@@ -55,45 +64,45 @@ namespace spx
       lg->crit( "LogDetailWriter::writeLogDataToDatabase -> database error, not table für logdata exist..." );
       return ( -1 );
     }
-    //
-    // ist das ein update oder ein insert?
-    //
-    if ( database->existDiveLogInBase( tableName, diveNum ) )
-    {
-      //
-      //  existiert, daten löschen...
-      // also ein "update", eigentlich natürlich löschen und neu machen
-      //
-      if ( !database->delDiveLogFromBase( tableName, diveNum ) )
-      {
-        return ( -1 );
-      }
-    }
+    lg->debug( QString( "LogDetailWriter::writeLogDataToDatabase -> table %1 exist!" ).arg( tableName ) );
     //
     while ( shouldRunning )
     {
       if ( detailQueue.count() > 0 )
       {
-        //
-        // so, ab jetzt ist das der "kurze" Timeout
-        //
-        maxTimeoutVal = timeoutVal;
         timeoutVal = 0;
         //
         // den Datensatz aus der Queue holen
         // (ist ja ein shared ptr, also sehr schnell)
         //
         auto logentry = detailQueue.dequeue();
-        if ( logentry->getCommand() == SPX42CommandDef::SPX_GET_LOG_NUMBER_SE )
+        //
+        // ist die diveNum immer noch dieselbe?
+        //
+        if ( diveNum != logentry->getDiveNum() )
         {
           //
-          // Zur Sicherheut könnte man noch testen ob
-          // recCommand->getValueFromHexAt( SPXCmdParam::LOGDETAIL_START_END ) == 0
-          // das ist der ENDE Marker für die Logdaten, gesendet von LogFragment::onCommandRecivedSlot
-          // verlässt unmittelbar die while Schleife
-          // und beendet den Thread
+          // Ok, anpassen
           //
-          break;
+          diveNum = logentry->getDiveNum();
+          lg->debug(
+              QString( "LogDetailWriter::writeLogDataToDatabase -> new dive to store %1" ).arg( diveNum, 3, 10, QChar( '0' ) ) );
+          //
+          // Nummer hat sich verändert
+          // ist das ein update oder ein insert?
+          //
+          if ( database->existDiveLogInBase( tableName, diveNum ) )
+          {
+            lg->debug( "LogDetailWriter::writeLogDataToDatabase -> update, drop old values..." );
+            //
+            //  existiert, daten löschen...
+            // also ein "update", eigentlich natürlich löschen und neu machen
+            //
+            if ( !database->delDiveLogFromBase( tableName, diveNum ) )
+            {
+              return ( -1 );
+            }
+          }
         }
         // zähle die Datensätze
         processed++;
@@ -105,10 +114,11 @@ namespace spx
       {
         if ( shouldRunning )
         {
-          QThread::msleep( waitUnits );
           timeoutVal++;
           if ( timeoutVal > maxTimeoutVal )
             shouldRunning = false;
+          else
+            QThread::msleep( waitUnits );
         }
       }
     }

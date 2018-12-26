@@ -904,7 +904,7 @@ namespace spx
     {
       QSqlQuery query( db );
       QString sql = loglineInsertTemplate.arg( tableName )
-                        .arg( cmd->getTag() )
+                        .arg( cmd->getDiveNum() )
                         .arg( cmd->getSequence() )
                         .arg( static_cast< int >( cmd->getValueAt( SPXCmdParam::LOGDETAIL_PRESSURE ) ) )
                         .arg( static_cast< int >( cmd->getValueAt( SPXCmdParam::LOGDETAIL_DEPTH ) ) )

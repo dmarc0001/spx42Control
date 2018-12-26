@@ -122,11 +122,16 @@ namespace spx
 
   void LogFragment::onTransferTimeout()
   {
-    ui->transferProgressBar->setVisible( false );
     lg->warn( "LogFragment::onTransferTimeout -> transfer timeout!!!" );
-    // logWriter.reset();
-    transferTimeout.stop();
-    // TODO: Warn oder Fehlermeldung ausgeben
+    //
+    // wenn der Writer noch läuft, dann noch nicht den Balken ausblenden
+    //
+    if ( dbWriterFuture.isFinished() )
+    {
+      ui->transferProgressBar->setVisible( false );
+      transferTimeout.stop();
+      // TODO: Warn oder Fehlermeldung ausgeben
+    }
   }
 
   void LogFragment::onWriterDoneSlot( int )
@@ -137,19 +142,19 @@ namespace spx
     {
       logWriter.reset();
       lg->debug( "LogFragment::onWriterDoneSlot -> writer finished!" );
+      ui->transferProgressBar->setVisible( false );
+      // TODO: Auswerten der Ergebnisse
+      // int result = dbWriterFuture.result();
     }
     //
     // wenn in der Queue was drin ist UND der Writer bereits fertig ist.
-    // ISt er nicht fertig, wird er dieses beim Beenden selber noch einmal aufrufen
+    // Ist er nicht fertig, wird er dieses beim Beenden selber noch einmal aufrufen
     //
     if ( !logDetailRead.isEmpty() && dbWriterFuture.isFinished() )
     {
-      int logDetailNum = logDetailRead.dequeue();
-      SendListEntry sendCommand_d = remoteSPX42->askForLogDetailFor( logDetailNum );
-      remoteSPX42->sendCommand( sendCommand_d );
-      lg->debug( "LogFragment::onWriterDoneSlot -> start writer thread..." );
-      dbWriterFuture = QtConcurrent::run( &this->logWriter, &LogDetailWriter::writeLogDataToDatabase,
-                                          remoteSPX42->getRemoteConnected(), logDetailNum );
+      lg->debug( "LogFragment::onWriterDoneSlot -> start writer thread again..." );
+      dbWriterFuture =
+          QtConcurrent::run( &this->logWriter, &LogDetailWriter::writeLogDataToDatabase, remoteSPX42->getRemoteConnected() );
     }
   }
 
@@ -192,7 +197,7 @@ namespace spx
     QModelIndexList indexList = ui->logentryListView->selectionModel()->selectedIndexes();
     if ( model->rowCount() == 0 )
     {
-      lg->warn( "LogFragment::onReadLogContentSlot: no log entrys!" );
+      lg->warn( "LogFragment::onReadLogContentSlot -> no log entrys!" );
       return;
     }
     //
@@ -200,11 +205,11 @@ namespace spx
     //
     if ( indexList.isEmpty() )
     {
-      lg->warn( "LogFragment::onReadLogContentSlot: nothing selected, read all?" );
+      lg->warn( "LogFragment::onReadLogContentSlot -> nothing selected, read all?" );
       // TODO: Messagebox aufpoppen und Nutzer fragen
       return;
     }
-    lg->debug( QString( "LogFragment::onReadLogContentSlot: read %1 logs from spx42..." ).arg( indexList.count() ) );
+    lg->debug( QString( "LogFragment::onReadLogContentSlot -> read %1 logs from spx42..." ).arg( indexList.count() ) );
     //
     // so, fülle mal die Queue mit den zu lesenden Nummern
     //
@@ -215,19 +220,29 @@ namespace spx
       logDetailRead.enqueue( el.at( 0 ).toInt() );
     }
     //
-    // und nu simuliere ich den "FERTIG" Ruf des Writers...
+    // und nun starte ich die Ereigniskette
     //
-    onWriterDoneSlot( 0 );
-    /*
-    logWriter.reset();
-    SendListEntry sendCommand_d = remoteSPX42->askForLogDetailFor( 3 );
-    remoteSPX42->sendCommand( sendCommand_d );
-    lg->debug( "LogFragment::onReadLogContentSlot -> start writer thread..." );
-    dbWriterFuture =
-        QtConcurrent::run( &this->logWriter, &LogDetailWriter::writeLogDataToDatabase, remoteSPX42->getRemoteConnected(), 3 );
-    // TODO: mehrfach starten verboten!
-    transferTimeout.start( TIMEOUTVAL );
-    */
+    if ( !logDetailRead.isEmpty() )
+    {
+      //
+      // GUI anzeigen...
+      //
+      ui->transferProgressBar->setVisible( true );
+      //
+      // den ersten Detaileintrag abrufen
+      //
+      int logDetailNum = logDetailRead.dequeue();
+      SendListEntry sendCommand = remoteSPX42->askForLogDetailFor( logDetailNum );
+      remoteSPX42->sendCommand( sendCommand );
+      //
+      // das kann etwas dauern...
+      //
+      transferTimeout.start( TIMEOUTVAL * 8 );
+      logWriter.reset();
+      lg->debug( QString( "LogFragment::onReadLogContentSlot -> request  %1 logs from spx42..." ).arg( logDetailNum ) );
+      dbWriterFuture =
+          QtConcurrent::run( &this->logWriter, &LogDetailWriter::writeLogDataToDatabase, remoteSPX42->getRemoteConnected() );
+    }
   }
 
   /**
@@ -517,13 +532,9 @@ namespace spx
           // Sekunde
           // MAX höchste Nummer der Einträge ( NR == MAX ==> letzter Eintrag )
           lg->debug( "LogFragment::onDatagramRecivedSlot -> log direntry..." );
-          // Das Ergebnis in die Liste der Config
           newEntry = SPX42LogDirectoryEntry( static_cast< int >( recCommand->getValueFromHexAt( SPXCmdParam::LOGDIR_CURR_NUMBER ) ),
                                              static_cast< int >( recCommand->getValueFromHexAt( SPXCmdParam::LOGDIR_MAXNUMBER ) ),
                                              recCommand->getParamAt( SPXCmdParam::LOGDIR_FILENAME ) );
-          spxConfig->addDirectoryEntry( newEntry );
-          newListEntry = QString( "%1:[%2]" ).arg( newEntry.number, 2, 10, QChar( '0' ) ).arg( newEntry.getDateTimeStr() );
-          onAddLogdirEntrySlot( newListEntry );
           //
           // war das der letzte Eintrag oder sollte noch mehr kommen
           //
@@ -535,6 +546,10 @@ namespace spx
           }
           else
           {
+            // Das Ergebnis in die Liste der Config
+            spxConfig->addDirectoryEntry( newEntry );
+            newListEntry = QString( "%1:[%2]" ).arg( newEntry.number, 2, 10, QChar( '0' ) ).arg( newEntry.getDateTimeStr() );
+            onAddLogdirEntrySlot( newListEntry );
             // Timer verlängern
             transferTimeout.start( TIMEOUTVAL );
           }
@@ -551,25 +566,55 @@ namespace spx
           //
           if ( recCommand->getValueFromHexAt( SPXCmdParam::LOGDETAIL_START_END ) == 1 )
           {
+            //
             // START der Details...
-            logWriter.clear();
+            //
+            if ( dbWriterFuture.isFinished() )
+            {
+              lg->debug( "LogFragment::onDatagramRecivedSlot -> start writer thread again..." );
+              dbWriterFuture =
+                  QtConcurrent::run( &this->logWriter, &LogDetailWriter::writeLogDataToDatabase, remoteSPX42->getRemoteConnected() );
+            }
             // Timer verlängern
             transferTimeout.start( TIMEOUTVAL );
           }
           else
           {
             // ENDE der Details
-            logWriter.addDetail( recCommand );
-            // Timer ist auch zu stoppen!
-            transferTimeout.stop();
+            if ( !logDetailRead.isEmpty() )
+            {
+              //
+              // da ist noch was anzufordern
+              //
+              int logDetailNum = logDetailRead.dequeue();
+              SendListEntry sendCommand = remoteSPX42->askForLogDetailFor( logDetailNum );
+              remoteSPX42->sendCommand( sendCommand );
+              //
+              // das kann etwas dauern...
+              //
+              transferTimeout.start( TIMEOUTVAL * 8 );
+              if ( dbWriterFuture.isFinished() )
+              {
+                // Thread neu starten
+                lg->debug( QString( "LogFragment::onReadLogContentSlot -> request  %1 logs from spx42..." ).arg( logDetailNum ) );
+                dbWriterFuture =
+                    QtConcurrent::run( &this->logWriter, &LogDetailWriter::writeLogDataToDatabase, remoteSPX42->getRemoteConnected() );
+              }
+            }
+            else
+            {
+              // Timer ist zu stoppen!
+              logWriter.nowait( true );
+              transferTimeout.stop();
+            }
           }
           break;
         case SPX42CommandDef::SPX_GET_LOG_DETAIL:
-          // Datensatz in die Wartschlange
+          // Datensatz empfangen, ab in die Wartschlange
           logWriter.addDetail( recCommand );
           lg->debug( QString( "LogFragment::onDatagramRecivedSlot -> log detail %1 for dive number %2..." )
                          .arg( logWriter.getGlobal() )
-                         .arg( recCommand->getTag() ) );
+                         .arg( recCommand->getDiveNum() ) );
           // Timer verlängern
           transferTimeout.start( TIMEOUTVAL );
           break;
