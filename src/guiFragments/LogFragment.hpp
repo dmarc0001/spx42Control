@@ -51,7 +51,9 @@ namespace spx
     LogDetailWriter logWriter;                  //! schreibt logdetails queue in die DB
     QFuture< int > dbWriterFuture;              //! nebenläufig daten in DB schreiben
     QQueue< int > logDetailRead;                //! Liste mit zu lesenden Logdetails
-    QString fragmentTitlePattern;               //! das Muster (lokalisierungsfähig) für Fragmentüberschrift
+    const QIcon savedIcon;
+    const QIcon nullIcon;
+    QString fragmentTitlePattern;  //! das Muster (lokalisierungsfähig) für Fragmentüberschrift
     QString diveNumberStr;
     QString diveDateStr;
     QString diveDepthStr;
@@ -74,7 +76,8 @@ namespace spx
     void prepareMiniChart( void );
     void showDiveDataForGraph( int deviceId, int diveNum );
     void setGuiConnected( bool isConnected );
-    void processLogDetails( void );  //! schreibe alle Daten aus der Queue in die Datenbank
+    void processLogDetails( void );    //! schreibe alle Daten aus der Queue in die Datenbank
+    void testForSavedDetails( void );  //! schaue nach ob die Details dazu bereits gesichert wurden
     float getMinYValue( const QLineSeries *series );
     float getMaxYValue( const QLineSeries *series );
 

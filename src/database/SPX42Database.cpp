@@ -947,8 +947,6 @@ namespace spx
     if ( db.isValid() && db.isOpen() )
     {
       QString sql = QString( "select count(*) from '%1' where divenum=%2" ).arg( tableName ).arg( diveNum );
-      lg->debug( QString( "############ %1 ###############" ).arg( sql ) );
-
       QSqlQuery query( sql, db );
       if ( query.next() )
       {
@@ -959,6 +957,7 @@ namespace spx
         lg->debug( QString( "SPX42Database::existDiveLogInBase -> <%1> sets == %2..." )
                        .arg( query.value( 0 ).toInt() )
                        .arg( exist ? "YES" : "NO" ) );
+        return ( exist );
       }
       else
       {

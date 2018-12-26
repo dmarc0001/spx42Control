@@ -22,6 +22,8 @@ namespace spx
       , chartView( new QtCharts::QChartView( dummyChart ) )
       , axisY( new QCategoryAxis() )
       , logWriter( this, logger, spx42Database )
+      , savedIcon( ":/icons/saved_black" )
+      , nullIcon( ":/icons/saved_white" )
   {
     lg->debug( "LogFragment::LogFragment..." );
     ui->setupUi( this );
@@ -74,6 +76,7 @@ namespace spx
           onAddLogdirEntrySlot( QString( "%1:[%2]" ).arg( entr.number, 2, 10, QChar( '0' ) ).arg( entr.getDateTimeStr() ) );
         }
       }
+      testForSavedDetails();
     }
     onConfLicChangedSlot();
     connect( spxConfig.get(), &SPX42Config::licenseChangedSig, this, &LogFragment::onConfLicChangedSlot );
@@ -155,6 +158,7 @@ namespace spx
       ui->transferProgressBar->setVisible( false );
       ui->dbWriteNumLabel->setVisible( false );
       ui->dbWriteNumLabel->setText( dbWriteNumIDLE );
+      testForSavedDetails();
       // TODO: Auswerten der Ergebnisse
       // int result = dbWriterFuture.result();
     }
@@ -191,9 +195,8 @@ namespace spx
       //
       spxConfig->resetConfig( SPX42ConfigClass::CF_CLASS_LOG );
       // GUI löschen
-      ui->logentryTableWidget->clear();
+      ui->logentryTableWidget->setRowCount( 0 );
       // preview löschen
-      // ui->logentryTableWidget->reset();
       // Chart löschen
       chart->removeAllSeries();
       // Timeout starten
@@ -272,12 +275,13 @@ namespace spx
    */
   void LogFragment::onLogListViewClickedSlot( const QModelIndex &index )
   {
-    QString entry = index.data().toString();
     QString number = "-";
     QString date = "-";
     QString depth = "-";
+    int row = index.row();
+    QString entry = ui->logentryTableWidget->item( row, 0 )->text();
     lg->debug( QString( "LogFragment::onLogListViewClickedSlot: data: %1..." ).arg( entry ) );
-    QStringList pieces = index.data().toString().split( ':' );
+    QStringList pieces = entry.split( ':' );
     number = pieces.at( 0 );
     int start = entry.indexOf( '[' ) + 1;
     int end = entry.indexOf( ']' );
@@ -318,7 +322,7 @@ namespace spx
     // neueste zuerst
     //
     QTableWidgetItem *itName = new QTableWidgetItem( entry );
-    QTableWidgetItem *itLoadet = new QTableWidgetItem( "x" );  // TODO: später icon!
+    QTableWidgetItem *itLoadet = new QTableWidgetItem( nullIcon, "" );
     ui->logentryTableWidget->insertRow( 0 );
     ui->logentryTableWidget->setItem( 0, 0, itName );
     ui->logentryTableWidget->setItem( 0, 1, itLoadet );
@@ -551,6 +555,9 @@ namespace spx
             // TODO: fertig Markieren
             ui->transferProgressBar->setVisible( false );
             transferTimeout.stop();
+            // noch hinterher testen ob da was gesichert war
+            // TODO: nebenläufig...
+            testForSavedDetails();
           }
           else
           {
@@ -647,10 +654,42 @@ namespace spx
     chart->setVisible( isConnected );
     if ( !isConnected )
     {
-      ui->logentryTableWidget->clear();
+      ui->logentryTableWidget->setRowCount( 0 );
       // preview löschen
       chart->removeAllSeries();
     }
+  }
+
+  void LogFragment::testForSavedDetails()
+  {
+    lg->debug( "LogFragment::testForSavedDetails..." );
+    for ( int i = 0; i < ui->logentryTableWidget->rowCount(); i++ )
+    {
+      // den Eintrag holen
+      QTableWidgetItem *it = ui->logentryTableWidget->item( i, 0 );
+      // jetzt daten extraieren, nummer des Eintrages finden
+      QStringList pieces = it->text().split( ':' );
+      if ( !pieces.isEmpty() && pieces.count() > 1 )
+      {
+        //
+        // ich hab was gefunden
+        //
+        int diveNum = pieces.at( 0 ).toInt();
+        if ( database->existDiveLogInBase( remoteSPX42->getRemoteConnected().replace( ':', '-' ), diveNum ) )
+        {
+          lg->debug( QString( "LogFragment::testForSavedDetails -> saved in dive %1" ).arg( diveNum, 3, 10, QChar( '0' ) ) );
+          QTableWidgetItem *itLoadet = new QTableWidgetItem( savedIcon, "" );
+          ui->logentryTableWidget->setItem( i, 1, itLoadet );
+        }
+        else
+        {
+          lg->debug( QString( "LogFragment::testForSavedDetails -> NOT saved in dive %1" ).arg( diveNum, 3, 10, QChar( '0' ) ) );
+          QTableWidgetItem *itLoadet = new QTableWidgetItem( nullIcon, "" );
+          ui->logentryTableWidget->setItem( i, 1, itLoadet );
+        }
+      }
+    }
+    lg->debug( "LogFragment::testForSavedDetails...OK" );
   }
 
 }  // namespace spx
