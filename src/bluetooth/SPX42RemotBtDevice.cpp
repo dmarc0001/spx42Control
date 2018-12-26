@@ -370,7 +370,7 @@ namespace spx
             {
               lg->info( "SPX42RemotBtDevice::onReadSocketSlot ->  COMMAND GET_LOG_NUMBER_SE ON" );
               isNormalCommandMode = false;
-              currentDiveNumberForLogDetail = params.at( SPXCmdParam::LOGDETAIL_NUMBER ).toInt();
+              currentDiveNumberForLogDetail = params.at( SPXCmdParam::LOGDETAIL_NUMBER ).toInt( nullptr, 16 );
               currentDetailSequenceNumber = -1;
               //
               // weitere zu sendende Sachen blocken
