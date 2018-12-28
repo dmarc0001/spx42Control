@@ -263,13 +263,6 @@ namespace spx
 
       lg->debug( "SPX42Database::addAlias -> ASK ...OK" );
       query.first();
-      /*
-      lg->debug( QString( "SPX42Database::addAlias ->  isvalid %1, first %2, at %3..." )
-                     .arg( query.isValid() )
-                     .arg( query.first() )
-                     .arg( query.at() ) );
-      lg->debug( "SPX42Database::addAlias -> isValid...OK" );
-      */
       if ( query.at() < 0 )
       {
         //
@@ -441,7 +434,7 @@ namespace spx
   {
     QString sql;
     QSqlQuery query( db );
-    lg->debug( "SPX42Database::getLogTableName..." );
+    lg->debug( QString( "SPX42Database::getLogTableName for <%1>..." ).arg( mac ) );
     if ( db.isValid() && db.isOpen() )
     {
       //
@@ -462,11 +455,11 @@ namespace spx
           // keine Tabelle?
           //
           QString tableName( mac );
-          tableName = tableName.replace( ':', '-' );
+          tableName = tableName.remove( ':' );
           if ( createDeviceLogTable( tableName ) )
           {
             query.clear();
-            sql = QString( "update %1 set logtable='%2' where mac='%3'" )
+            sql = QString( "update '%1' set logtable='%2' where mac='%3'" )
                       .arg( SPX42Database::deviceTableName )
                       .arg( tableName )
                       .arg( mac );
@@ -806,8 +799,15 @@ namespace spx
     lg->debug( QString( "SPX42Database::createDeviceLogTable <%1>..." ).arg( deviceLogTable ) );
     if ( db.isValid() && db.isOpen() )
     {
-      QSqlQuery query( QString( "drop table if exists '%1'" ).arg( deviceLogTable ), db );
-
+      QSqlQuery query( db );
+      sql = QString( "drop table if exists '%1'" ).arg( deviceLogTable );
+      if ( !query.exec( sql ) )
+      {
+        QSqlError err = db.lastError();
+        lg->crit( QString( "SPX42Database::createDeviceLogTable -> failed drop if exist <%1>" ).arg( err.text() ) );
+        return ( false );
+      }
+      query.clear();
       //
       // das Statement zusammenschrauben
       //
@@ -840,14 +840,14 @@ namespace spx
         return ( false );
       }
       query.clear();
-      sql = QString( "create unique index ixd_logId on '%1' (divenum,lfdNr)" ).arg( deviceLogTable );
+      sql = QString( "create unique index 'ixd_logId%1' on '%2' (divenum,lfdNr)" ).arg( deviceLogTable ).arg( deviceLogTable );
       if ( query.exec( sql ) )
       {
         lg->debug( "SPX42Database::createDeviceLogTable -> create index ok" );
         return ( true );
       }
       QSqlError err = db.lastError();
-      lg->crit( QString( "SPX42Database::createDeviceLogTable -> failed create <%1>" ).arg( err.text() ) );
+      lg->crit( QString( "SPX42Database::createDeviceLogTable -> failed create index  <%1>" ).arg( err.text() ) );
       return ( false );
     }
     lg->warn( "SPX42Database::createDeviceLogTable -> db not opened" );

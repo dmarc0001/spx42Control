@@ -432,6 +432,33 @@
     </widget>
    </item>
   </layout>
+  <action name="actionResdLogDetail">
+   <property name="text">
+    <string>READ FROM DEVICE</string>
+   </property>
+   <property name="statusTip">
+    <string>read selected details from device...</string>
+   </property>
+  </action>
+  <action name="actionDropDetailFromDb">
+   <property name="text">
+    <string>DETAIL DROP FROM DATABASE</string>
+   </property>
+   <property name="toolTip">
+    <string>DETAIL DROP FROM DATABASE</string>
+   </property>
+   <property name="statusTip">
+    <string>drop selected detail from database...</string>
+   </property>
+  </action>
+  <action name="actionExportDetail">
+   <property name="text">
+    <string>EXPORT DETAIL...</string>
+   </property>
+   <property name="statusTip">
+    <string>export selected details...</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

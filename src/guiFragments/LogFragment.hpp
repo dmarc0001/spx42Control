@@ -51,6 +51,7 @@ namespace spx
     LogDetailWriter logWriter;                  //! schreibt logdetails queue in die DB
     QFuture< int > dbWriterFuture;              //! nebenläufig daten in DB schreiben
     QQueue< int > logDetailRead;                //! Liste mit zu lesenden Logdetails
+    bool logWriterTableExist;                   //! Ergebnis des Logwriter Threads, bei -1 gab es einen Fehler
     const QIcon savedIcon;
     const QIcon nullIcon;
     QString fragmentTitlePattern;  //! das Muster (lokalisierungsfähig) für Fragmentüberschrift
@@ -59,6 +60,7 @@ namespace spx
     QString diveDepthStr;
     QString dbWriteNumTemplate;
     QString dbWriteNumIDLE;
+    QMenu *context;
 
     public:
     explicit LogFragment( QWidget *parent,
@@ -76,8 +78,9 @@ namespace spx
     void prepareMiniChart( void );
     void showDiveDataForGraph( int deviceId, int diveNum );
     void setGuiConnected( bool isConnected );
-    void processLogDetails( void );    //! schreibe alle Daten aus der Queue in die Datenbank
-    void testForSavedDetails( void );  //! schaue nach ob die Details dazu bereits gesichert wurden
+    void processLogDetails( void );        //! schreibe alle Daten aus der Queue in die Datenbank
+    void testForSavedDetails( void );      //! schaue nach ob die Details dazu bereits gesichert wurden
+    void tryStartLogWriterThread( void );  //! den Thread starten (restarten)
     float getMinYValue( const QLineSeries *series );
     float getMaxYValue( const QLineSeries *series );
 

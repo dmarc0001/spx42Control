@@ -61,7 +61,9 @@ namespace spx
     QString tableName = database->getLogTableName( deviceMac );
     if ( tableName.isNull() || tableName.isEmpty() )
     {
-      lg->crit( "LogDetailWriter::writeLogDataToDatabase -> database error, not table für logdata exist..." );
+      lg->crit( "LogDetailWriter::writeLogDataToDatabase -> database error, not table for logdata exist..." );
+      detailQueue.clear();
+      shouldRunning = false;
       return ( -1 );
     }
     lg->debug( QString( "LogDetailWriter::writeLogDataToDatabase -> table %1 exist!" ).arg( tableName ) );

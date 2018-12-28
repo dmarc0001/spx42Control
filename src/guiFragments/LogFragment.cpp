@@ -22,6 +22,7 @@ namespace spx
       , chartView( new QtCharts::QChartView( dummyChart ) )
       , axisY( new QCategoryAxis() )
       , logWriter( this, logger, spx42Database )
+      , logWriterTableExist( false )
       , savedIcon( ":/icons/saved_black" )
       , nullIcon()
   {
@@ -45,7 +46,7 @@ namespace spx
     diveNumberStr = tr( "DIVE NUMBER: %1" );
     diveDateStr = tr( "DIVE DATE: %1" );
     diveDepthStr = tr( "DIVE DEPTH: %1m" );
-    dbWriteNumTemplate = tr( "WRITE DIVE #%1..." );
+    dbWriteNumTemplate = tr( "WRITE DIVE #%1 TO DB..." );
     dbWriteNumIDLE = tr( "WAIT FOR START..." );
     ui->diveNumberLabel->setText( diveNumberStr.arg( "-" ) );
     ui->diveDateLabel->setText( diveDateStr.arg( "-" ) );
@@ -160,12 +161,27 @@ namespace spx
       ui->dbWriteNumLabel->setText( dbWriteNumIDLE );
       testForSavedDetails();
       // TODO: Auswerten der Ergebnisse
-      // int result = dbWriterFuture.result();
+      int result = dbWriterFuture.result();
+      if ( result < 0 )
+      {
+        logWriterTableExist = false;
+      }
     }
     //
     // wenn in der Queue was drin ist UND der Writer bereits fertig ist.
     // Ist er nicht fertig, wird er dieses beim Beenden selber noch einmal aufrufen
     //
+    tryStartLogWriterThread();
+  }
+
+  void LogFragment::tryStartLogWriterThread()
+  {
+    if ( !logWriterTableExist )
+    {
+      lg->crit( "LogFragment::tryStartLogWriterThread -> can't start writer thread while database error! Try restart programm." );
+      ui->dbWriteNumLabel->setVisible( false );
+      return;
+    }
     if ( !logDetailRead.isEmpty() && dbWriterFuture.isFinished() )
     {
       lg->debug( "LogFragment::onWriterDoneSlot -> start writer thread again..." );
@@ -269,9 +285,7 @@ namespace spx
       transferTimeout.start( TIMEOUTVAL * 8 );
       logWriter.reset();
       lg->debug( QString( "LogFragment::onReadLogContentSlot -> request  %1 logs from spx42..." ).arg( logDetailNum ) );
-      ui->dbWriteNumLabel->setVisible( true );
-      dbWriterFuture =
-          QtConcurrent::run( &this->logWriter, &LogDetailWriter::writeLogDataToDatabase, remoteSPX42->getRemoteConnected() );
+      tryStartLogWriterThread();
     }
   }
 
@@ -281,7 +295,7 @@ namespace spx
    */
   void LogFragment::onLogListClickedSlot( const QModelIndex &index )
   {
-    QString depthStr = "-";
+    QString depthStr = " ? ";
     int diveNum = 0;
     double depth = 0;
     int row = index.row();
@@ -316,7 +330,7 @@ namespace spx
       //
       // die Datenbank fragen, ob und wie tief
       //
-      depth = ( database->getMaxDepthFor( remoteSPX42->getRemoteConnected().replace( ':', '-' ), diveNum ) / 10.0 );
+      depth = ( database->getMaxDepthFor( database->getLogTableName( remoteSPX42->getRemoteConnected() ), diveNum ) / 10.0 );
       if ( depth > 0 )
       {
         //
@@ -620,8 +634,7 @@ namespace spx
             if ( dbWriterFuture.isFinished() )
             {
               lg->debug( "LogFragment::onDatagramRecivedSlot -> start writer thread again..." );
-              dbWriterFuture =
-                  QtConcurrent::run( &this->logWriter, &LogDetailWriter::writeLogDataToDatabase, remoteSPX42->getRemoteConnected() );
+              tryStartLogWriterThread();
               ui->dbWriteNumLabel->setVisible( true );
             }
             // Timer verlängern
@@ -636,19 +649,28 @@ namespace spx
               // da ist noch was anzufordern
               //
               int logDetailNum = logDetailRead.dequeue();
-              SendListEntry sendCommand = remoteSPX42->askForLogDetailFor( logDetailNum );
-              remoteSPX42->sendCommand( sendCommand );
-              //
-              // das kann etwas dauern...
-              //
-              transferTimeout.start( TIMEOUTVAL * 8 );
-              if ( dbWriterFuture.isFinished() )
+              if ( logWriterTableExist )
               {
-                // Thread neu starten
-                lg->debug( QString( "LogFragment::onReadLogContentSlot -> request  %1 logs from spx42..." ).arg( logDetailNum ) );
-                dbWriterFuture =
-                    QtConcurrent::run( &this->logWriter, &LogDetailWriter::writeLogDataToDatabase, remoteSPX42->getRemoteConnected() );
-                ui->dbWriteNumLabel->setVisible( true );
+                //
+                // senden lohnt nur, wenn ich das auch verarbeiten kann
+                //
+                SendListEntry sendCommand = remoteSPX42->askForLogDetailFor( logDetailNum );
+                remoteSPX42->sendCommand( sendCommand );
+                //
+                // das kann etwas dauern...
+                //
+                transferTimeout.start( TIMEOUTVAL * 8 );
+                if ( dbWriterFuture.isFinished() )
+                {
+                  // Thread neu starten
+                  lg->debug( QString( "LogFragment::onReadLogContentSlot -> request  %1 logs from spx42..." ).arg( logDetailNum ) );
+                  tryStartLogWriterThread();
+                  ui->dbWriteNumLabel->setVisible( true );
+                }
+              }
+              else
+              {
+                lg->warn( "LogFragment::onDatagramRecivedSlot -> cancel request details while database write error!" );
               }
             }
             else
@@ -661,12 +683,19 @@ namespace spx
           break;
         case SPX42CommandDef::SPX_GET_LOG_DETAIL:
           // Datensatz empfangen, ab in die Wartschlange
-          logWriter.addDetail( recCommand );
-          lg->debug( QString( "LogFragment::onDatagramRecivedSlot -> log detail %1 for dive number %2..." )
-                         .arg( logWriter.getGlobal() )
-                         .arg( recCommand->getDiveNum() ) );
-          // Timer verlängern
-          transferTimeout.start( TIMEOUTVAL );
+          if ( !logWriterTableExist )
+          {
+            lg->warn( "LogFragment::onDatagramRecivedSlot -> cancel processing details while database write error!" );
+          }
+          else
+          {
+            logWriter.addDetail( recCommand );
+            lg->debug( QString( "LogFragment::onDatagramRecivedSlot -> log detail %1 for dive number %2..." )
+                           .arg( logWriter.getGlobal() )
+                           .arg( recCommand->getDiveNum() ) );
+            // Timer verlängern
+            transferTimeout.start( TIMEOUTVAL );
+          }
           break;
       }
       //
@@ -684,6 +713,23 @@ namespace spx
     ui->readLogdirPushButton->setEnabled( isConnected );
     ui->readLogContentPushButton->setEnabled( isConnected );
     ui->tabHeaderLabel->setText( fragmentTitlePattern.arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) );
+
+    if ( isConnected )
+    {
+      QString tableName = database->getLogTableName( remoteSPX42->getRemoteConnected() );
+      if ( tableName.isNull() || tableName.isEmpty() )
+      {
+        logWriterTableExist = false;
+      }
+      else
+      {
+        logWriterTableExist = true;
+      }
+    }
+    else
+    {
+      logWriterTableExist = false;
+    }
     chart->setVisible( isConnected );
     if ( !isConnected )
     {
@@ -696,6 +742,7 @@ namespace spx
   void LogFragment::testForSavedDetails()
   {
     lg->debug( "LogFragment::testForSavedDetails..." );
+    QString tableName = database->getLogTableName( remoteSPX42->getRemoteConnected() );
     for ( int i = 0; i < ui->logentryTableWidget->rowCount(); i++ )
     {
       // den Eintrag holen
@@ -708,7 +755,7 @@ namespace spx
         // ich hab was gefunden
         //
         int diveNum = pieces.at( 0 ).toInt();
-        if ( database->existDiveLogInBase( remoteSPX42->getRemoteConnected().replace( ':', '-' ), diveNum ) )
+        if ( database->existDiveLogInBase( tableName, diveNum ) )
         {
           lg->debug( QString( "LogFragment::testForSavedDetails -> saved in dive %1" ).arg( diveNum, 3, 10, QChar( '0' ) ) );
           QTableWidgetItem *itLoadet = new QTableWidgetItem( savedIcon, "" );
