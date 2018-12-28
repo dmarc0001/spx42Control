@@ -111,7 +111,28 @@ namespace spx
     return ( SendListEntry( CmdMarker( SPX42CommandDef::SPX_GET_SETUP_GASLIST ), cmd ) );
   }
 
-  SendListEntry SPX42Commands::askWhileStartup( void )
+  SendListEntry SPX42Commands::askForLogDir()
+  {
+    QByteArray cmd;
+    makeSipleCommand( SPX42CommandDef::SPX_GET_LOG_INDEX, cmd );
+    return ( SendListEntry( CmdMarker( SPX42CommandDef::SPX_GET_LOG_INDEX ), cmd ) );
+  }
+
+  SendListEntry SPX42Commands::askForLogDetailFor( int logNumber )
+  {
+    QByteArray code;
+    QByteArray cmd;
+    // Prefix
+    cmd.append( &SPX42CommandDef::STX, 1 );
+    // Frage nach den Detais für einen Tauchgang
+    cmd.append( QString( "~%1:%2" )
+                    .arg( static_cast< int >( SPX42CommandDef::SPX_GET_LOG_NUMBER ), 2, 16, QChar( '0' ) )
+                    .arg( logNumber, 2, 16, QChar( '0' ) ) );
+    cmd.append( &SPX42CommandDef::ETX, 1 );
+    return ( SendListEntry( CmdMarker( SPX42CommandDef::SPX_GET_LOG_NUMBER ), cmd ) );
+  }
+
+  SendListEntry SPX42Commands::askWhileStartup()
   {
     QByteArray code;
     QByteArray cmd;
@@ -187,6 +208,13 @@ namespace spx
       retVal = static_cast< char >( cmd.toUInt( nullptr, 16 ) & 0xff );
     }
     return ( retVal );
+  }
+
+  void SPX42Commands::decodeLogDetailLine( const QByteArray &pdu )
+  {
+    params.clear();
+    // OK, das ist ein Datagramm vom SPX
+    params = pdu.split( '\t' );
   }
 
   QByteArray SPX42Commands::getParameter( int index )

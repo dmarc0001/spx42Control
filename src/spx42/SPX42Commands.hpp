@@ -50,6 +50,9 @@ namespace spx
     SendListEntry askForConfig( void );
     //! frage alle Gaase ab
     SendListEntry askForGasList( void );
+    //! Frage nach Log Verzeichnis
+    SendListEntry askForLogDir( void );
+    SendListEntry askForLogDetailFor( int logNumber );
     //! Erster Kontakt, einstellungen abfragen
     // Frage nach dem Hersteller
     // gleich danach Frage nach der Seriennummer
@@ -66,6 +69,8 @@ namespace spx
     SendListEntry shutdownSPX42( void );
     //! erkenne die PDU, lagere Parameter hier im Objekt
     char decodeCommand( const QByteArray &pdu );
+    //! dekodiere Log detail PDU
+    void decodeLogDetailLine( const QByteArray &pdu );
     //! gib Parameter mit Index index zurück, 0 == Command
     QByteArray getParameter( int index );
     //! send command zum deco setzten

@@ -21,6 +21,7 @@ namespace spx
     gasCurrentBoxTitleTemplate = tr( "GAS #%1" );
     ui->setupUi( this );
     ui->transferProgressBar->setVisible( false );
+    ui->transferProgressBar->setRange( 0, 0 );
     initGuiWithConfig();
     onConfLicChangedSlot();
     connectSlots();
@@ -176,6 +177,11 @@ namespace spx
     disconnect( ui->currbailoutCheckBox, nullptr, nullptr, nullptr );
     disconnect( ui->currdil01CheckBox, nullptr, nullptr, nullptr );
     disconnect( ui->currdil02CheckBox, nullptr, nullptr, nullptr );
+  }
+
+  void GasFragment::onSendBufferStateChangedSlot( bool isBusy )
+  {
+    ui->transferProgressBar->setVisible( isBusy );
   }
 
   void GasFragment::onSpinO2ValueChangedSlot( int o2Val )
@@ -418,7 +424,7 @@ namespace spx
           // ~03:PW
           // PX => Angabe HEX in Milivolt vom Akku
           lg->debug( "GasFragment::onCommandRecivedSlot -> alive/acku..." );
-          ackuVal = ( recCommand->getValueAt( SPXCmdParam::ALIVE_POWER ) / 100.0 );
+          ackuVal = ( recCommand->getValueFromHexAt( SPXCmdParam::ALIVE_POWER ) / 100.0 );
           emit onAkkuValueChangedSig( ackuVal );
           break;
         case SPX42CommandDef::SPX_APPLICATION_ID:
@@ -466,9 +472,9 @@ namespace spx
           // Bailout
           // AA Diluent 1 oder 2 oder keins
           // CG curent Gas
-          recGasNumber = static_cast< int >( recCommand->getValueAt( SPXCmdParam::GASLIST_GAS_NUMBER ) );
-          n2 = static_cast< int >( recCommand->getValueAt( SPXCmdParam::GASLIST_N2 ) );
-          he = static_cast< int >( recCommand->getValueAt( SPXCmdParam::GASLIST_HE ) );
+          recGasNumber = static_cast< int >( recCommand->getValueFromHexAt( SPXCmdParam::GASLIST_GAS_NUMBER ) );
+          n2 = static_cast< int >( recCommand->getValueFromHexAt( SPXCmdParam::GASLIST_N2 ) );
+          he = static_cast< int >( recCommand->getValueFromHexAt( SPXCmdParam::GASLIST_HE ) );
           o2 = 100 - ( n2 + he );
           lg->debug( QString( "GasFragment::onCommandRecivedSlot -> gas #%1..." ).arg( recGasNumber, 2, 10, QChar( '0' ) ) );
           // CONFIG speichern
@@ -476,10 +482,10 @@ namespace spx
           recGas.reset();
           recGas.setO2( static_cast< quint8 >( o2 ) );
           recGas.setHe( static_cast< quint8 >( he ) );
-          recGas.setBailout( recCommand->getValueAt( SPXCmdParam::GASLIST_BAILOUT ) == 0 ? false : true );
-          recGas.setDiluentType( static_cast< DiluentType >( recCommand->getValueAt( SPXCmdParam::GASLIST_DILUENT ) ) );
+          recGas.setBailout( recCommand->getValueFromHexAt( SPXCmdParam::GASLIST_BAILOUT ) == 0 ? false : true );
+          recGas.setDiluentType( static_cast< DiluentType >( recCommand->getValueFromHexAt( SPXCmdParam::GASLIST_DILUENT ) ) );
           spxConfig->setGasAt( recGasNumber, recGas );
-          if ( recCommand->getValueAt( SPXCmdParam::GASLIST_IS_CURRENT ) > 0 )
+          if ( recCommand->getValueFromHexAt( SPXCmdParam::GASLIST_IS_CURRENT ) > 0 )
           {
             // current parameter ist hier immer 0
           }

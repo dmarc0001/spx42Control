@@ -2,11 +2,11 @@
 
 namespace spx
 {
-  /**
-   * @brief SPX42RemotBtDevice::SPX42RemotBtDevice
-   * @param logger
-   * @param parent
-   */
+  //
+  // suchmustrer für Lineend
+  //
+  // const QByteArray SPX42RemotBtDevice::lineEnd( QByteArray( SPX42CommandDef::CR, SPX42CommandDef::LF ) );
+
   SPX42RemotBtDevice::SPX42RemotBtDevice( std::shared_ptr< Logger > logger, QObject *parent )
       : QObject( parent )
       , lg( logger )
@@ -15,7 +15,10 @@ namespace spx
       , btUuiid( ProjectConst::RFCommUUID )
       , remoteAddr()
       , wasSocketError( false )
-      , ignoreTimer( false )
+      , ignoreSendTimer( false )
+      , isNormalCommandMode( true )
+      , currentDiveNumberForLogDetail( -1 )
+      , currentDetailSequenceNumber( -1 )
   {
     // das interval des Teimer auf 80 ms setzten
     sendTimer.setInterval( SEND_TIMERVAL );
@@ -23,6 +26,10 @@ namespace spx
     // verbinde das Timerevent mit der Senderoutine
     //
     connect( &sendTimer, &QTimer::timeout, this, &SPX42RemotBtDevice::onSendSocketTimerSlot );
+    // das Suchmuster für CRLF bauen
+    lineEnd.clear();
+    lineEnd.append( SPX42CommandDef::CR );
+    lineEnd.append( SPX42CommandDef::LF );
   }
 
   /**
@@ -285,7 +292,47 @@ namespace spx
       //
       int idxOfETX = recBuffer.indexOf( SPX42CommandDef::ETX );
       int idxOfSTX = -1;
+      int idxDetailEnd = -1;
+      //#######################################################################
+      // guck mal in welchem Modus wir sind, und ob da noch ein
+      // normales kommando rumlungert
+      //#######################################################################
+      if ( !isNormalCommandMode )
+      {
+        // gibt es ein Ende eines Log Strings
+        idxDetailEnd = recBuffer.indexOf( SPX42RemotBtDevice::lineEnd );
+      }
+      if ( !isNormalCommandMode && idxDetailEnd > -1 )
+      {
+        //
+        // DA ist ein Detail, und ist es ist VOR dem Kommando
+        //
+        if ( idxOfETX > -1 && idxOfETX < idxDetailEnd )
+        {
+          // ein Kommando ist noch davor...
+          lg->debug(
+              "SPX42RemotBtDevice::onReadSocketSlot -> not normal mode: there is a command response brefore logdetail dataset...." );
+        }
+        else
+        {
+          // hier kommt ein log detail eintrag geflogen
+          // alles vor dem ist ein Datensatz
+          QByteArray _datagram = recBuffer.left( idxDetailEnd - 1 );
+          recBuffer.remove( 0, idxDetailEnd + 2 );
+          if ( _datagram.size() > 64 )
+          {
+            decodeLogDetailLine( _datagram );
+            rCmdQueue.enqueue( spSingleCommand( new SPX42SingleCommand(
+                SPX42CommandDef::SPX_GET_LOG_DETAIL, params, currentDiveNumberForLogDetail, ++currentDetailSequenceNumber ) ) );
+          }
+        }
+      }
+      //#######################################################################
+      // ende logdetail
+      //#######################################################################
+
       //
+      // normale datagramme bearbeiten
       // solange es ein Ende gibt muss ich Datagramme extraieren
       //
       while ( idxOfETX > -1 )
@@ -309,6 +356,36 @@ namespace spx
           char cmd = decodeCommand( _datagramm );
           // in die Empfangsqueue setzen
           rCmdQueue.enqueue( spSingleCommand( new SPX42SingleCommand( cmd, params ) ) );
+          //
+          // ändert sich der Status des Kommandomode? Normal/Logdetail
+          //
+          if ( cmd == SPX42CommandDef::SPX_GET_LOG_NUMBER_SE )
+          {
+            //
+            // Kommando beginn oder Ende LOG Details
+            // params[1] on/off 0/1
+            // params[2] nummer
+            //
+            if ( params.at( SPXCmdParam::LOGDETAIL_START_END ).toInt() == 1 )
+            {
+              lg->info( "SPX42RemotBtDevice::onReadSocketSlot ->  COMMAND GET_LOG_NUMBER_SE ON" );
+              isNormalCommandMode = false;
+              currentDiveNumberForLogDetail = params.at( SPXCmdParam::LOGDETAIL_NUMBER ).toInt( nullptr, 16 );
+              currentDetailSequenceNumber = -1;
+              //
+              // weitere zu sendende Sachen blocken
+              //
+              ignoreSendTimer = true;
+            }
+            else
+            {
+              lg->info( "SPX42RemotBtDevice::onReadSocketSlot -> COMMAND GET_LOG_NUMBER_SE OFF" );
+              isNormalCommandMode = true;
+              currentDiveNumberForLogDetail = -1;
+              ignoreSendTimer = false;
+              currentDetailSequenceNumber = -1;
+            }
+          }
           // ein timerereignis async zum versenden
           QTimer::singleShot( 5, [this] { emit onCommandRecivedSig(); } );
         }
@@ -342,11 +419,11 @@ namespace spx
    */
   void SPX42RemotBtDevice::onSendSocketTimerSlot()
   {
-    if ( ignoreTimer )
+    if ( ignoreSendTimer )
       return;
     if ( ( socket != nullptr ) && ( socket->state() == QBluetoothSocket::ConnectedState ) && !sendList.isEmpty() )
     {
-      ignoreTimer = true;
+      ignoreSendTimer = true;
       SendListEntry entry( sendList.takeFirst() );
 #ifdef DEBUG
       lg->debug( QString( "SPX42RemotBtDevice::onSendSocketTimerSlot -> send telegram <%1>..." ).arg( QString( entry.second ) ) );
@@ -354,7 +431,12 @@ namespace spx
       socket->write( entry.second );
       // Wartezeit startet neu
       sendTimer.start();
-      ignoreTimer = false;
+      ignoreSendTimer = false;
     }
+  }
+
+  bool SPX42RemotBtDevice::getIsNormalCommandMode() const
+  {
+    return isNormalCommandMode;
   }
 }

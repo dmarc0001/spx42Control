@@ -38,6 +38,8 @@ namespace Ui
 
 namespace spx
 {
+  constexpr int MAIN_WATCHDOG_TIMERCOUNT = 1000;
+  constexpr int MAIN_ALIVE_TIMEVALUE = MAIN_WATCHDOG_TIMERCOUNT * 10;
   class SPX42ControlMainWin : public QMainWindow
   {
     private:
@@ -84,6 +86,9 @@ namespace spx
     ApplicationTab getApplicationTab( void );                //! Welcher Tab war noch aktiv?
     void setOnlineStatusMessage( const QString &msg = "" );  //! setze eine Meldung in den Fenstertitel
     void makeOnlineStatus( void );                           //! Mache einen Online Status
+
+    signals:
+    void onSendBufferStateChangedSig( bool isBusy );  //! statusänderungeen im Puffer oder rledigt
 
     private slots:
     void onWatchdogTimerSlot( void );                                       //! timer für zyklische Sachen, watchdog...

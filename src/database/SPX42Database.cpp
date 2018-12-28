@@ -6,7 +6,14 @@ namespace spx
   const QString SPX42Database::deviceTableName{"devices"};
 
   const QString SPX42Database::sqlDriver{"QSQLITE"};
-  const qint16 SPX42Database::databaseVersion{1};
+  const qint16 SPX42Database::databaseVersion{2};
+
+  //! template für insert in die Logdaten
+  const QString SPX42Database::loglineInsertTemplate{
+      "insert into '%1' \n"
+      "(divenum,lfdNr,pressure,depth,temperature,acku,ppo2,ppo2_1,ppo2_2,ppo2_3,setpoint,n2,he,zeroTime,nextStep)\n"
+      "values\n"
+      "(%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16)"};
 
   SPX42DeviceAlias::SPX42DeviceAlias() : mac(), name(), alias(), lastConnected( false )
   {
@@ -19,6 +26,59 @@ namespace spx
 
   SPX42DeviceAlias::SPX42DeviceAlias( const SPX42DeviceAlias &di )
       : mac( di.mac ), name( di.name ), alias( di.alias ), lastConnected( di.lastConnected )
+  {
+  }
+
+  DiveLogEntry::DiveLogEntry(){};
+  DiveLogEntry::DiveLogEntry( int dn,
+                              int lf,
+                              int pr,
+                              int de,
+                              int te,
+                              double ac,
+                              double p2,
+                              double p21,
+                              double p22,
+                              double p23,
+                              int sp,
+                              int n,
+                              int h,
+                              int z,
+                              int nx )
+      : diveNum( dn )
+      , lfdNr( lf )
+      , pressure( pr )
+      , depth( de )
+      , temperature( te )
+      , acku( ac )
+      , ppo2( p2 )
+      , ppo2_1( p21 )
+      , ppo2_2( p22 )
+      , ppo2_3( p23 )
+      , setpoint( sp )
+      , n2( n )
+      , he( h )
+      , zeroTime( z )
+      , nextStep( nx )
+  {
+  }
+
+  DiveLogEntry::DiveLogEntry( const DiveLogEntry &en )
+      : diveNum( en.diveNum )
+      , lfdNr( en.lfdNr )
+      , pressure( en.pressure )
+      , depth( en.depth )
+      , temperature( en.temperature )
+      , acku( en.acku )
+      , ppo2( en.ppo2 )
+      , ppo2_1( en.ppo2_1 )
+      , ppo2_2( en.ppo2_1 )
+      , ppo2_3( en.ppo2_3 )
+      , setpoint( en.setpoint )
+      , n2( en.n2 )
+      , he( en.he )
+      , zeroTime( en.zeroTime )
+      , nextStep( en.nextStep )
   {
   }
 
@@ -163,7 +223,7 @@ namespace spx
     //
     if ( db.isValid() && db.isOpen() )
     {
-      QSqlQuery query( QString( "select mac,name,alias,last from %1" ).arg( SPX42Database::deviceTableName ), db );
+      QSqlQuery query( QString( "select mac,name,alias,last from '%1'" ).arg( SPX42Database::deviceTableName ), db );
       while ( query.next() )
       {
         QString mac( query.value( 0 ).toString() );
@@ -192,7 +252,7 @@ namespace spx
     {
       //
       // guck nach, ob der Eintrag vorhanden ist
-      sql = QString( "select mac from %1 where mac='%2'" ).arg( SPX42Database::deviceTableName ).arg( mac );
+      sql = QString( "select mac from '%1' where mac='%2'" ).arg( SPX42Database::deviceTableName ).arg( mac );
       lg->debug( QString( "SPX42Database::addAlias -> ASK (%1)..." ).arg( sql ) );
       if ( !query.exec( sql ) )
       {
@@ -203,19 +263,12 @@ namespace spx
 
       lg->debug( "SPX42Database::addAlias -> ASK ...OK" );
       query.first();
-      /*
-      lg->debug( QString( "SPX42Database::addAlias ->  isvalid %1, first %2, at %3..." )
-                     .arg( query.isValid() )
-                     .arg( query.first() )
-                     .arg( query.at() ) );
-      lg->debug( "SPX42Database::addAlias -> isValid...OK" );
-      */
       if ( query.at() < 0 )
       {
         //
         // MAC ist noch nicht in der Datenbank, INSERT
         //
-        sql = QString( "insert into %1 (mac, name, alias, last) values ('%2', '%3', '%4', %5)" )
+        sql = QString( "insert into '%1' (mac, name, alias, last) values ('%2', '%3', '%4', %5)" )
                   .arg( SPX42Database::deviceTableName )
                   .arg( mac )
                   .arg( name )
@@ -234,7 +287,7 @@ namespace spx
       //
       // Mac war in der Datenbank, also update
       //
-      sql = QString( "update %1 set name='%2', alias='%3', last=%4 where mac='%5'" )
+      sql = QString( "update '%1' set name='%2', alias='%3', last=%4 where mac='%5'" )
                 .arg( SPX42Database::deviceTableName )
                 .arg( name )
                 .arg( alias )
@@ -279,7 +332,7 @@ namespace spx
     if ( db.isValid() && db.isOpen() )
     {
       QSqlQuery query(
-          QString( "update %1 set alias='%2' where mac='%3'" ).arg( SPX42Database::deviceTableName ).arg( alias ).arg( mac ), db );
+          QString( "update '%1' set alias='%2' where mac='%3'" ).arg( SPX42Database::deviceTableName ).arg( alias ).arg( mac ), db );
       if ( query.exec() )
       {
         //
@@ -313,7 +366,7 @@ namespace spx
     if ( db.isValid() && db.isOpen() )
     {
       QSqlQuery query(
-          QString( "update %1 set alias='%2' where name='%3'" ).arg( SPX42Database::deviceTableName ).arg( alias ).arg( name ), db );
+          QString( "update '%1' set alias='%2' where name='%3'" ).arg( SPX42Database::deviceTableName ).arg( alias ).arg( name ), db );
       if ( query.exec() )
       {
         //
@@ -357,7 +410,7 @@ namespace spx
         lg->warn( QString( "SPX42Database::setLastConnected -> <%1>..." ).arg( err.text() ) );
         return ( false );
       }
-      sql = QString( "update %1 set last=%2 where mac='%3'" ).arg( SPX42Database::deviceTableName ).arg( 1 ).arg( mac );
+      sql = QString( "update '%1' set last=%2 where mac='%3'" ).arg( SPX42Database::deviceTableName ).arg( 1 ).arg( mac );
       if ( !query.exec( sql ) )
       {
         QSqlError err = db.lastError();
@@ -377,6 +430,59 @@ namespace spx
     return ( false );
   }
 
+  QString SPX42Database::getLogTableName( const QString &mac )
+  {
+    QString sql;
+    QSqlQuery query( db );
+    lg->debug( QString( "SPX42Database::getLogTableName for <%1>..." ).arg( mac ) );
+    if ( db.isValid() && db.isOpen() )
+    {
+      //
+      // existiert der Eintrag?
+      //
+      QSqlQuery query( QString( "select logtable from '%1' where mac='%2'" ).arg( SPX42Database::deviceTableName ).arg( mac ), db );
+      if ( !query.next() )
+      {
+        lg->warn( QString( "SPX42Database::getLogTableName -> requested mac <%1> not found in database..." ).arg( mac ) );
+        // Leeren String zurück
+        return ( QString() );
+      }
+      else
+      {
+        if ( query.value( 0 ).isNull() )
+        {
+          //
+          // keine Tabelle?
+          //
+          QString tableName( mac );
+          tableName = tableName.remove( ':' );
+          if ( createDeviceLogTable( tableName ) )
+          {
+            query.clear();
+            sql = QString( "update '%1' set logtable='%2' where mac='%3'" )
+                      .arg( SPX42Database::deviceTableName )
+                      .arg( tableName )
+                      .arg( mac );
+            if ( query.exec( sql ) )
+            {
+              //
+              // Tabelle erzeugt und eingetragen
+              //
+              lg->debug( "SPX42Database::getLogTableName...OK" );
+              return ( tableName );
+            }
+          }
+          return ( QString() );
+        }
+        else
+        {
+          return ( query.value( 0 ).toString() );
+        }
+      }
+    }
+    return ( QString() );
+  }
+
   /**
    * @brief SPX42Database::getLastConnected
    * @return
@@ -389,7 +495,7 @@ namespace spx
       //
       // alle flags löschen
       //
-      QSqlQuery query( QString( "select mac from %1 where last=1" ).arg( SPX42Database::deviceTableName ), db );
+      QSqlQuery query( QString( "select mac from '%1' where last=1" ).arg( SPX42Database::deviceTableName ), db );
       if ( !query.next() )
       {
         QSqlError err = db.lastError();
@@ -421,25 +527,30 @@ namespace spx
    */
   bool SPX42Database::existTable( const QString &tableName )
   {
-    QSqlQuery query( QString( "SELECT name FROM sqlite_master WHERE type = 'table' AND name = '%1'" ).arg( tableName ), db );
-    QString foundTable;
-    if ( query.next() )
+    if ( db.isValid() && db.isOpen() )
     {
-      //
-      // was war das Ergebnis, wenn die Anfrage erfolgreich war
-      //
-      foundTable = query.value( 0 ).toString().trimmed();
-      lg->debug( QString( "SPX42Database::existTable -> tablename <%1> found..." ).arg( foundTable ) );
-      //
-      // ist das das von mir erwartete Ergebnis (eigentlich würde reichen "nicht leer")
-      //
-      if ( foundTable == tableName )
+      QSqlQuery query( QString( "SELECT name FROM 'sqlite_master' WHERE type = 'table' AND name = '%1'" ).arg( tableName ), db );
+      QString foundTable;
+      if ( query.next() )
       {
-        lg->debug( QString( "SPX42Database::existTable -> table <%1> exists..." ).arg( tableName ) );
-        return ( true );
+        //
+        // was war das Ergebnis, wenn die Anfrage erfolgreich war
+        //
+        foundTable = query.value( 0 ).toString().trimmed();
+        lg->debug( QString( "SPX42Database::existTable -> tablename <%1> found..." ).arg( foundTable ) );
+        //
+        // ist das das von mir erwartete Ergebnis (eigentlich würde reichen "nicht leer")
+        //
+        if ( foundTable == tableName )
+        {
+          lg->debug( QString( "SPX42Database::existTable -> table <%1> exists..." ).arg( tableName ) );
+          return ( true );
+        }
       }
+      lg->debug( QString( "SPX42Database::existTable -> table <%1> NOT exists..." ).arg( tableName ) );
+      return ( false );
     }
-    lg->debug( QString( "SPX42Database::existTable -> table <%1> NOT exists..." ).arg( tableName ) );
+    lg->warn( "SPX42Database::existTable -> db is not open or exist!" );
     return ( false );
   }
 
@@ -451,12 +562,19 @@ namespace spx
   {
     qint16 version = -1;
     //
-    QSqlQuery query( QString( "select max(version) from %1" ).arg( SPX42Database::versionTableName ), db );
-    if ( query.next() )
+    if ( db.isValid() && db.isOpen() )
     {
-      version = static_cast< qint16 >( query.value( 0 ).toInt() );
+      QSqlQuery query( QString( "select max(version) from '%1'" ).arg( SPX42Database::versionTableName ), db );
+      if ( query.next() )
+      {
+        version = static_cast< qint16 >( query.value( 0 ).toInt() );
+      }
+      lg->debug( QString( "SPX42Database::getDatabaseVersion -> <%1>..." ).arg( version ) );
     }
-    lg->debug( QString( "SPX42Database::getDatabaseVersion -> <%1>..." ).arg( version ) );
+    else
+    {
+      lg->warn( "SPX42Database::getDatabaseVersion -> db not open or not exist!" );
+    }
     return ( version );
   }
 
@@ -466,25 +584,43 @@ namespace spx
    */
   bool SPX42Database::createVersionTable()
   {
+    QString sql;
     lg->debug( "SPX42Database::createVersionTable..." );
-    QSqlQuery query( QString( "drop table if exist %1" ).arg( SPX42Database::versionTableName ), db );
-    query.exec();
-    if ( !query.exec( QString( "create table %1 ( version INTEGER )" ).arg( SPX42Database::versionTableName ) ) )
+    if ( db.isValid() && db.isOpen() )
     {
+      QSqlQuery query( db );
+      sql = QString( "drop table if exists '%1'" ).arg( SPX42Database::versionTableName );
+      if ( !query.exec( sql ) )
+      {
+        QSqlError err = db.lastError();
+        lg->crit( QString( "SPX42Database::createVersionTable -> failed drop table if exist <%1>" ).arg( err.text() ) );
+        return ( false );
+      }
+      sql = QString( "create table '%1' ( version INTEGER default 0 )" ).arg( SPX42Database::versionTableName );
+      query.clear();
+      if ( !query.exec( sql ) )
+      {
+        QSqlError err = db.lastError();
+        lg->crit( QString( "SPX42Database::createVersionTable -> failed create table <%1>" ).arg( err.text() ) );
+        return ( false );
+      }
+      query.clear();
+      lg->debug( "SPX42Database::createVersionTable -> insert version number..." );
+      sql = QString( "insert into '%1' (version) values (%2)" )
+                .arg( SPX42Database::versionTableName )
+                .arg( SPX42Database::databaseVersion );
+      if ( query.exec( sql ) )
+      {
+        lg->debug( "SPX42Database::createVersionTable -> insert version number: OK" );
+        return ( true );
+      }
       QSqlError err = db.lastError();
-      lg->crit( QString( "SPX42Database::createVersionTable -> %1" ).arg( err.text() ) );
-      return ( false );
+      lg->crit( QString( "SPX42Database::createVersionTable -> failed insert data <%1>" ).arg( err.text() ) );
     }
-    lg->debug( "SPX42Database::createVersionTable -> insert version number..." );
-    if ( query.exec( QString( "insert into %1 (version) values (%2)" )
-                         .arg( SPX42Database::versionTableName )
-                         .arg( SPX42Database::databaseVersion ) ) )
+    else
     {
-      lg->debug( "SPX42Database::createVersionTable -> insert version number: OK" );
-      return ( true );
+      lg->warn( "SPX42Database::createVersionTable -> db nor open or not exist!" );
     }
-    QSqlError err = db.lastError();
-    lg->crit( QString( "SPX42Database::createVersionTable -> %1" ).arg( err.text() ) );
     return ( false );
   }
 
@@ -494,6 +630,8 @@ namespace spx
    */
   bool SPX42Database::checkOrCreateTables()
   {
+    lg->debug( "SPX42Database::checkOrCreateTables..." );
+    bool haveToCreateNewVersionTable = false;
     //
     // Datenbank ist offen, finde zuerst die Versionsnummer
     //
@@ -505,8 +643,9 @@ namespace spx
       //
       return createAllTables();
     }
-    qint16 currentVersionNumber = getDatabaseVersion();
-    if ( currentVersionNumber == -1 )
+    qint16 currentDatabaseVersionNumber = getDatabaseVersion();
+    lg->debug( QString( "SPX42Database::checkOrCreateTables -> current database version %1..." ).arg( currentDatabaseVersionNumber ) );
+    if ( currentDatabaseVersionNumber == -1 )
     {
       // Da ging was gewaltig schief, reagiere!
       lg->crit( "SPX42Database::checkOrCreateTables -> not an version number found!" );
@@ -521,9 +660,48 @@ namespace spx
         return ( false );
       }
     }
+    else
+    {
+      //
+      // Tabelle exixistiert
+      //
+      lg->debug( QString( "SPX42Database::checkOrCreateTables -> database version: %1 programm database version: %2..." )
+                     .arg( currentDatabaseVersionNumber )
+                     .arg( databaseVersion ) );
+      if ( currentDatabaseVersionNumber < databaseVersion )
+      {
+        //
+        // ALARM, da muss ich was machen
+        //
+        lg->info( "SPX42Database::checkOrCreateTables -> version is different..." );
+        if ( databaseVersion == 2 )
+        {
+          //
+          // von Version 1 zu 2
+          //
+          if ( alterAliasTableFrom1To2() )
+          {
+            // War ok...
+            haveToCreateNewVersionTable = true;
+          }
+          else
+          {
+            return ( false );
+          }
+        }
+      }
+    }
+
     //
     // zu guter letzt:
     //
+    if ( haveToCreateNewVersionTable )
+    {
+      //
+      // erzeuge eine neue Versionstabelle
+      // mit aktuellem Inhalt
+      createVersionTable();
+    }
     return ( true );
   }
 
@@ -552,24 +730,298 @@ namespace spx
   {
     QString sql;
     lg->debug( "SPX42Database::createAliasTable..." );
-    QSqlQuery query( QString( "drop table if exist %1" ).arg( SPX42Database::deviceTableName ), db );
-    //
-    // das Statement zusammenschrauben
-    //
-    sql = "create table " + SPX42Database::deviceTableName + "\n(\n";
-    sql += " mac TEXT not NULL,\n";
-    sql += " name TEXT not NULL,\n ";
-    sql += " alias TEXT default NULL,\n";
-    sql += " last INTEGER default 0\n";
-    sql += ")";
-    if ( query.exec( sql ) )
+    if ( db.isValid() && db.isOpen() )
     {
-      lg->debug( "SPX42Database::createAliasTable...OK" );
+      QSqlQuery query( QString( "drop table if exists '%1'" ).arg( SPX42Database::deviceTableName ), db );
+      //
+      // das Statement zusammenschrauben
+      //
+      sql = "create table '" + SPX42Database::deviceTableName + "'\n";
+      sql += "(\n";
+      sql += " mac TEXT not NULL,\n";          // MAC Adresse des Gerätes
+      sql += " name TEXT not NULL,\n ";        // Name, gemeldet vom Gerät
+      sql += " alias TEXT default NULL,\n";    // Alias, vom Benutzer gestgelegt
+      sql += " last INTEGER default 0,\n";     // War es das letzte verbundene Gerät
+      sql += " logtable TEXT default NULL\n";  // welche Tabelle?
+      sql += ")";
+      if ( query.exec( sql ) )
+      {
+        lg->debug( "SPX42Database::createAliasTable...OK" );
+        return ( true );
+      }
+      QSqlError err = db.lastError();
+      lg->crit( QString( "SPX42Database::createAliasTable -> failed create table <%1>" ).arg( err.text() ) );
+    }
+    else
+    {
+      lg->warn( "SPX42Database::createAliasTable -> db not open or not exist!" );
+    }
+    return ( false );
+  }
+
+  bool SPX42Database::alterAliasTableFrom1To2()
+  {
+    QString sql;
+    lg->debug( "SPX42Database::alterAliasTableFrom1To2..." );
+    if ( db.isValid() && db.isOpen() )
+    {
+      QSqlQuery query( db );
+      if ( !db.transaction() )
+      {
+        QSqlError err = db.lastError();
+        lg->crit( QString( "SPX42Database::alterAliasTableFrom1To2 -> open transaction failed %1" ).arg( err.text() ) );
+      }
+      sql = QString( "alter table %1 add logtable TEXT default NULL" ).arg( SPX42Database::deviceTableName );
+      if ( !query.exec( sql ) )
+      {
+        QSqlError err = db.lastError();
+        lg->crit( QString( "SPX42Database::alterAliasTableFrom1To2 -> alter table add column failed <%1>" ).arg( err.text() ) );
+        db.rollback();
+        return ( false );
+      }
+      if ( !db.commit() )
+      {
+        QSqlError err = db.lastError();
+        lg->crit( QString( "SPX42Database::alterAliasTableFrom1To2 -> commit failed %1" ).arg( err.text() ) );
+        db.rollback();
+        return ( false );
+      }
+      lg->debug( "SPX42Database::alterAliasTableFrom1To2...OK" );
       return ( true );
     }
-    QSqlError err = db.lastError();
-    lg->crit( QString( "SPX42Database::createAliasTable -> %1" ).arg( err.text() ) );
+    lg->warn( "SPX42Database::alterAliasTableFrom1To2 -> db not opened!" );
     return ( false );
+  }
+
+  bool SPX42Database::createDeviceLogTable( QString deviceLogTable )
+  {
+    QString sql;
+    lg->debug( QString( "SPX42Database::createDeviceLogTable <%1>..." ).arg( deviceLogTable ) );
+    if ( db.isValid() && db.isOpen() )
+    {
+      QSqlQuery query( db );
+      sql = QString( "drop table if exists '%1'" ).arg( deviceLogTable );
+      if ( !query.exec( sql ) )
+      {
+        QSqlError err = db.lastError();
+        lg->crit( QString( "SPX42Database::createDeviceLogTable -> failed drop if exist <%1>" ).arg( err.text() ) );
+        return ( false );
+      }
+      query.clear();
+      //
+      // das Statement zusammenschrauben
+      //
+      sql = QString( "create table '%1'\n" ).arg( deviceLogTable );
+      sql += "(\n";                                // Tabellenneme ist MAC
+      sql += " divenum INTEGER not NULL,\n";       // Tauchgangsnummer laufend
+      sql += " lfdNr INTEGER not NULL,\n ";        // logeintrag nummer des Tauchganges
+      sql += " pressure INTEGER default 0,\n";     // Umgebungsdruck == Tiefe
+      sql += " depth INTEGER default 0,\n";        // Tiefe
+      sql += " temperature INTEGER default 0,\n";  // Temperatur Wasser
+      sql += " acku REAL default 0,\n";            // Akkuspannung
+      sql += " ppo2 REAL default 0,\n";            // Sauerstoffpartioaldruck reslultierend
+      sql += " ppo2_1 REAL default 0,\n";          // PPO2 Sensor 1
+      sql += " ppo2_2 REAL default 0,\n";          // PPO2 Sensor 2
+      sql += " ppo2_3 REAL default 0,\n";          // PPO2 Sensor 3
+      sql += " setpoint INTEGER default 0,\n";     // Setpoint PPO2
+      sql += " n2 INTEGER default 78,\n";          // Stickstoff in prozent
+      sql += " he INTEGER default 0,\n";           // Helium in prozent
+      sql += " zeroTime INTEGER default 0,\n";     // Nullzeit zu diesem Zeitpunkt
+      sql += " nextStep INTEGER default 60\n";     // nächster Logeintrag in zeitlichem Abstand
+      sql += ")";
+      if ( query.exec( sql ) )
+      {
+        lg->debug( "SPX42Database::createDeviceLogTable -> create table ok" );
+      }
+      else
+      {
+        QSqlError err = db.lastError();
+        lg->crit( QString( "SPX42Database::createDeviceLogTable -> failed create <%1>" ).arg( err.text() ) );
+        return ( false );
+      }
+      query.clear();
+      sql = QString( "create unique index 'ixd_logId%1' on '%2' (divenum,lfdNr)" ).arg( deviceLogTable ).arg( deviceLogTable );
+      if ( query.exec( sql ) )
+      {
+        lg->debug( "SPX42Database::createDeviceLogTable -> create index ok" );
+        return ( true );
+      }
+      QSqlError err = db.lastError();
+      lg->crit( QString( "SPX42Database::createDeviceLogTable -> failed create index  <%1>" ).arg( err.text() ) );
+      return ( false );
+    }
+    lg->warn( "SPX42Database::createDeviceLogTable -> db not opened" );
+    return ( false );
+  }
+
+  bool SPX42Database::insertLogentry( const QString &tableName, const DiveLogEntry &entr )
+  {
+    lg->debug( "SPX42Database::insertLogentry..." );
+    if ( db.isValid() && db.isOpen() )
+    {
+      QString sql = loglineInsertTemplate.arg( tableName )
+                        .arg( entr.diveNum )
+                        .arg( entr.lfdNr )
+                        .arg( entr.pressure )
+                        .arg( entr.depth )
+                        .arg( entr.temperature )
+                        .arg( entr.acku )
+                        .arg( entr.ppo2 )
+                        .arg( entr.ppo2_1 )
+                        .arg( entr.ppo2_2 )
+                        .arg( entr.ppo2_3 )
+                        .arg( entr.setpoint )
+                        .arg( entr.n2 )
+                        .arg( entr.he )
+                        .arg( entr.zeroTime )
+                        .arg( entr.nextStep );
+      QSqlQuery query( sql, db );
+      if ( query.exec() )
+      {
+        //
+        // Abfrage korrekt bearbeitet
+        //
+        lg->debug( "SPX42Database::insertLogentry...OK" );
+        return ( true );
+      }
+      else
+      {
+        QSqlError err = db.lastError();
+        lg->warn( QString( "SPX42Database::insertLogentry -> <%1>..." ).arg( err.text() ) );
+      }
+    }
+    else
+    {
+      lg->warn( "SPX42Database::insertLogentry -> db is not valid or not opened." );
+    }
+    return ( false );
+  }
+
+  bool SPX42Database::insertLogentry( const QString &tableName, spSingleCommand cmd )
+  {
+    lg->debug( "SPX42Database::insertLogentry..." );
+    if ( db.isValid() && db.isOpen() )
+    {
+      QSqlQuery query( db );
+      QString sql = loglineInsertTemplate.arg( tableName )
+                        .arg( cmd->getDiveNum() )
+                        .arg( cmd->getSequence() )
+                        .arg( static_cast< int >( cmd->getValueAt( SPXCmdParam::LOGDETAIL_PRESSURE ) ) )
+                        .arg( static_cast< int >( cmd->getValueAt( SPXCmdParam::LOGDETAIL_DEPTH ) ) )
+                        .arg( static_cast< int >( cmd->getValueAt( SPXCmdParam::LOGDETAIL_TEMP ) ) )
+                        .arg( cmd->getParamAt( SPXCmdParam::LOGDETAIL_ACKU ).replace( 'V', ' ' ).toDouble() )  // Volt entfernen
+                        .arg( cmd->getDoubleValueAt( SPXCmdParam::LOGDETAIL_PPO2 ) )
+                        .arg( cmd->getDoubleValueAt( SPXCmdParam::LOGDETAIL_PPO2_1 ) )
+                        .arg( cmd->getDoubleValueAt( SPXCmdParam::LOGDETAIL_PPO2_2 ) )
+                        .arg( cmd->getDoubleValueAt( SPXCmdParam::LOGDETAIL_PPO2_3 ) )
+                        .arg( static_cast< int >( cmd->getValueAt( SPXCmdParam::LOGDETAIL_SETPOINT ) ) )
+                        .arg( static_cast< int >( cmd->getValueAt( SPXCmdParam::LOGDETAIL_N2 ) ) )
+                        .arg( static_cast< int >( cmd->getValueAt( SPXCmdParam::LOGDETAIL_HE ) ) )
+                        .arg( static_cast< int >( cmd->getValueAt( SPXCmdParam::LOGDETAIL_ZEROTIME ) ) )
+                        .arg( static_cast< int >( cmd->getValueAt( SPXCmdParam::LOGDETAIL_NEXT_STEP ) ) );
+      if ( query.exec( sql ) )
+      {
+        //
+        // Abfrage korrekt bearbeitet
+        //
+        lg->debug( "SPX42Database::insertLogentry...OK" );
+        return ( true );
+      }
+      else
+      {
+        QSqlError err = db.lastError();
+        lg->warn( QString( "SPX42Database::insertLogentry -> <%1>..." ).arg( err.text() ) );
+      }
+    }
+    else
+    {
+      lg->warn( "SPX42Database::insertLogentry -> db is not valid or not opened." );
+    }
+    return ( false );
+  }
+
+  bool SPX42Database::existDiveLogInBase( const QString &tableName, int diveNum )
+  {
+    bool exist = false;
+    //
+    if ( db.isValid() && db.isOpen() )
+    {
+      QString sql = QString( "select count(*) from '%1' where divenum=%2" ).arg( tableName ).arg( diveNum );
+      QSqlQuery query( sql, db );
+      if ( query.next() )
+      {
+        if ( query.value( 0 ).toInt() > 0 )
+        {
+          exist = true;
+        }
+        lg->debug( QString( "SPX42Database::existDiveLogInBase -> <%1> sets == %2..." )
+                       .arg( query.value( 0 ).toInt() )
+                       .arg( exist ? "YES" : "NO" ) );
+        return ( exist );
+      }
+      else
+      {
+        QSqlError err = db.lastError();
+        lg->warn( QString( "SPX42Database::existDiveLogInBase -> <%1>..." ).arg( err.text() ) );
+      }
+    }
+    else
+    {
+      lg->warn( "SPX42Database::existDiveLogInBase -> db not open or not exist!" );
+    }
+    return ( exist );
+  }
+
+  bool SPX42Database::delDiveLogFromBase( const QString &tableName, int diveNum )
+  {
+    if ( db.isValid() && db.isOpen() )
+    {
+      QSqlQuery query( QString( "delete from '%1' where divenum=%2" ).arg( tableName ).arg( diveNum ), db );
+      if ( query.exec() )
+      {
+        return ( true );
+      }
+      else
+      {
+        QSqlError err = db.lastError();
+        lg->warn( QString( "SPX42Database::delDiveLogFromBase -> <%1>..." ).arg( err.text() ) );
+      }
+    }
+    else
+    {
+      lg->warn( "SPX42Database::delDiveLogFromBase -> db not open or not exist!" );
+    }
+    return ( false );
+  }
+
+  int SPX42Database::getMaxDepthFor( const QString &tableName, int diveNum )
+  {
+    int maxDepth = -1;
+    lg->debug( "SPX42Database::getMaxDepthFor..." );
+    if ( db.isValid() && db.isOpen() )
+    {
+      //
+      // versuche mal rauszubekommen wie tief das war
+      //
+      QSqlQuery query( QString( "select max(depth) from '%1' where divenum=%2" ).arg( tableName ).arg( diveNum ), db );
+      if ( !query.next() )
+      {
+        QSqlError err = db.lastError();
+        lg->warn( QString( "SPX42Database::getMaxDepthFor -> <%1>..." ).arg( err.text() ) );
+        return ( -1 );
+      }
+      //
+      // Abfrage korrekt bearbeitet
+      //
+      maxDepth = query.value( 0 ).toInt();
+      lg->debug( QString( "SPX42Database::getMaxDepthFor -> max depth: %1" ).arg( maxDepth ) );
+      return ( maxDepth );
+    }
+    else
+    {
+      lg->warn( "SPX42Database::getMaxDepthFor -> db is not valid or not opened." );
+      return ( -1 );
+    }
   }
 
   // ##########################################################################

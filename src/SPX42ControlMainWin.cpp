@@ -128,7 +128,7 @@ namespace spx
 #endif
     setOnlineStatusMessage();
     connect( &watchdog, &QTimer::timeout, this, &SPX42ControlMainWin::onWatchdogTimerSlot );
-    watchdog.start( 1000 );
+    watchdog.start( MAIN_WATCHDOG_TIMERCOUNT );
     connect( &configWriteTimer, &QTimer::timeout, this, &SPX42ControlMainWin::onConfigWriteBackSlot );
     configWriteTimer.stop();
   }
@@ -244,21 +244,18 @@ namespace spx
       case ApplicationStat::STAT_OFFLINE:
         ui->actionAbout->setEnabled( true );
         ui->actionActionPrint->setEnabled( false );
-        ui->actionConnectBluetooth->setEnabled( true );
         ui->actionOpenDB->setEnabled( true );
         ui->actionSettings->setEnabled( true );
         break;
       case ApplicationStat::STAT_ONLINE:
         ui->actionAbout->setEnabled( true );
         ui->actionActionPrint->setEnabled( false );
-        ui->actionConnectBluetooth->setEnabled( false );
         ui->actionOpenDB->setEnabled( true );
         ui->actionSettings->setEnabled( true );
         break;
       case ApplicationStat::STAT_ERROR:
         ui->actionAbout->setEnabled( true );
         ui->actionActionPrint->setEnabled( false );
-        ui->actionConnectBluetooth->setEnabled( true );
         ui->actionOpenDB->setEnabled( false );
         ui->actionSettings->setEnabled( true );
         break;
@@ -592,12 +589,21 @@ namespace spx
     {
       if ( --zyclusCounter < 0 )
       {
-        zyclusCounter = 6;
-        SendListEntry sendCommand = remoteSPX42->aksForAliveSignal();
+        //
+        // nächsten Zeitpunkt vorbereiten
+        //
+        zyclusCounter = MAIN_ALIVE_TIMEVALUE;
 #ifdef DEBUG
         lg->debug( "SPX42ControlMainWin::onWatchdogTimerSlot -> send cmd alive..." );
 #endif
-        remoteSPX42->sendCommand( sendCommand );
+        if ( remoteSPX42->getIsNormalCommandMode() )
+        {
+          //
+          // während der übertragung der logdetails NICHT nachd em Acku fragen
+          //
+          SendListEntry sendCommand = remoteSPX42->aksForAliveSignal();
+          remoteSPX42->sendCommand( sendCommand );
+        }
       }
     }
   }
@@ -661,6 +667,8 @@ namespace spx
                  &SPX42ControlMainWin::onConfigWasChangedSlot );
         connect( dynamic_cast< DeviceConfigFragment * >( currObj ), &DeviceConfigFragment::onAkkuValueChangedSig, this,
                  &SPX42ControlMainWin::onAkkuValueChangedSlot );
+        connect( this, &SPX42ControlMainWin::onSendBufferStateChangedSig, dynamic_cast< DeviceConfigFragment * >( currObj ),
+                 &DeviceConfigFragment::onSendBufferStateChangedSlot );
         break;
 
       case static_cast< int >( ApplicationTab::GAS_TAB ):
@@ -673,6 +681,8 @@ namespace spx
                  &SPX42ControlMainWin::onConfigWasChangedSlot );
         connect( dynamic_cast< GasFragment * >( currObj ), &GasFragment::onAkkuValueChangedSig, this,
                  &SPX42ControlMainWin::onAkkuValueChangedSlot );
+        connect( this, &SPX42ControlMainWin::onSendBufferStateChangedSig, dynamic_cast< GasFragment * >( currObj ),
+                 &GasFragment::onSendBufferStateChangedSlot );
         break;
 
       case static_cast< int >( ApplicationTab::LOG_TAB ):
@@ -683,6 +693,8 @@ namespace spx
         currentTab = ApplicationTab::LOG_TAB;
         connect( dynamic_cast< LogFragment * >( currObj ), &LogFragment::onAkkuValueChangedSig, this,
                  &SPX42ControlMainWin::onAkkuValueChangedSlot );
+        connect( this, &SPX42ControlMainWin::onSendBufferStateChangedSig, dynamic_cast< LogFragment * >( currObj ),
+                 &LogFragment::onSendBufferStateChangedSlot );
         break;
 
       case static_cast< int >( ApplicationTab::CHART_TAB ):
@@ -1002,6 +1014,7 @@ namespace spx
     waitForWriteLabel->setText( tr( "CLEAR" ) );
     ui->actionSPX_STATE->setIcon( QIcon( ":/icons/ic_spx_online" ) );
     ui->actionSPX_STATE->setStatusTip( tr( "spx42 is online, click for disconnect..." ) );
+    emit onSendBufferStateChangedSig( false );
   }
 
   /**
@@ -1025,6 +1038,7 @@ namespace spx
     waitForWriteLabel->setText( tr( "BUSY" ) );
     ui->actionSPX_STATE->setIcon( QIcon( ":/icons/ic_spx_buffering" ) );
     ui->actionSPX_STATE->setStatusTip( tr( "spx42 is online and wait for write config data..." ) );
+    emit onSendBufferStateChangedSig( true );
   }
 
   void SPX42ControlMainWin::onGetHelpForUser()

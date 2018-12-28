@@ -8,7 +8,10 @@ namespace spx
                                           std::shared_ptr< SPX42Database > spx42Database,
                                           std::shared_ptr< SPX42Config > spxCfg,
                                           std::shared_ptr< SPX42RemotBtDevice > remSPX42 )
-      : QWidget( parent ), IFragmentInterface( logger, spx42Database, spxCfg, remSPX42 ), ui( new Ui::DeviceInfoFragment )
+      : QWidget( parent )
+      , IFragmentInterface( logger, spx42Database, spxCfg, remSPX42 )
+      , ui( new Ui::DeviceInfoFragment )
+      , spxPic( ":/images/SPX42.jpg" )
   {
     lg->debug( "DeviceInfoFragment::DeviceInfoFragment..." );
     ui->setupUi( this );
@@ -28,7 +31,6 @@ namespace spx
     newerParamsSortTemplate = tr( "HAS NEWER PARAMS SORT" );
     olderDisplayBrightnessTemplate = tr( "HAS OLDER DISPLAY BRIGHTNESS" );
     newerDisplayBrightnessTemplate = tr( "HAS NEWER DISPLAY BRIGHTNESS" );
-
     onConfLicChangedSlot();
     connect( spxConfig.get(), &SPX42Config::licenseChangedSig, this, &DeviceInfoFragment::onConfLicChangedSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onStateChangedSig, this, &DeviceInfoFragment::onOnlineStatusChangedSlot );
@@ -47,14 +49,26 @@ namespace spx
     // stelle Verbindungsstatus fest
     //
     bool isConnected = remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED;
-
+#ifdef DEBUG
+    ui->spx42ImageLabel->setVisible( false );
+    ui->firmwarePartGroupBox->setVisible( true );
+#else
+    ui->spx42ImageLabel->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
+    ui->spx42ImageLabel->setAlignment( Qt::AlignCenter );
+    ui->spx42ImageLabel->setMinimumSize( 400, 250 );
+    ui->spx42ImageLabel->setPixmap( QPixmap::fromImage( spxPic, Qt::AutoColor ) );
+    ui->firmwarePartGroupBox->setVisible( false );
+    ui->spx42ImageLabel->setVisible( true );
+#endif
     //
     // da ist nur wichtig online/offline
     //
+#ifdef DEBUG
     ui->hasSixParametersLabel->setEnabled( isConnected );
     ui->isOlderParametersSortLabel->setEnabled( isConnected );
     ui->isNewerDisplayBightnessLabel->setEnabled( isConnected );
     ui->isSixMetersAutoSetpointLabel->setEnabled( isConnected );
+#endif
     //
     if ( isConnected )
     {
@@ -62,9 +76,9 @@ namespace spx
       // TODO: Wenn sich das jemals ändert, hier noch die Config machen
       //
       ui->deviceModelLabel->setText( deviceModelTemplate.arg( "SPX42" ) );
-      //
       ui->deviceSerialNumberLabel->setText( deviceSerialNumberTemplate.arg( spxConfig->getSerialNumber() ) );
       ui->deviceFirmwareVersionNumber->setText( deviceFirmwareVersionTemplate.arg( spxConfig->getSpxFirmwareVersionString() ) );
+#ifdef DEBUG
       ui->fahrenheidBugLabel->setEnabled( spxConfig->getHasFahrenheidBug() );
       ui->fahrenheidBugLabel->setText( fahrenheidBugTemplate.arg( spxConfig->getHasFahrenheidBug() ? "" : notString ) );
       ui->canSetDateLabel->setEnabled( spxConfig->getCanSetDate() );
@@ -77,6 +91,7 @@ namespace spx
                                                                                           : olderDisplayBrightnessTemplate );
       ui->isSixMetersAutoSetpointLabel->setText(
           sixMetersAutoSetpointTemplate.arg( spxConfig->getIsSixMetersAutoSetpoint() ? "6m" : "5m" ) );
+#endif
     }
     else
     {
@@ -85,8 +100,9 @@ namespace spx
       ui->deviceSerialNumberLabel->setText( deviceSerialNumberTemplate.arg( unknownString ) );
       ui->deviceFirmwareVersionNumber->setText( deviceFirmwareVersionTemplate.arg( unknownString ) );
       //
-      // alle deaktieviert
+      // alle deaktiviert
       //
+#ifdef DEBUG
       ui->fahrenheidBugLabel->setEnabled( false );
       ui->canSetDateLabel->setEnabled( false );
       ui->isFirmwareSupportedLabel->setEnabled( false );
@@ -98,6 +114,7 @@ namespace spx
       ui->isOlderParametersSortLabel->setText( olderParamsSortTemplate.append( unknownString ) );
       ui->isNewerDisplayBightnessLabel->setText( olderDisplayBrightnessTemplate.append( unknownString ) );
       ui->isSixMetersAutoSetpointLabel->setText( sixMetersAutoSetpointTemplate.arg( unknownString ) );
+#endif
     }
   }
 
@@ -152,7 +169,7 @@ namespace spx
           // ~03:PW
           // PX => Angabe HEX in Milivolt vom Akku
           lg->debug( "ConnectFragment::onDatagramRecivedSlot -> alive/acku..." );
-          ackuVal = ( recCommand->getValueAt( SPXCmdParam::ALIVE_POWER ) / 100.0 );
+          ackuVal = ( recCommand->getValueFromHexAt( SPXCmdParam::ALIVE_POWER ) / 100.0 );
           emit onAkkuValueChangedSig( ackuVal );
           break;
         case SPX42CommandDef::SPX_APPLICATION_ID:

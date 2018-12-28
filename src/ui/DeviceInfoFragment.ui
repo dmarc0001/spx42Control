@@ -210,9 +210,6 @@
          </sizepolicy>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout">
-         <property name="topMargin">
-          <number>24</number>
-         </property>
          <item>
           <spacer name="horizontalSpacer_3">
            <property name="orientation">
@@ -228,6 +225,31 @@
             </size>
            </property>
           </spacer>
+         </item>
+         <item>
+          <widget class="QLabel" name="spx42ImageLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>350</width>
+             <height>200</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="../res/SPX42ControlRes.qrc">:/images/SPX42.jpg</pixmap>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QGroupBox" name="firmwarePartGroupBox">
@@ -589,6 +611,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../res/SPX42ControlRes.qrc"/>
+ </resources>
  <connections/>
 </ui>

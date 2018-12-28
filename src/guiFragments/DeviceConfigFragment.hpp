@@ -82,6 +82,9 @@ namespace spx
     void onAkkuValueChangedSig( double aValue ) override;                           //! signalisiert, dass der Akku eine Spanniung hat
     void onConfigWasChangedSig( void );  //! signalisieret das ich was in die Config geschrieben habe
 
+    public slots:
+    void onSendBufferStateChangedSlot( bool isBusy );
+
     private slots:
     virtual void onOnlineStatusChangedSlot( bool isOnline ) override;                //! Wenn sich der Onlinestatus des SPX42 ändert
     virtual void onSocketErrorSlot( QBluetoothSocket::SocketError error ) override;  //! ein Fehler bei der BT Verbindung
