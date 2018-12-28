@@ -89,7 +89,7 @@ SOURCES                 += \
     src/utils/HelpDialog.cpp \
     src/guiFragments/DeviceInfoFragment.cpp \
     src/spx42/SPX42LogDirectoryEntry.cpp \
-    src/database/LogDetailWriter.cpp
+    src/database/LogDetailWalker.cpp
 
 HEADERS                 += \
     src/SPX42ControlMainWin.hpp \
@@ -124,7 +124,7 @@ HEADERS                 += \
     src/guiFragments/DeviceInfoFragment.hpp \
     src/config/CurrBuildDef.hpp \
     src/spx42/SPX42LogDirectoryEntry.hpp \
-    src/database/LogDetailWriter.hpp
+    src/database/LogDetailWalker.hpp
 
 FORMS                   += \
     src/ui/SPX42ControlMainWin.ui \

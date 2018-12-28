@@ -9,6 +9,7 @@
 #include <QStringList>
 #include <QTableWidget>
 #include <QTimer>
+#include <QVector>
 #include <QWidget>
 #include <QtCharts>
 #include <QtConcurrent>
@@ -17,7 +18,7 @@
 #include "IFragmentInterface.hpp"
 #include "bluetooth/SPX42RemotBtDevice.hpp"
 #include "config/ProjectConst.hpp"
-#include "database/LogDetailWriter.hpp"
+#include "database/LogDetailWalker.hpp"
 #include "database/SPX42Database.hpp"
 #include "logging/Logger.hpp"
 #include "spx42/SPX42Config.hpp"
@@ -48,9 +49,10 @@ namespace spx
     QtCharts::QChartView *chartView;            //! Zeiger auf das ChartView
     QtCharts::QCategoryAxis *axisY;             //! Y-Achse für Chart
     QTimer transferTimeout;                     //! timer für timeout bei transfers
-    LogDetailWriter logWriter;                  //! schreibt logdetails queue in die DB
+    LogDetailWalker logWriter;                  //! schreibt logdetails queue in die DB
     QFuture< int > dbWriterFuture;              //! nebenläufig daten in DB schreiben
     QQueue< int > logDetailRead;                //! Liste mit zu lesenden Logdetails
+    QFuture< bool > dbDeleteFuture;             //! nebenläufig daten aus DB löschen
     bool logWriterTableExist;                   //! Ergebnis des Logwriter Threads, bei -1 gab es einen Fehler
     const QIcon savedIcon;
     const QIcon nullIcon;
@@ -60,7 +62,7 @@ namespace spx
     QString diveDepthStr;
     QString dbWriteNumTemplate;
     QString dbWriteNumIDLE;
-    QMenu *context;
+    QString dbDeleteNumTemplate;
 
     public:
     explicit LogFragment( QWidget *parent,
@@ -78,9 +80,10 @@ namespace spx
     void prepareMiniChart( void );
     void showDiveDataForGraph( int deviceId, int diveNum );
     void setGuiConnected( bool isConnected );
-    void processLogDetails( void );        //! schreibe alle Daten aus der Queue in die Datenbank
-    void testForSavedDetails( void );      //! schaue nach ob die Details dazu bereits gesichert wurden
-    void tryStartLogWriterThread( void );  //! den Thread starten (restarten)
+    void processLogDetails( void );                             //! schreibe alle Daten aus der Queue in die Datenbank
+    void testForSavedDetails( void );                           //! schaue nach ob die Details dazu bereits gesichert wurden
+    void tryStartLogWriterThread( void );                       //! den Thread starten (restarten)
+    std::shared_ptr< QVector< int > > getSelectedInDb( void );  //! gib alle selektierten Einträge, die in der DB sind
     float getMinYValue( const QLineSeries *series );
     float getMaxYValue( const QLineSeries *series );
 
@@ -99,11 +102,16 @@ namespace spx
     virtual void onCloseDatabaseSlot( void ) override;                               //! wenn die Datenbank geschlosen wird
     virtual void onCommandRecivedSlot( void ) override;                              //! wenn ein Datentelegramm empfangen wurde
     void onTransferTimeout( void );                                                  //! wenn der Transfer ausbleibt
-    void onReadLogDirectorySlot( void );
-    void onReadLogContentSlot( void );
-    void onLogListClickedSlot( const QModelIndex &index );
+    void onReadLogDirectoryClickSlot( void );
+    void onReadLogContentClickSlot( void );
+    void onLogListClickeSlot( const QModelIndex &index );
     void onWriterDoneSlot( int _countProcessed );
     void onNewDiveStartSlot( int newDiveNum );
+    void onLogDetailDeleteClickSlot( void );
+    void onLogDetailExportClickSlot( void );
+    void onDeleteDoneSlot( int diveNum );
+    void onNewDiveDoneSlot( int diveNum );
+    void itemSelectionChangedSlot( void );
 
     public slots:
     void onAddLogdirEntrySlot( const QString &entry );

@@ -267,6 +267,68 @@
           </widget>
          </item>
          <item>
+          <widget class="QWidget" name="handlingWidget" native="true">
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="QPushButton" name="deleteContentPushButton">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>DejaVu Sans Mono</family>
+                <pointsize>24</pointsize>
+               </font>
+              </property>
+              <property name="statusTip">
+               <string>delete selected data from database...</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true"/>
+              </property>
+              <property name="text">
+               <string>DELETE</string>
+              </property>
+              <property name="flat">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="exportContentPushButton">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>DejaVu Sans Mono</family>
+                <pointsize>24</pointsize>
+               </font>
+              </property>
+              <property name="statusTip">
+               <string>export selected data from database...</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true"/>
+              </property>
+              <property name="text">
+               <string>EXPORT</string>
+              </property>
+              <property name="flat">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
           <widget class="QGroupBox" name="logDetailsGroupBox">
            <property name="font">
             <font>

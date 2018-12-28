@@ -10,7 +10,7 @@
 
 namespace spx
 {
-  class LogDetailWriter : public QObject
+  class LogDetailWalker : public QObject
   {
     Q_OBJECT
     static const qint64 waitTimeout{( 1000 / 50 ) * 20};
@@ -18,7 +18,7 @@ namespace spx
     QQueue< spSingleCommand > detailQueue;      // Liste mit pointern auf die empfangenen Logdetails
     std::shared_ptr< Logger > lg;               // der Logger
     std::shared_ptr< SPX42Database > database;  // Datenbankverbindung
-    bool shouldRunning;                         // thread soll laufen und auf daten warten
+    bool shouldWriterRunning;                   // thread soll laufen und auf daten warten
     int processed;
     int forThisDiveProcessed;
     int overAll;
@@ -28,7 +28,7 @@ namespace spx
     QString logDetailTableName;
 
     public:
-    explicit LogDetailWriter( QObject *parent, std::shared_ptr< Logger > logger, std::shared_ptr< SPX42Database > _database );
+    explicit LogDetailWalker( QObject *parent, std::shared_ptr< Logger > logger, std::shared_ptr< SPX42Database > _database );
     void reset( void );
     void nowait( bool _shouldNoWait = true );  //! nicht mehr warten wenn die queue leer ist
     void addDetail( spSingleCommand );
@@ -36,10 +36,14 @@ namespace spx
     int getGlobal( void );
     int getQueueLen( void );
     int writeLogDataToDatabase( const QString &deviceMac );
+    bool deleteLogDataFromDatabase( const QString &deviceMac, std::shared_ptr< QVector< int > > list );
+    bool exportLogDataFromDatabase( const QString &deviceMac, const QString &fileName, std::shared_ptr< QVector< int > > list );
 
     signals:
+    void onNewDiveDoneSig( int savedDiveNum );
     void onWriteDoneSig( int _overallResult );
     void onNewDiveStartSig( int newDiveNum );
+    void onDeleteDoneSig( int diveNum );
 
     public slots:
   };

@@ -1,30 +1,30 @@
-﻿#include "LogDetailWriter.hpp"
+﻿#include "LogDetailWalker.hpp"
 
 namespace spx
 {
-  LogDetailWriter::LogDetailWriter( QObject *parent, std::shared_ptr< Logger > logger, std::shared_ptr< SPX42Database > _database )
+  LogDetailWalker::LogDetailWalker( QObject *parent, std::shared_ptr< Logger > logger, std::shared_ptr< SPX42Database > _database )
       : QObject( parent )
       , lg( logger )
       , database( _database )
-      , shouldRunning( true )
+      , shouldWriterRunning( true )
       , processed( 0 )
       , forThisDiveProcessed( 0 )
       , overAll( 0 )
   {
   }
 
-  void LogDetailWriter::addDetail( spSingleCommand _detail )
+  void LogDetailWalker::addDetail( spSingleCommand _detail )
   {
     overAll++;
     detailQueue.enqueue( _detail );
   }
 
-  void LogDetailWriter::reset()
+  void LogDetailWalker::reset()
   {
-    shouldRunning = false;
+    shouldWriterRunning = false;
   }
 
-  void LogDetailWriter::nowait( bool _shouldNoWait )
+  void LogDetailWalker::nowait( bool _shouldNoWait )
   {
     if ( _shouldNoWait )
       maxTimeoutVal = 0;
@@ -32,25 +32,25 @@ namespace spx
       maxTimeoutVal = waitTimeout;
   }
 
-  int LogDetailWriter::getProcessed()
+  int LogDetailWalker::getProcessed()
   {
     return ( processed );
   }
 
-  int LogDetailWriter::getGlobal()
+  int LogDetailWalker::getGlobal()
   {
     return ( overAll );
   }
 
-  int LogDetailWriter::getQueueLen()
+  int LogDetailWalker::getQueueLen()
   {
     return ( detailQueue.count() );
   }
 
-  int LogDetailWriter::writeLogDataToDatabase( const QString &deviceMac )
+  int LogDetailWalker::writeLogDataToDatabase( const QString &deviceMac )
   {
     int diveNum = -1;
-    shouldRunning = true;
+    shouldWriterRunning = true;
     forThisDiveProcessed = 0;
     processed = 0;
     qint64 timeoutVal = 0;
@@ -63,12 +63,12 @@ namespace spx
     {
       lg->crit( "LogDetailWriter::writeLogDataToDatabase -> database error, not table for logdata exist..." );
       detailQueue.clear();
-      shouldRunning = false;
+      shouldWriterRunning = false;
       return ( -1 );
     }
     lg->debug( QString( "LogDetailWriter::writeLogDataToDatabase -> table %1 exist!" ).arg( tableName ) );
     //
-    while ( shouldRunning )
+    while ( shouldWriterRunning )
     {
       if ( detailQueue.count() > 0 )
       {
@@ -86,6 +86,7 @@ namespace spx
           //
           // Ok, anpassen
           //
+          emit onNewDiveDoneSig( diveNum );
           diveNum = logentry->getDiveNum();
           lg->debug(
               QString( "LogDetailWriter::writeLogDataToDatabase -> new dive to store %1" ).arg( diveNum, 3, 10, QChar( '0' ) ) );
@@ -115,11 +116,11 @@ namespace spx
       }
       else
       {
-        if ( shouldRunning )
+        if ( shouldWriterRunning )
         {
           timeoutVal++;
           if ( timeoutVal > maxTimeoutVal )
-            shouldRunning = false;
+            shouldWriterRunning = false;
           else
             QThread::msleep( waitUnits );
         }
@@ -127,5 +128,38 @@ namespace spx
     }
     emit onWriteDoneSig( processed );
     return ( processed );
+  }
+
+  bool LogDetailWalker::deleteLogDataFromDatabase( const QString &deviceMac, std::shared_ptr< QVector< int > > list )
+  {
+    bool shouldDeleteRunning = true;
+    //
+    // zuerst: ist die Tabelle da/wurde angelegt?
+    //
+    QString tableName = database->getLogTableName( deviceMac );
+    if ( tableName.isNull() || tableName.isEmpty() )
+    {
+      lg->crit( "LogDetailWriter::writeLogDataToDatabase -> database error, not table for logdata exist..." );
+      detailQueue.clear();
+      return ( false );
+    }
+    for ( int diveNum : *list )
+    {
+      if ( shouldDeleteRunning )
+      {
+        if ( !database->delDiveLogFromBase( tableName, diveNum ) )
+        {
+          shouldDeleteRunning = false;
+        }
+        else
+        {
+          // gib Bescheid, der ist Geschichte...
+          emit onDeleteDoneSig( diveNum );
+        }
+      }
+    }
+    QThread::msleep( 1200 );
+    emit onDeleteDoneSig( -1 );
+    return ( shouldDeleteRunning );
   }
 }

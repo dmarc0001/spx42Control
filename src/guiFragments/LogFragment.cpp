@@ -48,10 +48,13 @@ namespace spx
     diveDepthStr = tr( "DIVE DEPTH: %1m" );
     dbWriteNumTemplate = tr( "WRITE DIVE #%1 TO DB..." );
     dbWriteNumIDLE = tr( "WAIT FOR START..." );
+    dbDeleteNumTemplate = tr( "DELETE DIVE %1 DONE." );
     ui->diveNumberLabel->setText( diveNumberStr.arg( "-" ) );
     ui->diveDateLabel->setText( diveDateStr.arg( "-" ) );
     ui->diveDepthLabel->setText( diveDepthStr.arg( "-" ) );
     ui->dbWriteNumLabel->setText( dbWriteNumIDLE );
+    ui->deleteContentPushButton->setEnabled( false );
+    ui->exportContentPushButton->setEnabled( false );
     prepareMiniChart();
     // tausche den Platzhalter aus und entsorge den gleich
     delete ui->logDetailsGroupBox->layout()->replaceWidget( ui->diveProfileGraphicsView, chartView );
@@ -81,15 +84,20 @@ namespace spx
     }
     onConfLicChangedSlot();
     connect( spxConfig.get(), &SPX42Config::licenseChangedSig, this, &LogFragment::onConfLicChangedSlot );
-    connect( ui->readLogdirPushButton, &QPushButton::clicked, this, &LogFragment::onReadLogDirectorySlot );
-    connect( ui->readLogContentPushButton, &QPushButton::clicked, this, &LogFragment::onReadLogContentSlot );
-    connect( ui->logentryTableWidget, &QAbstractItemView::clicked, this, &LogFragment::onLogListClickedSlot );
+    connect( ui->readLogdirPushButton, &QPushButton::clicked, this, &LogFragment::onReadLogDirectoryClickSlot );
+    connect( ui->readLogContentPushButton, &QPushButton::clicked, this, &LogFragment::onReadLogContentClickSlot );
+    connect( ui->logentryTableWidget, &QAbstractItemView::clicked, this, &LogFragment::onLogListClickeSlot );
+    connect( ui->logentryTableWidget, &QTableWidget::itemSelectionChanged, this, &LogFragment::itemSelectionChangedSlot );
+    connect( ui->deleteContentPushButton, &QPushButton::clicked, this, &LogFragment::onLogDetailDeleteClickSlot );
+    connect( ui->exportContentPushButton, &QPushButton::clicked, this, &LogFragment::onLogDetailExportClickSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onStateChangedSig, this, &LogFragment::onOnlineStatusChangedSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onSocketErrorSig, this, &LogFragment::onSocketErrorSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onCommandRecivedSig, this, &LogFragment::onCommandRecivedSlot );
     connect( &transferTimeout, &QTimer::timeout, this, &LogFragment::onTransferTimeout );
-    connect( &logWriter, &LogDetailWriter::onWriteDoneSig, this, &LogFragment::onWriterDoneSlot );
-    connect( &logWriter, &LogDetailWriter::onNewDiveStartSig, this, &LogFragment::onNewDiveStartSlot );
+    connect( &logWriter, &LogDetailWalker::onWriteDoneSig, this, &LogFragment::onWriterDoneSlot );
+    connect( &logWriter, &LogDetailWalker::onNewDiveStartSig, this, &LogFragment::onNewDiveStartSlot );
+    connect( &logWriter, &LogDetailWalker::onDeleteDoneSig, this, &LogFragment::onDeleteDoneSlot );
+    connect( &logWriter, &LogDetailWalker::onNewDiveDoneSig, this, &LogFragment::onNewDiveDoneSlot );
   }
 
   /**
@@ -187,7 +195,7 @@ namespace spx
       lg->debug( "LogFragment::onWriterDoneSlot -> start writer thread again..." );
       ui->dbWriteNumLabel->setVisible( true );
       dbWriterFuture =
-          QtConcurrent::run( &this->logWriter, &LogDetailWriter::writeLogDataToDatabase, remoteSPX42->getRemoteConnected() );
+          QtConcurrent::run( &this->logWriter, &LogDetailWalker::writeLogDataToDatabase, remoteSPX42->getRemoteConnected() );
     }
   }
 
@@ -201,7 +209,7 @@ namespace spx
   /**
    * @brief Slot für das Signal von button zum Directory lesen
    */
-  void LogFragment::onReadLogDirectorySlot()
+  void LogFragment::onReadLogDirectoryClickSlot()
   {
     lg->debug( "LogFragment::onReadLogDirectorySlot: ..." );
     if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
@@ -230,7 +238,7 @@ namespace spx
   /**
    * @brief Slot für das Signal vom button zum Inhalt des Logs lesen
    */
-  void LogFragment::onReadLogContentSlot()
+  void LogFragment::onReadLogContentClickSlot()
   {
     lg->debug( "LogFragment::onReadLogContentSlot: ..." );
     QModelIndexList indexList = ui->logentryTableWidget->selectionModel()->selectedIndexes();
@@ -293,12 +301,13 @@ namespace spx
    * @brief Slot für das Signal wenn auf einen Log Directory Eintrag geklickt wird
    * @param index welcher Index war es?
    */
-  void LogFragment::onLogListClickedSlot( const QModelIndex &index )
+  void LogFragment::onLogListClickeSlot( const QModelIndex &index )
   {
     QString depthStr = " ? ";
     int diveNum = 0;
     double depth = 0;
     int row = index.row();
+    bool dataInDatabaseSelected = false;
     // items finden
     QTableWidgetItem *clicked1stItem = ui->logentryTableWidget->item( row, 0 );
     QTableWidgetItem *clicked2ndItem = ui->logentryTableWidget->item( row, 1 );
@@ -343,7 +352,37 @@ namespace spx
         ui->diveDepthLabel->setText( diveDepthStr.arg( depthStr ) );
       }
     }
-
+    /*
+    //
+    // schaue mal ob da was selektiert ist, was auch daten in der DB hat
+    //
+    QModelIndexList indexList = ui->logentryTableWidget->selectionModel()->selectedIndexes();
+    if ( !indexList.isEmpty() )
+    {
+      //
+      // es gibt was zu tun
+      for ( auto idxEntry : indexList )
+      {
+        //
+        // die spalte 1 finden, da steht ein icon oder auch nicht
+        //
+        int row = idxEntry.row();
+        if ( !ui->logentryTableWidget->item( row, 1 )->icon().isNull() )
+        {
+          //
+          // mindestens einen Eintrag gefunden
+          //
+          dataInDatabaseSelected = true;
+          break;
+        }
+      }
+    }
+    //
+    // Buttons erlauben oder eben nicht
+    //
+    ui->deleteContentPushButton->setEnabled( dataInDatabaseSelected );
+    ui->exportContentPushButton->setEnabled( dataInDatabaseSelected );
+    */
     //
     // Daten anzeigen, oder auch nicht
     // FIXME: zum testen nur gerade anzahl
@@ -356,6 +395,75 @@ namespace spx
     else
     {
       chartView->setChart( dummyChart );
+    }
+  }
+
+  std::shared_ptr< QVector< int > > LogFragment::getSelectedInDb( void )
+  {
+    //
+    // erzeuge mal den Zeiger auf einen Vector
+    //
+    auto deleteList( std::shared_ptr< QVector< int > >( new QVector< int >() ) );
+    auto indexList = ui->logentryTableWidget->selectionModel()->selectedIndexes();
+    if ( !indexList.isEmpty() )
+    {
+      //
+      // es gibt was zu tun
+      for ( auto idxEntry : indexList )
+      {
+        //
+        // die spalte 1 finden, da steht ein icon oder auch nicht
+        // deshalb, weil das Model 2 Spalten hat, aber
+        // die Einstellung für das Widget (bei der Initialisierung)
+        // immer die ganze Zeile selektiert
+        // ui->logentryTableWidget->setSelectionBehavior( QAbstractItemView::SelectRows );
+        //
+        int row = idxEntry.row();
+        int col = idxEntry.column();
+        if ( col == 1 )
+        {
+          if ( !ui->logentryTableWidget->item( row, 1 )->icon().isNull() )
+          {
+            QString entry = ui->logentryTableWidget->item( row, 0 )->text();
+            QStringList el = entry.split( ':' );
+            // in die Liste kommt die Nummer!
+            deleteList->append( el.at( 0 ).toInt() );
+          }
+        }
+      }
+    }
+    return ( deleteList );
+  }
+
+  void LogFragment::onLogDetailDeleteClickSlot()
+  {
+    lg->debug( "LogFragment::onLogDetailDeleteClickSlot..." );
+    std::shared_ptr< QVector< int > > deleteList = getSelectedInDb();
+    if ( deleteList->count() == 0 )
+      return;
+#ifdef DEBUG
+    for ( int i : *deleteList.get() )
+    {
+      lg->debug( QString( "LogFragment::onLogDetailDeleteClickSlot -> delete <%1>..." ).arg( i ) );
+    }
+#endif
+    if ( dbDeleteFuture.isFinished() )
+    {
+      lg->debug( "LogFragment::onLogDetailDeleteClickSlot -> start delete thread..." );
+      dbDeleteFuture = QtConcurrent::run( &this->logWriter, &LogDetailWalker::deleteLogDataFromDatabase,
+                                          remoteSPX42->getRemoteConnected(), deleteList );
+    }
+  }
+
+  void LogFragment::onLogDetailExportClickSlot()
+  {
+    lg->debug( "LogFragment::onLogDetailExportClickSlot..." );
+    std::shared_ptr< QVector< int > > deleteList = getSelectedInDb();
+    if ( deleteList->count() == 0 )
+      return;
+    for ( int i : *deleteList.get() )
+    {
+      lg->debug( QString( "LogFragment::onLogDetailExportClickSlot -> export <%1>..." ).arg( i ) );
     }
   }
 
@@ -774,4 +882,78 @@ namespace spx
     lg->debug( "LogFragment::testForSavedDetails...OK" );
   }
 
+  void LogFragment::onDeleteDoneSlot( int diveNum )
+  {
+    if ( diveNum < 0 )
+    {
+      //
+      // zum Ende noch mal überarbeiten
+      //
+      ui->dbWriteNumLabel->setVisible( false );
+      testForSavedDetails();
+      return;
+    }
+    //
+    // Sichtbarkeit
+    //
+    if ( !ui->dbWriteNumLabel->isVisible() )
+      ui->dbWriteNumLabel->setVisible( true );
+    //
+    // das Label schreiben
+    //
+    ui->dbWriteNumLabel->setText( dbDeleteNumTemplate.arg( diveNum ) );
+    //
+    // den aktuellen Eintrag korrigieren
+    //
+    QList< QTableWidgetItem * > items =
+        ui->logentryTableWidget->findItems( QString( "%1:" ).arg( diveNum, 2, 10, QChar( '0' ) ), Qt::MatchStartsWith );
+    if ( items.count() > 0 )
+    {
+      ui->logentryTableWidget->item( items.at( 0 )->row(), 1 )->setIcon( nullIcon );
+    }
+  }
+
+  void LogFragment::onNewDiveDoneSlot( int diveNum )
+  {
+    //
+    // den aktuellen Eintrag korrigieren
+    //
+    QList< QTableWidgetItem * > items =
+        ui->logentryTableWidget->findItems( QString( "%1:" ).arg( diveNum, 2, 10, QChar( '0' ) ), Qt::MatchStartsWith );
+    if ( items.count() > 0 )
+    {
+      this->ui->logentryTableWidget->item( items.at( 0 )->row(), 1 )->setIcon( savedIcon );
+    }
+  }
+
+  void LogFragment::itemSelectionChangedSlot( void )
+  {
+    bool dataInDatabaseSelected = false;
+    QModelIndexList indexList = ui->logentryTableWidget->selectionModel()->selectedIndexes();
+    if ( !indexList.isEmpty() )
+    {
+      //
+      // es gibt was zu tun
+      for ( auto idxEntry : indexList )
+      {
+        //
+        // die spalte 1 finden, da steht ein icon oder auch nicht
+        //
+        int row = idxEntry.row();
+        if ( !ui->logentryTableWidget->item( row, 1 )->icon().isNull() )
+        {
+          //
+          // mindestens einen Eintrag gefunden
+          //
+          dataInDatabaseSelected = true;
+          break;
+        }
+      }
+    }
+    //
+    // Buttons erlauben oder eben nicht
+    //
+    ui->deleteContentPushButton->setEnabled( dataInDatabaseSelected );
+    ui->exportContentPushButton->setEnabled( dataInDatabaseSelected );
+  }
 }  // namespace spx
