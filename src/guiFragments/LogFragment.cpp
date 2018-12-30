@@ -17,9 +17,9 @@ namespace spx
       : QWidget( parent )
       , IFragmentInterface( logger, spx42Database, spxCfg, remSPX42 )
       , ui( new Ui::LogFragment() )
-      , chart( std::unique_ptr< DiveMiniChart >( new DiveMiniChart( logger, spx42Database ) ) )
-      , dummyChart( std::unique_ptr< QtCharts::QChart >( new QtCharts::QChart() ) )
-      , chartView( std::unique_ptr< QtCharts::QChartView >( new QtCharts::QChartView( dummyChart.get() ) ) )
+      , miniChart( std::unique_ptr< DiveMiniChart >( new DiveMiniChart( logger, spx42Database ) ) )
+      , dummyChart( new QtCharts::QChart() )
+      , chartView( std::unique_ptr< QtCharts::QChartView >( new QtCharts::QChartView( dummyChart ) ) )
       , logWriter( this, logger, spx42Database )
       , logWriterTableExist( false )
       , savedIcon( ":/icons/saved_black" )
@@ -105,8 +105,8 @@ namespace spx
   {
     lg->debug( "LogFragment::~LogFragment..." );
     // setze wieder den Dummy ein und lasse den
-    // uniqe_ptr die Objekte im ChartView entsorgen
-    chartView->setChart( dummyChart.get() );
+    // die Objekte im ChartView entsorgen
+    chartView->setChart( dummyChart );
     // ui->logentryTableWidget->setModel( Q_NULLPTR );
     deactivateTab();
   }
@@ -238,9 +238,8 @@ namespace spx
       spxConfig->resetConfig( SPX42ConfigClass::CF_CLASS_LOG );
       // GUI löschen
       ui->logentryTableWidget->setRowCount( 0 );
-      // preview löschen
-      // Chart löschen
-      chart->removeAllSeries();
+      // chart dummy setzten
+      chartView->setChart( miniChart.get() );
       // Timeout starten
       ui->transferProgressBar->setVisible( true );
       transferTimeout.start( TIMEOUTVAL );
@@ -350,7 +349,7 @@ namespace spx
     if ( clicked2ndItem->icon().isNull() )
     {
       ui->diveDepthLabel->setText( diveDepthStr.arg( depthStr ) );
-      chartView->setChart( dummyChart.get() );
+      chartView->setChart( dummyChart );
     }
     else
     {
@@ -367,14 +366,14 @@ namespace spx
         //
         // das Chart anzeigen, wenn Daten vorhanden sind
         //
-        miniChart->showDiveDataForGraph( remoteSPX42->getRemoteConnected(), diveNum );
+        miniChart->showDiveDataInMiniGraph( remoteSPX42->getRemoteConnected(), diveNum );
         //
         chartView->setChart( miniChart.get() );
       }
       else
       {
         ui->diveDepthLabel->setText( diveDepthStr.arg( depthStr ) );
-        chartView->setChart( dummyChart.get() );
+        chartView->setChart( dummyChart );
       }
     }
   }
@@ -734,12 +733,12 @@ namespace spx
     {
       logWriterTableExist = false;
     }
-    chart->setVisible( isConnected );
+    // TODO: chart->setVisible( isConnected );
     if ( !isConnected )
     {
       ui->logentryTableWidget->setRowCount( 0 );
       // preview löschen
-      chart->removeAllSeries();
+      chartView->setChart( miniChart.get() );
     }
   }
 

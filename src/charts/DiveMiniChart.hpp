@@ -23,10 +23,10 @@ namespace spx
                             std::shared_ptr< SPX42Database > db,
                             QGraphicsItem *parent = nullptr,
                             Qt::WindowFlags wFlags = Qt::Widget );
-    void showDiveDataForGraph( const QString &remDevice, int diveNum );
+    void showDiveDataInMiniGraph( const QString &remDevice, int diveNum );
 
     private:
     void prepareChart( void );
   };
-}
+}  // namespace spx
 #endif  // DIVEMINICHART_HPP

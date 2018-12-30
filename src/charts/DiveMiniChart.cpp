@@ -39,10 +39,10 @@ namespace spx
     lg->debug( "DiveMiniChart::prepareChart...OK" );
   }
 
-  void DiveMiniChart::showDiveDataForGraph( const QString &remDevice, int diveNum )
+  void DiveMiniChart::showDiveDataInMiniGraph( const QString &remDevice, int diveNum )
   {
     lg->debug( "DiveMiniChart::showDiveDataForGraph..." );
-    return;
+    // return;
     //
     // aufräumen
     //
@@ -107,4 +107,4 @@ namespace spx
     series->attachAxis( axisY3 );
     lg->debug( "DiveMiniChart::showDiveDataForGraph...OK" );
   }
-}
+}  // namespace spx

@@ -45,9 +45,8 @@ namespace spx
     Q_OBJECT
     Q_INTERFACES( spx::IFragmentInterface )
     std::unique_ptr< Ui::LogFragment > ui;              //! Zeiger auf GUI-Objekte
-    std::unique_ptr< QtCharts::QChart > chart;          //! Zeiger auf das Chart
     std::unique_ptr< DiveMiniChart > miniChart;         //! Zeiger auf das eigene Minichart
-    std::unique_ptr< QtCharts::QChart > dummyChart;     //! Zeiger auf das weisse, leere chart
+    QtCharts::QChart *dummyChart;                       //! Zeiger auf das weisse, leere chart
     std::unique_ptr< QtCharts::QChartView > chartView;  //! Zeiger auf das ChartView
     QTimer transferTimeout;                             //! timer für timeout bei transfers
     LogDetailWalker logWriter;                          //! schreibt logdetails queue in die DB
@@ -113,5 +112,5 @@ namespace spx
     public slots:
     void onAddLogdirEntrySlot( const QString &entry );
   };
-}
+}  // namespace spx
 #endif  // LOGFORM_HPP
