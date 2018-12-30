@@ -89,7 +89,9 @@ SOURCES                 += \
     src/utils/HelpDialog.cpp \
     src/guiFragments/DeviceInfoFragment.cpp \
     src/spx42/SPX42LogDirectoryEntry.cpp \
-    src/database/LogDetailWalker.cpp
+    src/database/LogDetailWalker.cpp \
+    src/charts/DiveMiniChart.cpp \
+    src/database/ChartDataWorker.cpp
 
 HEADERS                 += \
     src/SPX42ControlMainWin.hpp \
@@ -124,7 +126,9 @@ HEADERS                 += \
     src/guiFragments/DeviceInfoFragment.hpp \
     src/config/CurrBuildDef.hpp \
     src/spx42/SPX42LogDirectoryEntry.hpp \
-    src/database/LogDetailWalker.hpp
+    src/database/LogDetailWalker.hpp \
+    src/charts/DiveMiniChart.hpp \
+    src/database/ChartDataWorker.hpp
 
 FORMS                   += \
     src/ui/SPX42ControlMainWin.ui \

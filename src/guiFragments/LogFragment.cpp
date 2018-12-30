@@ -17,10 +17,9 @@ namespace spx
       : QWidget( parent )
       , IFragmentInterface( logger, spx42Database, spxCfg, remSPX42 )
       , ui( new Ui::LogFragment() )
-      , chart( new QtCharts::QChart() )
+      , miniChart( std::unique_ptr< DiveMiniChart >( new DiveMiniChart( logger, spx42Database ) ) )
       , dummyChart( new QtCharts::QChart() )
-      , chartView( new QtCharts::QChartView( dummyChart ) )
-      , axisY( new QCategoryAxis() )
+      , chartView( std::unique_ptr< QtCharts::QChartView >( new QtCharts::QChartView( dummyChart ) ) )
       , logWriter( this, logger, spx42Database )
       , logWriterTableExist( false )
       , savedIcon( ":/icons/saved_black" )
@@ -55,9 +54,11 @@ namespace spx
     ui->dbWriteNumLabel->setText( dbWriteNumIDLE );
     ui->deleteContentPushButton->setEnabled( false );
     ui->exportContentPushButton->setEnabled( false );
-    prepareMiniChart();
     // tausche den Platzhalter aus und entsorge den gleich
-    delete ui->logDetailsGroupBox->layout()->replaceWidget( ui->diveProfileGraphicsView, chartView );
+    // kopiere die policys und größe
+    chartView->setMinimumSize( ui->diveProfileGraphicsView->minimumSize() );
+    chartView->setSizePolicy( ui->diveProfileGraphicsView->sizePolicy() );
+    delete ui->logDetailsGroupBox->layout()->replaceWidget( ui->diveProfileGraphicsView, chartView.get() );
     // GUI dem Onlinestatus entsprechend vorbereiten
     setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
     //
@@ -107,18 +108,25 @@ namespace spx
   {
     lg->debug( "LogFragment::~LogFragment..." );
     // setze wieder den Dummy ein und lasse den
-    // uniqe_ptr die Objekte im ChartView entsorgen
+    // die Objekte im ChartView entsorgen
     chartView->setChart( dummyChart );
     // ui->logentryTableWidget->setModel( Q_NULLPTR );
     deactivateTab();
   }
 
+  /**
+   * @brief LogFragment::deactivateTab
+   */
   void LogFragment::deactivateTab()
   {
     disconnect( spxConfig.get(), nullptr, this, nullptr );
     disconnect( remoteSPX42.get(), nullptr, this, nullptr );
   }
 
+  /**
+   * @brief LogFragment::onSendBufferStateChangedSlot
+   * @param isBusy
+   */
   void LogFragment::onSendBufferStateChangedSlot( bool isBusy )
   {
     ui->transferProgressBar->setVisible( isBusy );
@@ -141,6 +149,9 @@ namespace spx
     }
   }
 
+  /**
+   * @brief LogFragment::onTransferTimeout
+   */
   void LogFragment::onTransferTimeout()
   {
     //
@@ -156,6 +167,9 @@ namespace spx
     }
   }
 
+  /**
+   * @brief LogFragment::onWriterDoneSlot
+   */
   void LogFragment::onWriterDoneSlot( int )
   {
     lg->debug( "LogFragment::onWriterDoneSlot..." );
@@ -182,6 +196,9 @@ namespace spx
     tryStartLogWriterThread();
   }
 
+  /**
+   * @brief LogFragment::tryStartLogWriterThread
+   */
   void LogFragment::tryStartLogWriterThread()
   {
     if ( !logWriterTableExist )
@@ -199,6 +216,10 @@ namespace spx
     }
   }
 
+  /**
+   * @brief LogFragment::onNewDiveStartSlot
+   * @param newDiveNum
+   */
   void LogFragment::onNewDiveStartSlot( int newDiveNum )
   {
     ui->dbWriteNumLabel->setText( dbWriteNumTemplate.arg( newDiveNum, 3, 10, QChar( '0' ) ) );
@@ -220,9 +241,8 @@ namespace spx
       spxConfig->resetConfig( SPX42ConfigClass::CF_CLASS_LOG );
       // GUI löschen
       ui->logentryTableWidget->setRowCount( 0 );
-      // preview löschen
-      // Chart löschen
-      chart->removeAllSeries();
+      // chart dummy setzten
+      chartView->setChart( dummyChart );
       // Timeout starten
       ui->transferProgressBar->setVisible( true );
       transferTimeout.start( TIMEOUTVAL );
@@ -307,7 +327,6 @@ namespace spx
     int diveNum = 0;
     double depth = 0;
     int row = index.row();
-    bool dataInDatabaseSelected = false;
     // items finden
     QTableWidgetItem *clicked1stItem = ui->logentryTableWidget->item( row, 0 );
     QTableWidgetItem *clicked2ndItem = ui->logentryTableWidget->item( row, 1 );
@@ -333,6 +352,7 @@ namespace spx
     if ( clicked2ndItem->icon().isNull() )
     {
       ui->diveDepthLabel->setText( diveDepthStr.arg( depthStr ) );
+      chartView->setChart( dummyChart );
     }
     else
     {
@@ -346,58 +366,25 @@ namespace spx
         // tiefe eintragen
         //
         ui->diveDepthLabel->setText( diveDepthStr.arg( depth, 2, 'f', 1 ) );
+        //
+        // das Chart anzeigen, wenn Daten vorhanden sind
+        //
+        miniChart->showDiveDataInMiniGraph( remoteSPX42->getRemoteConnected(), diveNum );
+        //
+        chartView->setChart( miniChart.get() );
       }
       else
       {
         ui->diveDepthLabel->setText( diveDepthStr.arg( depthStr ) );
+        chartView->setChart( dummyChart );
       }
-    }
-    /*
-    //
-    // schaue mal ob da was selektiert ist, was auch daten in der DB hat
-    //
-    QModelIndexList indexList = ui->logentryTableWidget->selectionModel()->selectedIndexes();
-    if ( !indexList.isEmpty() )
-    {
-      //
-      // es gibt was zu tun
-      for ( auto idxEntry : indexList )
-      {
-        //
-        // die spalte 1 finden, da steht ein icon oder auch nicht
-        //
-        int row = idxEntry.row();
-        if ( !ui->logentryTableWidget->item( row, 1 )->icon().isNull() )
-        {
-          //
-          // mindestens einen Eintrag gefunden
-          //
-          dataInDatabaseSelected = true;
-          break;
-        }
-      }
-    }
-    //
-    // Buttons erlauben oder eben nicht
-    //
-    ui->deleteContentPushButton->setEnabled( dataInDatabaseSelected );
-    ui->exportContentPushButton->setEnabled( dataInDatabaseSelected );
-    */
-    //
-    // Daten anzeigen, oder auch nicht
-    // FIXME: zum testen nur gerade anzahl
-    //
-    if ( ( index.row() % 2 ) > 0 )
-    {
-      // FIXME: natürlich noch die richtigen Daten einbauen
-      showDiveDataForGraph( 1, 2 );
-    }
-    else
-    {
-      chartView->setChart( dummyChart );
     }
   }
 
+  /**
+   * @brief LogFragment::getSelectedInDb
+   * @return
+   */
   std::shared_ptr< QVector< int > > LogFragment::getSelectedInDb( void )
   {
     //
@@ -435,6 +422,9 @@ namespace spx
     return ( deleteList );
   }
 
+  /**
+   * @brief LogFragment::onLogDetailDeleteClickSlot
+   */
   void LogFragment::onLogDetailDeleteClickSlot()
   {
     lg->debug( "LogFragment::onLogDetailDeleteClickSlot..." );
@@ -455,6 +445,9 @@ namespace spx
     }
   }
 
+  /**
+   * @brief LogFragment::onLogDetailExportClickSlot
+   */
   void LogFragment::onLogDetailExportClickSlot()
   {
     lg->debug( "LogFragment::onLogDetailExportClickSlot..." );
@@ -465,6 +458,12 @@ namespace spx
     {
       lg->debug( QString( "LogFragment::onLogDetailExportClickSlot -> export <%1>..." ).arg( i ) );
     }
+    // DEBUG: erst mal nurt Nachricht
+    QMessageBox msgBox;
+    msgBox.setText( tr( "FUNCTION NOT IMPLEMENTED YET" ) );
+    msgBox.setInformativeText( "Keep in mind: it is an test version..." );
+    msgBox.setIcon( QMessageBox::Information );
+    msgBox.exec();
   }
 
   /**
@@ -483,120 +482,9 @@ namespace spx
     ui->logentryTableWidget->setItem( 0, 1, itLoadet );
   }
 
-  void LogFragment::prepareMiniChart()
-  {
-    chart->legend()->hide();  // Keine Legende in der Minivorschau
-    // Chart Titel aufhübschen
-    QFont font;
-    font.setPixelSize( 10 );
-    chart->setTitleFont( font );
-    chart->setTitleBrush( QBrush( Qt::darkBlue ) );
-    chart->setTitle( tr( "PREVIEW" ) );
-    // Hintergrund aufhübschen
-    QBrush backgroundBrush( Qt::NoBrush );
-    chart->setBackgroundBrush( backgroundBrush );
-    // Malhintergrund auch noch
-    QLinearGradient plotAreaGradient;
-    plotAreaGradient.setStart( QPointF( 0, 1 ) );
-    plotAreaGradient.setFinalStop( QPointF( 1, 0 ) );
-    plotAreaGradient.setColorAt( 0.0, QRgb( 0x202040 ) );
-    plotAreaGradient.setColorAt( 1.0, QRgb( 0x2020f0 ) );
-    plotAreaGradient.setCoordinateMode( QGradient::ObjectBoundingMode );
-    chart->setPlotAreaBackgroundBrush( plotAreaGradient );
-    chart->setPlotAreaBackgroundVisible( true );
-    //
-    // Achse machen
-    //
-    // Y-Achse
-    QPen axisPen( QRgb( 0xd18952 ) );
-    axisPen.setWidth( 1 );
-    axisY->setLinePen( axisPen );
-    QBrush axisBrush( Qt::white );
-    axisY->setLabelsBrush( axisBrush );
-    // achsen grid lines and shades
-    axisY->setGridLineVisible( false );
-    axisY->setShadesPen( Qt::NoPen );
-    axisY->setShadesBrush( QBrush( QColor( 0x99, 0xcc, 0xcc, 0x55 ) ) );
-    axisY->setShadesVisible( true );
-    // Achsen Werte und Bereiche setzten
-    axisY->setRange( 0, 30 );
-    auto *se = new QLineSeries();
-    chart->setAxisY( axisY, se );
-    chart->setMargins( QMargins( 0, 0, 0, 0 ) );
-    // Hübsch malen
-    chartView->setRenderHint( QPainter::Antialiasing );
-  }
-
   /**
-   * @brief hole/erzeuge daten für einen Tauchgang wenn vorhanden
-   * @param deviceId Geräteid in der Datenbank
-   * @param diveNum Nummer des TG für das Gerät
+   * @brief LogFragment::onOnlineStatusChangedSlot
    */
-  void LogFragment::showDiveDataForGraph( int deviceId, int diveNum )
-  {
-    // Polimorphes Objekt hier mit DEBUG belegt
-    IDataSeriesGenerator *gen = new DebugDataSeriesGenerator( lg, spxConfig );
-    // Device-Id für Datenbank hinterlegen
-    gen->setDeviceId( deviceId );
-    // erzeuge Datenserie(n)
-    QLineSeries *series = gen->makeDepthSerie( diveNum );
-    // die Serie aufhübschen
-    QPen pen( QRgb( 0xfdb157 ) );
-    pen.setWidth( 2 );
-    series->setPen( pen );
-    // Chartobjekt etwas leeren
-    chart->removeAllSeries();
-    chart->removeAxis( axisY );
-    chart->addSeries( series );  // Serie zufügen
-    // Y-Achse
-    // Achsen Werte und Bereiche setzten
-    // vorher Skalierung testen
-    float min = getMinYValue( series );
-    min += ( min / 8.0f );  // 8% zugeben
-    axisY->setRange( static_cast< qreal >( min ), 0.50 );
-    // in chart setzten
-    chart->setAxisY( axisY, series );
-    chartView->setChart( chart.get() );
-  }
-
-  /**
-   * @brief Y-Minimum einer Serie finden
-   * @param series Zeiger auf die serie (const)
-   * @return Minimum
-   */
-  float LogFragment::getMinYValue( const QLineSeries *series )
-  {
-    QVector< QPointF > points = series->pointsVector();
-    QVector< QPointF >::iterator it = points.begin();
-    float min = FLT_MAX;
-    while ( it != points.end() )
-    {
-      if ( it->ry() < static_cast< qreal >( min ) )
-        min = static_cast< float >( it->ry() );
-      it++;
-    }
-    return ( min );
-  }
-
-  /**
-   * @brief Y-Maximum einer Serie finden
-   * @param series Zeiger auf die serie (const)
-   * @return Maximum
-   */
-  float LogFragment::getMaxYValue( const QLineSeries *series )
-  {
-    QVector< QPointF > points = series->pointsVector();
-    QVector< QPointF >::iterator it = points.begin();
-    float max = FLT_MIN;
-    while ( it != points.end() )
-    {
-      if ( it->ry() > static_cast< qreal >( max ) )
-        max = static_cast< float >( it->ry() );
-      it++;
-    }
-    return ( max );
-  }
-
   void LogFragment::onOnlineStatusChangedSlot( bool )
   {
     setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
@@ -605,11 +493,17 @@ namespace spx
       logWriter.reset();
   }
 
+  /**
+   * @brief LogFragment::onSocketErrorSlot
+   */
   void LogFragment::onSocketErrorSlot( QBluetoothSocket::SocketError )
   {
     // TODO: implementieren
   }
 
+  /**
+   * @brief LogFragment::onConfLicChangedSlot
+   */
   void LogFragment::onConfLicChangedSlot()
   {
     lg->debug( QString( "LogFragment::onOnlineStatusChangedSlot -> set: %1" )
@@ -618,11 +512,17 @@ namespace spx
         QString( tr( "LOGFILES SPX42 Serial [%1] Lic: %2" ).arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
   }
 
+  /**
+   * @brief LogFragment::onCloseDatabaseSlot
+   */
   void LogFragment::onCloseDatabaseSlot()
   {
     // TODO: implementieren
   }
 
+  /**
+   * @brief LogFragment::onCommandRecivedSlot
+   */
   void LogFragment::onCommandRecivedSlot()
   {
     spSingleCommand recCommand;
@@ -718,7 +618,7 @@ namespace spx
           {
             // Das Ergebnis in die Liste der Config
             spxConfig->addDirectoryEntry( newEntry );
-            newListEntry = QString( "%1:[%2]" ).arg( newEntry.number, 2, 10, QChar( '0' ) ).arg( newEntry.getDateTimeStr() );
+            newListEntry = QString( "%1:[%2]" ).arg( newEntry.number, 3, 10, QChar( '0' ) ).arg( newEntry.getDateTimeStr() );
             onAddLogdirEntrySlot( newListEntry );
             // Timer verlängern
             transferTimeout.start( TIMEOUTVAL );
@@ -813,6 +713,10 @@ namespace spx
     }
   }
 
+  /**
+   * @brief LogFragment::setGuiConnected
+   * @param isConnected
+   */
   void LogFragment::setGuiConnected( bool isConnected )
   {
     //
@@ -838,15 +742,18 @@ namespace spx
     {
       logWriterTableExist = false;
     }
-    chart->setVisible( isConnected );
+    // TODO: chart->setVisible( isConnected );
     if ( !isConnected )
     {
       ui->logentryTableWidget->setRowCount( 0 );
       // preview löschen
-      chart->removeAllSeries();
+      chartView->setChart( dummyChart );
     }
   }
 
+  /**
+   * @brief LogFragment::testForSavedDetails
+   */
   void LogFragment::testForSavedDetails()
   {
     lg->debug( "LogFragment::testForSavedDetails..." );
@@ -882,6 +789,10 @@ namespace spx
     lg->debug( "LogFragment::testForSavedDetails...OK" );
   }
 
+  /**
+   * @brief LogFragment::onDeleteDoneSlot
+   * @param diveNum
+   */
   void LogFragment::onDeleteDoneSlot( int diveNum )
   {
     if ( diveNum < 0 )
@@ -913,6 +824,10 @@ namespace spx
     }
   }
 
+  /**
+   * @brief LogFragment::onNewDiveDoneSlot
+   * @param diveNum
+   */
   void LogFragment::onNewDiveDoneSlot( int diveNum )
   {
     //
@@ -926,6 +841,9 @@ namespace spx
     }
   }
 
+  /**
+   * @brief LogFragment::itemSelectionChangedSlot
+   */
   void LogFragment::itemSelectionChangedSlot( void )
   {
     bool dataInDatabaseSelected = false;
