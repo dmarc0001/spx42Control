@@ -50,7 +50,16 @@ namespace spx
     SendListEntry askForConfig( void );
     //! frage alle Gaase ab
     SendListEntry askForGasList( void );
-    //! setzte im SPX DAtum und Zeit, sofern seine Firmware das kann
+    //! Frage nach Log Verzeichnis
+    SendListEntry askForLogDir( void );
+    SendListEntry askForLogDetailFor( int logNumber );
+    //! Erster Kontakt, einstellungen abfragen
+    // Frage nach dem Hersteller
+    // gleich danach Frage nach der Seriennummer
+    // und dann noch Frage nach der Firmwareversion
+    // und lizenz nicht vergessen
+    SendListEntry askWhileStartup( void );
+    //! setzte im SPX Datum und Zeit, sofern seine Firmware das kann
     SendListEntry setDateTime( const QDateTime &nowDateTime );
     // Schalte SPX auf YMODEM-Betrieb!
     // SendListEntry sendStartYModem( void );
@@ -60,6 +69,8 @@ namespace spx
     SendListEntry shutdownSPX42( void );
     //! erkenne die PDU, lagere Parameter hier im Objekt
     char decodeCommand( const QByteArray &pdu );
+    //! dekodiere Log detail PDU
+    void decodeLogDetailLine( const QByteArray &pdu );
     //! gib Parameter mit Index index zurück, 0 == Command
     QByteArray getParameter( int index );
     //! send command zum deco setzten

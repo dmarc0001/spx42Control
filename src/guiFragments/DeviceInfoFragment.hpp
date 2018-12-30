@@ -9,6 +9,8 @@
 #include "logging/Logger.hpp"
 #include "spx42/SPX42Config.hpp"
 
+#include <QImage>
+
 namespace Ui
 {
   class DeviceInfoFragment;
@@ -22,6 +24,7 @@ namespace spx
     Q_OBJECT
     Q_INTERFACES( spx::IFragmentInterface )
     std::unique_ptr< Ui::DeviceInfoFragment > ui;  //! Zeiger auf die GUI Objekte
+    QImage spxPic;
     QString titleTemplate;
     QString deviceModelTemplate;
     QString deviceSerialNumberTemplate;

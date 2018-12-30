@@ -22,10 +22,7 @@ namespace spx
 {
   constexpr int SEND_TIMERVAL = 200;
 
-  class SPX42RemotBtDevice;
-
-  // eine lesbarmachung
-  using spSingleCommand = std::shared_ptr< SPX42SingleCommand >;
+  // class SPX42RemotBtDevice;
 
   class SPX42RemotBtDevice : public QObject, public SPX42Commands
   {
@@ -51,7 +48,11 @@ namespace spx
     QBluetoothAddress remoteAddr;         //! die MAC des gegenübers
     QByteArray recBuffer;                 //! empfangspuffer für Telegramme
     bool wasSocketError;                  //! gab es einen Socketfehler?
-    bool ignoreTimer;                     //! während des Sendens ignorieren
+    bool ignoreSendTimer;                 //! während des Sendens ignorieren
+    bool isNormalCommandMode;             //! sind wir im normalen Betriebsmode
+    int currentDiveNumberForLogDetail;    //! aktuell übertragen
+    int currentDetailSequenceNumber;      //! Sequenznummer der Detailübertragung
+    QByteArray lineEnd;                   //! Suchmuster für Line-End
 
     public:
     explicit SPX42RemotBtDevice( std::shared_ptr< Logger > logger, QObject *parent = nullptr );
@@ -62,6 +63,7 @@ namespace spx
     SPX42ConnectStatus getConnectionStatus( void );  //! verbindungsstatus erfragen
     spSingleCommand getNextRecCommand( void );       //! nächtes Kommand holen, shared ptr zurück
     QString getRemoteConnected( void );              //! mit wem bin ich verbunden
+    bool getIsNormalCommandMode() const;             //! ist normale Mode (NICHT log)
 
     signals:
     void onStateChangedSig( QBluetoothSocket::SocketState state );  //! Signal, wenn Onlinestatus sich ändert

@@ -136,10 +136,10 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QListView" name="logentryListView">
+       <widget class="QTableWidget" name="logentryTableWidget">
         <property name="minimumSize">
          <size>
-          <width>350</width>
+          <width>250</width>
           <height>0</height>
          </size>
         </property>
@@ -152,7 +152,7 @@
         <property name="font">
          <font>
           <family>DejaVu Sans Mono</family>
-          <pointsize>11</pointsize>
+          <pointsize>14</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -163,6 +163,24 @@
         <property name="frameShadow">
          <enum>QFrame::Plain</enum>
         </property>
+        <property name="sizeAdjustPolicy">
+         <enum>QAbstractScrollArea::AdjustIgnored</enum>
+        </property>
+        <property name="rowCount">
+         <number>0</number>
+        </property>
+        <attribute name="horizontalHeaderVisible">
+         <bool>false</bool>
+        </attribute>
+        <attribute name="horizontalHeaderDefaultSectionSize">
+         <number>260</number>
+        </attribute>
+        <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+         <bool>false</bool>
+        </attribute>
+        <attribute name="verticalHeaderVisible">
+         <bool>false</bool>
+        </attribute>
        </widget>
       </item>
       <item>
@@ -207,7 +225,7 @@
            <property name="font">
             <font>
              <family>DejaVu Sans Mono</family>
-             <pointsize>11</pointsize>
+             <pointsize>24</pointsize>
             </font>
            </property>
            <property name="statusTip">
@@ -232,6 +250,11 @@
              <height>40</height>
             </size>
            </property>
+           <property name="font">
+            <font>
+             <pointsize>24</pointsize>
+            </font>
+           </property>
            <property name="statusTip">
             <string>read logfile content if left selected...</string>
            </property>
@@ -244,7 +267,74 @@
           </widget>
          </item>
          <item>
-          <widget class="QGroupBox" name="detailsGroupBox">
+          <widget class="QWidget" name="handlingWidget" native="true">
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="QPushButton" name="deleteContentPushButton">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>DejaVu Sans Mono</family>
+                <pointsize>24</pointsize>
+               </font>
+              </property>
+              <property name="statusTip">
+               <string>delete selected data from database...</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true"/>
+              </property>
+              <property name="text">
+               <string>DELETE</string>
+              </property>
+              <property name="flat">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="exportContentPushButton">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>DejaVu Sans Mono</family>
+                <pointsize>24</pointsize>
+               </font>
+              </property>
+              <property name="statusTip">
+               <string>export selected data from database...</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true"/>
+              </property>
+              <property name="text">
+               <string>EXPORT</string>
+              </property>
+              <property name="flat">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="logDetailsGroupBox">
+           <property name="font">
+            <font>
+             <pointsize>14</pointsize>
+            </font>
+           </property>
            <property name="statusTip">
             <string>details from log if on of entrys selected...</string>
            </property>
@@ -257,6 +347,17 @@
            <layout class="QVBoxLayout" name="verticalLayout_3">
             <item>
              <widget class="QLabel" name="diveNumberLabel">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>18</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>NUMBER: %03d</string>
               </property>
@@ -264,6 +365,17 @@
             </item>
             <item>
              <widget class="QLabel" name="diveDateLabel">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>18</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>DATE: %03d</string>
               </property>
@@ -271,6 +383,17 @@
             </item>
             <item>
              <widget class="QLabel" name="diveDepthLabel">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>18</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>DEPTH: %03d</string>
               </property>
@@ -281,8 +404,29 @@
               <property name="minimumSize">
                <size>
                 <width>250</width>
-                <height>250</height>
+                <height>200</height>
                </size>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="dbWriteNumLabel">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>18</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>WRITE-TO-DATABASE</string>
+              </property>
+              <property name="margin">
+               <number>6</number>
               </property>
              </widget>
             </item>
@@ -350,6 +494,33 @@
     </widget>
    </item>
   </layout>
+  <action name="actionResdLogDetail">
+   <property name="text">
+    <string>READ FROM DEVICE</string>
+   </property>
+   <property name="statusTip">
+    <string>read selected details from device...</string>
+   </property>
+  </action>
+  <action name="actionDropDetailFromDb">
+   <property name="text">
+    <string>DETAIL DROP FROM DATABASE</string>
+   </property>
+   <property name="toolTip">
+    <string>DETAIL DROP FROM DATABASE</string>
+   </property>
+   <property name="statusTip">
+    <string>drop selected detail from database...</string>
+   </property>
+  </action>
+  <action name="actionExportDetail">
+   <property name="text">
+    <string>EXPORT DETAIL...</string>
+   </property>
+   <property name="statusTip">
+    <string>export selected details...</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

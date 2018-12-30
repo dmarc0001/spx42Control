@@ -5,13 +5,13 @@
 #### Autor: Dirk Marciniak                                                 ####
 ####                                                                       ####
 ###############################################################################
-win32:VERSION_PE_HEADER                = 0.4
+win32:VERSION_PE_HEADER                = 0.5
 win32:QMAKE_TARGET_COMPANY             = submatix.com
 win32:QMAKE_TARGET_COPYRIGHT           = D. Marciniak
 win32:QMAKE_TARGET_PRODUCT             = SPX42 BT-Controller
 win32:RC_ICONS                         = src/res/programIcon.ico
-win32:VERSION                          = 0.5.1.0  # major.minor.patch.build
-else:VERSION                           = 0.5.1    # major.minor.patch
+win32:VERSION                          = 0.5.2.0  # major.minor.patch.build
+else:VERSION                           = 0.5.2    # major.minor.patch
 macx:ICON                              = src/res/programIcon.ico
 #
 TARGET                                 = spx42Control
@@ -23,6 +23,7 @@ QT                                     += widgets
 QT                                     += bluetooth
 QT                                     += sql
 QT                                     += charts
+QT                                     += concurrent
 CONFIG                                 += stl
 CONFIG                                 += c++14
 CONFIG                                 += lrelease
@@ -86,7 +87,11 @@ SOURCES                 += \
     src/bluetooth/SPX42BtDevicesManager.cpp \
     src/spx42/SPX42SingleCommand.cpp \
     src/utils/HelpDialog.cpp \
-    src/guiFragments/DeviceInfoFragment.cpp
+    src/guiFragments/DeviceInfoFragment.cpp \
+    src/spx42/SPX42LogDirectoryEntry.cpp \
+    src/database/LogDetailWalker.cpp \
+    src/charts/DiveMiniChart.cpp \
+    src/database/ChartDataWorker.cpp
 
 HEADERS                 += \
     src/SPX42ControlMainWin.hpp \
@@ -119,7 +124,11 @@ HEADERS                 += \
     src/spx42/SPX42SingleCommand.hpp \
     src/utils/HelpDialog.hpp \
     src/guiFragments/DeviceInfoFragment.hpp \
-    src/config/CurrBuildDef.hpp
+    src/config/CurrBuildDef.hpp \
+    src/spx42/SPX42LogDirectoryEntry.hpp \
+    src/database/LogDetailWalker.hpp \
+    src/charts/DiveMiniChart.hpp \
+    src/database/ChartDataWorker.hpp
 
 FORMS                   += \
     src/ui/SPX42ControlMainWin.ui \

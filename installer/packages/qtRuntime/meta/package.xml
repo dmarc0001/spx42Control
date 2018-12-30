@@ -1,10 +1,9 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Package>
     <DisplayName>QT SPX42 app runtime</DisplayName>
     <Description>Binary runtime files for the spx42 control application.</Description> 
     <Description xml:lang="de_de">Binäre laufzeitdateien für das SPX42 Kontrollprogramm</Description>
     <Version>5.12.0</Version>
-    <ReleaseDate>2018-12-09</ReleaseDate> 
+    <ReleaseDate>2018-12-19</ReleaseDate> 
     <Default>true</Default>
-    <SortingPriority>00</SortingPriority>
 </Package>
