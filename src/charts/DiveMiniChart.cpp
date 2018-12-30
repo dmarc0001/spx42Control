@@ -68,7 +68,16 @@ namespace spx
     // die Daten aufbereiten
     // TODO: nebenläufig als Future machen
     //
-    chartWorker->makeChartDataMini( this, remDevice, diveNum );
+    if ( !dbgetDataFuture.isFinished() )
+    {
+      dbgetDataFuture.cancel();
+      QThread::msleep( 100 );
+    }
+    if ( dbgetDataFuture.isFinished() )
+    {
+      dbgetDataFuture = QtConcurrent::run( this->chartWorker.get(), &ChartDataWorker::makeChartDataMini, this, remDevice, diveNum );
+    }
+    // chartWorker->makeChartDataMini( this, remDevice, diveNum );
 
     lg->debug( "DiveMiniChart::showDiveDataForGraph...OK" );
   }
