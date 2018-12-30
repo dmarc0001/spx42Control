@@ -113,12 +113,19 @@ namespace spx
     deactivateTab();
   }
 
+  /**
+   * @brief LogFragment::deactivateTab
+   */
   void LogFragment::deactivateTab()
   {
     disconnect( spxConfig.get(), nullptr, this, nullptr );
     disconnect( remoteSPX42.get(), nullptr, this, nullptr );
   }
 
+  /**
+   * @brief LogFragment::onSendBufferStateChangedSlot
+   * @param isBusy
+   */
   void LogFragment::onSendBufferStateChangedSlot( bool isBusy )
   {
     ui->transferProgressBar->setVisible( isBusy );
@@ -141,6 +148,9 @@ namespace spx
     }
   }
 
+  /**
+   * @brief LogFragment::onTransferTimeout
+   */
   void LogFragment::onTransferTimeout()
   {
     //
@@ -156,6 +166,9 @@ namespace spx
     }
   }
 
+  /**
+   * @brief LogFragment::onWriterDoneSlot
+   */
   void LogFragment::onWriterDoneSlot( int )
   {
     lg->debug( "LogFragment::onWriterDoneSlot..." );
@@ -182,6 +195,9 @@ namespace spx
     tryStartLogWriterThread();
   }
 
+  /**
+   * @brief LogFragment::tryStartLogWriterThread
+   */
   void LogFragment::tryStartLogWriterThread()
   {
     if ( !logWriterTableExist )
@@ -199,6 +215,10 @@ namespace spx
     }
   }
 
+  /**
+   * @brief LogFragment::onNewDiveStartSlot
+   * @param newDiveNum
+   */
   void LogFragment::onNewDiveStartSlot( int newDiveNum )
   {
     ui->dbWriteNumLabel->setText( dbWriteNumTemplate.arg( newDiveNum, 3, 10, QChar( '0' ) ) );
@@ -307,7 +327,6 @@ namespace spx
     int diveNum = 0;
     double depth = 0;
     int row = index.row();
-    bool dataInDatabaseSelected = false;
     // items finden
     QTableWidgetItem *clicked1stItem = ui->logentryTableWidget->item( row, 0 );
     QTableWidgetItem *clicked2ndItem = ui->logentryTableWidget->item( row, 1 );
@@ -352,37 +371,6 @@ namespace spx
         ui->diveDepthLabel->setText( diveDepthStr.arg( depthStr ) );
       }
     }
-    /*
-    //
-    // schaue mal ob da was selektiert ist, was auch daten in der DB hat
-    //
-    QModelIndexList indexList = ui->logentryTableWidget->selectionModel()->selectedIndexes();
-    if ( !indexList.isEmpty() )
-    {
-      //
-      // es gibt was zu tun
-      for ( auto idxEntry : indexList )
-      {
-        //
-        // die spalte 1 finden, da steht ein icon oder auch nicht
-        //
-        int row = idxEntry.row();
-        if ( !ui->logentryTableWidget->item( row, 1 )->icon().isNull() )
-        {
-          //
-          // mindestens einen Eintrag gefunden
-          //
-          dataInDatabaseSelected = true;
-          break;
-        }
-      }
-    }
-    //
-    // Buttons erlauben oder eben nicht
-    //
-    ui->deleteContentPushButton->setEnabled( dataInDatabaseSelected );
-    ui->exportContentPushButton->setEnabled( dataInDatabaseSelected );
-    */
     //
     // Daten anzeigen, oder auch nicht
     // FIXME: zum testen nur gerade anzahl
@@ -390,7 +378,7 @@ namespace spx
     if ( ( index.row() % 2 ) > 0 )
     {
       // FIXME: natürlich noch die richtigen Daten einbauen
-      showDiveDataForGraph( 1, 2 );
+      showDiveDataForGraph( remoteSPX42->getRemoteConnected(), diveNum );
     }
     else
     {
@@ -398,6 +386,10 @@ namespace spx
     }
   }
 
+  /**
+   * @brief LogFragment::getSelectedInDb
+   * @return
+   */
   std::shared_ptr< QVector< int > > LogFragment::getSelectedInDb( void )
   {
     //
@@ -435,6 +427,9 @@ namespace spx
     return ( deleteList );
   }
 
+  /**
+   * @brief LogFragment::onLogDetailDeleteClickSlot
+   */
   void LogFragment::onLogDetailDeleteClickSlot()
   {
     lg->debug( "LogFragment::onLogDetailDeleteClickSlot..." );
@@ -455,6 +450,9 @@ namespace spx
     }
   }
 
+  /**
+   * @brief LogFragment::onLogDetailExportClickSlot
+   */
   void LogFragment::onLogDetailExportClickSlot()
   {
     lg->debug( "LogFragment::onLogDetailExportClickSlot..." );
@@ -483,6 +481,9 @@ namespace spx
     ui->logentryTableWidget->setItem( 0, 1, itLoadet );
   }
 
+  /**
+   * @brief LogFragment::prepareMiniChart
+   */
   void LogFragment::prepareMiniChart()
   {
     chart->legend()->hide();  // Keine Legende in der Minivorschau
@@ -532,12 +533,12 @@ namespace spx
    * @param deviceId Geräteid in der Datenbank
    * @param diveNum Nummer des TG für das Gerät
    */
-  void LogFragment::showDiveDataForGraph( int deviceId, int diveNum )
+  void LogFragment::showDiveDataForGraph( const QString &remDevice, int diveNum )
   {
     // Polimorphes Objekt hier mit DEBUG belegt
     IDataSeriesGenerator *gen = new DebugDataSeriesGenerator( lg, spxConfig );
     // Device-Id für Datenbank hinterlegen
-    gen->setDeviceId( deviceId );
+    gen->setDeviceId( remDevice );
     // erzeuge Datenserie(n)
     QLineSeries *series = gen->makeDepthSerie( diveNum );
     // die Serie aufhübschen
@@ -597,6 +598,9 @@ namespace spx
     return ( max );
   }
 
+  /**
+   * @brief LogFragment::onOnlineStatusChangedSlot
+   */
   void LogFragment::onOnlineStatusChangedSlot( bool )
   {
     setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
@@ -605,11 +609,17 @@ namespace spx
       logWriter.reset();
   }
 
+  /**
+   * @brief LogFragment::onSocketErrorSlot
+   */
   void LogFragment::onSocketErrorSlot( QBluetoothSocket::SocketError )
   {
     // TODO: implementieren
   }
 
+  /**
+   * @brief LogFragment::onConfLicChangedSlot
+   */
   void LogFragment::onConfLicChangedSlot()
   {
     lg->debug( QString( "LogFragment::onOnlineStatusChangedSlot -> set: %1" )
@@ -618,11 +628,17 @@ namespace spx
         QString( tr( "LOGFILES SPX42 Serial [%1] Lic: %2" ).arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
   }
 
+  /**
+   * @brief LogFragment::onCloseDatabaseSlot
+   */
   void LogFragment::onCloseDatabaseSlot()
   {
     // TODO: implementieren
   }
 
+  /**
+   * @brief LogFragment::onCommandRecivedSlot
+   */
   void LogFragment::onCommandRecivedSlot()
   {
     spSingleCommand recCommand;
@@ -813,6 +829,10 @@ namespace spx
     }
   }
 
+  /**
+   * @brief LogFragment::setGuiConnected
+   * @param isConnected
+   */
   void LogFragment::setGuiConnected( bool isConnected )
   {
     //
@@ -847,6 +867,9 @@ namespace spx
     }
   }
 
+  /**
+   * @brief LogFragment::testForSavedDetails
+   */
   void LogFragment::testForSavedDetails()
   {
     lg->debug( "LogFragment::testForSavedDetails..." );
@@ -882,6 +905,10 @@ namespace spx
     lg->debug( "LogFragment::testForSavedDetails...OK" );
   }
 
+  /**
+   * @brief LogFragment::onDeleteDoneSlot
+   * @param diveNum
+   */
   void LogFragment::onDeleteDoneSlot( int diveNum )
   {
     if ( diveNum < 0 )
@@ -913,6 +940,10 @@ namespace spx
     }
   }
 
+  /**
+   * @brief LogFragment::onNewDiveDoneSlot
+   * @param diveNum
+   */
   void LogFragment::onNewDiveDoneSlot( int diveNum )
   {
     //
@@ -926,6 +957,9 @@ namespace spx
     }
   }
 
+  /**
+   * @brief LogFragment::itemSelectionChangedSlot
+   */
   void LogFragment::itemSelectionChangedSlot( void )
   {
     bool dataInDatabaseSelected = false;

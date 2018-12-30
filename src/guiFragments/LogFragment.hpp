@@ -78,7 +78,7 @@ namespace spx
 
     private:
     void prepareMiniChart( void );
-    void showDiveDataForGraph( int deviceId, int diveNum );
+    void showDiveDataForGraph( const QString &remDevice, int diveNum );
     void setGuiConnected( bool isConnected );
     void processLogDetails( void );                             //! schreibe alle Daten aus der Queue in die Datenbank
     void testForSavedDetails( void );                           //! schaue nach ob die Details dazu bereits gesichert wurden
