@@ -15,7 +15,10 @@ namespace spx
 {
   //
   class SPX42DeviceAlias;  // forward deklaration
+  class DiveChartDataset;
   using DeviceAliasHash = QHash< QString, SPX42DeviceAlias >;
+  using DiveChartSet = QVector< DiveChartDataset >;
+  using DiveChartSetPtr = std::shared_ptr< DiveChartSet >;
 
   /**
    * @brief The SPX42DeviceAlias class definiert parameter für gerät
@@ -53,6 +56,20 @@ namespace spx
     DiveLogEntry( void );
     DiveLogEntry( int, int, int, int, int, double, double, double, double, double, int, int, int, int, int );
     DiveLogEntry( const DiveLogEntry &en );
+  };
+
+  class DiveChartDataset
+  {
+    public:
+    int lfdnr;
+    double depth;
+    int temperature;
+    double ppo2;
+    double ppo2_1;
+    double ppo2_2;
+    double ppo2_3;
+    int nextStep;
+    void clear( void );
   };
 
   /**
@@ -97,6 +114,7 @@ namespace spx
     bool insertLogentry( const QString &tableName, const DiveLogEntry &entr );  //! einen Logeintrag zufügen
     bool insertLogentry( const QString &tableName, spSingleCommand );           //! Logeintrag einfügen
     int getMaxDepthFor( const QString &tableName, int diveNum );                //! maximale Tiefe für Tauchgang
+    DiveChartSetPtr getChartSet( const QString &tableName, int diveNum );       //! gib daten für CHART für einen Tauchgang
 
     private:
     bool existTable( const QString &tableName );     //! gibt es folgende Tabelle?

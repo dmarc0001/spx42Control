@@ -55,6 +55,9 @@ namespace spx
     ui->deleteContentPushButton->setEnabled( false );
     ui->exportContentPushButton->setEnabled( false );
     // tausche den Platzhalter aus und entsorge den gleich
+    // kopiere die policys und größe
+    chartView->setMinimumSize( ui->diveProfileGraphicsView->minimumSize() );
+    chartView->setSizePolicy( ui->diveProfileGraphicsView->sizePolicy() );
     delete ui->logDetailsGroupBox->layout()->replaceWidget( ui->diveProfileGraphicsView, chartView.get() );
     // GUI dem Onlinestatus entsprechend vorbereiten
     setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
@@ -239,7 +242,7 @@ namespace spx
       // GUI löschen
       ui->logentryTableWidget->setRowCount( 0 );
       // chart dummy setzten
-      chartView->setChart( miniChart.get() );
+      chartView->setChart( dummyChart );
       // Timeout starten
       ui->transferProgressBar->setVisible( true );
       transferTimeout.start( TIMEOUTVAL );
@@ -455,6 +458,12 @@ namespace spx
     {
       lg->debug( QString( "LogFragment::onLogDetailExportClickSlot -> export <%1>..." ).arg( i ) );
     }
+    // DEBUG: erst mal nurt Nachricht
+    QMessageBox msgBox;
+    msgBox.setText( tr( "FUNCTION NOT IMPLEMENTED YET" ) );
+    msgBox.setInformativeText( "Keep in mind: it is an test version..." );
+    msgBox.setIcon( QMessageBox::Information );
+    msgBox.exec();
   }
 
   /**
@@ -738,7 +747,7 @@ namespace spx
     {
       ui->logentryTableWidget->setRowCount( 0 );
       // preview löschen
-      chartView->setChart( miniChart.get() );
+      chartView->setChart( dummyChart );
     }
   }
 

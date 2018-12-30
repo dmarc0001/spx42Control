@@ -54,9 +54,9 @@ namespace spx
     QQueue< int > logDetailRead;                        //! Liste mit zu lesenden Logdetails
     QFuture< bool > dbDeleteFuture;                     //! nebenläufig daten aus DB löschen
     bool logWriterTableExist;                           //! Ergebnis des Logwriter Threads, bei -1 gab es einen Fehler
-    const QIcon savedIcon;
-    const QIcon nullIcon;
-    QString fragmentTitlePattern;  //! das Muster (lokalisierungsfähig) für Fragmentüberschrift
+    const QIcon savedIcon;                              //! icon fur anzeige log ist in db
+    const QIcon nullIcon;                               //! icon null
+    QString fragmentTitlePattern;                       //! das Muster (lokalisierungsfähig) für Fragmentüberschrift
     QString diveNumberStr;
     QString diveDateStr;
     QString diveDepthStr;

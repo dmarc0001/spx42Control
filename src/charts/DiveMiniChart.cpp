@@ -9,7 +9,10 @@ namespace spx
                                 std::shared_ptr< SPX42Database > db,
                                 QGraphicsItem *parent,
                                 Qt::WindowFlags wFlags )
-      : QtCharts::QChart( parent, wFlags ), lg( logger ), database( db )
+      : QtCharts::QChart( parent, wFlags )
+      , lg( logger )
+      , database( db )
+      , chartWorker( std::unique_ptr< ChartDataWorker >( new ChartDataWorker( logger, db ) ) )
   {
     prepareChart();
   }
@@ -20,7 +23,7 @@ namespace spx
     legend()->hide();  // Keine Legende in der Minivorschau
     // Chart Titel aufhübschen
     QFont font;
-    font.setPixelSize( 10 );
+    font.setPixelSize( 8 );
     setTitleFont( font );
     setTitleBrush( QBrush( Qt::darkBlue ) );
     setTitle( tr( "PREVIEW" ) );
@@ -42,7 +45,6 @@ namespace spx
   void DiveMiniChart::showDiveDataInMiniGraph( const QString &remDevice, int diveNum )
   {
     lg->debug( "DiveMiniChart::showDiveDataForGraph..." );
-    // return;
     //
     // aufräumen
     //
@@ -61,50 +63,13 @@ namespace spx
     //
     setTitle( tr( "DIVE NR %1" ).arg( diveNum, 3, 10, QChar( '0' ) ) );
     remoteDevice = remDevice;
+
     //
-    // Zeitachdse machen
+    // die Daten aufbereiten
+    // TODO: nebenläufig als Future machen
     //
-    lg->debug( "DiveMiniChart::showDiveDataForGraph -> make horizontal axis..." );
-    QValueAxis *axisX = new QValueAxis();
-    axisX->setTickCount( 10 );
-    addAxis( axisX, Qt::AlignBottom );
-    lg->debug( "DiveMiniChart::showDiveDataForGraph -> make horizontal axis...OK" );
-    //
-    // erste Serie
-    //
-    lg->debug( "DiveMiniChart::showDiveDataForGraph -> make first vertical axis..." );
-    QSplineSeries *series = new QSplineSeries();
-    *series << QPointF( 1, 5 ) << QPointF( 3.5, 18 ) << QPointF( 4.8, 7.5 ) << QPointF( 10, 2.5 );
-    addSeries( series );
-    // y-achse
-    QValueAxis *axisY = new QValueAxis;
-    axisY->setLinePenColor( series->pen().color() );
-    //
-    addAxis( axisY, Qt::AlignLeft );
-    series->attachAxis( axisX );
-    series->attachAxis( axisY );
-    lg->debug( "DiveMiniChart::showDiveDataForGraph -> make first vertical axis...OK" );
-    //
-    // noch eine Serie
-    //
-    lg->debug( "DiveMiniChart::showDiveDataForGraph -> make second vertical axis..." );
-    series = new QSplineSeries;
-    *series << QPointF( 1, 0.5 ) << QPointF( 1.5, 4.5 ) << QPointF( 2.4, 2.5 ) << QPointF( 4.3, 12.5 ) << QPointF( 5.2, 3.5 )
-            << QPointF( 7.4, 16.5 ) << QPointF( 8.3, 7.5 ) << QPointF( 10, 17 );
-    addSeries( series );
-    //
-    QCategoryAxis *axisY3 = new QCategoryAxis;
-    axisY3->append( "Low", 5 );
-    axisY3->append( "Medium", 12 );
-    axisY3->append( "High", 17 );
-    axisY3->setLinePenColor( series->pen().color() );
-    axisY3->setGridLinePen( ( series->pen() ) );
-    //
-    addAxis( axisY3, Qt::AlignRight );
-    lg->debug( "DiveMiniChart::showDiveDataForGraph -> make second vertical axis..." );
-    lg->debug( "DiveMiniChart::showDiveDataForGraph -> attach axis to series axis..." );
-    series->attachAxis( axisX );
-    series->attachAxis( axisY3 );
+    chartWorker->makeChartDataMini( this, remDevice, diveNum );
+
     lg->debug( "DiveMiniChart::showDiveDataForGraph...OK" );
   }
 }  // namespace spx

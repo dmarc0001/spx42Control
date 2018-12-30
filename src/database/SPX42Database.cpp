@@ -29,6 +29,18 @@ namespace spx
   {
   }
 
+  void DiveChartDataset::clear( void )
+  {
+    lfdnr = 0;
+    depth = 0.0;
+    temperature = 0;
+    ppo2 = 0.0;
+    ppo2_1 = 0.0;
+    ppo2_2 = 0.0;
+    ppo2_3 = 0.0;
+    nextStep = 0;
+  }
+
   DiveLogEntry::DiveLogEntry(){};
   DiveLogEntry::DiveLogEntry( int dn,
                               int lf,
@@ -1022,6 +1034,58 @@ namespace spx
       lg->warn( "SPX42Database::getMaxDepthFor -> db is not valid or not opened." );
       return ( -1 );
     }
+  }
+
+  DiveChartSetPtr SPX42Database::getChartSet( const QString &tableName, int diveNum )
+  {
+    DiveChartSetPtr chartSet = DiveChartSetPtr( new DiveChartSet() );
+    lg->debug( "SPX42Database::getChartSet..." );
+    if ( db.isValid() && db.isOpen() )
+    {
+      //
+      // suche die Daten aus der Datenbank zusammen
+      //
+      QSqlQuery query( db );
+      QString sql = QString( "select lfdNr,depth,temperature,ppo2,ppo2_1,ppo2_2,ppo2_3,nextStep from '%1' where divenum=%2" )
+                        .arg( tableName )
+                        .arg( diveNum );
+      //
+      // jetzt frage die Datenbank
+      //
+      if ( !query.exec( sql ) )
+      {
+        //
+        // es gab einen Fehler bei der Anfrage
+        //
+        QSqlError err = db.lastError();
+        lg->warn( QString( "SPX42Database::getMaxDepthFor -> <%1>..." ).arg( err.text() ) );
+        chartSet->clear();
+        return ( chartSet );
+      }
+      //
+      // alle Datensätze abholen
+      //
+      while ( query.next() )
+      {
+        DiveChartDataset currSet;
+        currSet.lfdnr = query.value( 0 ).toInt();
+        currSet.depth = 0.0 - ( query.value( 1 ).toDouble() / 10.0 );
+        currSet.temperature = query.value( 2 ).toInt();
+        currSet.ppo2 = query.value( 3 ).toDouble();
+        currSet.ppo2_1 = query.value( 4 ).toDouble();
+        currSet.ppo2_2 = query.value( 5 ).toDouble();
+        currSet.ppo2_3 = query.value( 6 ).toDouble();
+        currSet.nextStep = query.value( 7 ).toInt();
+        chartSet->append( currSet );
+      }
+      lg->debug( "SPX42Database::getChartSet...OK" );
+    }
+    else
+    {
+      lg->warn( "SPX42Database::getMaxDepthFor -> db is not valid or not opened." );
+      chartSet->clear();
+    }
+    return ( chartSet );
   }
 
   // ##########################################################################
