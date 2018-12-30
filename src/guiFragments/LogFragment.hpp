@@ -17,6 +17,7 @@
 #include <memory>
 #include "IFragmentInterface.hpp"
 #include "bluetooth/SPX42RemotBtDevice.hpp"
+#include "charts/DiveMiniChart.hpp"
 #include "config/ProjectConst.hpp"
 #include "database/LogDetailWalker.hpp"
 #include "database/SPX42Database.hpp"
@@ -43,20 +44,19 @@ namespace spx
     private:
     Q_OBJECT
     Q_INTERFACES( spx::IFragmentInterface )
-    std::unique_ptr< Ui::LogFragment > ui;      //! Zeiger auf GUI-Objekte
-    std::unique_ptr< QtCharts::QChart > chart;  //! Zeiger auf das Chart
-    QtCharts::QChart *dummyChart;               //! Zeiger auf das weisse, leere chart
-    QtCharts::QChartView *chartView;            //! Zeiger auf das ChartView
-    QtCharts::QCategoryAxis *axisY;             //! Y-Achse für Chart
-    QTimer transferTimeout;                     //! timer für timeout bei transfers
-    LogDetailWalker logWriter;                  //! schreibt logdetails queue in die DB
-    QFuture< int > dbWriterFuture;              //! nebenläufig daten in DB schreiben
-    QQueue< int > logDetailRead;                //! Liste mit zu lesenden Logdetails
-    QFuture< bool > dbDeleteFuture;             //! nebenläufig daten aus DB löschen
-    bool logWriterTableExist;                   //! Ergebnis des Logwriter Threads, bei -1 gab es einen Fehler
-    const QIcon savedIcon;
-    const QIcon nullIcon;
-    QString fragmentTitlePattern;  //! das Muster (lokalisierungsfähig) für Fragmentüberschrift
+    std::unique_ptr< Ui::LogFragment > ui;              //! Zeiger auf GUI-Objekte
+    std::unique_ptr< DiveMiniChart > miniChart;         //! Zeiger auf das eigene Minichart
+    QtCharts::QChart *dummyChart;                       //! Zeiger auf das weisse, leere chart
+    std::unique_ptr< QtCharts::QChartView > chartView;  //! Zeiger auf das ChartView
+    QTimer transferTimeout;                             //! timer für timeout bei transfers
+    LogDetailWalker logWriter;                          //! schreibt logdetails queue in die DB
+    QFuture< int > dbWriterFuture;                      //! nebenläufig daten in DB schreiben
+    QQueue< int > logDetailRead;                        //! Liste mit zu lesenden Logdetails
+    QFuture< bool > dbDeleteFuture;                     //! nebenläufig daten aus DB löschen
+    bool logWriterTableExist;                           //! Ergebnis des Logwriter Threads, bei -1 gab es einen Fehler
+    const QIcon savedIcon;                              //! icon fur anzeige log ist in db
+    const QIcon nullIcon;                               //! icon null
+    QString fragmentTitlePattern;                       //! das Muster (lokalisierungsfähig) für Fragmentüberschrift
     QString diveNumberStr;
     QString diveDateStr;
     QString diveDepthStr;
@@ -77,15 +77,11 @@ namespace spx
     void changeEvent( QEvent *e ) override;
 
     private:
-    void prepareMiniChart( void );
-    void showDiveDataForGraph( int deviceId, int diveNum );
     void setGuiConnected( bool isConnected );
     void processLogDetails( void );                             //! schreibe alle Daten aus der Queue in die Datenbank
     void testForSavedDetails( void );                           //! schaue nach ob die Details dazu bereits gesichert wurden
     void tryStartLogWriterThread( void );                       //! den Thread starten (restarten)
     std::shared_ptr< QVector< int > > getSelectedInDb( void );  //! gib alle selektierten Einträge, die in der DB sind
-    float getMinYValue( const QLineSeries *series );
-    float getMaxYValue( const QLineSeries *series );
 
     signals:
     void onWarningMessageSig( const QString &msg, bool asPopup = false ) override;  //! eine Warnmeldung soll das Main darstellen
@@ -116,5 +112,5 @@ namespace spx
     public slots:
     void onAddLogdirEntrySlot( const QString &entry );
   };
-}
+}  // namespace spx
 #endif  // LOGFORM_HPP
