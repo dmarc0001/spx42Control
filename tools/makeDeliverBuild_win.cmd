@@ -69,7 +69,8 @@ if "%MAKE_DONE%" == "false" goto false_end
 
 echo Deployment... 
 SET MAKE_DONE=false
-%DEPLOY% --%PROJECTTYPE% --no-quick-import --no-system-d3d-compiler --compiler-runtime --no-opengl-sw "out" && SET MAKE_DONE=true
+%DEPLOY% --%PROJECTTYPE% --no-quick-import --no-system-d3d-compiler --no-compiler-runtime --no-opengl-sw "out" && SET MAKE_DONE=true
+::%DEPLOY% --%PROJECTTYPE% --no-quick-import --no-system-d3d-compiler --compiler-runtime --no-opengl-sw "out" && SET MAKE_DONE=true
 
 :: falls das falsch ist, zum Ende kommen
 if "%MAKE_DONE%" == "false" goto false_end
@@ -109,6 +110,13 @@ echo erzeuge updater packages
 SET MAKE_DONE=false
 :: BUGFIX von visual studio/qt deploy
 cp -f %EXTRAS%\ucrtbased.dll ucrtbased.dll
+cp -f %EXTRAS%\libEGL.dll libEGL.dll
+cp -f %EXTRAS%\libGLESv2.dll libGLESv2.dll
+cp -f %EXTRAS%\msvcp140.dll msvcp140.dll
+cp -f %EXTRAS%\opengl32sw.dll opengl32sw.dll
+cp -f %EXTRAS%\vccorlib140.dll vccorlib140.dll
+cp -f %EXTRAS%\vcruntime140.dll vcruntime140.dll
+
 echo %ARCHIVEGEN% %APP_INSTALLER_FILE_PATH%\%APP_INSTALLER_FILE% *.exe *.qm *.ilk *.pdb ucrtbased.dll
 %ARCHIVEGEN% %APP_INSTALLER_FILE_PATH%\%APP_INSTALLER_FILE% *.exe *.qm *.ilk *.pdb ucrtbased.dll && SET MAKE_DONE=true
 
@@ -118,6 +126,12 @@ if "%MAKE_DONE%" == "false" goto false_end
 del /f /q  spx42Control.*
 del /f /q  *.qm
 del /f /q ucrtbased.dll
+del /f /q libEGL.dll
+del /f /q libGLESv2.dll
+del /f /q msvcp140.dll
+del /f /q opengl32sw.dll
+del /f /q vccorlib140.dll
+del /f /q vcruntime140.dll
 del /f /q "%RUNTIME_INSTALLER_FILE_PATH%%RUNTIME_INSTALLER_FILE%"
 
 SET MAKE_DONE=false
