@@ -117,8 +117,8 @@ cp -f %EXTRAS%\opengl32sw.dll opengl32sw.dll
 cp -f %EXTRAS%\vccorlib140.dll vccorlib140.dll
 cp -f %EXTRAS%\vcruntime140.dll vcruntime140.dll
 
-echo %ARCHIVEGEN% %APP_INSTALLER_FILE_PATH%\%APP_INSTALLER_FILE% *.exe *.qm *.ilk *.pdb ucrtbased.dll
-%ARCHIVEGEN% %APP_INSTALLER_FILE_PATH%\%APP_INSTALLER_FILE% *.exe *.qm *.ilk *.pdb ucrtbased.dll && SET MAKE_DONE=true
+echo %ARCHIVEGEN% %APP_INSTALLER_FILE_PATH%\%APP_INSTALLER_FILE% *.exe *.qm *.ilk *.pdb ucrtbased.dll libEGL.dll libGLESv2.dll msvcp140.dll opengl32sw.dll vccorlib140.dll vcruntime140.dll
+%ARCHIVEGEN% %APP_INSTALLER_FILE_PATH%\%APP_INSTALLER_FILE% *.exe *.qm *.ilk *.pdb ucrtbased.dll libEGL.dll libGLESv2.dll msvcp140.dll opengl32sw.dll vccorlib140.dll vcruntime140.dll && SET MAKE_DONE=true
 
 :: falls das falsch ist, zum Ende kommen
 if "%MAKE_DONE%" == "false" goto false_end
