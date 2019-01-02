@@ -7,6 +7,8 @@
 #
 ARCH_PREFIX=0.5.2
 QT_PREFIX=5.12.0
+ONLINEINSTALLER=spx42ControlOnlineInstallerMac.dmg
+OFFLINEINSTALLER=spx42ControlOfflineInstallerMac.dmg
 PROJECTBASE=/Users/dmarcini/entwicklung/spx42Control
 PROJECTFILE=$PROJECTBASE/spx42Control.pro
 PROJECTBUILDDIR=DEPLOYDIR
@@ -15,10 +17,11 @@ TRANSLATION=$PROJECTBASE/src/translations
 INSTALLERBASE=$PROJECTBASE/installer
 TRANSLATION=$PROJECTBASE/src/translations
 INSTALLERBASE=$PROJECTBASE/installer
-APP_INSTALLER_FILE=$ARCH_PREFIXspx42Control.7z
-APP_INSTALLER_FILE_PATH=$INSTALLERBASE/packages/app/data/
-RUNTIME_INSTALLER_FILE=$QT_PREFIXqtRuntime_5120.7z
-RUNTIME_INSTALLER_FILE_PATH=$INSTALLERBASE/packages/runtime/data/
+REPOSITORY_DIR=repository
+APP_INSTALLER_FILE=spx42Control.7z
+APP_INSTALLER_FILE_PATH=$INSTALLERBASE/packages/spx42ControlMac/data/
+#RUNTIME_INSTALLER_FILE=qtRuntime_5120.7z
+#RUNTIME_INSTALLER_FILE_PATH=$INSTALLERBASE/packages/qtRuntime/data/
 
 QT_BASEDIR=/Users/dmarcini/Qt/$QT_PREFIX/clang_64/bin
 QT_QMAKE=$QT_BASEDIR/qmake
@@ -26,6 +29,7 @@ MAKE=/usr/bin/make
 DEPLOY=$QT_BASEDIR/macdeployqt
 ARCHIVEGEN=/Users/dmarcini/Qt/Tools/QtInstallerFramework/3.0/bin/archivegen
 BINARYCREATOR=/Users/dmarcini/Qt/Tools/QtInstallerFramework/3.0/bin/binarycreator
+REPOGEN=/Users/dmarcini/Qt/Tools/QtInstallerFramework/3.0/bin/repogen
 MAKE_DONE=false
 
 #
@@ -43,10 +47,21 @@ then
 fi
 
 #
+# das Repository Verzeichnis testen und ggf anlegen
+#
+if [ -d $REPOSITORY_DIR ] 
+then
+  rm -r  $REPOSITORY_DIR
+fi
+mkdir $REPOSITORY_DIR
+
+#
 # in das Verzeichnis wechseln und komplett leeren
 #
 cd $PROJECTBUILDDIR
-# TODO: entkommentieren  rm -rf ./*
+
+rm -rf ./out/*
+# rm -rf ./*
 
 #
 # mit qmake das make konfigurieren
@@ -55,7 +70,7 @@ echo "qmake ausfuehren..."
 $QT_QMAKE $PROJECTFILE  -Wall -nocache -spec macx-clang  "CONFIG += $PROJECTTYPE" "CONFIG+=x86_64" 
 # das eigentliche compilieren
 echo "build Projekt $PROJECTTYPE"
-$MAKE qmake_all first && MAKE_DONE=true
+$MAKE -j4 qmake_all first && MAKE_DONE=true
 
 #
 # falls das falsch ist, zum Ende kommen
@@ -83,9 +98,25 @@ fi
 #
 echo "Deployment..."
 MAKE_DONE=false
+cd out
 pwd
-$DEPLOY  out/spx42Control.app -verbose=1 -always-overwrite -appstore-compliant  && MAKE_DONE=true
+$DEPLOY  spx42Control.app -verbose=1 -always-overwrite -appstore-compliant  && MAKE_DONE=true
+#$DEPLOY  spx42Control.app -dmg -verbose=1 -always-overwrite -appstore-compliant  && MAKE_DONE=true
 
+
+echo "create package..."
+echo $ARCHIVEGEN $APP_INSTALLER_FILE_PATH/$APP_INSTALLER_FILE 
+$ARCHIVEGEN $APP_INSTALLER_FILE_PATH/$APP_INSTALLER_FILE *
+
+
+cd $INSTALLERBASE
+pwd
+echo "make repository..."
+$REPOGEN -p packages -i spx42ControlMac ../repository
+
+echo "make binary creator..."
+echo $BINARYCREATOR -n -c config/config_mac.xml -p packages -i spx42ControlMac $ONLINEINSTALLER
+$BINARYCREATOR -n -c config/config_mac.xml -p packages -i spx42ControlMac $ONLINEINSTALLER
 
 
 popd
