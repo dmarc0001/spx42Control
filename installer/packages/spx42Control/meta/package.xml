@@ -2,7 +2,7 @@
 <Package>
     <DisplayName>SPX42 app execute</DisplayName>
     <Description>Binary executable files for the spx42Control application.</Description> 
-    <Version>0.5.2.2</Version>
+    <Version>0.5.2.3</Version>
     <ReleaseDate>2018-12-30</ReleaseDate>
     <Default>true</Default>
     <Script>installscript.qs</Script>

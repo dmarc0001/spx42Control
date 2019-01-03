@@ -254,7 +254,7 @@
          </font>
         </property>
         <property name="statusTip">
-         <string>Edit device propertys...</string>
+         <string>Edit device Alias...</string>
         </property>
         <property name="text">
          <string/>
@@ -335,12 +335,18 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <layout class="QVBoxLayout" name="editorLayout">
       <property name="sizeConstraint">
        <enum>QLayout::SetMaximumSize</enum>
       </property>
       <item>
-       <widget class="QTableView" name="editAliasesTableView">
+       <widget class="QTableWidget" name="editAliasesTableWidget">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -353,12 +359,26 @@
           <height>80</height>
          </size>
         </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="statusTip">
-         <string>edit device aliases</string>
+         <string>edit device aliases, doubleclick for edit entry...</string>
+        </property>
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
         </property>
         <property name="gridStyle">
          <enum>Qt::DotLine</enum>
         </property>
+        <property name="columnCount">
+         <number>2</number>
+        </property>
+        <column/>
+        <column/>
        </widget>
       </item>
       <item>

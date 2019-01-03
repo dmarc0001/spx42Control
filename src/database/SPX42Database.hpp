@@ -81,6 +81,7 @@ namespace spx
     public:
     static const QString versionTableName;  //! Name der Versionstabelle
     static const QString deviceTableName;   //! Name der Aliase für Geräte
+    static const QString deviceAliasView;   //! View für aliase
 
     private:
     std::shared_ptr< Logger > lg;                //! Zeiger auf ein Loggerobjekt
@@ -98,6 +99,7 @@ namespace spx
     QSqlError openDatabase( const QString &databaseName,
                             bool createPath = false );  //! öffne die Datenbank, checke auf Vollständigkeit
     void closeDatabase( void );                         //! schliesse Datenbank
+    QSqlDatabase *getDatabase( void );                  //! Zeiger auf aktuelle DB zurück
     DeviceAliasHash getDeviceAliasHash( void );         //! gib einen hash mit einem hash (ALIAS <-> DEVICENAME) zurück
     bool addAlias( const QString &mac,
                    const QString &name,

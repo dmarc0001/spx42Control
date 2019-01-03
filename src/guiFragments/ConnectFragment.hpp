@@ -3,8 +3,10 @@
 
 #include <QDateTime>
 #include <QPair>
+#include <QTableWidgetItem>
 #include <QTimer>
 #include <QWidget>
+#include <QWindow>
 #include <memory>
 #include "IFragmentInterface.hpp"
 #include "bluetooth/BtDiscoverRemoteDevice.hpp"
@@ -68,6 +70,7 @@ namespace spx
     void onCurrentIndexChangedSlot( int index );                      //! Dropdown box: Auswahl geändert
     void onDiscoveredDeviceSlot( const SPXDeviceDescr &deviceInfo );  //! wurde ein neues gerät gefunden...
     void onDiscoverScanFinishedSlot( void );                          //! wenn das discovering abgeschlossen ist
+    void onAliasEditItemChanged( QTableWidgetItem *edItem );          //! wenn im Editor er Alias geändert wurde
   };
 }
 #endif  // CONNECTFORM_HPP

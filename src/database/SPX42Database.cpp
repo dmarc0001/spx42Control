@@ -4,6 +4,7 @@ namespace spx
 {
   const QString SPX42Database::versionTableName{"version"};
   const QString SPX42Database::deviceTableName{"devices"};
+  const QString SPX42Database::deviceAliasView{"deviceAlias"};
 
   const QString SPX42Database::sqlDriver{"QSQLITE"};
   const qint16 SPX42Database::databaseVersion{2};
@@ -222,6 +223,13 @@ namespace spx
     QSqlDatabase::removeDatabase( currentConnectionName );
     currentConnectionName.clear();
     lg->debug( "SPX42Database::closeDatabase...OK" );
+  }
+
+  QSqlDatabase *SPX42Database::getDatabase( void )
+  {
+    if ( db.isValid() && db.isOpen() )
+      return ( &db );
+    return ( nullptr );
   }
 
   /**
