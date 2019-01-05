@@ -33,7 +33,7 @@ MOC_DIR                                = moc
 RCC_DIR                                = rcc
 UI_DIR                                 = ui
 
-# %{CurrentProject:NativePath}/%{CurrentKit:FileSystemName}/%{CurrentBuild:Name}
+# %{CurrentProject:NativePath}\%{CurrentKit:FileSystemName}\%{CurrentBuild:Name}
 
 #
 # momentan noch als TESTVERSION markieren
