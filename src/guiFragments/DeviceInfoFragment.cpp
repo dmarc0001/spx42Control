@@ -11,7 +11,7 @@ namespace spx
       : QWidget( parent )
       , IFragmentInterface( logger, spx42Database, spxCfg, remSPX42 )
       , ui( new Ui::DeviceInfoFragment )
-      , spxPic( ":/images/SPX42.jpg" )
+      , spxPic( ":/images/spx42-normal" )
   {
     lg->debug( "DeviceInfoFragment::DeviceInfoFragment..." );
     ui->setupUi( this );
@@ -215,4 +215,4 @@ namespace spx
     //
     QCoreApplication::processEvents();
   }
-}
+}  // namespace spx
