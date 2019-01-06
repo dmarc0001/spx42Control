@@ -3,6 +3,7 @@
 
 #include <QDateTime>
 #include <QPair>
+#include <QPixmap>
 #include <QTableWidgetItem>
 #include <QTimer>
 #include <QWidget>
@@ -34,6 +35,9 @@ namespace spx
     DeviceAliasHash spxDevicesAliasHash;    //! gehashte Liste der verfügbaren Geräte aus DB
     QString errMsg;                         //! Fehlermeldungen BT Connection
     std::unique_ptr< BtDiscoverRemoteDevice > discoverObj;  //! Objekt zum Discovern der Geräte
+    const QPixmap connectedSpx;                             //! Bild verbundener SPX
+    const QPixmap disConnectedSpx;                          //! Bild nicht verbundener SPX
+    const QPixmap errorSpx;                                 //! Fehlerbild
     QString fragmentTitlePattern;                           //! das Muster (lokalisierungsfähig) für Fragmentüberschrift
 
     public:
@@ -72,5 +76,5 @@ namespace spx
     void onDiscoverScanFinishedSlot( void );                          //! wenn das discovering abgeschlossen ist
     void onAliasEditItemChanged( QTableWidgetItem *edItem );          //! wenn im Editor er Alias geändert wurde
   };
-}
+}  // namespace spx
 #endif  // CONNECTFORM_HPP

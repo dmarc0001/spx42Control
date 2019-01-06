@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1182</width>
+    <width>1252</width>
     <height>721</height>
    </rect>
   </property>
@@ -126,7 +126,7 @@
          </font>
         </property>
         <property name="statusTip">
-         <string>DEVICE  MODEL NAME</string>
+         <string>device model name...</string>
         </property>
         <property name="text">
          <string>DEVICE MODEL: SPX42</string>
@@ -160,7 +160,7 @@
          </font>
         </property>
         <property name="statusTip">
-         <string>DEVICE  MODEL NAME</string>
+         <string>device serial numbrer...</string>
         </property>
         <property name="text">
          <string>DEVICE SERIAL NUMBER: - unknown -</string>
@@ -191,7 +191,7 @@
          </font>
         </property>
         <property name="statusTip">
-         <string>DEVICE  MODEL NAME</string>
+         <string>device firmware version...</string>
         </property>
         <property name="text">
          <string>DEVICE FIRMWARE VERSION: 0.0 - unknown-</string>
@@ -244,7 +244,7 @@
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap resource="../res/SPX42ControlRes.qrc">:/images/SPX42.jpg</pixmap>
+            <pixmap resource="../res/SPX42ControlRes.qrc">:/images/spx42-normal</pixmap>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
