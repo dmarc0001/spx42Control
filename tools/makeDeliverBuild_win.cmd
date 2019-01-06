@@ -7,6 +7,7 @@ SET QT_PREFIX=5.12.0
 SET ONLINEINSTALLER=spx42ControlOnlineInstaller
 SET OFFLINEINSTALLER=spx42ControlOfflineInstaller
 ::
+SET WINKIT=C:\Program Files (x86)\Windows Kits\10\bin\10.0.17763.0\x64
 SET PACKAGES=packages
 SET PROJECTBASE=C:\DATEN\Entwicklung\QT-Projekte\spx42Control
 SET QT_DIR=C:\Qt
@@ -53,9 +54,8 @@ cd %PROJECTBUILDDIR%
 echo directory %cd%
 
 echo Umgebung einrichten...
-SET PATH=%PATH%;C:\Program Files (x86)\Windows Kits\10\bin\10.0.17763.0\x64
+SET PATH=%PATH%;%WINKIT%
 call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
-::call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community/VC\Auxiliary\Build\vcvars32.bat"
 
 echo.
 echo qmake ausfuehren
@@ -104,7 +104,6 @@ if exist "%INSTALLERBASE%\%OFFLINEINSTALLER%" (
   del /F /Q "%INSTALLERBASE%\%OFFLINEINSTALLER%"
 )
 
-
 echo erzeuge updater packages
 
 SET MAKE_DONE=false
@@ -150,6 +149,7 @@ echo erzeuge das installerprogramm online...
 echo %BINARYCREATOR% -n -c config\config.xml -p packages -i qtRuntime,spx42Control %ONLINEINSTALLER%
 %BINARYCREATOR% -n -c config\config.xml -p packages -i qtRuntime,spx42Control %ONLINEINSTALLER%
 :: repository generate
+echo %REPOGEN% -p packages -i qtRuntime,spx42Control ../repository/
 %REPOGEN% -p packages -i qtRuntime,spx42Control ../repository/
 
 ::sleep 2

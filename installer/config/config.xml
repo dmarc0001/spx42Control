@@ -1,6 +1,6 @@
 <?xml version="1.0" ?><Installer>
   <Name>SPX42 Control App</Name>
-  <Version>2.5.4</Version>
+  <Version>2.5.5</Version>
   <Title>SUBMATIX SPX42 Controller App</Title>
   <Publisher>SUBMATIX</Publisher>
   <ProductUrl>http://www.submatix.com</ProductUrl>
@@ -12,12 +12,12 @@
   <TargetDir>@ApplicationsDir@/SPX42Control</TargetDir>
   <RemoteRepositories>
     <Repository>
-      <Url>http://update.submatix.com/spx42ControlMac</Url>
+      <Url>http://update.submatix.com/spx42Control</Url>
       <Enabled>1</Enabled>
       <DisplayName>SUBMATIX SPX42 Control Repository</DisplayName>
     </Repository>
     <Repository>
-      <Url>http://qtraspi.fritz.box/spx42ControlMac</Url>
+      <Url>http://qtraspi.fritz.box/spx42Control</Url>
       <Enabled>0</Enabled>
       <DisplayName>TESTING Repository</DisplayName>
     </Repository>
