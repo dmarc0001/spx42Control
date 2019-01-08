@@ -69,7 +69,7 @@ namespace spx
       //
       // wenn Einträge vorhanden sind
       //
-      if ( spxConfig->getLogDirectory().size() > 0 )
+      if ( !spxConfig->getLogDirectory().isEmpty() )
       {
         const QVector< SPX42LogDirectoryEntry > &dirList = spxConfig->getLogDirectory();
         lg->debug( QString( "LogFragment::LogFragment -> fill log directory list from cache..." ) );
@@ -385,7 +385,7 @@ namespace spx
    * @brief LogFragment::getSelectedInDb
    * @return
    */
-  std::shared_ptr< QVector< int > > LogFragment::getSelectedInDb( void )
+  std::shared_ptr< QVector< int > > LogFragment::getSelectedInDb()
   {
     //
     // erzeuge mal den Zeiger auf einen Vector
@@ -475,8 +475,8 @@ namespace spx
     //
     // neueste zuerst
     //
-    QTableWidgetItem *itName = new QTableWidgetItem( entry );
-    QTableWidgetItem *itLoadet = new QTableWidgetItem( "" );
+    auto *itName = new QTableWidgetItem( entry );
+    auto *itLoadet = new QTableWidgetItem( "" );
     ui->logentryTableWidget->insertRow( 0 );
     ui->logentryTableWidget->setItem( 0, 0, itName );
     ui->logentryTableWidget->setItem( 0, 1, itLoadet );
@@ -527,7 +527,6 @@ namespace spx
   {
     spSingleCommand recCommand;
     QDateTime nowDateTime;
-    QByteArray value;
     QString newListEntry;
     SPX42LogDirectoryEntry newEntry;
     char kdo;
@@ -844,7 +843,7 @@ namespace spx
   /**
    * @brief LogFragment::itemSelectionChangedSlot
    */
-  void LogFragment::itemSelectionChangedSlot( void )
+  void LogFragment::itemSelectionChangedSlot()
   {
     bool dataInDatabaseSelected = false;
     QModelIndexList indexList = ui->logentryTableWidget->selectionModel()->selectedIndexes();
