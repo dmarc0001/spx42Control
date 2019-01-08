@@ -50,6 +50,7 @@ namespace spx
     std::unique_ptr< QtCharts::QChartView > chartView;  //! Zeiger auf das ChartView
     QTimer transferTimeout;                             //! timer für timeout bei transfers
     LogDetailWalker logWriter;                          //! schreibt logdetails queue in die DB
+    DeviceAliasHash spxDevicesAliasHash;                //! Liste mit Devices aus der Datenbank
     QFuture< int > dbWriterFuture;                      //! nebenläufig daten in DB schreiben
     QQueue< int > logDetailRead;                        //! Liste mit zu lesenden Logdetails
     QFuture< bool > dbDeleteFuture;                     //! nebenläufig daten aus DB löschen
@@ -57,6 +58,7 @@ namespace spx
     const QIcon savedIcon;                              //! icon fur anzeige log ist in db
     const QIcon nullIcon;                               //! icon null
     QString fragmentTitlePattern;                       //! das Muster (lokalisierungsfähig) für Fragmentüberschrift
+    QString fragmentTitleOfflinePattern;                //! das ganze offline
     QString diveNumberStr;
     QString diveDateStr;
     QString diveDepthStr;
@@ -108,6 +110,7 @@ namespace spx
     void onDeleteDoneSlot( int diveNum );
     void onNewDiveDoneSlot( int diveNum );
     void itemSelectionChangedSlot( void );
+    void onDeviceComboChangedSlot( int index );
 
     public slots:
     void onAddLogdirEntrySlot( const QString &entry );

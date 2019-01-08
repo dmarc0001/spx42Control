@@ -42,6 +42,7 @@ namespace spx
     //
     ui->dbWriteNumLabel->setVisible( false );
     fragmentTitlePattern = tr( "LOGFILES SPX42 Serial [%1] LIC: %2" );
+    fragmentTitleOfflinePattern = tr( "LOGFILES SPX42 Serial [%1] in database" );
     diveNumberStr = tr( "DIVE NUMBER: %1" );
     diveDateStr = tr( "DIVE DATE: %1" );
     diveDepthStr = tr( "DIVE DEPTH: %1m" );
@@ -66,6 +67,8 @@ namespace spx
     //
     if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
     {
+      // ist der online glcieh noch die Lizenz setzten
+      onConfLicChangedSlot();
       //
       // wenn Einträge vorhanden sind
       //
@@ -83,8 +86,9 @@ namespace spx
       }
       testForSavedDetails();
     }
-    onConfLicChangedSlot();
     connect( spxConfig.get(), &SPX42Config::licenseChangedSig, this, &LogFragment::onConfLicChangedSlot );
+    connect( ui->deviceSelectComboBox, static_cast< void ( QComboBox::* )( int ) >( &QComboBox::currentIndexChanged ), this,
+             &LogFragment::onDeviceComboChangedSlot );
     connect( ui->readLogdirPushButton, &QPushButton::clicked, this, &LogFragment::onReadLogDirectoryClickSlot );
     connect( ui->readLogContentPushButton, &QPushButton::clicked, this, &LogFragment::onReadLogContentClickSlot );
     connect( ui->logentryTableWidget, &QAbstractItemView::clicked, this, &LogFragment::onLogListClickeSlot );
@@ -721,12 +725,17 @@ namespace spx
     //
     // setzte die GUI Elemente entsprechend des Online Status
     //
+    ui->readLogdirPushButton->setVisible( isConnected );
+    ui->readLogContentPushButton->setVisible( isConnected );
     ui->readLogdirPushButton->setEnabled( isConnected );
     ui->readLogContentPushButton->setEnabled( isConnected );
-    ui->tabHeaderLabel->setText( fragmentTitlePattern.arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) );
+    ui->deviceSelectLabel->setVisible( !isConnected );
+    ui->deviceSelectComboBox->setVisible( !isConnected );
+    //
 
     if ( isConnected )
     {
+      ui->tabHeaderLabel->setText( fragmentTitlePattern.arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) );
       QString tableName = database->getLogTableName( remoteSPX42->getRemoteConnected() );
       if ( tableName.isNull() || tableName.isEmpty() )
       {
@@ -736,17 +745,73 @@ namespace spx
       {
         logWriterTableExist = true;
       }
+      ui->deviceSelectComboBox->clear();
     }
     else
     {
       logWriterTableExist = false;
-    }
-    // TODO: chart->setVisible( isConnected );
-    if ( !isConnected )
-    {
       ui->logentryTableWidget->setRowCount( 0 );
       // preview löschen
       chartView->setChart( dummyChart );
+      ui->tabHeaderLabel->setText( fragmentTitleOfflinePattern.arg( tr( "unknown" ) ) );
+      ui->deviceSelectComboBox->clear();
+      //
+      // Tabelle füllen
+      //
+      spxDevicesAliasHash = database->getDeviceAliasHash();
+      if ( spxDevicesAliasHash.isEmpty() )
+      {
+        //
+        // nix in der Datenbank, dummy zeigen
+        //
+        ui->deviceSelectComboBox->addItem( tr( "database empty" ), 0 );
+      }
+      else
+      {
+        for ( auto deviceKey : spxDevicesAliasHash.keys() )
+        {
+          //
+          // alles in die Combobox schreiben, TAG ist MAC Addr
+          //
+          SPX42DeviceAlias devAlias = spxDevicesAliasHash.value( deviceKey );
+          QString title = QString( "%1 (%2)" ).arg( devAlias.alias ).arg( devAlias.name );
+          ui->deviceSelectComboBox->addItem( title, devAlias.mac );
+        }
+        QString mac = database->getLastConnected();
+        if ( !mac.isEmpty() )
+        {
+          lg->debug( QString( "LogFragment::setGuiConnected -> last connected was: " ).append( mac ) );
+          //
+          // verbunden oder nicht, versuche etwas zu selektiern
+          //
+          // suche nach diesem Eintrag...
+          //
+          int index = ui->deviceSelectComboBox->findData( mac );
+          if ( index != ui->deviceSelectComboBox->currentIndex() && index != -1 )
+          {
+            lg->debug( QString( "LogFragment::setGuiConnected -> found at idx %1, set to idx" ).arg( index ) );
+            //
+            // -1 for not found
+            // und der index ist nicht schon auf diesen Wert gesetzt
+            // also, wenn gefunden, selektiere diesen Eintrag
+            //
+            ui->deviceSelectComboBox->setCurrentIndex( index );
+            onDeviceComboChangedSlot( index );
+          }
+          else
+          {
+            //
+            // der index ist entweder schon gesetzt oder keiner
+            //
+            if ( index == -1 )
+              // setzte den ersten Eintrag ==> löst slot aus
+              ui->deviceSelectComboBox->setCurrentIndex( index );
+            else
+              // slot manuell starten mit akteuellen index
+              onDeviceComboChangedSlot( index );
+          }
+        }
+      }
     }
   }
 
@@ -872,5 +937,28 @@ namespace spx
     //
     ui->deleteContentPushButton->setEnabled( dataInDatabaseSelected );
     ui->exportContentPushButton->setEnabled( dataInDatabaseSelected );
+  }
+
+  /**
+   * @brief LogFragment::onDeviceComboChangedSlot
+   * @param index
+   */
+  void LogFragment::onDeviceComboChangedSlot( int index )
+  {
+    lg->debug( QString( "LogFragment::onDeviceComboChangedSlot -> index changed to <%1>. addr: <%2>" )
+                   .arg( index, 2, 10, QChar( '0' ) )
+                   .arg( ui->deviceSelectComboBox->itemData( index ).toString() ) );
+    //
+    // Liste leeren
+    //
+    ui->logentryTableWidget->clear();
+    //
+    // die Liste füllen mit einträgen aus der Datenbank
+    // TODO: auslesen
+    //
+    for ( int i = 0; i < 10; i++ )
+    {
+      onAddLogdirEntrySlot( QString( "entry %1" ).arg( i, 2, 10, QChar( '0' ) ) );
+    }
   }
 }  // namespace spx
