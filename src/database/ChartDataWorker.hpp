@@ -6,7 +6,7 @@
 #include <QSplineSeries>
 #include <QValueAxis>
 #include <QtCore/QObject>
-#include <cmath >
+#include <cmath>
 #include <memory>
 #include "database/SPX42Database.hpp"
 #include "spx42/SPX42SingleCommand.hpp"
@@ -36,5 +36,5 @@ namespace spx
 
     public slots:
   };
-}
+}  // namespace spx
 #endif  // CHARTDATAWORKER_HPP

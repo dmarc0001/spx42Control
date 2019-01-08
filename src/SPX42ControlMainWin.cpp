@@ -28,7 +28,7 @@ namespace spx
       , errorPalette( onlineLabel->palette() )
   {
     //
-    // Hilfebutton ausblenden
+    // Hilfebutton ausblenden...
     //
     this->setWindowFlags( this->windowFlags() & ~Qt::WindowContextHelpButtonHint );
     //
