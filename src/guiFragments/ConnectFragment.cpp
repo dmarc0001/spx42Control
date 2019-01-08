@@ -278,10 +278,10 @@ namespace spx
         {
           auto deviceAlias = aliasHash.value( key );
           // column 0
-          QTableWidgetItem *item0 = new QTableWidgetItem( deviceAlias.mac );
+          auto *item0 = new QTableWidgetItem( deviceAlias.mac );
           item0->setFlags( item0->flags() & ~Qt::ItemIsEditable );
           // column 1
-          QTableWidgetItem *item1 = new QTableWidgetItem( deviceAlias.alias );
+          auto *item1 = new QTableWidgetItem( deviceAlias.alias );
           // einfügen
           ui->editAliasesTableWidget->insertRow( currentRow );
           lg->debug( QString( "insert row <%1>, %2, %3" ).arg( currentRow ).arg( item0->text() ).arg( item1->text() ) );
@@ -376,7 +376,6 @@ namespace spx
   {
     spSingleCommand recCommand;
     QDateTime nowDateTime;
-    QByteArray value;
     char kdo;
     //
     lg->debug( "ConnectFragment::onDatagramRecivedSlot..." );

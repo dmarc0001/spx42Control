@@ -151,7 +151,6 @@ namespace spx
   {
     spSingleCommand recCommand;
     QDateTime nowDateTime;
-    QByteArray value;
     char kdo;
     //
     lg->debug( "ConnectFragment::onDatagramRecivedSlot..." );
