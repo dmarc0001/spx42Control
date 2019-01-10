@@ -179,7 +179,7 @@ QGroupBox#currGasGroupBox>QWidget>QLabel,
 {
   font-style: bold;
   font-size: 22pt;
-  color:gray;
+  color:rgb(0, 30, 161);
   background-color: silver;
 }
 
@@ -197,12 +197,14 @@ QGroupBox#gasesGroupBox>QRadioButton
 
 QGroupBox#gasesGroupBox>QRadioButton:checked
 {
-  color:red;
+  color:rgb(10, 41, 179);
+  background-color: silver;
 }
 
 QGroupBox#gasesGroupBox>QRadioButton:hover
 {
-  color:#ff8080;
+  color:rgb(47, 79, 223);
+  background-color: rgb(170, 183, 241);
 }
 
 /*

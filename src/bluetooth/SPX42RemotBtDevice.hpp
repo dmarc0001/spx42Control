@@ -22,8 +22,6 @@ namespace spx
 {
   constexpr int SEND_TIMERVAL = 200;
 
-  // class SPX42RemotBtDevice;
-
   class SPX42RemotBtDevice : public QObject, public SPX42Commands
   {
     Q_OBJECT
@@ -78,5 +76,5 @@ namespace spx
     void onReadSocketSlot( void );
     void onSendSocketTimerSlot( void );
   };
-}
+}  // namespace spx
 #endif  // SPX42REMOTBTDEVICE_HPP

@@ -11,6 +11,7 @@
 #include <QTimer>
 #include <QVector>
 #include <QWidget>
+#include <QtAlgorithms>
 #include <QtCharts>
 #include <QtConcurrent>
 #include <algorithm>
@@ -113,7 +114,7 @@ namespace spx
     void onDeviceComboChangedSlot( int index );
 
     public slots:
-    void onAddLogdirEntrySlot( const QString &entry );
+    void onAddLogdirEntrySlot( const QString &entry, bool inDatabase = false );
   };
 }  // namespace spx
 #endif  // LOGFORM_HPP

@@ -2,10 +2,14 @@
 
 namespace spx
 {
-  LogDetailWalker::LogDetailWalker( QObject *parent, std::shared_ptr< Logger > logger, std::shared_ptr< SPX42Database > _database )
+  LogDetailWalker::LogDetailWalker( QObject *parent,
+                                    std::shared_ptr< Logger > logger,
+                                    std::shared_ptr< SPX42Database > _database,
+                                    std::shared_ptr< SPX42Config > spxCfg )
       : QObject( parent )
       , lg( logger )
       , database( _database )
+      , spx42Config( spxCfg )
       , shouldWriterRunning( true )
       , processed( 0 )
       , forThisDiveProcessed( 0 )
@@ -89,7 +93,7 @@ namespace spx
           emit onNewDiveDoneSig( diveNum );
           diveNum = logentry->getDiveNum();
           lg->debug(
-              QString( "LogDetailWriter::writeLogDataToDatabase -> new dive to store %1" ).arg( diveNum, 3, 10, QChar( '0' ) ) );
+              QString( "LogDetailWriter::writeLogDataToDatabase -> new dive to store #%1" ).arg( diveNum, 3, 10, QChar( '0' ) ) );
           //
           // Nummer hat sich verändert
           // ist das ein update oder ein insert?
@@ -98,13 +102,38 @@ namespace spx
           {
             lg->debug( "LogDetailWriter::writeLogDataToDatabase -> update, drop old values..." );
             //
-            //  existiert, daten löschen...
+            // existiert, daten löschen...
             // also ein "update", eigentlich natürlich löschen und neu machen
             //
             if ( !database->delDiveLogFromBase( tableName, diveNum ) )
             {
               return ( -1 );
             }
+          }
+          //
+          // neu anlegen, Tauchgangszeit suchen
+          //
+          qint64 timestamp = 0;
+          SPX42LogDirectoryEntryListPtr entrys = spx42Config->getLogDirectory();
+          for ( auto &entry : *( entrys.get() ) )
+          {
+            if ( entry.number == diveNum )
+            {
+              // die gesuchte Tauchgangsnummer
+              timestamp = entry.diveDateTime.toSecsSinceEpoch();
+              lg->debug( QString( "LogDetailWriter::writeLogDataToDatabase -> start time for dive #%1: %2" )
+                             .arg( diveNum, 3, 10, QChar( '0' ) )
+                             .arg( entry.getDateTimeStr() ) );
+              // Schleife abbrechen
+              break;
+            }
+          }
+          //
+          // Daten komplett, Tauchgang in der DB anlegen
+          //
+          if ( !database->insertDiveLogInBase( tableName, diveNum, timestamp ) )
+          {
+            return ( -1 );
           }
           emit onNewDiveStartSig( diveNum );
         }
@@ -162,4 +191,4 @@ namespace spx
     emit onDeleteDoneSig( -1 );
     return ( shouldDeleteRunning );
   }
-}
+}  // namespace spx

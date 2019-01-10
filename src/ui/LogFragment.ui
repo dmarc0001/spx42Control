@@ -231,7 +231,7 @@
             </font>
            </property>
            <property name="text">
-            <string>SECECT DEVICE</string>
+            <string>SELECT DEVICE</string>
            </property>
           </widget>
          </item>

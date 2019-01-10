@@ -20,7 +20,7 @@ namespace spx
       , miniChart( std::unique_ptr< DiveMiniChart >( new DiveMiniChart( logger, spx42Database ) ) )
       , dummyChart( new QtCharts::QChart() )
       , chartView( std::unique_ptr< QtCharts::QChartView >( new QtCharts::QChartView( dummyChart ) ) )
-      , logWriter( this, logger, spx42Database )
+      , logWriter( this, logger, spx42Database, spxCfg )
       , logWriterTableExist( false )
       , savedIcon( ":/icons/saved_black" )
       , nullIcon()
@@ -42,7 +42,7 @@ namespace spx
     //
     ui->dbWriteNumLabel->setVisible( false );
     fragmentTitlePattern = tr( "LOGFILES SPX42 Serial [%1] LIC: %2" );
-    fragmentTitleOfflinePattern = tr( "LOGFILES SPX42 Serial [%1] in database" );
+    fragmentTitleOfflinePattern = tr( "LOGFILES SPX42 [%1] in database" );
     diveNumberStr = tr( "DIVE NUMBER: %1" );
     diveDateStr = tr( "DIVE DATE: %1" );
     diveDepthStr = tr( "DIVE DEPTH: %1m" );
@@ -63,29 +63,45 @@ namespace spx
     // GUI dem Onlinestatus entsprechend vorbereiten
     setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
     //
-    // ist das Verzeichnis im cache?
+    // ist der SPX online?
     //
     if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
     {
-      // ist der online glcieh noch die Lizenz setzten
-      onConfLicChangedSlot();
       //
-      // wenn Einträge vorhanden sind
+      // ist das Verzeichnis im cache?
       //
-      if ( !spxConfig->getLogDirectory().isEmpty() )
+      SPX42LogDirectoryEntryListPtr dirList;
+      if ( !spxConfig->getLogDirectory()->isEmpty() )
       {
-        const QVector< SPX42LogDirectoryEntry > &dirList = spxConfig->getLogDirectory();
+        // Daten im Cache
+        // Speicherstatus sollte auch drin stehen
         lg->debug( QString( "LogFragment::LogFragment -> fill log directory list from cache..." ) );
-        //
-        // Alle Einträge in die Liste
-        //
-        for ( auto entr : dirList )
-        {
-          onAddLogdirEntrySlot( QString( "%1:[%2]" ).arg( entr.number, 2, 10, QChar( '0' ) ).arg( entr.getDateTimeStr() ) );
-        }
+        dirList = spxConfig->getLogDirectory();
       }
-      testForSavedDetails();
+      else
+      {
+        // Daten in der DB
+        lg->debug( QString( "LogFragment::LogFragment -> fill log directory list from database..." ) );
+        QString tableName = database->getLogTableName( remoteSPX42->getRemoteConnected() );
+        dirList = database->getLogentrysForDevice( tableName );
+      }
+      //
+      // Alle Einträge sortiert in die Liste
+      //
+      auto sortKeys = dirList.get()->keys();
+      qSort( sortKeys.begin(), sortKeys.end() );
+      for ( auto entr : sortKeys )
+      {
+        SPX42LogDirectoryEntry dEntry = dirList->value( entr );
+        onAddLogdirEntrySlot( QString( "%1:[%2]" ).arg( dEntry.number, 2, 10, QChar( '0' ) ).arg( dEntry.getDateTimeStr() ),
+                              dEntry.inDatabase );
+      }
+      // ist der online gleich noch die Lizenz setzten
+      onConfLicChangedSlot();
     }
+    //
+    // signale verbinden
+    //
     connect( spxConfig.get(), &SPX42Config::licenseChangedSig, this, &LogFragment::onConfLicChangedSlot );
     connect( ui->deviceSelectComboBox, static_cast< void ( QComboBox::* )( int ) >( &QComboBox::currentIndexChanged ), this,
              &LogFragment::onDeviceComboChangedSlot );
@@ -474,13 +490,17 @@ namespace spx
    * @brief Wird ein Log Verzeichniseintrag angeliefert....
    * @param entry Der Eintrag
    */
-  void LogFragment::onAddLogdirEntrySlot( const QString &entry )
+  void LogFragment::onAddLogdirEntrySlot( const QString &entry, bool inDatabase )
   {
+    QTableWidgetItem *itLoadet;
     //
     // neueste zuerst
     //
     auto *itName = new QTableWidgetItem( entry );
-    auto *itLoadet = new QTableWidgetItem( "" );
+    if ( inDatabase )
+      itLoadet = new QTableWidgetItem( savedIcon, "" );
+    else
+      itLoadet = new QTableWidgetItem( "" );
     ui->logentryTableWidget->insertRow( 0 );
     ui->logentryTableWidget->setItem( 0, 0, itName );
     ui->logentryTableWidget->setItem( 0, 1, itLoadet );
@@ -512,8 +532,7 @@ namespace spx
   {
     lg->debug( QString( "LogFragment::onOnlineStatusChangedSlot -> set: %1" )
                    .arg( static_cast< int >( spxConfig->getLicense().getLicType() ) ) );
-    ui->tabHeaderLabel->setText(
-        QString( tr( "LOGFILES SPX42 Serial [%1] Lic: %2" ).arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
+    ui->tabHeaderLabel->setText( QString( fragmentTitlePattern.arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
   }
 
   /**
@@ -732,9 +751,11 @@ namespace spx
     ui->deviceSelectLabel->setVisible( !isConnected );
     ui->deviceSelectComboBox->setVisible( !isConnected );
     //
-
     if ( isConnected )
     {
+      //
+      // wenn ein SPX42 verbunden ist
+      //
       ui->tabHeaderLabel->setText( fragmentTitlePattern.arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) );
       QString tableName = database->getLogTableName( remoteSPX42->getRemoteConnected() );
       if ( tableName.isNull() || tableName.isEmpty() )
@@ -749,6 +770,9 @@ namespace spx
     }
     else
     {
+      //
+      // wenn kein SPX42 verbunden ist
+      //
       logWriterTableExist = false;
       ui->logentryTableWidget->setRowCount( 0 );
       // preview löschen
@@ -821,21 +845,54 @@ namespace spx
   void LogFragment::testForSavedDetails()
   {
     lg->debug( "LogFragment::testForSavedDetails..." );
+    //
+    // Tabellenname holen
+    //
     QString tableName = database->getLogTableName( remoteSPX42->getRemoteConnected() );
+    //
+    // jetzt die Liste der gespeicherten Tauchgänge aus der Datenbank holen
+    //
+    SPX42LogDirectoryEntryListPtr directoryList = database->getLogentrysForDevice( tableName );
+    lg->debug( QString( "#### directoryList: %1" ).arg( directoryList->count() ) );
+    //
+    // und die gecachte Liste holen
+    //
+    SPX42LogDirectoryEntryListPtr cachedList = spxConfig->getLogDirectory();
+    lg->debug( QString( "#### cachedList: %1" ).arg( cachedList->count() ) );
     for ( int i = 0; i < ui->logentryTableWidget->rowCount(); i++ )
     {
       // den Eintrag holen
       QTableWidgetItem *it = ui->logentryTableWidget->item( i, 0 );
       // jetzt daten extraieren, nummer des Eintrages finden
-      QStringList pieces = it->text().split( ':' );
-      if ( !pieces.isEmpty() && pieces.count() > 1 )
+      QStringList entryPieces = it->text().split( ':' );
+      if ( !entryPieces.isEmpty() && entryPieces.count() > 1 )
       {
         //
-        // ich hab was gefunden
+        // ich hab die Tauchgangsnummer gefunden
         //
-        int diveNum = pieces.at( 0 ).toInt();
-        if ( database->existDiveLogInBase( tableName, diveNum ) )
+        int diveNum = entryPieces.at( 0 ).toInt();
+        lg->debug( QString( "#### diveNum: %1" ).arg( diveNum ) );
+        // in der Datenbank nachschauen
+        SPX42LogDirectoryEntry dbEntry( directoryList->value( diveNum ) );
+        if ( dbEntry.number == diveNum )
         {
+          lg->debug( QString( "#### diveNum: %1 -> in database----" ).arg( diveNum ) );
+          //
+          // Eintrag in der DB gefunden == Gesicherter Eintrag == Markieren
+          //
+          SPX42LogDirectoryEntry cacheEntry( directoryList->value( diveNum ) );
+          if ( cacheEntry.number == diveNum )
+          {
+            // im Cache gefunden, eintragen
+            cacheEntry.inDatabase = true;
+            cachedList->insert( diveNum, cacheEntry );
+          }
+          else
+          {
+            // war noch nicht im Cache...
+            // dann den Eintrag su der datenbank dazu tun
+            cachedList->insert( diveNum, dbEntry );
+          }
           lg->debug( QString( "LogFragment::testForSavedDetails -> saved in dive %1" ).arg( diveNum, 3, 10, QChar( '0' ) ) );
           QTableWidgetItem *itLoadet = new QTableWidgetItem( savedIcon, "" );
           // itLoadet->setStatusTip( tr( "NEW STATUS TIP --SAVED --" ) );
@@ -945,20 +1002,29 @@ namespace spx
    */
   void LogFragment::onDeviceComboChangedSlot( int index )
   {
+    QString deviceAddr = ui->deviceSelectComboBox->itemData( index ).toString();
     lg->debug( QString( "LogFragment::onDeviceComboChangedSlot -> index changed to <%1>. addr: <%2>" )
                    .arg( index, 2, 10, QChar( '0' ) )
-                   .arg( ui->deviceSelectComboBox->itemData( index ).toString() ) );
+                   .arg( deviceAddr ) );
+    ui->tabHeaderLabel->setText( fragmentTitleOfflinePattern.arg( database->getAliasForMac( deviceAddr ) ) );
     //
     // Liste leeren
     //
     ui->logentryTableWidget->clear();
+    // Daten in der DB
+    lg->debug( QString( "LogFragment::LogFragment -> fill log directory list from database..." ) );
+    QString tableName = database->getLogTableName( deviceAddr );
+    SPX42LogDirectoryEntryListPtr dirList = database->getLogentrysForDevice( tableName );
     //
-    // die Liste füllen mit einträgen aus der Datenbank
-    // TODO: auslesen
+    // Alle Einträge sortiert in die Liste
     //
-    for ( int i = 0; i < 10; i++ )
+    auto sortKeys = dirList.get()->keys();
+    qSort( sortKeys.begin(), sortKeys.end() );
+    for ( auto entr : sortKeys )
     {
-      onAddLogdirEntrySlot( QString( "entry %1" ).arg( i, 2, 10, QChar( '0' ) ) );
+      SPX42LogDirectoryEntry dEntry = dirList->value( entr );
+      onAddLogdirEntrySlot( QString( "%1:[%2]" ).arg( dEntry.number, 2, 10, QChar( '0' ) ).arg( dEntry.getDateTimeStr() ),
+                            dEntry.inDatabase );
     }
   }
 }  // namespace spx

@@ -8,6 +8,10 @@
 
 namespace spx
 {
+  class SPX42LogDirectoryEntry;  // Vorwärtsdeklaration
+  using SPX42LogDirectoryEntryList = QHash< int, SPX42LogDirectoryEntry >;
+  using SPX42LogDirectoryEntryListPtr = std::shared_ptr< SPX42LogDirectoryEntryList >;
+
   //
   // Beispiel für Log directory entry
   // zahlen in HEX
@@ -36,13 +40,15 @@ namespace spx
     QString fileName;
     QDateTime diveDateTime;
     QString dateTimeString;
-    int maxNumber;   // redundant, aber sicher ist sicher
-    QString diveId;  // eindeutige Kennung eines Tauchganges. Nummer und zeit/datum sollte einmalig sein
-
-    SPX42LogDirectoryEntry( int num, int max, const QByteArray &cmd );
+    int maxNumber;    // redundant, aber sicher ist sicher
+    QString diveId;   // eindeutige Kennung eines Tauchganges. Nummer und zeit/datum sollte einmalig sein
+    bool inDatabase;  // flag ob das Ding in der DB ist
+    //
+    SPX42LogDirectoryEntry( int num, int max, const QByteArray &cmd, bool _inDatabase = false );
+    SPX42LogDirectoryEntry( int num, int max, const QDateTime &dt, bool _inDatabase = false );
     SPX42LogDirectoryEntry();
     QString &getDateTimeStr( void );
     QString &getDiveId( void );
   };
-}
+}  // namespace spx
 #endif  // SPX42LOGDIRECTORYENTRY_HPP
