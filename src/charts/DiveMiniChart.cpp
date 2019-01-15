@@ -42,7 +42,7 @@ namespace spx
     lg->debug( "DiveMiniChart::prepareChart...OK" );
   }
 
-  void DiveMiniChart::showDiveDataInMiniGraph( const QString &remDevice, int diveNum )
+  void DiveMiniChart::showDiveDataInMiniGraph( const QString &deviceAddr, int diveNum )
   {
     lg->debug( "DiveMiniChart::showDiveDataForGraph..." );
     //
@@ -62,7 +62,6 @@ namespace spx
     // Überschrift ist immer gut
     //
     setTitle( tr( "DIVE NR %1" ).arg( diveNum, 3, 10, QChar( '0' ) ) );
-    remoteDevice = remDevice;
 
     //
     // die Daten aufbereiten
@@ -75,7 +74,7 @@ namespace spx
     }
     if ( dbgetDataFuture.isFinished() )
     {
-      dbgetDataFuture = QtConcurrent::run( this->chartWorker.get(), &ChartDataWorker::makeChartDataMini, this, remDevice, diveNum );
+      dbgetDataFuture = QtConcurrent::run( this->chartWorker.get(), &ChartDataWorker::makeChartDataMini, this, deviceAddr, diveNum );
     }
     // chartWorker->makeChartDataMini( this, remDevice, diveNum );
 

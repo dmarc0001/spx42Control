@@ -22,21 +22,15 @@ namespace spx
       maxTimeoutVal = waitTimeout;
   }
 
-  bool ChartDataWorker::makeChartDataMini( QChart *chart, const QString &remDevice, int diveNum )
+  bool ChartDataWorker::makeChartDataMini( QChart *chart, const QString &deviceMac, int diveNum )
   {
     QString tableName;
     DiveChartSetPtr dataSet;
-    lg->debug( "ChartDataWorker::makeChartDataMini..." );
-    tableName = database->getLogTableName( remDevice );
-    if ( tableName.isNull() || tableName.isEmpty() )
-    {
-      lg->warn( "ChartDataWorker::makeChartDataMini -> can't read data tablename..." );
-      return ( false );
-    }
+    lg->debug( QString( "ChartDataWorker::makeChartDataMini for <%1>, num <%2>..." ).arg( deviceMac ).arg( diveNum ) );
     //
     // jetzt die Daten abholen
     //
-    dataSet = database->getChartSet( tableName, diveNum );
+    dataSet = database->getChartSet( deviceMac, diveNum );
     // hat es sich gelohnt
     if ( dataSet->isEmpty() )
       return ( false );

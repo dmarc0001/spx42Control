@@ -91,7 +91,8 @@ SOURCES                 += \
     src/spx42/SPX42LogDirectoryEntry.cpp \
     src/database/LogDetailWalker.cpp \
     src/charts/DiveMiniChart.cpp \
-    src/database/ChartDataWorker.cpp
+    src/database/ChartDataWorker.cpp \
+    src/database/spx42databaseconstants.cpp
 
 HEADERS                 += \
     src/SPX42ControlMainWin.hpp \
@@ -128,7 +129,8 @@ HEADERS                 += \
     src/spx42/SPX42LogDirectoryEntry.hpp \
     src/database/LogDetailWalker.hpp \
     src/charts/DiveMiniChart.hpp \
-    src/database/ChartDataWorker.hpp
+    src/database/ChartDataWorker.hpp \
+    src/database/spx42databaseconstants.hpp
 
 FORMS                   += \
     src/ui/SPX42ControlMainWin.ui \

@@ -54,23 +54,14 @@ namespace spx
   int LogDetailWalker::writeLogDataToDatabase( const QString &deviceMac )
   {
     int diveNum = -1;
+    int detail_id = -1;
     shouldWriterRunning = true;
     forThisDiveProcessed = 0;
     processed = 0;
     qint64 timeoutVal = 0;
     maxTimeoutVal = waitTimeout;
     //
-    // zuerst: ist die Tabelle da/wurde angelegt?
-    //
-    QString tableName = database->getLogTableName( deviceMac );
-    if ( tableName.isNull() || tableName.isEmpty() )
-    {
-      lg->crit( "LogDetailWriter::writeLogDataToDatabase -> database error, not table for logdata exist..." );
-      detailQueue.clear();
-      shouldWriterRunning = false;
-      return ( -1 );
-    }
-    lg->debug( QString( "LogDetailWriter::writeLogDataToDatabase -> table %1 exist!" ).arg( tableName ) );
+    // solange es was zu schreiben gibt
     //
     while ( shouldWriterRunning )
     {
@@ -87,6 +78,18 @@ namespace spx
         //
         if ( diveNum != logentry->getDiveNum() )
         {
+          if ( diveNum != -1 && detail_id != -1 )
+          {
+            //
+            // also gab es einene Tauchgang, den ich gerade gesichert habe?
+            // dann erzeuge maximaltiefe und anzahl der einträge
+            // in der Tabellenspalte in detaildir
+            //
+            if ( !database->computeStatistic( detail_id ) )
+            {
+              lg->warn( "LogDetailWriter::writeLogDataToDatabase -> can't not compute statistic für dive..." );
+            }
+          }
           //
           // Ok, anpassen
           //
@@ -98,14 +101,14 @@ namespace spx
           // Nummer hat sich verändert
           // ist das ein update oder ein insert?
           //
-          if ( database->existDiveLogInBase( tableName, diveNum ) )
+          if ( database->existDiveLogInBase( deviceMac, diveNum ) )
           {
             lg->debug( "LogDetailWriter::writeLogDataToDatabase -> update, drop old values..." );
             //
             // existiert, daten löschen...
             // also ein "update", eigentlich natürlich löschen und neu machen
             //
-            if ( !database->delDiveLogFromBase( tableName, diveNum ) )
+            if ( !database->delDiveLogFromBase( deviceMac, diveNum ) )
             {
               return ( -1 );
             }
@@ -131,7 +134,15 @@ namespace spx
           //
           // Daten komplett, Tauchgang in der DB anlegen
           //
-          if ( !database->insertDiveLogInBase( tableName, diveNum, timestamp ) )
+          if ( !database->insertDiveLogInBase( deviceMac, diveNum, timestamp ) )
+          {
+            return ( -1 );
+          }
+          //
+          // die neue detail_id muss ich noch erfragen
+          //
+          detail_id = database->getDetailId( deviceMac, diveNum );
+          if ( detail_id == -1 )
           {
             return ( -1 );
           }
@@ -140,8 +151,10 @@ namespace spx
         // zähle die Datensätze
         processed++;
         lg->debug( QString( "LogDetailWriter::writeLogDataToDatabase -> write set %1" ).arg( processed, 3, 10, QChar( '0' ) ) );
-        // in die Warteschlange des writer Threads schicken
-        database->insertLogentry( tableName, logentry );
+        //
+        // in die Datenbank schreiben
+        //
+        database->insertLogentry( detail_id, logentry );
       }
       else
       {
@@ -155,6 +168,18 @@ namespace spx
         }
       }
     }
+    if ( diveNum != -1 && detail_id != -1 )
+    {
+      //
+      // also gab es einen Tauchgang, den ich gerade gesichert habe?
+      // dann erzeuge maximaltiefe und anzahl der einträge
+      // in der Tabellenspalte in detaildir
+      //
+      if ( !database->computeStatistic( detail_id ) )
+      {
+        lg->warn( "LogDetailWriter::writeLogDataToDatabase -> can't not compute statistic für dive..." );
+      }
+    }
     emit onWriteDoneSig( processed );
     return ( processed );
   }
@@ -165,18 +190,11 @@ namespace spx
     //
     // zuerst: ist die Tabelle da/wurde angelegt?
     //
-    QString tableName = database->getLogTableName( deviceMac );
-    if ( tableName.isNull() || tableName.isEmpty() )
-    {
-      lg->crit( "LogDetailWriter::writeLogDataToDatabase -> database error, not table for logdata exist..." );
-      detailQueue.clear();
-      return ( false );
-    }
     for ( int diveNum : *list )
     {
       if ( shouldDeleteRunning )
       {
-        if ( !database->delDiveLogFromBase( tableName, diveNum ) )
+        if ( !database->delDiveLogFromBase( deviceMac, diveNum ) )
         {
           shouldDeleteRunning = false;
         }

@@ -12,6 +12,7 @@
 #include "spx42/SPX42CommandDef.hpp"
 #include "spx42/SPX42LogDirectoryEntry.hpp"
 #include "spx42/SPX42SingleCommand.hpp"
+#include "spx42databaseconstants.hpp"
 
 namespace spx
 {
@@ -40,7 +41,7 @@ namespace spx
   class DiveLogEntry
   {
     public:
-    int diveNum;      // Tauchgangsnummer laufend
+    int detailId;     // Id aius Tabelle detaildir
     int lfdNr;        // logeintrag nummer des Tauchganges
     int pressure;     // Umgebungsdruck == Tiefe
     int depth;        // Tiefe
@@ -80,13 +81,6 @@ namespace spx
   class SPX42Database : public QObject
   {
     Q_OBJECT
-    public:
-    //! Name der Versionstabelle
-    static const QString versionTableName;
-    //! Name der Aliase für Geräte
-    static const QString deviceTableName;
-    //! Tabelle für Tauchgänge
-    static const QString diveLogDirectory;
 
     private:
     //! Zeiger auf ein Loggerobjekt
@@ -135,24 +129,28 @@ namespace spx
     bool setLastConnected( const QString &mac );
     //! wer war der letzte?
     QString getLastConnected( void );
-    //! gib die Tabelle für das Gerät zurück, wenn Gerät in der Liste ist
-    QString getLogTableName( const QString &mac );
+    //! gib die Geräteid zurück, wenn Gerät in der Liste ist
+    int getDevicveId( const QString &mac );
+    //! Gib für einen Tauchgang für ein Gerät die Detsail-id zurück
+    int getDetailId( const QString &mac, int diveNum );
     //! fügt einen Eintrag in das Logverzeichnis ein
-    bool insertDiveLogInBase( const QString &tableName, int diveNum, qint64 timestamp );
+    int insertDiveLogInBase( const QString &mac, int diveNum, qint64 timestamp );
     //! existiert ein log mit der Nummer
-    bool existDiveLogInBase( const QString &tableName, int diveNum );
+    bool existDiveLogInBase( const QString &mac, int diveNum );
     //! einen Tauchgang entfernen
-    bool delDiveLogFromBase( const QString &tableName, int diveNum );
+    bool delDiveLogFromBase( const QString &mac, int diveNum );
     //! einen Logeintrag zufügen
-    bool insertLogentry( const QString &tableName, const DiveLogEntry &entr );
+    bool insertLogentry( const DiveLogEntry &entr );
     //! Logeintrag einfügen
-    bool insertLogentry( const QString &tableName, spSingleCommand );
+    bool insertLogentry( int detail_id, spSingleCommand );
     //! maximale Tiefe für Tauchgang
-    int getMaxDepthFor( const QString &tableName, int diveNum );
+    int getMaxDepthFor( const QString &mac, int diveNum );
     //! gib daten für CHART für einen Tauchgang
-    DiveChartSetPtr getChartSet( const QString &tableName, int diveNum );
+    DiveChartSetPtr getChartSet( const QString &mac, int diveNum );
     //! gib eine Liste der gespeicherten Tauchgänge für ein Gerät zurück
-    SPX42LogDirectoryEntryListPtr getLogentrysForDevice( const QString &tableName );
+    SPX42LogDirectoryEntryListPtr getLogentrysForDevice( const QString &mac );
+    //! erzeuge statistik daten in der verzeichnistabelle
+    bool computeStatistic( int detail_id );
 
     private:
     //! gibt es folgende Tabelle?
@@ -161,8 +159,8 @@ namespace spx
     bool createAliasTable( void );
     //! tabelle zu version 2 heben
     bool alterAliasTableFrom1To2( void );
-    //! erzeuge /lösche und erzeuge eine Tablelle für Logdaten für ein Gerät
-    bool createDeviceLogTable( QString deviceMac );
+    //! erzeuge /lösche und erzeuge eine Tablelle für DEtails der Logdaten
+    bool createLogDataTable( void );
     //! erzeuge Verzeichnistabelle für dive logs
     bool createLogDirTable( void );
     //! neue Datenbank, alleTabellen neu anlegen
