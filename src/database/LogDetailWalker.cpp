@@ -87,7 +87,7 @@ namespace spx
             //
             if ( !database->computeStatistic( detail_id ) )
             {
-              lg->warn( "LogDetailWriter::writeLogDataToDatabase -> can't not compute statistic für dive..." );
+              lg->warn( "LogDetailWriter::writeLogDataToDatabase -> can't not compute statistic for dive..." );
             }
           }
           //
