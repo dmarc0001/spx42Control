@@ -989,7 +989,7 @@ namespace spx
    */
   bool SPX42Database::insertLogentry( const DiveLogEntry &entr )
   {
-    lg->debug( "SPX42Database::insertLogentry..." );
+    // lg->debug( "SPX42Database::insertLogentry..." );
     if ( db.isValid() && db.isOpen() )
     {
       QString sql = SPX42DatabaseConstants::loglineInsertTemplate.arg( entr.detailId )
@@ -1013,7 +1013,7 @@ namespace spx
         //
         // Abfrage korrekt bearbeitet
         //
-        lg->debug( "SPX42Database::insertLogentry...OK" );
+        // lg->debug( "SPX42Database::insertLogentry...OK" );
         return ( true );
       }
       else
@@ -1034,7 +1034,7 @@ namespace spx
    */
   bool SPX42Database::insertLogentry( int detail_id, spSingleCommand cmd )
   {
-    lg->debug( "SPX42Database::insertLogentry..." );
+    // lg->debug( "SPX42Database::insertLogentry..." );
     if ( db.isValid() && db.isOpen() )
     {
       QSqlQuery query( db );
@@ -1058,7 +1058,7 @@ namespace spx
         //
         // Abfrage korrekt bearbeitet
         //
-        lg->debug( "SPX42Database::insertLogentry...OK" );
+        // lg->debug( "SPX42Database::insertLogentry...OK" );
         return ( true );
       }
       else
