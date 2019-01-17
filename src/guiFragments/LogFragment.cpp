@@ -113,11 +113,12 @@ namespace spx
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onStateChangedSig, this, &LogFragment::onOnlineStatusChangedSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onSocketErrorSig, this, &LogFragment::onSocketErrorSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onCommandRecivedSig, this, &LogFragment::onCommandRecivedSlot );
-    connect( &transferTimeout, &QTimer::timeout, this, &LogFragment::onTransferTimeout );
+    connect( &transferTimeout, &QTimer::timeout, this, &LogFragment::onTransferTimeoutSlot );
     connect( &logWriter, &LogDetailWalker::onWriteDoneSig, this, &LogFragment::onWriterDoneSlot );
     connect( &logWriter, &LogDetailWalker::onNewDiveStartSig, this, &LogFragment::onNewDiveStartSlot );
     connect( &logWriter, &LogDetailWalker::onDeleteDoneSig, this, &LogFragment::onDeleteDoneSlot );
     connect( &logWriter, &LogDetailWalker::onNewDiveDoneSig, this, &LogFragment::onNewDiveDoneSlot );
+    connect( &startNextTransferTimer, &QTimer::timeout, this, &LogFragment::onNextTransferRequest );
   }
 
   /**
@@ -171,7 +172,7 @@ namespace spx
   /**
    * @brief LogFragment::onTransferTimeout
    */
-  void LogFragment::onTransferTimeout()
+  void LogFragment::onTransferTimeoutSlot()
   {
     //
     // wenn der Writer noch läuft, dann noch nicht den Balken ausblenden
@@ -183,6 +184,55 @@ namespace spx
       transferTimeout.stop();
       lg->warn( "LogFragment::onTransferTimeout -> transfer timeout!!!" );
       // TODO: Warn oder Fehlermeldung ausgeben
+    }
+  }
+
+  /**
+   * @brief LogFragment::onNextTransferRequest
+   */
+  void LogFragment::onNextTransferRequest()
+  {
+    if ( !logDetailRead.isEmpty() )
+    {
+      if ( logDetailRead.count() > 250 )
+      {
+        //
+        // gleich noch einmal versuchen
+        //
+        startNextTransferTimer.setSingleShot( true );
+        startNextTransferTimer.setInterval( 500 );
+        //
+        // timeout verlängern
+        //
+        transferTimeout.start( TIMEOUTVAL * 8 );
+        return;
+      }
+      //
+      // da ist noch was anzufordern
+      //
+      int logDetailNum = logDetailRead.dequeue();
+      //
+      // senden lohnt nur, wenn ich das auch verarbeiten kann
+      //
+      SendListEntry sendCommand = remoteSPX42->askForLogDetailFor( logDetailNum );
+      remoteSPX42->sendCommand( sendCommand );
+      //
+      // das kann etwas dauern...
+      //
+      transferTimeout.start( TIMEOUTVAL * 8 );
+      if ( dbWriterFuture.isFinished() )
+      {
+        // Thread neu starten
+        lg->debug( QString( "LogFragment::onNextTransferRequestSlot -> request  %1 logs from spx42..." ).arg( logDetailNum ) );
+        tryStartLogWriterThread();
+        ui->dbWriteNumLabel->setVisible( true );
+      }
+    }
+    else
+    {
+      // Timer ist zu stoppen!
+      logWriter.nowait( true );
+      transferTimeout.stop();
     }
   }
 
@@ -715,7 +765,9 @@ namespace spx
             {
               //
               // da ist noch was anzufordern
-              //
+              // nutze die next-transfer-Timerroutine
+              onNextTransferRequest();
+              /*
               int logDetailNum = logDetailRead.dequeue();
               //
               // senden lohnt nur, wenn ich das auch verarbeiten kann
@@ -733,6 +785,7 @@ namespace spx
                 tryStartLogWriterThread();
                 ui->dbWriteNumLabel->setVisible( true );
               }
+              */
             }
             else
             {
@@ -882,12 +935,10 @@ namespace spx
     if ( !deviceAddr.isEmpty() )
     {
       SPX42LogDirectoryEntryListPtr directoryList = database->getLogentrysForDevice( deviceAddr );
-      lg->debug( QString( "#### directoryList: %1" ).arg( directoryList->count() ) );
       //
       // und die gecachte Liste holen
       //
       SPX42LogDirectoryEntryListPtr cachedList = spxConfig->getLogDirectory();
-      lg->debug( QString( "#### cachedList: %1" ).arg( cachedList->count() ) );
       for ( int i = 0; i < ui->logentryTableWidget->rowCount(); i++ )
       {
         // den Eintrag aus der widget liste holen
@@ -900,12 +951,10 @@ namespace spx
           // ich hab die Tauchgangsnummer gefunden
           //
           int diveNum = entryPieces.at( 0 ).toInt();
-          lg->debug( QString( "#### diveNum: %1" ).arg( diveNum ) );
           // in der Datenbank nachschauen
           SPX42LogDirectoryEntry dbEntry( directoryList->value( diveNum ) );
           if ( dbEntry.number == diveNum )
           {
-            lg->debug( QString( "#### diveNum: %1 -> in database----" ).arg( diveNum ) );
             //
             // Eintrag in der DB gefunden == Gesicherter Eintrag == Markieren
             //
@@ -924,14 +973,12 @@ namespace spx
             }
             lg->debug( QString( "LogFragment::testForSavedDetails -> saved in dive %1" ).arg( diveNum, 3, 10, QChar( '0' ) ) );
             QTableWidgetItem *itLoadet = new QTableWidgetItem( savedIcon, "" );
-            // itLoadet->setStatusTip( tr( "NEW STATUS TIP --SAVED --" ) );
             ui->logentryTableWidget->setItem( i, 1, itLoadet );
           }
           else
           {
             lg->debug( QString( "LogFragment::testForSavedDetails -> NOT saved in dive %1" ).arg( diveNum, 3, 10, QChar( '0' ) ) );
             QTableWidgetItem *itLoadet = new QTableWidgetItem( "" );
-            // itLoadet->setStatusTip( tr( "NEW STATUS TIP --UNSAVED --" ) );
             ui->logentryTableWidget->setItem( i, 1, itLoadet );
           }
         }

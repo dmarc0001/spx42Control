@@ -87,7 +87,9 @@ namespace spx
             //
             if ( !database->computeStatistic( detail_id ) )
             {
-              lg->warn( "LogDetailWriter::writeLogDataToDatabase -> can't not compute statistic for dive..." );
+              lg->warn(
+                  QString( "LogDetailWriter::writeLogDataToDatabase -> can't not compute statistic for dive - detail id <%1>..." )
+                      .arg( detail_id ) );
             }
           }
           //
@@ -177,7 +179,8 @@ namespace spx
       //
       if ( !database->computeStatistic( detail_id ) )
       {
-        lg->warn( "LogDetailWriter::writeLogDataToDatabase -> can't not compute statistic für dive..." );
+        lg->warn( QString( "LogDetailWriter::writeLogDataToDatabase -> can't not compute statistic for dive - detail id <%1>..." )
+                      .arg( detail_id ) );
       }
     }
     emit onWriteDoneSig( processed );
