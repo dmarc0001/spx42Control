@@ -55,8 +55,6 @@ namespace spx
     std::unique_ptr< QtCharts::QChartView > chartView;
     //! timer für timeout bei transfers
     QTimer transferTimeout;
-    //! Timer startet den nächsten Transfer von Logdetails
-    QTimer startNextTransferTimer;
     //! schreibt logdetails queue in die DB
     LogDetailWalker logWriter;
     //! Liste mit Devices aus der Datenbank
@@ -100,7 +98,6 @@ namespace spx
     void changeEvent( QEvent *e ) override;
 
     private:
-    //! Einstellungen entsprechend des Onlinestatus machen
     void setGuiConnected( bool isConnected );
     //! schreibe alle Daten aus der Queue in die Datenbank
     void processLogDetails( void );
@@ -135,9 +132,7 @@ namespace spx
     //! wenn ein Datentelegramm empfangen wurde
     virtual void onCommandRecivedSlot( void ) override;
     //! wenn der Transfer ausbleibt
-    void onTransferTimeoutSlot( void );
-    //! wenn das nächste Log abgerüfen werden soll/kann
-    void onNextTransferRequest( void );
+    void onTransferTimeout( void );
     void onReadLogDirectoryClickSlot( void );
     void onReadLogContentClickSlot( void );
     void onLogListClickeSlot( const QModelIndex &index );
