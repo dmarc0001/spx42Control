@@ -19,6 +19,7 @@ namespace spx
 
   void LogDetailWalker::addDetail( spSingleCommand _detail )
   {
+    QMutexLocker writeLock( &queueMutex );
     overAll++;
     detailQueue.enqueue( _detail );
   }
@@ -51,6 +52,12 @@ namespace spx
     return ( detailQueue.count() );
   }
 
+  spSingleCommand LogDetailWalker::dequeueDetail()
+  {
+    QMutexLocker writeLock( &queueMutex );
+    return ( detailQueue.dequeue() );
+  }
+
   int LogDetailWalker::writeLogDataToDatabase( const QString &deviceMac )
   {
     int diveNum = -1;
@@ -72,7 +79,7 @@ namespace spx
         // den Datensatz aus der Queue holen
         // (ist ja ein shared ptr, also sehr schnell)
         //
-        auto logentry = detailQueue.dequeue();
+        auto logentry = dequeueDetail();
         //
         // ist die diveNum immer noch dieselbe?
         //

@@ -1,6 +1,8 @@
 ﻿#ifndef LOGDETAILWRITER_HPP
 #define LOGDETAILWRITER_HPP
 
+#include <QMutex>
+#include <QMutexLocker>
 #include <QObject>
 #include <QQueue>
 #include <QString>
@@ -20,6 +22,7 @@ namespace spx
     std::shared_ptr< Logger > lg;                // der Logger
     std::shared_ptr< SPX42Database > database;   // Datenbankverbindung
     std::shared_ptr< SPX42Config > spx42Config;  // die Konfioguration
+    QMutex queueMutex;                           // Mutex zum locken der Queue
     bool shouldWriterRunning;                    // thread soll laufen und auf daten warten
     int processed;
     int forThisDiveProcessed;
@@ -43,6 +46,9 @@ namespace spx
     int writeLogDataToDatabase( const QString &deviceMac );
     bool deleteLogDataFromDatabase( const QString &deviceMac, std::shared_ptr< QVector< int > > list );
     bool exportLogDataFromDatabase( const QString &deviceMac, const QString &fileName, std::shared_ptr< QVector< int > > list );
+
+    private:
+    spSingleCommand dequeueDetail( void );
 
     signals:
     void onNewDiveDoneSig( int savedDiveNum );
