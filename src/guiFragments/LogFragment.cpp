@@ -118,7 +118,6 @@ namespace spx
     connect( &logWriter, &LogDetailWalker::onNewDiveStartSig, this, &LogFragment::onNewDiveStartSlot );
     connect( &logWriter, &LogDetailWalker::onDeleteDoneSig, this, &LogFragment::onDeleteDoneSlot );
     connect( &logWriter, &LogDetailWalker::onNewDiveDoneSig, this, &LogFragment::onNewDiveDoneSlot );
-    connect( &startNextTransferTimer, &QTimer::timeout, this, &LogFragment::onNextTransferRequest );
   }
 
   /**
@@ -184,55 +183,6 @@ namespace spx
       transferTimeout.stop();
       lg->warn( "LogFragment::onTransferTimeout -> transfer timeout!!!" );
       // TODO: Warn oder Fehlermeldung ausgeben
-    }
-  }
-
-  /**
-   * @brief LogFragment::onNextTransferRequest
-   */
-  void LogFragment::onNextTransferRequest()
-  {
-    if ( !logDetailRead.isEmpty() )
-    {
-      if ( logDetailRead.count() > 250 )
-      {
-        //
-        // gleich noch einmal versuchen
-        //
-        startNextTransferTimer.setSingleShot( true );
-        startNextTransferTimer.setInterval( 500 );
-        //
-        // timeout verlängern
-        //
-        transferTimeout.start( TIMEOUTVAL * 8 );
-        return;
-      }
-      //
-      // da ist noch was anzufordern
-      //
-      int logDetailNum = logDetailRead.dequeue();
-      //
-      // senden lohnt nur, wenn ich das auch verarbeiten kann
-      //
-      SendListEntry sendCommand = remoteSPX42->askForLogDetailFor( logDetailNum );
-      remoteSPX42->sendCommand( sendCommand );
-      //
-      // das kann etwas dauern...
-      //
-      transferTimeout.start( TIMEOUTVAL * 8 );
-      if ( dbWriterFuture.isFinished() )
-      {
-        // Thread neu starten
-        lg->debug( QString( "LogFragment::onNextTransferRequestSlot -> request  %1 logs from spx42..." ).arg( logDetailNum ) );
-        tryStartLogWriterThread();
-        ui->dbWriteNumLabel->setVisible( true );
-      }
-    }
-    else
-    {
-      // Timer ist zu stoppen!
-      logWriter.nowait( true );
-      transferTimeout.stop();
     }
   }
 
@@ -766,8 +716,6 @@ namespace spx
               //
               // da ist noch was anzufordern
               // nutze die next-transfer-Timerroutine
-              onNextTransferRequest();
-              /*
               int logDetailNum = logDetailRead.dequeue();
               //
               // senden lohnt nur, wenn ich das auch verarbeiten kann
@@ -785,7 +733,6 @@ namespace spx
                 tryStartLogWriterThread();
                 ui->dbWriteNumLabel->setVisible( true );
               }
-              */
             }
             else
             {

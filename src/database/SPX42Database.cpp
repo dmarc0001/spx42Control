@@ -253,6 +253,8 @@ namespace spx
     QSqlQuery query( db );
     QSqlError err;
     QString sql;
+    // serialize schreibzugriff
+    QMutexLocker locker( &writeMutex );
     //
     lg->debug( "SPX42Database::addAlias..." );
     if ( db.isValid() && db.isOpen() )
@@ -333,6 +335,9 @@ namespace spx
    */
   bool SPX42Database::setAliasForMac( const QString &mac, const QString &alias )
   {
+    // serialize schreibzugriff
+    QMutexLocker locker( &writeMutex );
+    //
     lg->debug( "SPX42Database::setAliasForMac..." );
     if ( db.isValid() && db.isOpen() )
     {
@@ -366,6 +371,9 @@ namespace spx
    */
   bool SPX42Database::setAliasForName( const QString &name, const QString &alias )
   {
+    // serialize schreibzugriff
+    QMutexLocker locker( &writeMutex );
+    //
     lg->debug( "SPX42Database::setAliasForName..." );
     if ( db.isValid() && db.isOpen() )
     {
@@ -458,6 +466,9 @@ namespace spx
    */
   bool SPX42Database::setLastConnected( const QString &mac )
   {
+    // serialize schreibzugriff
+    QMutexLocker locker( &writeMutex );
+    //
     QString sql;
     QSqlQuery query( db );
     lg->debug( "SPX42Database::setLastConnected..." );
@@ -989,7 +1000,9 @@ namespace spx
    */
   bool SPX42Database::insertLogentry( const DiveLogEntry &entr )
   {
-    // lg->debug( "SPX42Database::insertLogentry..." );
+    // serialize schreibzugriff
+    QMutexLocker locker( &writeMutex );
+    //
     if ( db.isValid() && db.isOpen() )
     {
       QString sql = SPX42DatabaseConstants::loglineInsertTemplate.arg( entr.detailId )
@@ -1034,7 +1047,9 @@ namespace spx
    */
   bool SPX42Database::insertLogentry( int detail_id, spSingleCommand cmd )
   {
-    // lg->debug( "SPX42Database::insertLogentry..." );
+    // serialize schreibzugriff
+    QMutexLocker locker( &writeMutex );
+    //
     if ( db.isValid() && db.isOpen() )
     {
       QSqlQuery query( db );
@@ -1080,6 +1095,9 @@ namespace spx
    */
   int SPX42Database::insertDiveLogInBase( const QString &mac, int diveNum, qint64 timestamp )
   {
+    // serialize schreibzugriff
+    QMutexLocker locker( &writeMutex );
+    //
     int device_id = -1;
 
     lg->debug( "SPX42Database::insertDiveLogInBase..." );
@@ -1201,6 +1219,9 @@ namespace spx
    */
   bool SPX42Database::delDiveLogFromBase( const QString &mac, int diveNum )
   {
+    // serialize schreibzugriff
+    QMutexLocker locker( &writeMutex );
+    //
     int detailId = 0;
     lg->debug( QString( "SPX42Database::delDiveLogFromBase -> <%1> num: <%2>..." ).arg( mac ).arg( diveNum ) );
 
@@ -1412,6 +1433,9 @@ namespace spx
 
   bool SPX42Database::computeStatistic( int detail_id )
   {
+    // serialize schreibzugriff
+    QMutexLocker locker( &writeMutex );
+    //
     if ( db.isValid() && db.isOpen() )
     {
       QString sql;

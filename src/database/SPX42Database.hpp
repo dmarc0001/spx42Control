@@ -4,6 +4,8 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QHash>
+#include <QMutex>
+#include <QMutexLocker>
 #include <QObject>
 #include <QPair>
 #include <QVector>
@@ -97,6 +99,8 @@ namespace spx
     static const qint16 databaseVersion;
     //! das template für einen INSERT einer Logzeile
     static const QString loglineInsertTemplate;
+    //! Threadsaves schreiben auf die DB
+    QMutex writeMutex;
 
     public:
     //! Der Konstruktor, explizit der Standartkonstruktor

@@ -132,7 +132,7 @@ namespace spx
     //! wenn ein Datentelegramm empfangen wurde
     virtual void onCommandRecivedSlot( void ) override;
     //! wenn der Transfer ausbleibt
-    void onTransferTimeout( void );
+    void onTransferTimeoutSlot( void );
     void onReadLogDirectoryClickSlot( void );
     void onReadLogContentClickSlot( void );
     void onLogListClickeSlot( const QModelIndex &index );
