@@ -45,17 +45,17 @@
     <message>
         <location filename="../ui/ChartsFragment.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/ChartsFragment.ui" line="85"/>
         <source>LOGCHARTS SPX42 Serial [0x2cf3a56712] LIC: NITROX</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/ChartsFragment.ui" line="123"/>
         <source>transfer status...</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -78,12 +78,12 @@
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="195"/>
         <source> DECOMPRESSION </source>
-        <translation>DEKOMPRESSION</translation>
+        <translation> DEKOMPRESSION </translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="267"/>
         <source>GF-LOW</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="289"/>
@@ -93,7 +93,7 @@
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="329"/>
         <source>GF-HIGH</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="351"/>
@@ -183,7 +183,7 @@
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="620"/>
         <source> SETPOINT </source>
-        <translation>Setpoint</translation>
+        <translation> Setpoint </translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="674"/>
@@ -193,313 +193,313 @@
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="693"/>
         <source>set the point of automatic oxygen setpoint...</source>
-        <translation type="unfinished"></translation>
+        <translation>setzte die Tiefe der automatischen Umschaltung des PPO2...</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="700"/>
         <source>OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>AUS</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="705"/>
         <source>6 m</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="710"/>
         <source>10 m</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="715"/>
         <source>15 m</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="741"/>
         <source>SETPOINT</source>
-        <translation type="unfinished"></translation>
+        <translation>PPO2/Setpoint</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="760"/>
         <source>set the oxygen setpoint value...</source>
-        <translation type="unfinished"></translation>
+        <translation>setze den Sauerstoff  Partialdruck...</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="767"/>
         <source>1.0 BAR</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="772"/>
         <source>1.1 BAR</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="777"/>
         <source>1.2 BAR</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="782"/>
         <source>1.3 BAR</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="787"/>
         <source>1.4 BAR</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="828"/>
         <source>settings for SPX42 display...</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellungen für das SPX42 Display...</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="837"/>
         <source> DISPLAY </source>
-        <translation type="unfinished"></translation>
+        <translation> Anzeige </translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="888"/>
         <source>BRIGHTNESS</source>
-        <translation type="unfinished"></translation>
+        <translation>Helligkeit</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="907"/>
         <source>settings for display brightness...</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellungen für Anzeige Helligkeit...</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="914"/>
         <source>20%</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="919"/>
         <source>40%</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="924"/>
         <source>60%</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="929"/>
         <source>80%</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="934"/>
         <source>100%</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="960"/>
         <source>ORIENTATION</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausrichtung</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="979"/>
         <source>settings for display orientation...</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellungen fpr Anzeige Ausrichtung...</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="986"/>
         <source>LANDSCAPE</source>
-        <translation type="unfinished"></translation>
+        <translation>Breitformat</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="991"/>
         <source>LANDSCAPE 180°</source>
-        <translation type="unfinished"></translation>
+        <translation>Breitformat 180°</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1038"/>
         <source>settings for measure units...</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellungen für Einheiten...</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1044"/>
         <source> UNITS </source>
-        <translation type="unfinished"></translation>
+        <translation> Einheiten </translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1092"/>
         <source>TEMPERATUR UNIT</source>
-        <translation type="unfinished"></translation>
+        <translation>Temperatur Einheit</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1111"/>
         <source>switch temperature measuring unit...</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstelling für Temperatur Einheit...</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1118"/>
         <source>CELSIUS</source>
-        <translation type="unfinished"></translation>
+        <translation>Celsius</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1123"/>
         <source>FAHRENHEID</source>
-        <translation type="unfinished"></translation>
+        <translation>Fahrenheid</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1149"/>
         <source>DEPTH UNIT</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiefe</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1168"/>
         <source>switch lenght/depth measuring unit...</source>
-        <translation type="unfinished"></translation>
+        <translation>Einheite metrisch/imperial...</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1175"/>
         <source>METER</source>
-        <translation type="unfinished"></translation>
+        <translation>Meter</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1180"/>
         <source>FOOT</source>
-        <translation type="unfinished"></translation>
+        <translation>Fuß</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1206"/>
         <source>WATER TYPE</source>
-        <translation type="unfinished"></translation>
+        <translation>Wassertyp</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1225"/>
         <source>switch (general) water type...</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellung für Wassertyp...</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1232"/>
         <source>SALT</source>
-        <translation type="unfinished"></translation>
+        <translation>Salzwasser</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1237"/>
         <source>FRESH</source>
-        <translation type="unfinished"></translation>
+        <translation>Süßwasser</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1272"/>
         <source>settings for individual settings (if licensed)...</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellungen individual (wenn lizensiert)...</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1278"/>
         <source> INDIVIDUAL </source>
-        <translation type="unfinished"></translation>
+        <translation> Individuell </translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1305"/>
         <source>switch sensors on or off (generally) CAUTION!!!</source>
-        <translation type="unfinished"></translation>
+        <translation>Sensoren ein oder ausschalten WARNUNG!!!</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1308"/>
         <source>SENSORS ON</source>
-        <translation type="unfinished"></translation>
+        <translation>Sensoren AN</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1315"/>
         <source>switch on or off the passive semniclosed rebreather mode...</source>
-        <translation type="unfinished"></translation>
+        <translation>Passiver Modus -SEMI Geschlosseneer Modus -  EIN/AUS...</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1318"/>
         <source>PSCR MODE ON</source>
-        <translation type="unfinished"></translation>
+        <translation>PSCR EIN</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1340"/>
         <source>set the count of sensors for measuring...</source>
-        <translation type="unfinished"></translation>
+        <translation>Anzahzl der Sensoren für Messung...</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1343"/>
         <source>SENSORS COUNT</source>
-        <translation type="unfinished"></translation>
+        <translation>Anzahl Sensoren</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1366"/>
         <source>1</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1371"/>
         <source>2</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1376"/>
         <source>3</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1393"/>
         <source>switch on or off acoustic warnings...</source>
-        <translation type="unfinished"></translation>
+        <translation>Akustische Warnungen EIN/AUS...</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1396"/>
         <source>ACOUSTIC WARNINGS ON</source>
-        <translation type="unfinished"></translation>
+        <translation>Akustische Warnungen</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1418"/>
         <source>LOG INTERVAL</source>
-        <translation type="unfinished"></translation>
+        <translation>Log Intervall</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1437"/>
         <location filename="../ui/DeviceConfigFragment.ui" line="1499"/>
         <source>set the time between measurings (and logentrys)...</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeit zwichen den geloggten Messungen...</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1444"/>
         <source>20 s</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1449"/>
         <source>30 s</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1454"/>
         <source>60 s</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1480"/>
         <source>TEMPSTICK TYPE</source>
-        <translation type="unfinished"></translation>
+        <translation>Temperatur Stab</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1506"/>
         <source>T1</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1511"/>
         <source>T2</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1516"/>
         <source>T3</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1551"/>
         <source>status of transfer...</source>
-        <translation type="unfinished"></translation>
+        <translation>Transfer Indikator...</translation>
     </message>
 </context>
 <context>
@@ -507,114 +507,122 @@
     <message>
         <location filename="../ui/DeviceInfoFragment.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceInfoFragment.ui" line="85"/>
         <source>DEVICE INFO SPX42 Serial [0x2cf3a56712] LIC: NITROX</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceInfoFragment.ui" line="129"/>
-        <location filename="../ui/DeviceInfoFragment.ui" line="163"/>
-        <location filename="../ui/DeviceInfoFragment.ui" line="194"/>
-        <source>DEVICE  MODEL NAME</source>
-        <translation type="unfinished"></translation>
+        <source>device model name...</source>
+        <translation>Name des Gerätemodells...</translation>
     </message>
     <message>
         <location filename="../ui/DeviceInfoFragment.ui" line="132"/>
         <source>DEVICE MODEL: SPX42</source>
-        <translation type="unfinished"></translation>
+        <translation>Geräte Modell: SPX42</translation>
+    </message>
+    <message>
+        <location filename="../ui/DeviceInfoFragment.ui" line="163"/>
+        <source>device serial numbrer...</source>
+        <translation>Seriennummer des verbundenen Gerätes...</translation>
     </message>
     <message>
         <location filename="../ui/DeviceInfoFragment.ui" line="166"/>
         <source>DEVICE SERIAL NUMBER: - unknown -</source>
-        <translation type="unfinished"></translation>
+        <translation>Geräte Seriennummer: - unbekannt-</translation>
+    </message>
+    <message>
+        <location filename="../ui/DeviceInfoFragment.ui" line="194"/>
+        <source>device firmware version...</source>
+        <translation>Gerätre Firmwareversion...</translation>
     </message>
     <message>
         <location filename="../ui/DeviceInfoFragment.ui" line="197"/>
         <source>DEVICE FIRMWARE VERSION: 0.0 - unknown-</source>
-        <translation type="unfinished"></translation>
+        <translation>Geräte Firmwareversion: - unbekannt -</translation>
     </message>
     <message>
         <location filename="../ui/DeviceInfoFragment.ui" line="281"/>
         <source>[ PARTICULARITYS ]</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceInfoFragment.ui" line="324"/>
         <source>device has an old firmware with bug in communiacation for temperature units...</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceInfoFragment.ui" line="330"/>
         <source>HAS FAHRENHEID BUG</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceInfoFragment.ui" line="362"/>
         <source>device can/can&apos;t set date and time via communication interface...</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceInfoFragment.ui" line="368"/>
         <source>CAN SET DATE</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceInfoFragment.ui" line="400"/>
         <source>device has six parameters für communication for individuals config...</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceInfoFragment.ui" line="406"/>
         <source>HAS SIX PARAMETER INDIVIDUAL</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceInfoFragment.ui" line="438"/>
         <source>is the firmware supported for this software...</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceInfoFragment.ui" line="444"/>
         <source>IS FIRMWARE SUPPORTED</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceInfoFragment.ui" line="476"/>
         <source>communication interface with older or newer parametr sorting...</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceInfoFragment.ui" line="482"/>
         <source>IS OLDER PARAMETERS SORT</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceInfoFragment.ui" line="514"/>
         <source>display brightness ar newer or older type...</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceInfoFragment.ui" line="520"/>
         <source>IS NEWER DISPLAY BRIGHTNESS</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceInfoFragment.ui" line="552"/>
         <source>is autosetpoint by five or six meters...</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceInfoFragment.ui" line="558"/>
         <source>IS SIX METERS AUTOSETPOINT</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DeviceInfoFragment.ui" line="599"/>
         <source>transfer status...</source>
-        <translation type="unfinished"></translation>
+        <translation>Transfer Indikator....</translation>
     </message>
 </context>
 <context>
@@ -622,196 +630,196 @@
     <message>
         <location filename="../ui/GasFragment.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="97"/>
         <source>Gaslist SPX42 Serial [0x2cf3a56712] Lic: NITROX</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="175"/>
         <source>gas propertys...</source>
-        <translation type="unfinished"></translation>
+        <translation>Gas Einstellungen...</translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="178"/>
         <source>[GAS #01 ]</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="209"/>
         <source>TMX 21/45</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="283"/>
         <source>HE</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="335"/>
         <source>helium percent value...</source>
-        <translation type="unfinished"></translation>
+        <translation>Helium, prozentualer Anteil...</translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="338"/>
         <source>helium quantity (noticed license)...</source>
-        <translation type="unfinished"></translation>
+        <translation>Helium,beachtet Lizensierung...</translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="350"/>
         <location filename="../ui/GasFragment.ui" line="549"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="395"/>
         <source>diluent #1...</source>
-        <translation type="unfinished"></translation>
+        <translation>Das Verdünergas Nummer 1...</translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="398"/>
         <source>DIL1</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="482"/>
         <source>O2</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="534"/>
         <source>oxigen percent value...</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="537"/>
         <source>oxygen quantity (noticed license)...</source>
-        <translation type="unfinished"></translation>
+        <translation>Sauerstoff, beachtet Lizensierung...</translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="600"/>
         <source>diluent #2...</source>
-        <translation type="unfinished"></translation>
+        <translation>VErdünnergas Nummer 2...</translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="603"/>
         <source>DIL2</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="690"/>
         <source>N2</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="742"/>
         <source>result nitrogen value...</source>
-        <translation type="unfinished"></translation>
+        <translation>resultierender Stickstoffanteil...</translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="745"/>
         <source>nitrogen quantity (computed value)...</source>
-        <translation type="unfinished"></translation>
+        <translation>Anteil Stickstoff, wird berechnet...</translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="748"/>
         <location filename="../ui/GasFragment.ui" line="751"/>
         <location filename="../ui/GasFragment.ui" line="766"/>
         <source>00%</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="808"/>
         <source>bailout gas...</source>
-        <translation type="unfinished"></translation>
+        <translation>Notfall Gas...</translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="811"/>
         <source>Bailout</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="868"/>
         <location filename="../ui/GasFragment.ui" line="1018"/>
         <source>equivalent air depth for this gas...</source>
-        <translation type="unfinished"></translation>
+        <translation>Equivalente Tiefe mit Luft...</translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="896"/>
         <source>compute mod and ead for freshwater or saltwater...</source>
-        <translation type="unfinished"></translation>
+        <translation>berecchne MOD und EAD für Süßwasser oder Salzwasser...</translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="899"/>
         <source>COMPUTE FRESHWATER</source>
-        <translation type="unfinished"></translation>
+        <translation>Berechne Süßwasser</translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="946"/>
         <source>maximum oxigen depth for this gas (1.6 bar)...</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximale Tiefe für den Sauerstoffanteil bei 1.6 Bar PPO2...</translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="974"/>
         <source>MOD: 0m</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="1046"/>
         <source>EAD: 0m</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="1100"/>
         <source>[ GASES - EDIT ON LEFT ]</source>
-        <translation type="unfinished"></translation>
+        <translation>[ Gase - bearbeiten LINKS ]</translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="1129"/>
         <source>GAS #01 HE:00 O2:00 N2:00 DIL1 [ ] DIL2 [X] BO [x]</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="1162"/>
         <source>GAS #02 HE:00 O2:00 N2:00 DIL1 [ ] DIL2 [X] BO [x]</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="1192"/>
         <source>GAS #03 HE:00 O2:00 N2:00 DIL1 [ ] DIL2 [X] BO [x]</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="1222"/>
         <source>GAS #04 HE:00 O2:00 N2:00 DIL1 [ ] DIL2 [X] BO [x]</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="1252"/>
         <source>GAS #05 HE:00 O2:00 N2:00 DIL1 [ ] DIL2 [X] BO [x]</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="1282"/>
         <source>GAS #06 HE:00 O2:00 N2:00 DIL1 [ ] DIL2 [X] BO [x]</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="1312"/>
         <source>GAS #07 HE:00 O2:00 N2:00 DIL1 [ ] DIL2 [X] BO [x]</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="1342"/>
         <source>GAS #08 HE:00 O2:00 N2:00 DIL1 [ ] DIL2 [X] BO [x]</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="1380"/>
         <source>transfer status...</source>
-        <translation type="unfinished"></translation>
+        <translation>Übertragungsindikator...</translation>
     </message>
 </context>
 <context>
@@ -819,12 +827,12 @@
     <message>
         <location filename="../ui/HelpDialog.ui" line="14"/>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>ÜBER</translation>
     </message>
     <message>
         <location filename="../ui/HelpDialog.ui" line="77"/>
         <source>[ DISMISS ]</source>
-        <translation type="unfinished"></translation>
+        <translation>[ Schließen ]</translation>
     </message>
 </context>
 <context>
@@ -832,123 +840,133 @@
     <message>
         <location filename="../ui/LogFragment.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/LogFragment.ui" line="94"/>
         <source>LOGFILES SPX42 Serial [0x2cf3a56712] LIC: NITROX</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/LogFragment.ui" line="161"/>
         <source>log directory from connected SPX42 (push read log directory)...</source>
-        <translation type="unfinished"></translation>
+        <translation>Verzeichnis der Logs auf dem SPX42 (Clicke &quot;Lese Log Verzeichnis&quot;)...</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="232"/>
+        <location filename="../ui/LogFragment.ui" line="234"/>
+        <source>SELECT DEVICE</source>
+        <translation>Wähle Gerät</translation>
+    </message>
+    <message>
+        <location filename="../ui/LogFragment.ui" line="264"/>
+        <source>select device for list dives...</source>
+        <translation>wähle ein GErät für die Anzeige aus der Liste...</translation>
+    </message>
+    <message>
+        <location filename="../ui/LogFragment.ui" line="289"/>
         <source>read log directory...</source>
-        <translation type="unfinished"></translation>
+        <translation>Lese Verzeichnis der Logs vom Gerät...</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="238"/>
+        <location filename="../ui/LogFragment.ui" line="295"/>
         <source>READ LOG DIRECTORY</source>
-        <translation type="unfinished"></translation>
+        <translation>Lese Logverzeichnis</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="259"/>
+        <location filename="../ui/LogFragment.ui" line="316"/>
         <source>read logfile content if left selected...</source>
-        <translation type="unfinished"></translation>
+        <translation>lese markierte logdaten vom Gerät...</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="262"/>
+        <location filename="../ui/LogFragment.ui" line="319"/>
         <source>READ LOG CONTENT</source>
-        <translation type="unfinished"></translation>
+        <translation>Lese Logdaten</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="287"/>
+        <location filename="../ui/LogFragment.ui" line="344"/>
         <source>delete selected data from database...</source>
-        <translation type="unfinished"></translation>
+        <translation>lösche selektierte Logdaten aus der Datenbank...</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="293"/>
+        <location filename="../ui/LogFragment.ui" line="350"/>
         <source>DELETE</source>
-        <translation type="unfinished"></translation>
+        <translation>LÖSCHEN</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="315"/>
+        <location filename="../ui/LogFragment.ui" line="372"/>
         <source>export selected data from database...</source>
-        <translation type="unfinished"></translation>
+        <translation>exportiere selektierte Daten von der Datenbank...</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="321"/>
+        <location filename="../ui/LogFragment.ui" line="378"/>
         <source>EXPORT</source>
-        <translation type="unfinished"></translation>
+        <translation>EXPORT</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="339"/>
+        <location filename="../ui/LogFragment.ui" line="396"/>
         <source>details from log if on of entrys selected...</source>
-        <translation type="unfinished"></translation>
+        <translation>DEtails des selektierten Logs...</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="342"/>
+        <location filename="../ui/LogFragment.ui" line="399"/>
         <source> [ DETAILS ]</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="362"/>
+        <location filename="../ui/LogFragment.ui" line="419"/>
         <source>NUMBER: %03d</source>
-        <translation type="unfinished"></translation>
+        <translation>Nummer: %03d</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="380"/>
+        <location filename="../ui/LogFragment.ui" line="437"/>
         <source>DATE: %03d</source>
-        <translation type="unfinished"></translation>
+        <translation>Datum: %03d</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="398"/>
+        <location filename="../ui/LogFragment.ui" line="455"/>
         <source>DEPTH: %03d</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/LogFragment.ui" line="426"/>
-        <source>WRITE-TO-DATABASE</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiefe: %03d</translation>
     </message>
     <message>
         <location filename="../ui/LogFragment.ui" line="483"/>
+        <source>WRITE-TO-DATABASE</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../ui/LogFragment.ui" line="540"/>
         <source>transfer status...</source>
-        <translation type="unfinished"></translation>
+        <translation>Transfer Indikator...</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="499"/>
+        <location filename="../ui/LogFragment.ui" line="556"/>
         <source>READ FROM DEVICE</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="502"/>
+        <location filename="../ui/LogFragment.ui" line="559"/>
         <source>read selected details from device...</source>
-        <translation type="unfinished"></translation>
+        <translation>lese selektierte Daten vom GErät...</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="507"/>
-        <location filename="../ui/LogFragment.ui" line="510"/>
+        <location filename="../ui/LogFragment.ui" line="564"/>
+        <location filename="../ui/LogFragment.ui" line="567"/>
         <source>DETAIL DROP FROM DATABASE</source>
-        <translation type="unfinished"></translation>
+        <translation>lösche selektierte Daten aus der Datenbank</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="513"/>
+        <location filename="../ui/LogFragment.ui" line="570"/>
         <source>drop selected detail from database...</source>
-        <translation type="unfinished"></translation>
+        <translation>lösche selektierte Daten aus der Datenbank...</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="518"/>
+        <location filename="../ui/LogFragment.ui" line="575"/>
         <source>EXPORT DETAIL...</source>
-        <translation type="unfinished"></translation>
+        <translation>Export Details...</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="521"/>
+        <location filename="../ui/LogFragment.ui" line="578"/>
         <source>export selected details...</source>
-        <translation type="unfinished"></translation>
+        <translation>exportiere selektierte Daten...</translation>
     </message>
 </context>
 <context>
@@ -956,27 +974,27 @@
     <message>
         <location filename="../spx42/SPX42Gas.cpp" line="134"/>
         <source>Oxygen</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../spx42/SPX42Gas.cpp" line="141"/>
         <source>Air</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../spx42/SPX42Gas.cpp" line="143"/>
         <source>NX%1</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../spx42/SPX42Gas.cpp" line="150"/>
         <source>HX%1/%2</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../spx42/SPX42Gas.cpp" line="152"/>
         <source>TX%1/%2</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -984,161 +1002,163 @@
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="39"/>
         <source>SPX42 control program</source>
-        <translation type="unfinished"></translation>
+        <translation>SPX42 Kontrollprogramm</translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="74"/>
         <source>Tab 1</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>DUMMY</translatorcomment>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="79"/>
         <source>Tab 2</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>DUMMY</translatorcomment>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="97"/>
         <source>File</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei</translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="105"/>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>Hilfe</translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="112"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Bearbeiten</translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="118"/>
         <source>DEBUGGING</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="122"/>
         <source>Lizences</source>
-        <translation type="unfinished"></translation>
+        <translation>Lizenzen</translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="140"/>
         <location filename="../ui/SPX42ControlMainWin.ui" line="222"/>
         <source>print current content...</source>
-        <translation type="unfinished"></translation>
+        <translation>drucke aktellen Inhalt...</translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="164"/>
         <source>QUIT</source>
-        <translation type="unfinished"></translation>
+        <translation>ENDE</translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="167"/>
         <source>QUIT application</source>
-        <translation type="unfinished"></translation>
+        <translation>Beende Programm</translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="170"/>
         <source>quit this application...</source>
-        <translation type="unfinished"></translation>
+        <translation>beende das Programm...</translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="178"/>
         <source>About...</source>
-        <translation type="unfinished"></translation>
+        <translation>Über...</translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="181"/>
         <source>about this application...</source>
-        <translation type="unfinished"></translation>
+        <translation>über diese Programm...</translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="194"/>
         <location filename="../ui/SPX42ControlMainWin.ui" line="197"/>
         <source>Open Database...</source>
-        <translation type="unfinished"></translation>
+        <translation>öffne Datenbank...</translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="200"/>
         <source>Open SPX42 database...</source>
-        <translation type="unfinished"></translation>
+        <translation>öffne SPX42 Datenbank...</translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="203"/>
         <source>open an database with SPX42 logs...</source>
-        <translation type="unfinished"></translation>
+        <translation>öffne eine Datenbank mit SPX42 Logdaten...</translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="213"/>
         <location filename="../ui/SPX42ControlMainWin.ui" line="216"/>
         <source>Print...</source>
-        <translation type="unfinished"></translation>
+        <translation>Drucke...</translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="219"/>
         <source>print current content</source>
-        <translation type="unfinished"></translation>
+        <translation>drucke aktuellen Inhalt</translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="232"/>
         <location filename="../ui/SPX42ControlMainWin.ui" line="235"/>
         <source>Settings...</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellungen...</translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="238"/>
         <source>Application settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Programmeinstellungen</translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="241"/>
         <source>set application settings...</source>
-        <translation type="unfinished"></translation>
+        <translation>setze Programmeinstellungen...</translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="252"/>
         <source>Nitrox</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="260"/>
         <source>Normoxic TMX</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="268"/>
         <source>Full TMX</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="276"/>
         <source>Military</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="284"/>
         <source>INDIVIDUAL-LIC</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="302"/>
         <source>SPX STATE</source>
-        <translation type="unfinished"></translation>
+        <translation>SPX42 Status</translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="305"/>
         <source>state of the connected spx42</source>
-        <translation type="unfinished"></translation>
+        <translation>stsatus des verbundenen SPX42</translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="318"/>
         <source>Get Help...</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Hilfe...</translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="321"/>
         <source>help für using this program...</source>
-        <translation type="unfinished"></translation>
+        <translation>Hilfe zur Nutzung des Programmes...</translation>
     </message>
 </context>
 <context>
@@ -1146,52 +1166,52 @@
     <message>
         <location filename="../ui/ConnectFragment.ui" line="26"/>
         <source>ConnectForm</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/ConnectFragment.ui" line="103"/>
         <source>LOGCHARTS SPX42 Serial [0x2cf3a56712] LIC: NITROX</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="../ui/ConnectFragment.ui" line="169"/>
+        <location filename="../ui/ConnectFragment.ui" line="172"/>
         <source>select SPX42 device...</source>
-        <translation type="unfinished"></translation>
+        <translation>Gerät wählen...</translation>
     </message>
     <message>
-        <location filename="../ui/ConnectFragment.ui" line="188"/>
+        <location filename="../ui/ConnectFragment.ui" line="191"/>
         <source>select SPX42 device</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/ConnectFragment.ui" line="213"/>
-        <source>connect selected device...</source>
-        <translation type="unfinished"></translation>
+        <translation>Gerät auswählen</translation>
     </message>
     <message>
         <location filename="../ui/ConnectFragment.ui" line="216"/>
+        <source>connect selected device...</source>
+        <translation>Verbinde selektiertes Gerät...</translation>
+    </message>
+    <message>
+        <location filename="../ui/ConnectFragment.ui" line="219"/>
         <source>connect device</source>
-        <translation type="unfinished"></translation>
+        <translation>Verbinde Gerät</translation>
     </message>
     <message>
-        <location filename="../ui/ConnectFragment.ui" line="257"/>
+        <location filename="../ui/ConnectFragment.ui" line="260"/>
         <source>Edit device Alias...</source>
-        <translation type="unfinished"></translation>
+        <translation>Bearbeite Geräte Aliase...</translation>
     </message>
     <message>
-        <location filename="../ui/ConnectFragment.ui" line="369"/>
+        <location filename="../ui/ConnectFragment.ui" line="403"/>
         <source>edit device aliases, doubleclick for edit entry...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/ConnectFragment.ui" line="293"/>
-        <source>Discover bluetooth SPX42 devices...</source>
-        <translation type="unfinished"></translation>
+        <translation>bearbeite Geräte Aliase, tippen oder Doppelclick...</translation>
     </message>
     <message>
         <location filename="../ui/ConnectFragment.ui" line="296"/>
+        <source>Discover bluetooth SPX42 devices...</source>
+        <translation>finde via bluetooht SPX42 GEräte...</translation>
+    </message>
+    <message>
+        <location filename="../ui/ConnectFragment.ui" line="299"/>
         <source>discover devices</source>
-        <translation type="unfinished"></translation>
+        <translation>Finde Geräte</translation>
     </message>
 </context>
 <context>
@@ -1199,7 +1219,7 @@
     <message>
         <location filename="../guiFragments/ChartsFragment.cpp" line="46"/>
         <source>LOGCHARTS SPX42 Serial [%1] Lic: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Log Grafiken SPX32 Seriennummer [%1] Lizenz: %2</translation>
     </message>
 </context>
 <context>
@@ -1207,62 +1227,62 @@
     <message>
         <location filename="../guiFragments/ConnectFragment.cpp" line="24"/>
         <source>CONNECTION BLUETHOOTH ERROR: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Bluetooth Verbindungsfehler: %1</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="33"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="36"/>
         <source>CONNECTSTATE SPX42 Serial [%1] LIC: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Verbindungsstatus SPX42 Seriennummer [%1] Lizenz: %2</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="41"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="46"/>
         <source>DEVICE</source>
-        <translation type="unfinished"></translation>
+        <translation>Gerät</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="42"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="47"/>
         <source>DEVICE ALIAS</source>
-        <translation type="unfinished"></translation>
+        <translation>Gerätealias</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="159"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="164"/>
         <source>UNKNOWN ERROR</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekannter Fehler</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="162"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="167"/>
         <source>NO BT SOCKET FOUND</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Bluethooth Verbindung gefunden</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="165"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="170"/>
         <source>REMOTE HOST NOT FOUND</source>
-        <translation type="unfinished"></translation>
+        <translation>Entferntes Gerät nicht gefunden</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="168"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="173"/>
         <source>REMOTE HOST CLOSED CONNECTION</source>
-        <translation type="unfinished"></translation>
+        <translation>Entferntes Gerät hat Verbindung beendet</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="171"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="176"/>
         <source>COMMUNICATION ERROR</source>
-        <translation type="unfinished"></translation>
+        <translation>Kommunikationsfehler</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="217"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="222"/>
         <source>NOT SELECTED A DEVICE TO CONNECT</source>
-        <translation type="unfinished"></translation>
+        <translation>Kein Gerät für die Verbindung gewählt</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="458"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="463"/>
         <source>DISCONNECT DEVICE</source>
-        <translation type="unfinished"></translation>
+        <translation>Gerät trennen</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="458"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="463"/>
         <source>CONNECT DEVICE</source>
-        <translation type="unfinished"></translation>
+        <translation>Gerät verbinden</translation>
     </message>
 </context>
 <context>
@@ -1270,77 +1290,77 @@
     <message>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="24"/>
         <source>CONFIG SPX42 SERIAL [%1] LIC: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Konfiguration SPX42 Seriennummer [%1] Lizenz: %2</translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="30"/>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="31"/>
         <source>OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>AUS</translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="30"/>
         <source>5 METERS</source>
-        <translation type="unfinished">6 Meter {5 ?}</translation>
+        <translation>5 Meter</translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="30"/>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="31"/>
         <source>10 METERS</source>
-        <translation type="unfinished">6 Meter {10 ?}</translation>
+        <translation>10 Meter</translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="30"/>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="31"/>
         <source>15 METERS</source>
-        <translation type="unfinished">6 Meter {15 ?}</translation>
+        <translation>15 Meter</translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="30"/>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="31"/>
         <source>20 METERS</source>
-        <translation type="unfinished">6 Meter {20 ?}</translation>
+        <translation>20 Meter</translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="31"/>
         <source>6 METERS</source>
-        <translation type="unfinished">6 Meter</translation>
+        <translation>6 Meter</translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="32"/>
         <source>10%</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="32"/>
         <source>50%</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="32"/>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="33"/>
         <source>100%</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="33"/>
         <source>20%</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="33"/>
         <source>40%</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="33"/>
         <source>60%</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="33"/>
         <source>80%</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -1348,77 +1368,77 @@
     <message>
         <location filename="../guiFragments/DeviceInfoFragment.cpp" line="19"/>
         <source>DEVICE INFO Serial [%1] Lic: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Geräte Info Seriennummer [%1] Lizenz: %2</translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceInfoFragment.cpp" line="20"/>
         <source>DEVICE MODEL: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Gerätemodell: %1</translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceInfoFragment.cpp" line="21"/>
         <source>DEVICE SERIAL NUMBER: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Geräte Seriennummer: %1</translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceInfoFragment.cpp" line="22"/>
         <source>DEVICE FIRMWARE VERSION: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Geräte Firmwareversion: %1</translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceInfoFragment.cpp" line="23"/>
         <source>- UNKNOWN -</source>
-        <translation type="unfinished"></translation>
+        <translation>- UNBEKANNT -</translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceInfoFragment.cpp" line="24"/>
         <source>NOT </source>
-        <translation type="unfinished"></translation>
+        <translation>NICHT </translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceInfoFragment.cpp" line="25"/>
         <source>HAS %1FAHRENHEID BUG</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceInfoFragment.cpp" line="26"/>
         <source>CAN %1SET DATE</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceInfoFragment.cpp" line="27"/>
         <source>HAS %1SIX PARAMS INDIVIDUAL</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceInfoFragment.cpp" line="28"/>
         <source>AUTOSETPOINT IS %1</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceInfoFragment.cpp" line="29"/>
         <source>FIRMWARE IS %1SUPPORTED</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceInfoFragment.cpp" line="30"/>
         <source>HAS OLDER PARAMS SORT</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceInfoFragment.cpp" line="31"/>
         <source>HAS NEWER PARAMS SORT</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceInfoFragment.cpp" line="32"/>
         <source>HAS OLDER DISPLAY BRIGHTNESS</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../guiFragments/DeviceInfoFragment.cpp" line="33"/>
         <source>HAS NEWER DISPLAY BRIGHTNESS</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -1426,12 +1446,12 @@
     <message>
         <location filename="../charts/DiveMiniChart.cpp" line="29"/>
         <source>PREVIEW</source>
-        <translation type="unfinished"></translation>
+        <translation>Vorschau</translation>
     </message>
     <message>
         <location filename="../charts/DiveMiniChart.cpp" line="64"/>
         <source>DIVE NR %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Tauchgang %1</translation>
     </message>
 </context>
 <context>
@@ -1439,43 +1459,44 @@
     <message>
         <location filename="../guiFragments/GasFragment.cpp" line="20"/>
         <source>GAS #%1 HE:%2 O2:%3 N2:%4 DIL1 [%5] DIL2 [%6] BO [%7]</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>nicht in deutsch übersetzten</translatorcomment>
+        <translation></translation>
     </message>
     <message>
         <location filename="../guiFragments/GasFragment.cpp" line="21"/>
         <source>GAS #%1</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../guiFragments/GasFragment.cpp" line="73"/>
-        <location filename="../guiFragments/GasFragment.cpp" line="538"/>
+        <location filename="../guiFragments/GasFragment.cpp" line="535"/>
         <source>COMPUTE FRESHWATER</source>
-        <translation type="unfinished"></translation>
+        <translation>Rechne mit Süßwasser</translation>
     </message>
     <message>
         <location filename="../guiFragments/GasFragment.cpp" line="89"/>
         <source>GASLIST SPX42 SERIAL [%1] LIC: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Gasliste SPX42 Seriennummer [%1] Lizenz: %2</translation>
+    </message>
+    <message>
+        <location filename="../guiFragments/GasFragment.cpp" line="251"/>
+        <source>MOD: %1m</source>
+        <translation></translation>
     </message>
     <message>
         <location filename="../guiFragments/GasFragment.cpp" line="252"/>
-        <source>MOD: %1m</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../guiFragments/GasFragment.cpp" line="253"/>
         <source>EAD: %1m</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="../guiFragments/GasFragment.cpp" line="384"/>
+        <location filename="../guiFragments/GasFragment.cpp" line="382"/>
         <source>GASLIST SPX42 Serial [%1] Lic: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Gasliste SPX42 Seriennummer [%1] Lizenz %2</translation>
     </message>
     <message>
-        <location filename="../guiFragments/GasFragment.cpp" line="543"/>
+        <location filename="../guiFragments/GasFragment.cpp" line="540"/>
         <source>COMPUTE SALTWATER</source>
-        <translation type="unfinished"></translation>
+        <translation>Rechne mit Salzwasser</translation>
     </message>
 </context>
 <context>
@@ -1483,7 +1504,8 @@
     <message>
         <location filename="../utils/HelpDialog.cpp" line="20"/>
         <source>qrc:/help/help_en.html#mark_%1</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Sprache der Hilfe</translatorcomment>
+        <translation>qrc:/help/help_de.html#mark_%1</translation>
     </message>
 </context>
 <context>
@@ -1491,80 +1513,90 @@
     <message>
         <location filename="../guiFragments/LogFragment.cpp" line="44"/>
         <source>LOGFILES SPX42 Serial [%1] LIC: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Logdaten SPX42 Seriennummer [%1] Lizenz %2</translation>
     </message>
     <message>
         <location filename="../guiFragments/LogFragment.cpp" line="45"/>
-        <source>DIVE NUMBER: %1</source>
-        <translation type="unfinished"></translation>
+        <source>LOGFILES SPX42 [%1] in database</source>
+        <translation>Logdaten SPX42 [%1] in Datenbank</translation>
     </message>
     <message>
         <location filename="../guiFragments/LogFragment.cpp" line="46"/>
-        <source>DIVE DATE: %1</source>
-        <translation type="unfinished"></translation>
+        <source>DIVE NUMBER: %1</source>
+        <translation>Tauchgang Nr: %1</translation>
     </message>
     <message>
         <location filename="../guiFragments/LogFragment.cpp" line="47"/>
-        <source>DIVE DEPTH: %1m</source>
-        <translation type="unfinished"></translation>
+        <source>DIVE DATE: %1</source>
+        <translation>Datum: %1</translation>
     </message>
     <message>
         <location filename="../guiFragments/LogFragment.cpp" line="48"/>
-        <source>WRITE DIVE #%1 TO DB...</source>
-        <translation type="unfinished"></translation>
+        <source>DIVE DEPTH: %1m</source>
+        <translation>Tiefe: %1m</translation>
     </message>
     <message>
         <location filename="../guiFragments/LogFragment.cpp" line="49"/>
-        <source>WAIT FOR START...</source>
-        <translation type="unfinished"></translation>
+        <source>WRITE DIVE #%1 TO DB...</source>
+        <translation>Sichere TG #%1 in DB...</translation>
     </message>
     <message>
         <location filename="../guiFragments/LogFragment.cpp" line="50"/>
+        <source>WAIT FOR START...</source>
+        <translation>Warte auf Datenbank...</translation>
+    </message>
+    <message>
+        <location filename="../guiFragments/LogFragment.cpp" line="51"/>
         <source>DELETE DIVE %1 DONE.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lösche Tg %1 Fertig.</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="463"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="521"/>
         <source>FUNCTION NOT IMPLEMENTED YET</source>
-        <translation type="unfinished"></translation>
+        <translation>Funktion nicht implementiert</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="512"/>
-        <source>LOGFILES SPX42 Serial [%1] Lic: %2</source>
-        <translation type="unfinished"></translation>
+        <location filename="../guiFragments/LogFragment.cpp" line="794"/>
+        <source>unknown</source>
+        <translation>unbekannt</translation>
+    </message>
+    <message>
+        <location filename="../guiFragments/LogFragment.cpp" line="805"/>
+        <source>database empty</source>
+        <translation>Datenbank leer</translation>
     </message>
 </context>
 <context>
     <name>spx::SPX42Config</name>
     <message>
-        <location filename="../spx42/SPX42Config.cpp" line="291"/>
+        <location filename="../spx42/SPX42Config.cpp" line="292"/>
         <source> (I)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="../spx42/SPX42Config.cpp" line="296"/>
+        <location filename="../spx42/SPX42Config.cpp" line="297"/>
         <source>NITROX</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="../spx42/SPX42Config.cpp" line="298"/>
+        <location filename="../spx42/SPX42Config.cpp" line="299"/>
         <source>NORMOXIC TMX</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="../spx42/SPX42Config.cpp" line="300"/>
+        <location filename="../spx42/SPX42Config.cpp" line="301"/>
         <source>FULL TMX</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="../spx42/SPX42Config.cpp" line="302"/>
+        <location filename="../spx42/SPX42Config.cpp" line="303"/>
         <source>MILITARY</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="../spx42/SPX42Config.cpp" line="304"/>
+        <location filename="../spx42/SPX42Config.cpp" line="305"/>
         <source>UNKNOWN</source>
-        <translation type="unfinished"></translation>
+        <translation>UNBEKANNT</translation>
     </message>
 </context>
 <context>
@@ -1573,125 +1605,125 @@
         <location filename="../SPX42ControlMainWin.cpp" line="17"/>
         <location filename="../SPX42ControlMainWin.cpp" line="522"/>
         <source>SPX42 OFFLINE</source>
-        <translation type="unfinished"></translation>
+        <translation>SPX42 Offline</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="19"/>
         <location filename="../SPX42ControlMainWin.cpp" line="1014"/>
         <source>CLEAR</source>
-        <translation type="unfinished"></translation>
+        <translation>FREI</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="63"/>
         <location filename="../SPX42ControlMainWin.cpp" line="80"/>
         <source>CRITICAL</source>
-        <translation type="unfinished"></translation>
+        <translation>KRITISCH</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="63"/>
         <source>database can&apos;t open!</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte Datenbank ncht öffnen!</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="80"/>
         <source>internal font can&apos;t load!</source>
-        <translation type="unfinished"></translation>
+        <translation>Interner Font kann nicht geladen werden!</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="164"/>
         <source>Really EXIT?</source>
-        <translation type="unfinished"></translation>
+        <translation>Wirklich beenden?</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="165"/>
         <source>Will you really quit this programm and close all files, databases, connections?</source>
-        <translation type="unfinished"></translation>
+        <translation>Wollen Sie das Programm wirklich beenden und alle Verbindeungen und Datenbanken schleißen?</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="215"/>
         <source>Logging start FAIL!</source>
-        <translation type="unfinished"></translation>
+        <translation>Logging konnte nicht gestartet werden!</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="216"/>
         <source>Check write rights for program directory or reinstall software.</source>
-        <translation type="unfinished"></translation>
+        <translation>Prüfe Schreibrechte im Programmverzeichnis oder instsalliere die Software neu.</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="228"/>
         <source>CONNECTION</source>
-        <translation type="unfinished"></translation>
+        <translation>VERBINDUNG</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="229"/>
         <source>INFO</source>
-        <translation type="unfinished"></translation>
+        <translation>INFO</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="230"/>
         <source>CONFIG</source>
-        <translation type="unfinished"></translation>
+        <translation>KONFIG</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="231"/>
         <source>GAS</source>
-        <translation type="unfinished"></translation>
+        <translation>GAS</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="232"/>
         <source>LOG</source>
-        <translation type="unfinished"></translation>
+        <translation>LOG</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="233"/>
         <source>CHARTS</source>
-        <translation type="unfinished"></translation>
+        <translation>DIAGRAMME</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="526"/>
         <source>spx42 is offline...</source>
-        <translation type="unfinished"></translation>
+        <translation>SPX42 ist offline...</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="532"/>
         <source>SPX42 ONLINE</source>
-        <translation type="unfinished"></translation>
+        <translation>SPX42 ist online</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="537"/>
         <location filename="../SPX42ControlMainWin.cpp" line="1016"/>
         <source>spx42 is online, click for disconnect...</source>
-        <translation type="unfinished"></translation>
+        <translation>SPX42 ist inline, Klicke zum trennen...</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="543"/>
         <source>SPX42 CONNECTING</source>
-        <translation type="unfinished"></translation>
+        <translation>SPX42 verbindet</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="550"/>
         <source>SPX42 OFFLINE/ERROR</source>
-        <translation type="unfinished"></translation>
+        <translation>SPX42 getrennt/Fehler</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="553"/>
         <source>spx42 had connection error...</source>
-        <translation type="unfinished"></translation>
+        <translation>SPX42 hatte Verbindungsfehler...</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="815"/>
         <source>AKKU</source>
-        <translation type="unfinished"></translation>
+        <translation>AKKU</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="1038"/>
         <source>BUSY</source>
-        <translation type="unfinished"></translation>
+        <translation>Besetzt</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="1040"/>
         <source>spx42 is online and wait for write config data...</source>
-        <translation type="unfinished"></translation>
+        <translation>SPX42 ist online und wartet auf das schriben der Konfigurationsdaten...</translation>
     </message>
 </context>
 </TS>
