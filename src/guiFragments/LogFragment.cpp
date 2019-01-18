@@ -989,7 +989,8 @@ namespace spx
         ui->logentryTableWidget->findItems( QString( "%1:" ).arg( diveNum, 2, 10, QChar( '0' ) ), Qt::MatchStartsWith );
     if ( items.count() > 0 )
     {
-      this->ui->logentryTableWidget->item( items.at( 0 )->row(), 1 )->setIcon( savedIcon );
+      ui->logentryTableWidget->item( items.at( 0 )->row(), 1 )->setIcon( savedIcon );
+      ui->logentryTableWidget->viewport()->update();
     }
   }
 
