@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QVector>
 #include <QXmlStreamWriter>
 #include <QtXml>
 #include <memory>
@@ -12,15 +13,50 @@
 
 namespace spx
 {
+  class UddfGasDefinition
+  {
+    public:
+    QString gName;
+    double o2;
+    double n2;
+    double he;
+    double ar;
+    double h2;
+    UddfGasDefinition();
+    explicit UddfGasDefinition( int _n2, int _he );
+
+    private:
+    UddfGasDefinition( double n2, double he );
+    UddfGasDefinition( double o2, double n2, double he, double ar = 0.0, double h2 = 0.0 );
+
+    public:
+    QString getName( void ) const;
+    QString getO2( void ) const;
+    QString getN2( void ) const;
+    QString getHe( void ) const;
+    QString getAr( void ) const;
+    QString getH2( void ) const;
+
+    private:
+    QString getFloatStr( double val ) const;
+  };
+
   class SPX42UDDFExport : public QObject
   {
     Q_OBJECT
     private:
-    std::shared_ptr< Logger > lg;               // der Logger
-    std::shared_ptr< SPX42Database > database;  // Datenbankzugriff
-    QString XMLFileNameTemplate;                // BASIS-Name der zu exportierenden Datei
-    QString device_mac;                         // MAC des Gerätes/Tauchcomputers
-    QVector< int > diveNums;                    // Liste mit Nummern der Tauchgänge
+    //! der Logger
+    std::shared_ptr< Logger > lg;
+    //! Datenbankzugriff
+    std::shared_ptr< SPX42Database > database;
+    //! BASIS-Name der zu exportierenden Datei
+    QString XMLFileNameTemplate;
+    //! MAC des Gerätes/Tauchcomputers
+    QString device_mac;
+    //! Liste mit Nummern der Tauchgänge
+    QVector< int > diveNums;
+    //! Liste der genutzten Gase
+    QVector< UddfGasDefinition > gasDefs;
 
     public:
     //! Konstruktor
@@ -38,7 +74,10 @@ namespace spx
 
     private:
     //! Schreibe in den Stream den "Generator" block
-    bool writeGenerator( QXmlStreamWriter &stream );
+    bool writeGenerator( QXmlStreamWriter &st );
+    //! Schreibe Gasdefinitionen
+    bool writeGasDefinitions( QXmlStreamWriter &st );
+
     signals:
 
     public slots:
