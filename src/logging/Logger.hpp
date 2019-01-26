@@ -3,6 +3,8 @@
 #include <QDateTime>
 #include <QDebug>
 #include <QFile>
+#include <QMutex>
+#include <QMutexLocker>
 #include <QString>
 #include <QTextStream>
 #include <QtGlobal>
@@ -27,6 +29,7 @@ namespace spx
     std::unique_ptr< QFile > logFile;           //! Zeiger auf das Logdateiobjekt
     std::unique_ptr< QTextStream > textStream;  //! Zeiger auf einen Textstrom
     QDateTime dateTime;                         //! das lokale Datum/Zeit objekt
+    QMutex logMutex;                            //! Mutex zum locken der Queue
     static const QString dateTimeFormat;        //! Format der Zeitausgabe
     static const QString DEBUG_STR;             //! String für Debuglevel
     static const QString INFO_STR;              //! String für Infolevel
@@ -62,5 +65,5 @@ namespace spx
     private:
     QString getDateString();  //! interne Funktion für den Datumsstring
   };
-}
+}  // namespace spx
 #endif /* SRC_LOGGING_LOGGER_HPP_ */
