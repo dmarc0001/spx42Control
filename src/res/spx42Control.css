@@ -45,7 +45,93 @@ QLabel#tabHeaderLabel
   font-style: bold;
   font-size: 14pt;
   color: blue;
+<<<<<<< HEAD
 }
+
+/*
+###############################################################################
+#### tabs stylen                                                           ####
+###############################################################################
+*/
+
+/* linie zum hauptbereicvh */
+QTabWidget::pane
+{
+  border-top: 2px solid #295732;
+}
+
+/* abstand zur linken Seite unter Windows, bei mac ist mitte standart */
+QTabWidget::tab-bar
+{
+    left: 5px;
+}
+
+/* grundstyle des einzelnen TAB */
+QTabBar::tab
+{
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                stop: 0 #E1E1E1, stop: 0.4 #DDDDDD,
+                                stop: 0.5 #D8D8D8, stop: 1.0 #D3D3D3);
+    border: 2px solid #C4C4C3;
+    border-bottom-color: #295732; /* same as the pane color */
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    min-width: 10ex;
+    padding-top: 4px;
+    padding-bottom: 2px;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+/* drüber mit der Maus */
+QTabBar::tab:selected, QTabBar::tab:hover
+{
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                stop: 0 #fafafa, stop: 0.4 #f4f4f4,
+                                stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);
+}
+
+/* der markierte TAB */
+QTabBar::tab:selected
+{
+    border-color: #278C23;
+    border-bottom-color: #295732; /* same as pane color */
+}
+
+/* NICHT selektierter Tabs sollen kleiner erscheinen */
+QTabBar::tab:!selected
+{
+    margin-top: 2px;
+=======
+>>>>>>> dev/stabilizing
+}
+
+/* selektierte tabs sollen überlappen */
+QTabBar::tab:selected
+{
+    margin-left: -2px;
+    margin-right: -2px;
+}
+
+/* der erste tab überlappt natürlich nicht links */
+QTabBar::tab:first:selected
+{
+    margin-left: 0;
+}
+
+/* und der letzte tab überlapt natürlich nicht rechts */
+QTabBar::tab:last:selected
+{
+    margin-right: 0;
+}
+
+/* wenn nur ein tab da sein sollte */
+QTabBar::tab:only-one
+{
+    margin: 0;
+}
+
+
 
 /*
 ###############################################################################
@@ -183,7 +269,11 @@ QGroupBox#currGasGroupBox>QWidget>QLabel,
 {
   font-style: bold;
   font-size: 22pt;
+<<<<<<< HEAD
   color:red;
+=======
+  color:rgb(0, 30, 161);;
+>>>>>>> dev/stabilizing
   background-color: silver;
 }
 
@@ -200,12 +290,17 @@ QGroupBox#gasesGroupBox>QRadioButton
 
 QGroupBox#gasesGroupBox>QRadioButton:checked
 {
+<<<<<<< HEAD
   color:red;
+=======
+  color:rgb(10, 41, 179);
+>>>>>>> dev/stabilizing
   background-color: silver;
 }
 
 QGroupBox#gasesGroupBox>QRadioButton:hover
 {
+<<<<<<< HEAD
   color:#ff8080;
   background-color: #f0f0f0;
 }
@@ -222,3 +317,21 @@ QGroupBox#logDetailsGroupBox>QLabel#dbWriteNumLabel
   background-color: #D6D6D6;
 }
 
+=======
+  color:rgb(47, 79, 223);
+  background-color: #f0f0f0;
+}
+
+/*
+###############################################################################
+LOG TAB
+###############################################################################
+*/
+QGroupBox#logDetailsGroupBox>QLabel#dbWriteNumLabel
+{
+  font-style: bold;
+  color: rgb(182, 21, 133);
+  background-color: #D6D6D6;
+}
+
+>>>>>>> dev/stabilizing

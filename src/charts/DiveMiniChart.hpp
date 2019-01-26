@@ -28,7 +28,11 @@ namespace spx
                             std::shared_ptr< SPX42Database > db,
                             QGraphicsItem *parent = nullptr,
                             Qt::WindowFlags wFlags = Qt::Widget );
+<<<<<<< HEAD
     void showDiveDataInMiniGraph( const QString &remDevice, int diveNum );
+=======
+    void showDiveDataInMiniGraph( const QString &deviceAddr, int diveNum );
+>>>>>>> dev/stabilizing
 
     private:
     void prepareChart( void );

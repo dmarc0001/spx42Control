@@ -23,6 +23,9 @@ namespace spx
       , ui( new Ui::connectForm )
       , errMsg( tr( "CONNECTION BLUETHOOTH ERROR: %1" ) )
       , discoverObj( std::unique_ptr< BtDiscoverRemoteDevice >( new BtDiscoverRemoteDevice( lg ) ) )
+      , connectedSpx( ":/images/spx42-normal" )
+      , disConnectedSpx( ":/images/spx42-no-connection" )
+      , errorSpx( ":/images/spx42-error" )
   {
     // merke mir ob das Programm das zum ersten mal macht...
     static bool isFirstStart{true};
@@ -36,7 +39,14 @@ namespace spx
     //
     ui->setupUi( this );
     ui->connectProgressBar->setVisible( false );
-    ui->editAliasesTableView->setVisible( false );
+    ui->spx42ImageLabel->setVisible( true );
+    ui->spx42ImageLabel->setPixmap( disConnectedSpx );
+    ui->editAliasesTableWidget->setVisible( false );
+    ui->editAliasesTableWidget->setColumnCount( 2 );
+    ui->editAliasesTableWidget->setHorizontalHeaderItem( 0, new QTableWidgetItem( tr( "DEVICE" ) ) );
+    ui->editAliasesTableWidget->setHorizontalHeaderItem( 1, new QTableWidgetItem( tr( "DEVICE ALIAS" ) ) );
+    ui->editAliasesTableWidget->horizontalHeader()->setMinimumSectionSize( 220 );
+    ui->editAliasesTableWidget->horizontalHeader()->setStretchLastSection( true );
     //
     // geräte einlesen und combo liste füllen
     // hashliste mac, <name,alias>
@@ -240,8 +250,68 @@ namespace spx
     lg->debug( "ConnectFragment::onPropertyButtonSlot -> property button clicked." );
     if ( remoteSPX42->getConnectionStatus() != SPX42RemotBtDevice::SPX42_CONNECTED )
     {
-      ui->editAliasesTableView->setVisible( !ui->editAliasesTableView->isVisible() );
+      ui->editAliasesTableWidget->setVisible( !ui->editAliasesTableWidget->isVisible() );
+      ui->spx42ImageLabel->setVisible( !ui->editAliasesTableWidget->isVisible() );
+      if ( ui->editAliasesTableWidget->isVisible() )
+      {
+        //
+        // größe etwas eindämmen
+        //
+        int edWith = ui->editorWidget->width();
+        if ( edWith > 500 )
+        {
+          int margins = edWith - 500;
+          if ( margins > 400 )
+            margins = 400;
+          int left, top, right, bottom;
+          ui->editorLayout->getContentsMargins( &left, &top, &right, &bottom );
+          ui->editorLayout->setContentsMargins( margins / 4, top, margins / 4, bottom );
+        }
+        //
+        // mit datenbankeinträgen füllen
+        //
+        DeviceAliasHash aliasHash = database->getDeviceAliasHash();
+        disconnect( ui->editAliasesTableWidget, &QTableWidget::itemChanged, nullptr, nullptr );
+        ui->editAliasesTableWidget->setRowCount( 0 );
+        int currentRow = 0;
+        for ( auto key : aliasHash.keys() )
+        {
+          auto deviceAlias = aliasHash.value( key );
+          // column 0
+          auto *item0 = new QTableWidgetItem( deviceAlias.mac );
+          item0->setFlags( item0->flags() & ~Qt::ItemIsEditable );
+          // column 1
+          auto *item1 = new QTableWidgetItem( deviceAlias.alias );
+          // einfügen
+          ui->editAliasesTableWidget->insertRow( currentRow );
+          lg->debug( QString( "insert row <%1>, %2, %3" ).arg( currentRow ).arg( item0->text() ).arg( item1->text() ) );
+          ui->editAliasesTableWidget->setItem( currentRow, 0, item0 );
+          ui->editAliasesTableWidget->setItem( currentRow, 1, item1 );
+          ui->editAliasesTableWidget->repaint();
+          currentRow++;
+        }
+        connect( ui->editAliasesTableWidget, &QTableWidget::itemChanged, this, &ConnectFragment::onAliasEditItemChanged );
+      }
     }
+  }
+
+  void ConnectFragment::onAliasEditItemChanged( QTableWidgetItem *edItem )
+  {
+    int currentRow = edItem->row();
+    QString alias = edItem->text();
+    QString mac = ui->editAliasesTableWidget->item( currentRow, 0 )->text();
+    lg->debug( QString( "ConnectFragment::onAliasEditItemChanged -> entry <%1> to new Alias: <%2>" ).arg( mac ).arg( alias ) );
+    if ( database->setAliasForMac( mac, alias ) )
+    {
+      //
+      // die combobox neu füllen
+      //
+      spxDevicesAliasHash = database->getDeviceAliasHash();
+      fillDeviceCombo();
+      lg->debug( "ConnectFragment::onAliasEditItemChanged -> OK" );
+      return;
+    }
+    lg->warn( "ConnectFragment::onAliasEditItemChanged -> NOT OK - show previous messages" );
   }
 
   /**
@@ -306,7 +376,6 @@ namespace spx
   {
     spSingleCommand recCommand;
     QDateTime nowDateTime;
-    QByteArray value;
     char kdo;
     //
     lg->debug( "ConnectFragment::onDatagramRecivedSlot..." );
@@ -396,7 +465,22 @@ namespace spx
     ui->propertyPushButton->setEnabled( !isConnected );
     ui->discoverPushButton->setEnabled( !isConnected );
     if ( isConnected )
-      ui->editAliasesTableView->setVisible( false );
+    {
+      ui->spx42ImageLabel->setVisible( true );
+      ui->spx42ImageLabel->setPixmap( connectedSpx );
+      ui->editAliasesTableWidget->setVisible( false );
+    }
+    else
+    {
+      if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_ERROR )
+      {
+        ui->spx42ImageLabel->setPixmap( errorSpx );
+      }
+      else
+      {
+        ui->spx42ImageLabel->setPixmap( disConnectedSpx );
+      }
+    }
     ui->tabHeaderLabel->setText( fragmentTitlePattern.arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) );
   }
 

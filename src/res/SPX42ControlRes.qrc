@@ -42,11 +42,13 @@
         <file alias="saved_white">outline_assignment_turned_in_white_24dp.png</file>
     </qresource>
     <qresource prefix="/images">
-        <file>SPX42.jpg</file>
         <file>logo_header205-54.png</file>
         <file>logo_header240.png</file>
         <file>logo_header450.png</file>
         <file>ic_bluetooth_black_24dp_1x.png</file>
+        <file alias="spx42-normal">SPX42.png</file>
+        <file alias="spx42-error">SPX42-error.png</file>
+        <file alias="spx42-no-connection">SPX42-no-connection.png</file>
     </qresource>
     <qresource prefix="/scanner">
         <file alias="worker">no_working.gif</file>

@@ -48,7 +48,7 @@ namespace spx
     deactivateTab();
   }
 
-  void DeviceConfigFragment::deactivateTab( void )
+  void DeviceConfigFragment::deactivateTab()
   {
     // alle signale trennen...
     disconnectSlots();
@@ -488,7 +488,6 @@ namespace spx
   {
     spSingleCommand recCommand;
     QDateTime nowDateTime;
-    QByteArray value;
     DecoGradient currentGradient;
     DecompressionPreset preset;
 
@@ -578,10 +577,19 @@ namespace spx
           ui->gradientLowSpinBox->setValue( static_cast< int >( currentGradient.first ) );
           ui->gradientHighSpinBox->setValue( static_cast< int >( currentGradient.second ) );
           ui->conservatismComboBox->setCurrentIndex( static_cast< int >( preset ) );
+<<<<<<< HEAD
           ui->deepStopOnCheckBox->setCheckState(
               recCommand->getValueFromHexAt( SPXCmdParam::DECO_DEEPSTOPS ) == 1 ? Qt::CheckState::Checked : Qt::CheckState::Unchecked );
           ui->dynamicGradientsOnCheckBox->setCheckState(
               recCommand->getValueFromHexAt( SPXCmdParam::DECO_DYNGRADIENTS ) == 1 ? Qt::CheckState::Checked : Qt::CheckState::Unchecked );
+=======
+          ui->deepStopOnCheckBox->setCheckState( recCommand->getValueFromHexAt( SPXCmdParam::DECO_DEEPSTOPS ) == 1
+                                                     ? Qt::CheckState::Checked
+                                                     : Qt::CheckState::Unchecked );
+          ui->dynamicGradientsOnCheckBox->setCheckState( recCommand->getValueFromHexAt( SPXCmdParam::DECO_DYNGRADIENTS ) == 1
+                                                             ? Qt::CheckState::Checked
+                                                             : Qt::CheckState::Unchecked );
+>>>>>>> dev/stabilizing
           ui->lastDecoStopComboBox->setCurrentIndex( recCommand->getValueFromHexAt( SPXCmdParam::DECO_LASTSTOP ) == 1 ? 1 : 0 );
           spxConfig->freezeConfigs( SPX42ConfigClass::CF_CLASS_DECO );
           connectSlots( SIGNALS_DECOMPRESSION );
@@ -598,8 +606,15 @@ namespace spx
                          .arg( recCommand->getValueFromHexAt( SPXCmdParam::SETPOINT_VALUE ) ) );
           disconnectSlots( SIGNALS_SETPOINT );
           // config speichern
+<<<<<<< HEAD
           spxConfig->setSetpointAuto( static_cast< DeviceSetpointAuto >( recCommand->getValueFromHexAt( SPXCmdParam::SETPOINT_AUTO ) ) );
           spxConfig->setSetpointValue( static_cast< DeviceSetpointValue >( recCommand->getValueFromHexAt( SPXCmdParam::SETPOINT_VALUE ) ) );
+=======
+          spxConfig->setSetpointAuto(
+              static_cast< DeviceSetpointAuto >( recCommand->getValueFromHexAt( SPXCmdParam::SETPOINT_AUTO ) ) );
+          spxConfig->setSetpointValue(
+              static_cast< DeviceSetpointValue >( recCommand->getValueFromHexAt( SPXCmdParam::SETPOINT_VALUE ) ) );
+>>>>>>> dev/stabilizing
           // GUI machen
           switch ( recCommand->getValueFromHexAt( SPXCmdParam::SETPOINT_AUTO ) )
           {

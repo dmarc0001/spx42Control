@@ -11,7 +11,11 @@ namespace spx
       : QWidget( parent )
       , IFragmentInterface( logger, spx42Database, spxCfg, remSPX42 )
       , ui( new Ui::DeviceInfoFragment )
+<<<<<<< HEAD
       , spxPic( ":/images/SPX42.jpg" )
+=======
+      , spxPic( ":/images/spx42-normal" )
+>>>>>>> dev/stabilizing
   {
     lg->debug( "DeviceInfoFragment::DeviceInfoFragment..." );
     ui->setupUi( this );
@@ -151,7 +155,6 @@ namespace spx
   {
     spSingleCommand recCommand;
     QDateTime nowDateTime;
-    QByteArray value;
     char kdo;
     //
     lg->debug( "ConnectFragment::onDatagramRecivedSlot..." );
@@ -215,4 +218,4 @@ namespace spx
     //
     QCoreApplication::processEvents();
   }
-}
+}  // namespace spx

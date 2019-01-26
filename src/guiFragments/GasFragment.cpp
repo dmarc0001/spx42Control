@@ -108,8 +108,7 @@ namespace spx
       {
         if ( currentGasNum == i )
           continue;
-        else
-          updateCurrGasGUI( i, false );
+        updateCurrGasGUI( i, false );
       }
     }
     updateCurrGasGUI( currentGasNum );
@@ -346,8 +345,7 @@ namespace spx
     {
       if ( currentGasNum == i )
         continue;
-      else
-        updateCurrGasGUI( i, false );
+      updateCurrGasGUI( i, false );
     }
     if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
       emit onConfigWasChangedSig();
@@ -403,7 +401,6 @@ namespace spx
   {
     spSingleCommand recCommand;
     QDateTime nowDateTime;
-    QByteArray value;
     SPX42Gas recGas;
     int recGasNumber, n2, he, o2;
 

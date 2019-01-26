@@ -31,6 +31,7 @@ namespace spx
       , individualAcustic()
       , individualLogInterval()
       , individualTempStick()
+      , logDirectory( new SPX42LogDirectoryEntryList() )
       , hasFahrenheidBug( true )
       , canSetDate( false )
       , hasSixValuesIndividual( false )
@@ -407,7 +408,11 @@ namespace spx
     }
     if ( classes & SPX42ConfigClass::CF_CLASS_LOG )
     {
+<<<<<<< HEAD
       logDirectory.clear();
+=======
+      logDirectory->clear();
+>>>>>>> dev/stabilizing
     }
     emit licenseChangedSig( spxLicense );
   }
@@ -1206,14 +1211,23 @@ namespace spx
     return ( QString( "unit current hash: %1, unit saved hash: %2" ).arg( currentUnitHash ).arg( savedUnitHash ) );
   }
 
+<<<<<<< HEAD
   QVector< SPX42LogDirectoryEntry > &SPX42Config::getLogDirectory()
+=======
+  SPX42LogDirectoryEntryListPtr SPX42Config::getLogDirectory()
+>>>>>>> dev/stabilizing
   {
     return ( logDirectory );
   }
 
   int SPX42Config::addDirectoryEntry( const SPX42LogDirectoryEntry &entry )
   {
+<<<<<<< HEAD
     logDirectory.append( entry );
     return ( logDirectory.size() );
+=======
+    logDirectory->insert( entry.number, entry );
+    return ( logDirectory->size() );
+>>>>>>> dev/stabilizing
   }
 }  // namespace spx

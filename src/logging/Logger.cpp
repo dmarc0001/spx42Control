@@ -77,6 +77,8 @@ namespace spx
    */
   void Logger::warn( const QString &msg )
   {
+    //! Serialisieren...
+    QMutexLocker locker( &logMutex );
     qWarning().noquote().nospace() << msg;
     if ( textStream && threshold >= LG_WARN )
     {
@@ -86,6 +88,8 @@ namespace spx
 
   void Logger::warn( const char *msg )
   {
+    //! Serialisieren...
+    QMutexLocker locker( &logMutex );
     qWarning().noquote().nospace() << msg;
     if ( textStream && threshold >= LG_WARN )
     {
@@ -95,6 +99,8 @@ namespace spx
 
   void Logger::warn( const std::string &msg )
   {
+    //! Serialisieren...
+    QMutexLocker locker( &logMutex );
     qWarning().noquote().nospace() << msg.c_str();
     if ( textStream && threshold >= LG_WARN )
     {
@@ -108,6 +114,8 @@ namespace spx
    */
   void Logger::info( const QString &msg )
   {
+    //! Serialisieren...
+    QMutexLocker locker( &logMutex );
     qInfo().noquote().nospace() << msg;
     if ( textStream && threshold >= LG_INFO )
     {
@@ -117,6 +125,8 @@ namespace spx
 
   void Logger::info( const char *msg )
   {
+    //! Serialisieren...
+    QMutexLocker locker( &logMutex );
     qInfo().noquote().nospace() << msg;
     if ( textStream && threshold >= LG_INFO )
     {
@@ -125,6 +135,8 @@ namespace spx
   }
   void Logger::info( const std::string &msg )
   {
+    //! Serialisieren...
+    QMutexLocker locker( &logMutex );
     qInfo().noquote().nospace() << msg.c_str();
     if ( textStream && threshold >= LG_INFO )
     {
@@ -138,6 +150,8 @@ namespace spx
    */
   void Logger::debug( const QString &msg )
   {
+    //! Serialisieren...
+    QMutexLocker locker( &logMutex );
     qDebug().noquote().nospace() << msg;
     if ( textStream && threshold >= LG_DEBUG )
     {
@@ -147,6 +161,8 @@ namespace spx
 
   void Logger::debug( const char *msg )
   {
+    //! Serialisieren...
+    QMutexLocker locker( &logMutex );
     qDebug().noquote().nospace() << msg;
     if ( textStream && threshold >= LG_DEBUG )
     {
@@ -156,6 +172,8 @@ namespace spx
 
   void Logger::debug( const std::string &msg )
   {
+    //! Serialisieren...
+    QMutexLocker locker( &logMutex );
     qDebug().noquote().nospace() << msg.c_str();
     if ( textStream && threshold >= LG_DEBUG )
     {
@@ -169,6 +187,8 @@ namespace spx
    */
   void Logger::crit( const QString &msg )
   {
+    //! Serialisieren...
+    QMutexLocker locker( &logMutex );
     qCritical().noquote().nospace() << msg;
     if ( textStream && threshold >= LG_DEBUG )
     {
@@ -178,6 +198,8 @@ namespace spx
 
   void Logger::crit( const char *msg )
   {
+    //! Serialisieren...
+    QMutexLocker locker( &logMutex );
     qCritical().noquote().nospace() << msg;
     if ( textStream && threshold >= LG_DEBUG )
     {
@@ -187,6 +209,8 @@ namespace spx
 
   void Logger::crit( const std::string &msg )
   {
+    //! Serialisieren...
+    QMutexLocker locker( &logMutex );
     qCritical().noquote().nospace() << msg.c_str();
     if ( textStream && threshold >= LG_DEBUG )
     {
@@ -216,4 +240,4 @@ namespace spx
     dateTime = QDateTime::currentDateTime();
     return ( dateTime.toString( dateTimeFormat ) );
   }
-}
+}  // namespace spx
