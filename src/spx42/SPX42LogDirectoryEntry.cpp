@@ -28,14 +28,6 @@ namespace spx
   second = Integer.parseInt( fields[ 5 ] );
   */
 
-<<<<<<< HEAD
-  SPX42LogDirectoryEntry::SPX42LogDirectoryEntry() : number( -1 ), fileName(), diveDateTime(), dateTimeString(), maxNumber( -1 )
-  {
-  }
-
-  SPX42LogDirectoryEntry::SPX42LogDirectoryEntry( int num, int max, const QByteArray &cmd )
-      : number( num ), fileName( cmd ), maxNumber( max )
-=======
   SPX42LogDirectoryEntry::SPX42LogDirectoryEntry()
       : number( -1 ), fileName(), diveDateTime(), dateTimeString(), maxNumber( -1 ), inDatabase( false )
   {
@@ -43,7 +35,6 @@ namespace spx
 
   SPX42LogDirectoryEntry::SPX42LogDirectoryEntry( int num, int max, const QByteArray &cmd, bool _inDatabase )
       : number( num ), fileName( cmd ), maxNumber( max ), inDatabase( _inDatabase )
->>>>>>> dev/stabilizing
   {
     int idx = cmd.indexOf( ".txt" );
     QByteArray tmp = cmd.left( idx );
@@ -57,8 +48,6 @@ namespace spx
     // dateTimeString = diveDateTime.toString( "dd.MM.YYYY HH:mm:ss " );
   }
 
-<<<<<<< HEAD
-=======
   SPX42LogDirectoryEntry::SPX42LogDirectoryEntry( int num, int max, const QDateTime &dt, bool _inDatabase )
       : number( num ), fileName( "" ), maxNumber( max ), inDatabase( _inDatabase )
   {
@@ -69,7 +58,6 @@ namespace spx
     // dateTimeString = diveDateTime.toString( "dd.MM.YYYY HH:mm:ss " );
   }
 
->>>>>>> dev/stabilizing
   QString &SPX42LogDirectoryEntry::getDateTimeStr()
   {
     return ( dateTimeString );
@@ -79,8 +67,4 @@ namespace spx
   {
     return ( diveId );
   }
-<<<<<<< HEAD
-}
-=======
 }  // namespace spx
->>>>>>> dev/stabilizing

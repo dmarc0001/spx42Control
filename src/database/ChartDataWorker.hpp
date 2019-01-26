@@ -6,11 +6,7 @@
 #include <QSplineSeries>
 #include <QValueAxis>
 #include <QtCore/QObject>
-<<<<<<< HEAD
-#include <cmath >
-=======
 #include <cmath>
->>>>>>> dev/stabilizing
 #include <memory>
 #include "database/SPX42Database.hpp"
 #include "spx42/SPX42SingleCommand.hpp"
@@ -32,11 +28,7 @@ namespace spx
     explicit ChartDataWorker( std::shared_ptr< Logger > logger,
                               std::shared_ptr< SPX42Database > _database,
                               QObject *parent = nullptr );
-<<<<<<< HEAD
-    bool makeChartDataMini( QtCharts::QChart *chart, const QString &remDevice, int diveNum );
-=======
     bool makeChartDataMini( QtCharts::QChart *chart, const QString &deviceMac, int diveNum );
->>>>>>> dev/stabilizing
     void reset( void );
     void nowait( bool _shouldNoWait = true );  //! nicht mehr warten wenn die queue leer ist
 
@@ -44,9 +36,5 @@ namespace spx
 
     public slots:
   };
-<<<<<<< HEAD
-}
-=======
 }  // namespace spx
->>>>>>> dev/stabilizing
 #endif  // CHARTDATAWORKER_HPP

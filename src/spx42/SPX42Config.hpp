@@ -46,11 +46,7 @@ namespace spx
     DeviceIndividualAcoustic individualAcustic;         //! sollen akustische Warnunge ausggeben werden
     DeviceIndividualLogInterval individualLogInterval;  //! welches Interval zum loggen
     DeviceIndividualTempstick individualTempStick;      //! welcher Tempstick wird genutzt?
-<<<<<<< HEAD
-    QVector< SPX42LogDirectoryEntry > logDirectory;     //! Liste mit Einträgen im Verzeichnis
-=======
     SPX42LogDirectoryEntryListPtr logDirectory;         //! Liste mit Einträgen im Verzeichnis
->>>>>>> dev/stabilizing
     bool hasFahrenheidBug;                              //! bug bei der darstellung
     bool canSetDate;                                    //! kann diese Version das Datum setzten?
     bool hasSixValuesIndividual;                        //! beiindividual anzehl der Werte
@@ -143,11 +139,7 @@ namespace spx
     quint8 getChangedConfig( void );                                           //! was ist geändert?
     quint8 getChangedGases( void );                                            //! welches Gas wurde geändert?
     QString getUnitHashes( void );                                             //! gib dieu Unit-Hashes zurück
-<<<<<<< HEAD
-    QVector< SPX42LogDirectoryEntry > &getLogDirectory( void );                //! Verzeichis ausgeben
-=======
     SPX42LogDirectoryEntryListPtr getLogDirectory( void );                     //! Verzeichis ausgeben
->>>>>>> dev/stabilizing
     int addDirectoryEntry( const SPX42LogDirectoryEntry &entry );              //! Einen Eintrag zufügen
 
     private:

@@ -25,16 +25,6 @@ namespace spx
     const int sequence;
 
     public:
-<<<<<<< HEAD
-    SPX42SingleCommand( char cmd, const QList< QByteArray > &params, int diveNum = 0, int seq = 0 );  //! Konstruktor
-    char getCommand( void );             //! gib das gekapselte Kommando zurück (siehe SPX42CommandDef.hpp)
-    QByteArray getParamAt( int idx );    //! gibt den Parameter Nummer idx als QByteArra zurück ( 0..x )
-    uint getValueFromHexAt( int idx );   //! gibt den int wert des Parameters zurück aus HEX Source
-    uint getValueAt( int idx );          //! gibt den Wert eines parameters zurück
-    double getDoubleValueAt( int idx );  //! gib für logdetails den Wert als double
-    int getDiveNum( void );              //! gib den Tsag hzurück (bei logdetail die Tauchgangsnummer)
-    int getSequence( void );             //! Sequenmznumer
-=======
     //! Konstruktor
     SPX42SingleCommand( char cmd, const QList< QByteArray > &params, int diveNum = 0, int seq = 0 );
     //! gib das gekapselte Kommando zurück (siehe SPX42CommandDef.hpp)
@@ -51,7 +41,6 @@ namespace spx
     int getDiveNum( void );
     //! Sequenmznumer innerhalb des Tauchgangslogs
     int getSequence( void );
->>>>>>> dev/stabilizing
   };
 }  // namespace spx
 #endif  // SPX42SINGLECOMMAND_HPP

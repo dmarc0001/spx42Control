@@ -22,23 +22,6 @@ namespace spx
       maxTimeoutVal = waitTimeout;
   }
 
-<<<<<<< HEAD
-  bool ChartDataWorker::makeChartDataMini( QChart *chart, const QString &remDevice, int diveNum )
-  {
-    QString tableName;
-    DiveChartSetPtr dataSet;
-    lg->debug( "ChartDataWorker::makeChartData..." );
-    tableName = database->getLogTableName( remDevice );
-    if ( tableName.isNull() || tableName.isEmpty() )
-    {
-      lg->warn( "ChartDataWorker::makeChartData -> can't read data tablename..." );
-      return ( false );
-    }
-    //
-    // jetzt die Daten abholen
-    //
-    dataSet = database->getChartSet( tableName, diveNum );
-=======
   bool ChartDataWorker::makeChartDataMini( QChart *chart, const QString &deviceMac, int diveNum )
   {
     QString tableName;
@@ -48,18 +31,13 @@ namespace spx
     // jetzt die Daten abholen
     //
     dataSet = database->getChartSet( deviceMac, diveNum );
->>>>>>> dev/stabilizing
     // hat es sich gelohnt
     if ( dataSet->isEmpty() )
       return ( false );
     //
     // jetzt die Daten für das Chart machen
     //
-<<<<<<< HEAD
-    lg->debug( "ChartDataWorker::makeChartData -> create depth serie..." );
-=======
     lg->debug( "ChartDataWorker::makeChartDataMini -> create depth serie..." );
->>>>>>> dev/stabilizing
     // tiefe Datenserie
     QSplineSeries *depthSeries = new QSplineSeries();
     // berülle Daten
@@ -74,11 +52,7 @@ namespace spx
     depthSeries->attachAxis( axisYDepth );
     axisYDepth->setMax( 0.0 );
 
-<<<<<<< HEAD
-    lg->debug( "ChartDataWorker::makeChartData -> create ppo2 serie..." );
-=======
     lg->debug( "ChartDataWorker::makeChartDataMini -> create ppo2 serie..." );
->>>>>>> dev/stabilizing
     // ppo2 Serie
     QSplineSeries *ppo2Series = new QSplineSeries();
     for ( auto singleSet : *dataSet.get() )
@@ -91,11 +65,7 @@ namespace spx
     chart->addAxis( axisYPPO2, Qt::AlignRight );
     ppo2Series->attachAxis( axisYPPO2 );
 
-<<<<<<< HEAD
-    lg->debug( "ChartDataWorker::makeChartData -> create time axis..." );
-=======
     lg->debug( "ChartDataWorker::makeChartDataMini -> create time axis..." );
->>>>>>> dev/stabilizing
     // Zeitachse, dimension aus DB lesen
     QValueAxis *axisX = new QValueAxis();
     axisX->setTickCount( dataSet->count() );
@@ -114,8 +84,4 @@ namespace spx
     */
     return ( true );
   }
-<<<<<<< HEAD
-}
-=======
 }  // namespace spx
->>>>>>> dev/stabilizing

@@ -12,13 +12,9 @@
 #include <QtSql>
 #include <logging/Logger.hpp>
 #include "spx42/SPX42CommandDef.hpp"
-<<<<<<< HEAD
-#include "spx42/SPX42SingleCommand.hpp"
-=======
 #include "spx42/SPX42LogDirectoryEntry.hpp"
 #include "spx42/SPX42SingleCommand.hpp"
 #include "spx42databaseconstants.hpp"
->>>>>>> dev/stabilizing
 
 namespace spx
 {
@@ -47,11 +43,7 @@ namespace spx
   class DiveLogEntry
   {
     public:
-<<<<<<< HEAD
-    int diveNum;      // Tauchgangsnummer laufend
-=======
     int detailId;     // Id aius Tabelle detaildir
->>>>>>> dev/stabilizing
     int lfdNr;        // logeintrag nummer des Tauchganges
     int pressure;     // Umgebungsdruck == Tiefe
     int depth;        // Tiefe
@@ -93,15 +85,6 @@ namespace spx
     Q_OBJECT
 
     private:
-<<<<<<< HEAD
-    std::shared_ptr< Logger > lg;                //! Zeiger auf ein Loggerobjekt
-    QSqlDatabase db;                             //! die lokale Datenbankinstanz
-    QString dbName;                              //! Name der Datenbank (sqlite dateiname)
-    QString currentConnectionName;               //! name der aktuellen Verbindung
-    static const QString sqlDriver;              //! name des SQL Treibers für SQLITE3
-    static const qint16 databaseVersion;         //! aktuelle Version der Datenbank (für spätere Versionen wichtig)
-    static const QString loglineInsertTemplate;  //! das template für einen INSERT einer Logzeile
-=======
     //! Zeiger auf ein Loggerobjekt
     std::shared_ptr< Logger > lg;
     //! die lokale Datenbankinstanz
@@ -118,46 +101,12 @@ namespace spx
     static const QString loglineInsertTemplate;
     //! Threadsaves schreiben auf die DB
     QMutex dbMutex;
->>>>>>> dev/stabilizing
 
     public:
     //! Der Konstruktor, explizit der Standartkonstruktor
     explicit SPX42Database( std::shared_ptr< Logger > logger, const QString &databaseName, QObject *parent = nullptr );
     //! Der Destruktor
     ~SPX42Database();
-<<<<<<< HEAD
-    QSqlError openDatabase( bool createPath = false );  //! öffne die Datenbank, checke auf Vollständigkeit
-    QSqlError openDatabase( const QString &databaseName,
-                            bool createPath = false );  //! öffne die Datenbank, checke auf Vollständigkeit
-    void closeDatabase( void );                         //! schliesse Datenbank
-    DeviceAliasHash getDeviceAliasHash( void );         //! gib einen hash mit einem hash (ALIAS <-> DEVICENAME) zurück
-    bool addAlias( const QString &mac,
-                   const QString &name,
-                   const QString &alias,
-                   bool lastConnected = false );                        //! erzeuge einen Alias Eintrag
-    bool addAlias( const SPX42DeviceAlias &devAlias );                  //! erzeuge einen Alias Eintrag
-    bool setAliasForMac( const QString &mac, const QString &alias );    //! setzte einen Aliasnamen für MAC
-    bool setAliasForName( const QString &name, const QString &alias );  //! setzte einen Aliasnamen für MAC
-    bool setLastConnected( const QString &mac );                        //! setzte das Gerät auf "last connected"
-    QString getLastConnected( void );                                   //! wer war der letzte?
-    QString getLogTableName( const QString &mac );  //! gib die Tabelle für das Gerät zurück, wenn Gerät in der Liste ist
-    bool existDiveLogInBase( const QString &tableName, int diveNum );           //! existiert ein log mit der Nummer
-    bool delDiveLogFromBase( const QString &tableName, int diveNum );           //! einen Tauchgang entfernen
-    bool insertLogentry( const QString &tableName, const DiveLogEntry &entr );  //! einen Logeintrag zufügen
-    bool insertLogentry( const QString &tableName, spSingleCommand );           //! Logeintrag einfügen
-    int getMaxDepthFor( const QString &tableName, int diveNum );                //! maximale Tiefe für Tauchgang
-    DiveChartSetPtr getChartSet( const QString &tableName, int diveNum );       //! gib daten für CHART für einen Tauchgang
-
-    private:
-    bool existTable( const QString &tableName );     //! gibt es folgende Tabelle?
-    bool createAliasTable( void );                   //! erzeuge die ALIAS Tabelle
-    bool alterAliasTableFrom1To2( void );            //! tabelle zu version 2 heben
-    bool createDeviceLogTable( QString deviceMac );  //! erzeuge /lösche und erzeuge eine Tablelle für Logdaten für ein Gerät
-    bool createAllTables( void );                    //! neue Datenbank, alleTabellen neu anlegen
-    qint16 getDatabaseVersion( void );               //! erfrage die Datenbankversion
-    bool createVersionTable( void );                 //! erzeuge die Versionstabelle mit Versiuonsinhalt
-    bool checkOrCreateTables( void );                //! teste ob alle Tabellen vorhanden sind, wenn ncht erzeuge diese
-=======
     //! öffne die Datenbank, checke auf Vollständigkeit
     QSqlError openDatabase( bool createPath = false );
     //! öffne die Datenbank, checke auf Vollständigkeit
@@ -226,7 +175,6 @@ namespace spx
     bool createVersionTable( void );
     //! teste ob alle Tabellen vorhanden sind, wenn ncht erzeuge diese
     bool checkOrCreateTables( void );
->>>>>>> dev/stabilizing
 
     // GETTER und SETTER
     bool isDbOpen() const;

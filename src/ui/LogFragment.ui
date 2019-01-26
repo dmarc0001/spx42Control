@@ -282,11 +282,7 @@
            <property name="font">
             <font>
              <family>DejaVu Sans Mono</family>
-<<<<<<< HEAD
-             <pointsize>24</pointsize>
-=======
              <pointsize>16</pointsize>
->>>>>>> dev/stabilizing
             </font>
            </property>
            <property name="statusTip">
@@ -313,11 +309,7 @@
            </property>
            <property name="font">
             <font>
-<<<<<<< HEAD
-             <pointsize>24</pointsize>
-=======
              <pointsize>16</pointsize>
->>>>>>> dev/stabilizing
             </font>
            </property>
            <property name="statusTip">
@@ -345,11 +337,7 @@
               <property name="font">
                <font>
                 <family>DejaVu Sans Mono</family>
-<<<<<<< HEAD
-                <pointsize>24</pointsize>
-=======
                 <pointsize>16</pointsize>
->>>>>>> dev/stabilizing
                </font>
               </property>
               <property name="statusTip">
@@ -377,11 +365,7 @@
               <property name="font">
                <font>
                 <family>DejaVu Sans Mono</family>
-<<<<<<< HEAD
-                <pointsize>24</pointsize>
-=======
                 <pointsize>16</pointsize>
->>>>>>> dev/stabilizing
                </font>
               </property>
               <property name="statusTip">
@@ -428,11 +412,7 @@
               </property>
               <property name="font">
                <font>
-<<<<<<< HEAD
-                <pointsize>18</pointsize>
-=======
                 <pointsize>16</pointsize>
->>>>>>> dev/stabilizing
                </font>
               </property>
               <property name="text">
@@ -450,11 +430,7 @@
               </property>
               <property name="font">
                <font>
-<<<<<<< HEAD
-                <pointsize>18</pointsize>
-=======
                 <pointsize>16</pointsize>
->>>>>>> dev/stabilizing
                </font>
               </property>
               <property name="text">
@@ -472,11 +448,7 @@
               </property>
               <property name="font">
                <font>
-<<<<<<< HEAD
-                <pointsize>18</pointsize>
-=======
                 <pointsize>16</pointsize>
->>>>>>> dev/stabilizing
                </font>
               </property>
               <property name="text">
