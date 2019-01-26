@@ -10,8 +10,8 @@ win32:QMAKE_TARGET_COMPANY             = submatix.com
 win32:QMAKE_TARGET_COPYRIGHT           = D. Marciniak
 win32:QMAKE_TARGET_PRODUCT             = SPX42 BT-Controller
 win32:RC_ICONS                         = src/res/programIcon.ico
-win32:VERSION                          = 0.5.2.0  # major.minor.patch.build
-else:VERSION                           = 0.5.2    # major.minor.patch
+win32:VERSION                          = 0.5.4.0  # major.minor.patch.build
+else:VERSION                           = 0.5.4    # major.minor.patch
 macx:ICON                              = src/res/programIcon.ico
 #
 TARGET                                 = spx42Control
@@ -91,7 +91,8 @@ SOURCES                 += \
     src/spx42/SPX42LogDirectoryEntry.cpp \
     src/database/LogDetailWalker.cpp \
     src/charts/DiveMiniChart.cpp \
-    src/database/ChartDataWorker.cpp
+    src/database/ChartDataWorker.cpp \
+    src/database/spx42databaseconstants.cpp
 
 HEADERS                 += \
     src/SPX42ControlMainWin.hpp \
@@ -128,7 +129,8 @@ HEADERS                 += \
     src/spx42/SPX42LogDirectoryEntry.hpp \
     src/database/LogDetailWalker.hpp \
     src/charts/DiveMiniChart.hpp \
-    src/database/ChartDataWorker.hpp
+    src/database/ChartDataWorker.hpp \
+    src/database/spx42databaseconstants.hpp
 
 FORMS                   += \
     src/ui/SPX42ControlMainWin.ui \

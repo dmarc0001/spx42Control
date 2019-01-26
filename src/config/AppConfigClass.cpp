@@ -20,7 +20,7 @@ namespace spx
   const int AppConfigClass::defaultWatchdogTimerVal{20};
   const QString AppConfigClass::constAppThresholdKey{"loggingThreshold"};
   const qint8 AppConfigClass::defaultAppThreshold{4};
-  const QString AppConfigClass::defaultDatabaseName{"spx42Database.db"};
+  const QString AppConfigClass::defaultDatabaseName{"spx42Database.sqlite"};
   const QString AppConfigClass::defaultDatabasePath{
       QStandardPaths::writableLocation( QStandardPaths::AppDataLocation ).append( "/spx42Control" )};
 
@@ -369,4 +369,4 @@ namespace spx
     QFileInfo dbFileInfo( dbFile );
     return ( dbFileInfo.filePath() );
   }
-}
+}  // namespace spx

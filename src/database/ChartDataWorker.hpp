@@ -28,7 +28,7 @@ namespace spx
     explicit ChartDataWorker( std::shared_ptr< Logger > logger,
                               std::shared_ptr< SPX42Database > _database,
                               QObject *parent = nullptr );
-    bool makeChartDataMini( QtCharts::QChart *chart, const QString &remDevice, int diveNum );
+    bool makeChartDataMini( QtCharts::QChart *chart, const QString &deviceMac, int diveNum );
     void reset( void );
     void nowait( bool _shouldNoWait = true );  //! nicht mehr warten wenn die queue leer ist
 

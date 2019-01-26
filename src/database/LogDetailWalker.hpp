@@ -1,11 +1,14 @@
 ﻿#ifndef LOGDETAILWRITER_HPP
 #define LOGDETAILWRITER_HPP
 
+#include <QMutex>
+#include <QMutexLocker>
 #include <QObject>
 #include <QQueue>
 #include <QString>
 #include <memory>
 #include "database/SPX42Database.hpp"
+#include "spx42/SPX42Config.hpp"
 #include "spx42/SPX42SingleCommand.hpp"
 
 namespace spx
@@ -15,10 +18,12 @@ namespace spx
     Q_OBJECT
     static const qint64 waitTimeout{( 1000 / 50 ) * 20};
     static const qint64 waitUnits{50};
-    QQueue< spSingleCommand > detailQueue;      // Liste mit pointern auf die empfangenen Logdetails
-    std::shared_ptr< Logger > lg;               // der Logger
-    std::shared_ptr< SPX42Database > database;  // Datenbankverbindung
-    bool shouldWriterRunning;                   // thread soll laufen und auf daten warten
+    QQueue< spSingleCommand > detailQueue;       // Liste mit pointern auf die empfangenen Logdetails
+    std::shared_ptr< Logger > lg;                // der Logger
+    std::shared_ptr< SPX42Database > database;   // Datenbankverbindung
+    std::shared_ptr< SPX42Config > spx42Config;  // die Konfioguration
+    QMutex queueMutex;                           // Mutex zum locken der Queue
+    bool shouldWriterRunning;                    // thread soll laufen und auf daten warten
     int processed;
     int forThisDiveProcessed;
     int overAll;
@@ -28,7 +33,10 @@ namespace spx
     QString logDetailTableName;
 
     public:
-    explicit LogDetailWalker( QObject *parent, std::shared_ptr< Logger > logger, std::shared_ptr< SPX42Database > _database );
+    explicit LogDetailWalker( QObject *parent,
+                              std::shared_ptr< Logger > logger,
+                              std::shared_ptr< SPX42Database > _database,
+                              std::shared_ptr< SPX42Config > spxCfg );
     void reset( void );
     void nowait( bool _shouldNoWait = true );  //! nicht mehr warten wenn die queue leer ist
     void addDetail( spSingleCommand );
@@ -39,6 +47,9 @@ namespace spx
     bool deleteLogDataFromDatabase( const QString &deviceMac, std::shared_ptr< QVector< int > > list );
     bool exportLogDataFromDatabase( const QString &deviceMac, const QString &fileName, std::shared_ptr< QVector< int > > list );
 
+    private:
+    spSingleCommand dequeueDetail( void );
+
     signals:
     void onNewDiveDoneSig( int savedDiveNum );
     void onWriteDoneSig( int _overallResult );
@@ -47,5 +58,5 @@ namespace spx
 
     public slots:
   };
-}
+}  // namespace spx
 #endif  // LOGDETAILWRITER_HPP

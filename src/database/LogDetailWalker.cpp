@@ -2,10 +2,14 @@
 
 namespace spx
 {
-  LogDetailWalker::LogDetailWalker( QObject *parent, std::shared_ptr< Logger > logger, std::shared_ptr< SPX42Database > _database )
+  LogDetailWalker::LogDetailWalker( QObject *parent,
+                                    std::shared_ptr< Logger > logger,
+                                    std::shared_ptr< SPX42Database > _database,
+                                    std::shared_ptr< SPX42Config > spxCfg )
       : QObject( parent )
       , lg( logger )
       , database( _database )
+      , spx42Config( spxCfg )
       , shouldWriterRunning( true )
       , processed( 0 )
       , forThisDiveProcessed( 0 )
@@ -15,6 +19,7 @@ namespace spx
 
   void LogDetailWalker::addDetail( spSingleCommand _detail )
   {
+    QMutexLocker writeLock( &queueMutex );
     overAll++;
     detailQueue.enqueue( _detail );
   }
@@ -47,26 +52,23 @@ namespace spx
     return ( detailQueue.count() );
   }
 
+  spSingleCommand LogDetailWalker::dequeueDetail()
+  {
+    QMutexLocker writeLock( &queueMutex );
+    return ( detailQueue.dequeue() );
+  }
+
   int LogDetailWalker::writeLogDataToDatabase( const QString &deviceMac )
   {
     int diveNum = -1;
+    int detail_id = -1;
     shouldWriterRunning = true;
     forThisDiveProcessed = 0;
     processed = 0;
     qint64 timeoutVal = 0;
     maxTimeoutVal = waitTimeout;
     //
-    // zuerst: ist die Tabelle da/wurde angelegt?
-    //
-    QString tableName = database->getLogTableName( deviceMac );
-    if ( tableName.isNull() || tableName.isEmpty() )
-    {
-      lg->crit( "LogDetailWriter::writeLogDataToDatabase -> database error, not table for logdata exist..." );
-      detailQueue.clear();
-      shouldWriterRunning = false;
-      return ( -1 );
-    }
-    lg->debug( QString( "LogDetailWriter::writeLogDataToDatabase -> table %1 exist!" ).arg( tableName ) );
+    // solange es was zu schreiben gibt
     //
     while ( shouldWriterRunning )
     {
@@ -77,42 +79,91 @@ namespace spx
         // den Datensatz aus der Queue holen
         // (ist ja ein shared ptr, also sehr schnell)
         //
-        auto logentry = detailQueue.dequeue();
+        auto logentry = dequeueDetail();
         //
         // ist die diveNum immer noch dieselbe?
         //
         if ( diveNum != logentry->getDiveNum() )
         {
+          if ( diveNum != -1 && detail_id != -1 )
+          {
+            //
+            // also gab es einene Tauchgang, den ich gerade gesichert habe?
+            // dann erzeuge maximaltiefe und anzahl der einträge
+            // in der Tabellenspalte in detaildir
+            //
+            if ( !database->computeStatistic( detail_id ) )
+            {
+              lg->warn(
+                  QString( "LogDetailWriter::writeLogDataToDatabase -> can't not compute statistic for dive - detail id <%1>..." )
+                      .arg( detail_id ) );
+            }
+          }
           //
           // Ok, anpassen
           //
           emit onNewDiveDoneSig( diveNum );
           diveNum = logentry->getDiveNum();
           lg->debug(
-              QString( "LogDetailWriter::writeLogDataToDatabase -> new dive to store %1" ).arg( diveNum, 3, 10, QChar( '0' ) ) );
+              QString( "LogDetailWriter::writeLogDataToDatabase -> new dive to store #%1" ).arg( diveNum, 3, 10, QChar( '0' ) ) );
           //
           // Nummer hat sich verändert
           // ist das ein update oder ein insert?
           //
-          if ( database->existDiveLogInBase( tableName, diveNum ) )
+          if ( database->existDiveLogInBase( deviceMac, diveNum ) )
           {
             lg->debug( "LogDetailWriter::writeLogDataToDatabase -> update, drop old values..." );
             //
-            //  existiert, daten löschen...
+            // existiert, daten löschen...
             // also ein "update", eigentlich natürlich löschen und neu machen
             //
-            if ( !database->delDiveLogFromBase( tableName, diveNum ) )
+            if ( !database->delDiveLogFromBase( deviceMac, diveNum ) )
             {
               return ( -1 );
             }
+          }
+          //
+          // neu anlegen, Tauchgangszeit suchen
+          //
+          qint64 timestamp = 0;
+          SPX42LogDirectoryEntryListPtr entrys = spx42Config->getLogDirectory();
+          for ( auto &entry : *( entrys.get() ) )
+          {
+            if ( entry.number == diveNum )
+            {
+              // die gesuchte Tauchgangsnummer
+              timestamp = entry.diveDateTime.toSecsSinceEpoch();
+              lg->debug( QString( "LogDetailWriter::writeLogDataToDatabase -> start time for dive #%1: %2" )
+                             .arg( diveNum, 3, 10, QChar( '0' ) )
+                             .arg( entry.getDateTimeStr() ) );
+              // Schleife abbrechen
+              break;
+            }
+          }
+          //
+          // Daten komplett, Tauchgang in der DB anlegen
+          //
+          if ( !database->insertDiveLogInBase( deviceMac, diveNum, timestamp ) )
+          {
+            return ( -1 );
+          }
+          //
+          // die neue detail_id muss ich noch erfragen
+          //
+          detail_id = database->getDetailId( deviceMac, diveNum );
+          if ( detail_id == -1 )
+          {
+            return ( -1 );
           }
           emit onNewDiveStartSig( diveNum );
         }
         // zähle die Datensätze
         processed++;
         lg->debug( QString( "LogDetailWriter::writeLogDataToDatabase -> write set %1" ).arg( processed, 3, 10, QChar( '0' ) ) );
-        // in die Warteschlange des writer Threads schicken
-        database->insertLogentry( tableName, logentry );
+        //
+        // in die Datenbank schreiben
+        //
+        database->insertLogentry( detail_id, logentry );
       }
       else
       {
@@ -126,6 +177,19 @@ namespace spx
         }
       }
     }
+    if ( diveNum != -1 && detail_id != -1 )
+    {
+      //
+      // also gab es einen Tauchgang, den ich gerade gesichert habe?
+      // dann erzeuge maximaltiefe und anzahl der einträge
+      // in der Tabellenspalte in detaildir
+      //
+      if ( !database->computeStatistic( detail_id ) )
+      {
+        lg->warn( QString( "LogDetailWriter::writeLogDataToDatabase -> can't not compute statistic for dive - detail id <%1>..." )
+                      .arg( detail_id ) );
+      }
+    }
     emit onWriteDoneSig( processed );
     return ( processed );
   }
@@ -136,18 +200,11 @@ namespace spx
     //
     // zuerst: ist die Tabelle da/wurde angelegt?
     //
-    QString tableName = database->getLogTableName( deviceMac );
-    if ( tableName.isNull() || tableName.isEmpty() )
-    {
-      lg->crit( "LogDetailWriter::writeLogDataToDatabase -> database error, not table for logdata exist..." );
-      detailQueue.clear();
-      return ( false );
-    }
     for ( int diveNum : *list )
     {
       if ( shouldDeleteRunning )
       {
-        if ( !database->delDiveLogFromBase( tableName, diveNum ) )
+        if ( !database->delDiveLogFromBase( deviceMac, diveNum ) )
         {
           shouldDeleteRunning = false;
         }
@@ -162,4 +219,4 @@ namespace spx
     emit onDeleteDoneSig( -1 );
     return ( shouldDeleteRunning );
   }
-}
+}  // namespace spx

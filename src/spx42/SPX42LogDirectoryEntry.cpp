@@ -28,12 +28,13 @@ namespace spx
   second = Integer.parseInt( fields[ 5 ] );
   */
 
-  SPX42LogDirectoryEntry::SPX42LogDirectoryEntry() : number( -1 ), fileName(), diveDateTime(), dateTimeString(), maxNumber( -1 )
+  SPX42LogDirectoryEntry::SPX42LogDirectoryEntry()
+      : number( -1 ), fileName(), diveDateTime(), dateTimeString(), maxNumber( -1 ), inDatabase( false )
   {
   }
 
-  SPX42LogDirectoryEntry::SPX42LogDirectoryEntry( int num, int max, const QByteArray &cmd )
-      : number( num ), fileName( cmd ), maxNumber( max )
+  SPX42LogDirectoryEntry::SPX42LogDirectoryEntry( int num, int max, const QByteArray &cmd, bool _inDatabase )
+      : number( num ), fileName( cmd ), maxNumber( max ), inDatabase( _inDatabase )
   {
     int idx = cmd.indexOf( ".txt" );
     QByteArray tmp = cmd.left( idx );
@@ -41,6 +42,16 @@ namespace spx
     QDate diveDate( dateTimeList.at( 2 ).toInt() + 2000, dateTimeList.at( 1 ).toInt(), dateTimeList.at( 0 ).toInt() );
     QTime diveTime( dateTimeList.at( 3 ).toInt(), dateTimeList.at( 4 ).toInt(), dateTimeList.at( 5 ).toInt() );
     diveDateTime = QDateTime( diveDate, diveTime, QTimeZone::systemTimeZone() );
+    // TODO: Konfigurierbar via locale!
+    dateTimeString = diveDateTime.toString( "yyyy/MM/dd hh:mm:ss" );
+    diveId = QString( "%1-%2" ).arg( num, 4, 10, QChar( '0' ) ).arg( diveDateTime.toString( "yyyyMMddhhmmss" ) );
+    // dateTimeString = diveDateTime.toString( "dd.MM.YYYY HH:mm:ss " );
+  }
+
+  SPX42LogDirectoryEntry::SPX42LogDirectoryEntry( int num, int max, const QDateTime &dt, bool _inDatabase )
+      : number( num ), fileName( "" ), maxNumber( max ), inDatabase( _inDatabase )
+  {
+    diveDateTime = dt;
     // TODO: Konfigurierbar via locale!
     dateTimeString = diveDateTime.toString( "yyyy/MM/dd hh:mm:ss" );
     diveId = QString( "%1-%2" ).arg( num, 4, 10, QChar( '0' ) ).arg( diveDateTime.toString( "yyyyMMddhhmmss" ) );
@@ -56,4 +67,4 @@ namespace spx
   {
     return ( diveId );
   }
-}
+}  // namespace spx

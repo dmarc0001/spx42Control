@@ -22,28 +22,22 @@ namespace spx
       maxTimeoutVal = waitTimeout;
   }
 
-  bool ChartDataWorker::makeChartDataMini( QChart *chart, const QString &remDevice, int diveNum )
+  bool ChartDataWorker::makeChartDataMini( QChart *chart, const QString &deviceMac, int diveNum )
   {
     QString tableName;
     DiveChartSetPtr dataSet;
-    lg->debug( "ChartDataWorker::makeChartData..." );
-    tableName = database->getLogTableName( remDevice );
-    if ( tableName.isNull() || tableName.isEmpty() )
-    {
-      lg->warn( "ChartDataWorker::makeChartData -> can't read data tablename..." );
-      return ( false );
-    }
+    lg->debug( QString( "ChartDataWorker::makeChartDataMini for <%1>, num <%2>..." ).arg( deviceMac ).arg( diveNum ) );
     //
     // jetzt die Daten abholen
     //
-    dataSet = database->getChartSet( tableName, diveNum );
+    dataSet = database->getChartSet( deviceMac, diveNum );
     // hat es sich gelohnt
     if ( dataSet->isEmpty() )
       return ( false );
     //
     // jetzt die Daten für das Chart machen
     //
-    lg->debug( "ChartDataWorker::makeChartData -> create depth serie..." );
+    lg->debug( "ChartDataWorker::makeChartDataMini -> create depth serie..." );
     // tiefe Datenserie
     QSplineSeries *depthSeries = new QSplineSeries();
     // berülle Daten
@@ -58,7 +52,7 @@ namespace spx
     depthSeries->attachAxis( axisYDepth );
     axisYDepth->setMax( 0.0 );
 
-    lg->debug( "ChartDataWorker::makeChartData -> create ppo2 serie..." );
+    lg->debug( "ChartDataWorker::makeChartDataMini -> create ppo2 serie..." );
     // ppo2 Serie
     QSplineSeries *ppo2Series = new QSplineSeries();
     for ( auto singleSet : *dataSet.get() )
@@ -71,7 +65,7 @@ namespace spx
     chart->addAxis( axisYPPO2, Qt::AlignRight );
     ppo2Series->attachAxis( axisYPPO2 );
 
-    lg->debug( "ChartDataWorker::makeChartData -> create time axis..." );
+    lg->debug( "ChartDataWorker::makeChartDataMini -> create time axis..." );
     // Zeitachse, dimension aus DB lesen
     QValueAxis *axisX = new QValueAxis();
     axisX->setTickCount( dataSet->count() );
@@ -90,4 +84,4 @@ namespace spx
     */
     return ( true );
   }
-}
+}  // namespace spx

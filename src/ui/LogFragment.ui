@@ -214,6 +214,63 @@
          </size>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="deviceSelectLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>16</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>SELECT DEVICE</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="deviceSelectComboBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>16</pointsize>
+            </font>
+           </property>
+           <property name="statusTip">
+            <string>select device for list dives...</string>
+           </property>
+           <property name="currentText">
+            <string/>
+           </property>
+           <property name="insertPolicy">
+            <enum>QComboBox::InsertAtTop</enum>
+           </property>
+          </widget>
+         </item>
          <item>
           <widget class="QPushButton" name="readLogdirPushButton">
            <property name="minimumSize">
@@ -225,7 +282,7 @@
            <property name="font">
             <font>
              <family>DejaVu Sans Mono</family>
-             <pointsize>24</pointsize>
+             <pointsize>16</pointsize>
             </font>
            </property>
            <property name="statusTip">
@@ -252,7 +309,7 @@
            </property>
            <property name="font">
             <font>
-             <pointsize>24</pointsize>
+             <pointsize>16</pointsize>
             </font>
            </property>
            <property name="statusTip">
@@ -280,7 +337,7 @@
               <property name="font">
                <font>
                 <family>DejaVu Sans Mono</family>
-                <pointsize>24</pointsize>
+                <pointsize>16</pointsize>
                </font>
               </property>
               <property name="statusTip">
@@ -308,7 +365,7 @@
               <property name="font">
                <font>
                 <family>DejaVu Sans Mono</family>
-                <pointsize>24</pointsize>
+                <pointsize>16</pointsize>
                </font>
               </property>
               <property name="statusTip">
@@ -355,7 +412,7 @@
               </property>
               <property name="font">
                <font>
-                <pointsize>18</pointsize>
+                <pointsize>16</pointsize>
                </font>
               </property>
               <property name="text">
@@ -373,7 +430,7 @@
               </property>
               <property name="font">
                <font>
-                <pointsize>18</pointsize>
+                <pointsize>16</pointsize>
                </font>
               </property>
               <property name="text">
@@ -391,7 +448,7 @@
               </property>
               <property name="font">
                <font>
-                <pointsize>18</pointsize>
+                <pointsize>16</pointsize>
                </font>
               </property>
               <property name="text">
@@ -441,7 +498,7 @@
            <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
-             <height>40</height>
+             <height>10</height>
             </size>
            </property>
           </spacer>
@@ -470,13 +527,13 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>12</height>
+       <height>24</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
        <width>16777215</width>
-       <height>12</height>
+       <height>24</height>
       </size>
      </property>
      <property name="statusTip">

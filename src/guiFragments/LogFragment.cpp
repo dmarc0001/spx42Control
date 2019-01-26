@@ -20,10 +20,10 @@ namespace spx
       , miniChart( std::unique_ptr< DiveMiniChart >( new DiveMiniChart( logger, spx42Database ) ) )
       , dummyChart( new QtCharts::QChart() )
       , chartView( std::unique_ptr< QtCharts::QChartView >( new QtCharts::QChartView( dummyChart ) ) )
-      , logWriter( this, logger, spx42Database )
-      , logWriterTableExist( false )
+      , logWriter( this, logger, spx42Database, spxCfg )
       , savedIcon( ":/icons/saved_black" )
       , nullIcon()
+      , offlineDeviceAddr()
   {
     lg->debug( "LogFragment::LogFragment..." );
     ui->setupUi( this );
@@ -42,6 +42,7 @@ namespace spx
     //
     ui->dbWriteNumLabel->setVisible( false );
     fragmentTitlePattern = tr( "LOGFILES SPX42 Serial [%1] LIC: %2" );
+    fragmentTitleOfflinePattern = tr( "LOGFILES SPX42 [%1] in database" );
     diveNumberStr = tr( "DIVE NUMBER: %1" );
     diveDateStr = tr( "DIVE DATE: %1" );
     diveDepthStr = tr( "DIVE DEPTH: %1m" );
@@ -62,29 +63,47 @@ namespace spx
     // GUI dem Onlinestatus entsprechend vorbereiten
     setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
     //
-    // ist das Verzeichnis im cache?
+    // ist der SPX online?
     //
     if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
     {
       //
-      // wenn Einträge vorhanden sind
+      // ist das Verzeichnis im cache?
       //
-      if ( !spxConfig->getLogDirectory().isEmpty() )
+      SPX42LogDirectoryEntryListPtr dirList;
+      if ( !spxConfig->getLogDirectory()->isEmpty() )
       {
-        const QVector< SPX42LogDirectoryEntry > &dirList = spxConfig->getLogDirectory();
+        // Daten im Cache
+        // Speicherstatus sollte auch drin stehen
         lg->debug( QString( "LogFragment::LogFragment -> fill log directory list from cache..." ) );
-        //
-        // Alle Einträge in die Liste
-        //
-        for ( auto entr : dirList )
-        {
-          onAddLogdirEntrySlot( QString( "%1:[%2]" ).arg( entr.number, 2, 10, QChar( '0' ) ).arg( entr.getDateTimeStr() ) );
-        }
+        dirList = spxConfig->getLogDirectory();
       }
-      testForSavedDetails();
+      else
+      {
+        // Daten in der DB
+        lg->debug( QString( "LogFragment::LogFragment -> fill log directory list from database..." ) );
+        dirList = database->getLogentrysForDevice( remoteSPX42->getRemoteConnected() );
+      }
+      //
+      // Alle Einträge sortiert in die Liste
+      //
+      auto sortKeys = dirList.get()->keys();
+      qSort( sortKeys.begin(), sortKeys.end() );
+      for ( auto entr : sortKeys )
+      {
+        SPX42LogDirectoryEntry dEntry = dirList->value( entr );
+        onAddLogdirEntrySlot( QString( "%1:[%2]" ).arg( dEntry.number, 2, 10, QChar( '0' ) ).arg( dEntry.getDateTimeStr() ),
+                              dEntry.inDatabase );
+      }
+      // ist der online gleich noch die Lizenz setzten
+      onConfLicChangedSlot();
     }
-    onConfLicChangedSlot();
+    //
+    // signale verbinden
+    //
     connect( spxConfig.get(), &SPX42Config::licenseChangedSig, this, &LogFragment::onConfLicChangedSlot );
+    connect( ui->deviceSelectComboBox, static_cast< void ( QComboBox::* )( int ) >( &QComboBox::currentIndexChanged ), this,
+             &LogFragment::onDeviceComboChangedSlot );
     connect( ui->readLogdirPushButton, &QPushButton::clicked, this, &LogFragment::onReadLogDirectoryClickSlot );
     connect( ui->readLogContentPushButton, &QPushButton::clicked, this, &LogFragment::onReadLogContentClickSlot );
     connect( ui->logentryTableWidget, &QAbstractItemView::clicked, this, &LogFragment::onLogListClickeSlot );
@@ -94,7 +113,7 @@ namespace spx
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onStateChangedSig, this, &LogFragment::onOnlineStatusChangedSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onSocketErrorSig, this, &LogFragment::onSocketErrorSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onCommandRecivedSig, this, &LogFragment::onCommandRecivedSlot );
-    connect( &transferTimeout, &QTimer::timeout, this, &LogFragment::onTransferTimeout );
+    connect( &transferTimeout, &QTimer::timeout, this, &LogFragment::onTransferTimeoutSlot );
     connect( &logWriter, &LogDetailWalker::onWriteDoneSig, this, &LogFragment::onWriterDoneSlot );
     connect( &logWriter, &LogDetailWalker::onNewDiveStartSig, this, &LogFragment::onNewDiveStartSlot );
     connect( &logWriter, &LogDetailWalker::onDeleteDoneSig, this, &LogFragment::onDeleteDoneSlot );
@@ -152,7 +171,7 @@ namespace spx
   /**
    * @brief LogFragment::onTransferTimeout
    */
-  void LogFragment::onTransferTimeout()
+  void LogFragment::onTransferTimeoutSlot()
   {
     //
     // wenn der Writer noch läuft, dann noch nicht den Balken ausblenden
@@ -186,7 +205,7 @@ namespace spx
       int result = dbWriterFuture.result();
       if ( result < 0 )
       {
-        logWriterTableExist = false;
+        // TODO: was machen
       }
     }
     //
@@ -201,12 +220,6 @@ namespace spx
    */
   void LogFragment::tryStartLogWriterThread()
   {
-    if ( !logWriterTableExist )
-    {
-      lg->crit( "LogFragment::tryStartLogWriterThread -> can't start writer thread while database error! Try restart programm." );
-      ui->dbWriteNumLabel->setVisible( false );
-      return;
-    }
     if ( !logDetailRead.isEmpty() && dbWriterFuture.isFinished() )
     {
       lg->debug( "LogFragment::onWriterDoneSlot -> start writer thread again..." );
@@ -323,6 +336,7 @@ namespace spx
    */
   void LogFragment::onLogListClickeSlot( const QModelIndex &index )
   {
+    QString deviceAddr;
     QString depthStr = " ? ";
     int diveNum = 0;
     double depth = 0;
@@ -358,25 +372,43 @@ namespace spx
     {
       //
       // die Datenbank fragen, ob und wie tief
+      // unterscheide ob ich online oder offline arbeite
       //
-      depth = ( database->getMaxDepthFor( database->getLogTableName( remoteSPX42->getRemoteConnected() ), diveNum ) / 10.0 );
-      if ( depth > 0 )
+      if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
       {
         //
-        // tiefe eintragen
+        // mit wem bin ich verbunden ==> dessen Daten lösche ich
         //
-        ui->diveDepthLabel->setText( diveDepthStr.arg( depth, 2, 'f', 1 ) );
-        //
-        // das Chart anzeigen, wenn Daten vorhanden sind
-        //
-        miniChart->showDiveDataInMiniGraph( remoteSPX42->getRemoteConnected(), diveNum );
-        //
-        chartView->setChart( miniChart.get() );
+        deviceAddr = remoteSPX42->getRemoteConnected();
       }
       else
       {
-        ui->diveDepthLabel->setText( diveDepthStr.arg( depthStr ) );
-        chartView->setChart( dummyChart );
+        //
+        // habe ich ein Gerät ausgewählt, wenn ja welches
+        //
+        deviceAddr = offlineDeviceAddr;
+      }
+      if ( !deviceAddr.isEmpty() )
+      {
+        depth = ( database->getMaxDepthFor( deviceAddr, diveNum ) / 10.0 );
+        if ( depth > 0 )
+        {
+          //
+          // tiefe eintragen
+          //
+          ui->diveDepthLabel->setText( diveDepthStr.arg( depth, 2, 'f', 1 ) );
+          //
+          // das Chart anzeigen, wenn Daten vorhanden sind
+          //
+          miniChart->showDiveDataInMiniGraph( deviceAddr, diveNum );
+          //
+          chartView->setChart( miniChart.get() );
+        }
+        else
+        {
+          ui->diveDepthLabel->setText( diveDepthStr.arg( depthStr ) );
+          chartView->setChart( dummyChart );
+        }
       }
     }
   }
@@ -428,6 +460,9 @@ namespace spx
   void LogFragment::onLogDetailDeleteClickSlot()
   {
     lg->debug( "LogFragment::onLogDetailDeleteClickSlot..." );
+    //
+    // gib mir eine Liste mit diveNum
+    //
     std::shared_ptr< QVector< int > > deleteList = getSelectedInDb();
     if ( deleteList->count() == 0 )
       return;
@@ -439,9 +474,32 @@ namespace spx
 #endif
     if ( dbDeleteFuture.isFinished() )
     {
-      lg->debug( "LogFragment::onLogDetailDeleteClickSlot -> start delete thread..." );
-      dbDeleteFuture = QtConcurrent::run( &this->logWriter, &LogDetailWalker::deleteLogDataFromDatabase,
-                                          remoteSPX42->getRemoteConnected(), deleteList );
+      QString deviceAddr;
+      //
+      // unterscheide ob ich online oder offline arbeite
+      //
+      if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
+      {
+        //
+        // mit wem bin ich verbunden ==> dessen Daten lösche ich
+        //
+        deviceAddr = remoteSPX42->getRemoteConnected();
+      }
+      else
+      {
+        //
+        // habe ich ein Gerät ausgewählt, wenn ja welches
+        //
+        deviceAddr = offlineDeviceAddr;
+      }
+      //
+      // ist ein Zielgerät benannt, kann ich versuchen zu löschen
+      //
+      if ( !deviceAddr.isNull() && !deviceAddr.isEmpty() )
+      {
+        lg->debug( "LogFragment::onLogDetailDeleteClickSlot -> start delete thread..." );
+        dbDeleteFuture = QtConcurrent::run( &this->logWriter, &LogDetailWalker::deleteLogDataFromDatabase, deviceAddr, deleteList );
+      }
     }
   }
 
@@ -470,13 +528,17 @@ namespace spx
    * @brief Wird ein Log Verzeichniseintrag angeliefert....
    * @param entry Der Eintrag
    */
-  void LogFragment::onAddLogdirEntrySlot( const QString &entry )
+  void LogFragment::onAddLogdirEntrySlot( const QString &entry, bool inDatabase )
   {
+    QTableWidgetItem *itLoadet;
     //
     // neueste zuerst
     //
     auto *itName = new QTableWidgetItem( entry );
-    auto *itLoadet = new QTableWidgetItem( "" );
+    if ( inDatabase )
+      itLoadet = new QTableWidgetItem( savedIcon, "" );
+    else
+      itLoadet = new QTableWidgetItem( "" );
     ui->logentryTableWidget->insertRow( 0 );
     ui->logentryTableWidget->setItem( 0, 0, itName );
     ui->logentryTableWidget->setItem( 0, 1, itLoadet );
@@ -508,8 +570,7 @@ namespace spx
   {
     lg->debug( QString( "LogFragment::onOnlineStatusChangedSlot -> set: %1" )
                    .arg( static_cast< int >( spxConfig->getLicense().getLicType() ) ) );
-    ui->tabHeaderLabel->setText(
-        QString( tr( "LOGFILES SPX42 Serial [%1] Lic: %2" ).arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
+    ui->tabHeaderLabel->setText( QString( fragmentTitlePattern.arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
   }
 
   /**
@@ -654,30 +715,23 @@ namespace spx
             {
               //
               // da ist noch was anzufordern
-              //
+              // nutze die next-transfer-Timerroutine
               int logDetailNum = logDetailRead.dequeue();
-              if ( logWriterTableExist )
+              //
+              // senden lohnt nur, wenn ich das auch verarbeiten kann
+              //
+              SendListEntry sendCommand = remoteSPX42->askForLogDetailFor( logDetailNum );
+              remoteSPX42->sendCommand( sendCommand );
+              //
+              // das kann etwas dauern...
+              //
+              transferTimeout.start( TIMEOUTVAL * 8 );
+              if ( dbWriterFuture.isFinished() )
               {
-                //
-                // senden lohnt nur, wenn ich das auch verarbeiten kann
-                //
-                SendListEntry sendCommand = remoteSPX42->askForLogDetailFor( logDetailNum );
-                remoteSPX42->sendCommand( sendCommand );
-                //
-                // das kann etwas dauern...
-                //
-                transferTimeout.start( TIMEOUTVAL * 8 );
-                if ( dbWriterFuture.isFinished() )
-                {
-                  // Thread neu starten
-                  lg->debug( QString( "LogFragment::onReadLogContentSlot -> request  %1 logs from spx42..." ).arg( logDetailNum ) );
-                  tryStartLogWriterThread();
-                  ui->dbWriteNumLabel->setVisible( true );
-                }
-              }
-              else
-              {
-                lg->warn( "LogFragment::onDatagramRecivedSlot -> cancel request details while database write error!" );
+                // Thread neu starten
+                lg->debug( QString( "LogFragment::onReadLogContentSlot -> request  %1 logs from spx42..." ).arg( logDetailNum ) );
+                tryStartLogWriterThread();
+                ui->dbWriteNumLabel->setVisible( true );
               }
             }
             else
@@ -690,19 +744,12 @@ namespace spx
           break;
         case SPX42CommandDef::SPX_GET_LOG_DETAIL:
           // Datensatz empfangen, ab in die Wartschlange
-          if ( !logWriterTableExist )
-          {
-            lg->warn( "LogFragment::onDatagramRecivedSlot -> cancel processing details while database write error!" );
-          }
-          else
-          {
-            logWriter.addDetail( recCommand );
-            lg->debug( QString( "LogFragment::onDatagramRecivedSlot -> log detail %1 for dive number %2..." )
-                           .arg( logWriter.getGlobal() )
-                           .arg( recCommand->getDiveNum() ) );
-            // Timer verlängern
-            transferTimeout.start( TIMEOUTVAL );
-          }
+          logWriter.addDetail( recCommand );
+          lg->debug( QString( "LogFragment::onDatagramRecivedSlot -> log detail %1 for dive number %2..." )
+                         .arg( logWriter.getGlobal() )
+                         .arg( recCommand->getDiveNum() ) );
+          // Timer verlängern
+          transferTimeout.start( TIMEOUTVAL );
           break;
       }
       //
@@ -721,32 +768,88 @@ namespace spx
     //
     // setzte die GUI Elemente entsprechend des Online Status
     //
+    ui->readLogdirPushButton->setVisible( isConnected );
+    ui->readLogContentPushButton->setVisible( isConnected );
     ui->readLogdirPushButton->setEnabled( isConnected );
     ui->readLogContentPushButton->setEnabled( isConnected );
-    ui->tabHeaderLabel->setText( fragmentTitlePattern.arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) );
-
+    ui->deviceSelectLabel->setVisible( !isConnected );
+    ui->deviceSelectComboBox->setVisible( !isConnected );
+    //
     if ( isConnected )
     {
-      QString tableName = database->getLogTableName( remoteSPX42->getRemoteConnected() );
-      if ( tableName.isNull() || tableName.isEmpty() )
-      {
-        logWriterTableExist = false;
-      }
-      else
-      {
-        logWriterTableExist = true;
-      }
+      //
+      // wenn ein SPX42 verbunden ist
+      //
+      offlineDeviceAddr.clear();
+      ui->tabHeaderLabel->setText( fragmentTitlePattern.arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) );
     }
     else
     {
-      logWriterTableExist = false;
-    }
-    // TODO: chart->setVisible( isConnected );
-    if ( !isConnected )
-    {
+      //
+      // wenn kein SPX42 verbunden ist
+      //
       ui->logentryTableWidget->setRowCount( 0 );
       // preview löschen
       chartView->setChart( dummyChart );
+      ui->tabHeaderLabel->setText( fragmentTitleOfflinePattern.arg( tr( "unknown" ) ) );
+      ui->deviceSelectComboBox->clear();
+      //
+      // Tabelle füllen
+      //
+      spxDevicesAliasHash = database->getDeviceAliasHash();
+      if ( spxDevicesAliasHash.isEmpty() )
+      {
+        //
+        // nix in der Datenbank, dummy zeigen
+        //
+        ui->deviceSelectComboBox->addItem( tr( "database empty" ), 0 );
+      }
+      else
+      {
+        for ( auto deviceKey : spxDevicesAliasHash.keys() )
+        {
+          //
+          // alles in die Combobox schreiben, TAG ist MAC Addr
+          //
+          SPX42DeviceAlias devAlias = spxDevicesAliasHash.value( deviceKey );
+          QString title = QString( "%1 (%2)" ).arg( devAlias.alias ).arg( devAlias.name );
+          ui->deviceSelectComboBox->addItem( title, devAlias.mac );
+        }
+        QString mac = database->getLastConnected();
+        if ( !mac.isEmpty() )
+        {
+          lg->debug( QString( "LogFragment::setGuiConnected -> last connected was: " ).append( mac ) );
+          //
+          // verbunden oder nicht, versuche etwas zu selektiern
+          //
+          // suche nach diesem Eintrag...
+          //
+          int index = ui->deviceSelectComboBox->findData( mac );
+          if ( index != ui->deviceSelectComboBox->currentIndex() && index != -1 )
+          {
+            lg->debug( QString( "LogFragment::setGuiConnected -> found at idx %1, set to idx" ).arg( index ) );
+            //
+            // -1 for not found
+            // und der index ist nicht schon auf diesen Wert gesetzt
+            // also, wenn gefunden, selektiere diesen Eintrag
+            //
+            ui->deviceSelectComboBox->setCurrentIndex( index );
+            onDeviceComboChangedSlot( index );
+          }
+          else
+          {
+            //
+            // der index ist entweder schon gesetzt oder keiner
+            //
+            if ( index == -1 )
+              // setzte den ersten Eintrag ==> löst slot aus
+              ui->deviceSelectComboBox->setCurrentIndex( index );
+            else
+              // slot manuell starten mit akteuellen index
+              onDeviceComboChangedSlot( index );
+          }
+        }
+      }
     }
   }
 
@@ -755,33 +858,76 @@ namespace spx
    */
   void LogFragment::testForSavedDetails()
   {
+    QString deviceAddr;
+    //
     lg->debug( "LogFragment::testForSavedDetails..." );
-    QString tableName = database->getLogTableName( remoteSPX42->getRemoteConnected() );
-    for ( int i = 0; i < ui->logentryTableWidget->rowCount(); i++ )
+    //
+    // die Liste der gespeicherten Tauchgänge aus der Datenbank holen
+    // unterscheide ob ich online oder offline arbeite
+    //
+    if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
     {
-      // den Eintrag holen
-      QTableWidgetItem *it = ui->logentryTableWidget->item( i, 0 );
-      // jetzt daten extraieren, nummer des Eintrages finden
-      QStringList pieces = it->text().split( ':' );
-      if ( !pieces.isEmpty() && pieces.count() > 1 )
+      //
+      // mit wem bin ich verbunden ==> dessen Daten lösche ich
+      //
+      deviceAddr = remoteSPX42->getRemoteConnected();
+    }
+    else
+    {
+      //
+      // habe ich ein Gerät ausgewählt, wenn ja welches
+      //
+      deviceAddr = offlineDeviceAddr;
+    }
+    if ( !deviceAddr.isEmpty() )
+    {
+      SPX42LogDirectoryEntryListPtr directoryList = database->getLogentrysForDevice( deviceAddr );
+      //
+      // und die gecachte Liste holen
+      //
+      SPX42LogDirectoryEntryListPtr cachedList = spxConfig->getLogDirectory();
+      for ( int i = 0; i < ui->logentryTableWidget->rowCount(); i++ )
       {
-        //
-        // ich hab was gefunden
-        //
-        int diveNum = pieces.at( 0 ).toInt();
-        if ( database->existDiveLogInBase( tableName, diveNum ) )
+        // den Eintrag aus der widget liste holen
+        QTableWidgetItem *it = ui->logentryTableWidget->item( i, 0 );
+        // jetzt daten extraieren, dive nummer des Eintrages finden
+        QStringList entryPieces = it->text().split( ':' );
+        if ( !entryPieces.isEmpty() && entryPieces.count() > 1 )
         {
-          lg->debug( QString( "LogFragment::testForSavedDetails -> saved in dive %1" ).arg( diveNum, 3, 10, QChar( '0' ) ) );
-          QTableWidgetItem *itLoadet = new QTableWidgetItem( savedIcon, "" );
-          // itLoadet->setStatusTip( tr( "NEW STATUS TIP --SAVED --" ) );
-          ui->logentryTableWidget->setItem( i, 1, itLoadet );
-        }
-        else
-        {
-          lg->debug( QString( "LogFragment::testForSavedDetails -> NOT saved in dive %1" ).arg( diveNum, 3, 10, QChar( '0' ) ) );
-          QTableWidgetItem *itLoadet = new QTableWidgetItem( "" );
-          // itLoadet->setStatusTip( tr( "NEW STATUS TIP --UNSAVED --" ) );
-          ui->logentryTableWidget->setItem( i, 1, itLoadet );
+          //
+          // ich hab die Tauchgangsnummer gefunden
+          //
+          int diveNum = entryPieces.at( 0 ).toInt();
+          // in der Datenbank nachschauen
+          SPX42LogDirectoryEntry dbEntry( directoryList->value( diveNum ) );
+          if ( dbEntry.number == diveNum )
+          {
+            //
+            // Eintrag in der DB gefunden == Gesicherter Eintrag == Markieren
+            //
+            SPX42LogDirectoryEntry cacheEntry( directoryList->value( diveNum ) );
+            if ( cacheEntry.number == diveNum )
+            {
+              // im Cache gefunden, eintragen
+              cacheEntry.inDatabase = true;
+              cachedList->insert( diveNum, cacheEntry );
+            }
+            else
+            {
+              // war noch nicht im Cache...
+              // dann den Eintrag su der datenbank dazu tun
+              cachedList->insert( diveNum, dbEntry );
+            }
+            lg->debug( QString( "LogFragment::testForSavedDetails -> saved in dive %1" ).arg( diveNum, 3, 10, QChar( '0' ) ) );
+            QTableWidgetItem *itLoadet = new QTableWidgetItem( savedIcon, "" );
+            ui->logentryTableWidget->setItem( i, 1, itLoadet );
+          }
+          else
+          {
+            lg->debug( QString( "LogFragment::testForSavedDetails -> NOT saved in dive %1" ).arg( diveNum, 3, 10, QChar( '0' ) ) );
+            QTableWidgetItem *itLoadet = new QTableWidgetItem( "" );
+            ui->logentryTableWidget->setItem( i, 1, itLoadet );
+          }
         }
       }
     }
@@ -819,7 +965,14 @@ namespace spx
         ui->logentryTableWidget->findItems( QString( "%1:" ).arg( diveNum, 2, 10, QChar( '0' ) ), Qt::MatchStartsWith );
     if ( items.count() > 0 )
     {
-      ui->logentryTableWidget->item( items.at( 0 )->row(), 1 )->setIcon( nullIcon );
+      if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
+      {
+        ui->logentryTableWidget->item( items.at( 0 )->row(), 1 )->setIcon( nullIcon );
+      }
+      else
+      {
+        ui->logentryTableWidget->removeRow( items.at( 0 )->row() );
+      }
     }
   }
 
@@ -836,7 +989,8 @@ namespace spx
         ui->logentryTableWidget->findItems( QString( "%1:" ).arg( diveNum, 2, 10, QChar( '0' ) ), Qt::MatchStartsWith );
     if ( items.count() > 0 )
     {
-      this->ui->logentryTableWidget->item( items.at( 0 )->row(), 1 )->setIcon( savedIcon );
+      ui->logentryTableWidget->item( items.at( 0 )->row(), 1 )->setIcon( savedIcon );
+      ui->logentryTableWidget->viewport()->update();
     }
   }
 
@@ -872,5 +1026,36 @@ namespace spx
     //
     ui->deleteContentPushButton->setEnabled( dataInDatabaseSelected );
     ui->exportContentPushButton->setEnabled( dataInDatabaseSelected );
+  }
+
+  /**
+   * @brief LogFragment::onDeviceComboChangedSlot
+   * @param index
+   */
+  void LogFragment::onDeviceComboChangedSlot( int index )
+  {
+    offlineDeviceAddr = ui->deviceSelectComboBox->itemData( index ).toString();
+    lg->debug( QString( "LogFragment::onDeviceComboChangedSlot -> index changed to <%1>. addr: <%2>" )
+                   .arg( index, 2, 10, QChar( '0' ) )
+                   .arg( offlineDeviceAddr ) );
+    ui->tabHeaderLabel->setText( fragmentTitleOfflinePattern.arg( database->getAliasForMac( offlineDeviceAddr ) ) );
+    //
+    // Liste leeren
+    //
+    ui->logentryTableWidget->clear();
+    // Daten in der DB
+    lg->debug( QString( "LogFragment::LogFragment -> fill log directory list from database..." ) );
+    SPX42LogDirectoryEntryListPtr dirList = database->getLogentrysForDevice( offlineDeviceAddr );
+    //
+    // Alle Einträge sortiert in die Liste
+    //
+    auto sortKeys = dirList.get()->keys();
+    qSort( sortKeys.begin(), sortKeys.end() );
+    for ( auto entr : sortKeys )
+    {
+      SPX42LogDirectoryEntry dEntry = dirList->value( entr );
+      onAddLogdirEntrySlot( QString( "%1:[%2]" ).arg( dEntry.number, 2, 10, QChar( '0' ) ).arg( dEntry.getDateTimeStr() ),
+                            dEntry.inDatabase );
+    }
   }
 }  // namespace spx
