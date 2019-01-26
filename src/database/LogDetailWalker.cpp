@@ -62,6 +62,7 @@ namespace spx
   {
     int diveNum = -1;
     int detail_id = -1;
+    int processed_per_dive = 0;
     shouldWriterRunning = true;
     forThisDiveProcessed = 0;
     processed = 0;
@@ -95,7 +96,7 @@ namespace spx
             if ( !database->computeStatistic( detail_id ) )
             {
               lg->warn(
-                  QString( "LogDetailWriter::writeLogDataToDatabase -> can't not compute statistic for dive - detail id <%1>..." )
+                  QString( "LogDetailWalker::writeLogDataToDatabase -> can't not compute statistic for dive - detail id <%1>..." )
                       .arg( detail_id ) );
             }
           }
@@ -105,14 +106,14 @@ namespace spx
           emit onNewDiveDoneSig( diveNum );
           diveNum = logentry->getDiveNum();
           lg->debug(
-              QString( "LogDetailWriter::writeLogDataToDatabase -> new dive to store #%1" ).arg( diveNum, 3, 10, QChar( '0' ) ) );
+              QString( "LogDetailWalker::writeLogDataToDatabase -> new dive to store #%1" ).arg( diveNum, 3, 10, QChar( '0' ) ) );
           //
           // Nummer hat sich verändert
           // ist das ein update oder ein insert?
           //
           if ( database->existDiveLogInBase( deviceMac, diveNum ) )
           {
-            lg->debug( "LogDetailWriter::writeLogDataToDatabase -> update, drop old values..." );
+            lg->debug( "LogDetailWalker::writeLogDataToDatabase -> update, drop old values..." );
             //
             // existiert, daten löschen...
             // also ein "update", eigentlich natürlich löschen und neu machen
@@ -133,7 +134,7 @@ namespace spx
             {
               // die gesuchte Tauchgangsnummer
               timestamp = entry.diveDateTime.toSecsSinceEpoch();
-              lg->debug( QString( "LogDetailWriter::writeLogDataToDatabase -> start time for dive #%1: %2" )
+              lg->debug( QString( "LogDetailWalker::writeLogDataToDatabase -> start time for dive #%1: %2" )
                              .arg( diveNum, 3, 10, QChar( '0' ) )
                              .arg( entry.getDateTimeStr() ) );
               // Schleife abbrechen
@@ -156,10 +157,14 @@ namespace spx
             return ( -1 );
           }
           emit onNewDiveStartSig( diveNum );
+          processed_per_dive = 0;
         }
         // zähle die Datensätze
         processed++;
-        lg->debug( QString( "LogDetailWriter::writeLogDataToDatabase -> write set %1" ).arg( processed, 3, 10, QChar( '0' ) ) );
+        lg->debug( QString( "LogDetailWalker::writeLogDataToDatabase -> write set %1 dive number %2, over all processed: %3" )
+                       .arg( processed_per_dive++, 3, 10, QChar( '0' ) )
+                       .arg( diveNum, 3, 10, QChar( '0' ) )
+                       .arg( processed, 5, 10, QChar( '0' ) ) );
         //
         // in die Datenbank schreiben
         //
