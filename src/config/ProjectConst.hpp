@@ -23,6 +23,11 @@ namespace spx
     //#### Stringkonstanten ohne Lokalisierung
     //###########################################################################
     static const QString MAIN_TITLE;  //! der Fenstertitel
+    static const QString APP_VERSION;
+    static const QString MANUFACTURER_APP;
+    static const QString MANUFACTURER_APP_NAME;
+    static const QString MANUFACTURER_EMAIL;
+    static const QString MANUFACTURER_WWW;
     // für Buggy Firmware, Temperatur-Lesen, Gradienten-Bug unterscheiden
     static const QRegExp FIRMWARE_2_6x;
     static const QRegExp FIRMWARE_2_7x;
@@ -77,5 +82,5 @@ namespace spx
     FW_PROGRAMMING,
     AERROR
   };
-}
+}  // namespace spx
 #endif

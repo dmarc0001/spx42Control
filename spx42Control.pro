@@ -5,13 +5,18 @@
 #### Autor: Dirk Marciniak                                                 ####
 ####                                                                       ####
 ###############################################################################
-win32:VERSION_PE_HEADER                = 0.5
+MAJOR                                  = 0 # Major Verion Nummer
+MINOR                                  = 5 # Minor Version Number
+PATCH                                  = 5 # Patch Version Number
+BUILD                                  = 0 # win build number
+
+win32:VERSION_PE_HEADER                = $${MAJOR}.$${MINOR}
 win32:QMAKE_TARGET_COMPANY             = submatix.com
 win32:QMAKE_TARGET_COPYRIGHT           = D. Marciniak
 win32:QMAKE_TARGET_PRODUCT             = SPX42 BT-Controller
 win32:RC_ICONS                         = src/res/programIcon.ico
-win32:VERSION                          = 0.5.4.0  # major.minor.patch.build
-else:VERSION                           = 0.5.4    # major.minor.patch
+win32:VERSION                          = $${MAJOR}.$${MINOR}.$${PATCH}.$${BUILD} # major.minor.patch.build
+else:VERSION                           = $${MAJOR}.$${MINOR}.$${PATCH}    # major.minor.patch
 macx:ICON                              = src/res/programIcon.ico
 #
 TARGET                                 = spx42Control
@@ -40,6 +45,10 @@ UI_DIR                                 = ui
 # momentan noch als TESTVERSION markieren
 #
 DEFINES                                += TESTVERSION
+DEFINES                                += VMAJOR=$$MAJOR
+DEFINES                                += VMINOR=$$MINOR
+DEFINES                                += VPATCH=$$PATCH
+DEFINES                                += QT_DEPRECATED_WARNINGS
 
 CONFIG(debug, debug|release) {
   DEFINES                              += DEBUG
@@ -202,3 +211,7 @@ INCLUDEPATH             += \
 
 }
 
+
+
+
+message( app version $$VERSION kit $${KIT} )

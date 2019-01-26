@@ -3,8 +3,10 @@
 
 #include <QObject>
 #include <QString>
+#include <QXmlStreamWriter>
 #include <QtXml>
 #include <memory>
+#include "config/ProjectConst.hpp"
 #include "database/SPX42Database.hpp"
 #include "logging/Logger.hpp"
 
@@ -34,6 +36,9 @@ namespace spx
     //! Erzeuge den Export
     int createExportXml( void );
 
+    private:
+    //! Schreibe in den Stream den "Generator" block
+    bool writeGenerator( QXmlStreamWriter &stream );
     signals:
 
     public slots:

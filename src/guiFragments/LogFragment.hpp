@@ -141,16 +141,27 @@ namespace spx
     virtual void onCommandRecivedSlot( void ) override;
     //! wenn der Transfer ausbleibt
     void onTransferTimeoutSlot( void );
+    //! Button zum lesen des Verzeichisses vom SPX42
     void onReadLogDirectoryClickSlot( void );
+    //! Button zum lesen der Logdaten vom SPX42
     void onReadLogContentClickSlot( void );
+    //! in die Liste des Logverzeichisses geklickt
     void onLogListClickeSlot( const QModelIndex &index );
+    //! Schreiben in die Datenbank füe einen Tauchgang beendet
     void onWriterDoneSlot( int _countProcessed );
+    //! Schreiben der Daten eines neuen Tauchgangs begonnen
     void onNewDiveStartSlot( int newDiveNum );
-    void onLogDetailDeleteClickSlot( void );
-    void onLogDetailExportClickSlot( void );
+    //! Button für Logdaten aus Datenbank löschen
+    void onDeleteLogDetailClickSlot( void );
+    //! Button für das Exportieren der Logdaten aus der Datenbank
+    void onExportLogDetailClickSlot( void );
+    //! Löschen aus der Datenbank für einen Tauchgang erfolgreich
     void onDeleteDoneSlot( int diveNum );
+    //! Neuer Tauchgang daten sichern erfolgreich
     void onNewDiveDoneSlot( int diveNum );
+    //! Eintrag in der Verzeichisliste
     void itemSelectionChangedSlot( void );
+    //! Eintrag in der Offline-Geräteliste geändert
     void onDeviceComboChangedSlot( int index );
 
     public slots:

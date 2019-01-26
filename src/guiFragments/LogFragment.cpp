@@ -109,8 +109,8 @@ namespace spx
     connect( ui->readLogContentPushButton, &QPushButton::clicked, this, &LogFragment::onReadLogContentClickSlot );
     connect( ui->logentryTableWidget, &QAbstractItemView::clicked, this, &LogFragment::onLogListClickeSlot );
     connect( ui->logentryTableWidget, &QTableWidget::itemSelectionChanged, this, &LogFragment::itemSelectionChangedSlot );
-    connect( ui->deleteContentPushButton, &QPushButton::clicked, this, &LogFragment::onLogDetailDeleteClickSlot );
-    connect( ui->exportContentPushButton, &QPushButton::clicked, this, &LogFragment::onLogDetailExportClickSlot );
+    connect( ui->deleteContentPushButton, &QPushButton::clicked, this, &LogFragment::onDeleteLogDetailClickSlot );
+    connect( ui->exportContentPushButton, &QPushButton::clicked, this, &LogFragment::onExportLogDetailClickSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onStateChangedSig, this, &LogFragment::onOnlineStatusChangedSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onSocketErrorSig, this, &LogFragment::onSocketErrorSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onCommandRecivedSig, this, &LogFragment::onCommandRecivedSlot );
@@ -463,7 +463,7 @@ namespace spx
   /**
    * @brief LogFragment::onLogDetailDeleteClickSlot
    */
-  void LogFragment::onLogDetailDeleteClickSlot()
+  void LogFragment::onDeleteLogDetailClickSlot()
   {
     lg->debug( "LogFragment::onLogDetailDeleteClickSlot..." );
     //
@@ -512,7 +512,7 @@ namespace spx
   /**
    * @brief LogFragment::onLogDetailExportClickSlot
    */
-  void LogFragment::onLogDetailExportClickSlot()
+  void LogFragment::onExportLogDetailClickSlot()
   {
     QString device_mac;
     //
@@ -552,13 +552,16 @@ namespace spx
     //
     // TODO: ERZEUGEN!
     //
+    xmlExport->createExportXml();
 
     // DEBUG: erst mal nur Nachricht
+    /*
     QMessageBox msgBox;
     msgBox.setText( tr( "FUNCTION NOT IMPLEMENTED YET" ) );
     msgBox.setInformativeText( "Keep in mind: it is an test version..." );
     msgBox.setIcon( QMessageBox::Information );
     msgBox.exec();
+    */
   }
 
   /**
