@@ -28,6 +28,7 @@ namespace spx
     lg->debug( "LogFragment::LogFragment..." );
     ui->setupUi( this );
     logWriter.reset();
+    exportPath = QStandardPaths::writableLocation( QStandardPaths::DownloadLocation );
     ui->transferProgressBar->setVisible( false );
     ui->transferProgressBar->setRange( 0, 0 );
     // tableview zurecht machen
@@ -92,7 +93,7 @@ namespace spx
       for ( auto entr : sortKeys )
       {
         SPX42LogDirectoryEntry dEntry = dirList->value( entr );
-        onAddLogdirEntrySlot( QString( "%1:[%2]" ).arg( dEntry.number, 2, 10, QChar( '0' ) ).arg( dEntry.getDateTimeStr() ),
+        onAddLogdirEntrySlot( QString( "%1:[%2]" ).arg( dEntry.number, 3, 10, QChar( '0' ) ).arg( dEntry.getDateTimeStr() ),
                               dEntry.inDatabase );
       }
       // ist der online gleich noch die Lizenz setzten
@@ -131,6 +132,11 @@ namespace spx
     chartView->setChart( dummyChart );
     // ui->logentryTableWidget->setModel( Q_NULLPTR );
     deactivateTab();
+  }
+
+  void LogFragment::setExportPath( const QString &_export )
+  {
+    exportPath = _export;
   }
 
   /**
@@ -508,15 +514,46 @@ namespace spx
    */
   void LogFragment::onLogDetailExportClickSlot()
   {
+    QString device_mac;
+    //
     lg->debug( "LogFragment::onLogDetailExportClickSlot..." );
-    std::shared_ptr< QVector< int > > deleteList = getSelectedInDb();
-    if ( deleteList->count() == 0 )
+    std::shared_ptr< QVector< int > > exportList = getSelectedInDb();
+    if ( exportList->count() == 0 )
       return;
-    for ( int i : *deleteList.get() )
+#ifdef DEBUG
+    for ( int i : *exportList.get() )
     {
       lg->debug( QString( "LogFragment::onLogDetailExportClickSlot -> export <%1>..." ).arg( i ) );
     }
-    // DEBUG: erst mal nurt Nachricht
+#endif
+    if ( !xmlExport )
+    {
+      lg->debug( "LogFragment::onLogDetailExportClickSlot -> create a new instance from SPX42UDDFExport..." );
+      xmlExport = std::unique_ptr< SPX42UDDFExport >( new SPX42UDDFExport( lg, database, this ) );
+    }
+    lg->debug( "LogFragment::onLogDetailExportClickSlot -> set parameters for export..." );
+    if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
+    {
+      //
+      // mit wem bin ich verbunden ==> dessen Daten lösche ich
+      //
+      device_mac = remoteSPX42->getRemoteConnected();
+    }
+    else
+    {
+      //
+      // habe ich ein Gerät ausgewählt, wenn ja welches
+      //
+      device_mac = offlineDeviceAddr;
+    }
+    xmlExport->setExportDives( device_mac, *( exportList.get() ) );
+    QString uddfFile = exportPath + "/" + database->getAliasForMac( device_mac ) + "_";
+    xmlExport->setXmlFileBaseName( uddfFile );
+    //
+    // TODO: ERZEUGEN!
+    //
+
+    // DEBUG: erst mal nur Nachricht
     QMessageBox msgBox;
     msgBox.setText( tr( "FUNCTION NOT IMPLEMENTED YET" ) );
     msgBox.setInformativeText( "Keep in mind: it is an test version..." );
@@ -962,7 +999,7 @@ namespace spx
     // den aktuellen Eintrag korrigieren
     //
     QList< QTableWidgetItem * > items =
-        ui->logentryTableWidget->findItems( QString( "%1:" ).arg( diveNum, 2, 10, QChar( '0' ) ), Qt::MatchStartsWith );
+        ui->logentryTableWidget->findItems( QString( "%1:" ).arg( diveNum, 3, 10, QChar( '0' ) ), Qt::MatchStartsWith );
     if ( items.count() > 0 )
     {
       if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
@@ -986,7 +1023,7 @@ namespace spx
     // den aktuellen Eintrag korrigieren
     //
     QList< QTableWidgetItem * > items =
-        ui->logentryTableWidget->findItems( QString( "%1:" ).arg( diveNum, 2, 10, QChar( '0' ) ), Qt::MatchStartsWith );
+        ui->logentryTableWidget->findItems( QString( "%1:" ).arg( diveNum, 3, 10, QChar( '0' ) ), Qt::MatchStartsWith );
     if ( items.count() > 0 )
     {
       ui->logentryTableWidget->item( items.at( 0 )->row(), 1 )->setIcon( savedIcon );
@@ -1054,7 +1091,7 @@ namespace spx
     for ( auto entr : sortKeys )
     {
       SPX42LogDirectoryEntry dEntry = dirList->value( entr );
-      onAddLogdirEntrySlot( QString( "%1:[%2]" ).arg( dEntry.number, 2, 10, QChar( '0' ) ).arg( dEntry.getDateTimeStr() ),
+      onAddLogdirEntrySlot( QString( "%1:[%2]" ).arg( dEntry.number, 3, 10, QChar( '0' ) ).arg( dEntry.getDateTimeStr() ),
                             dEntry.inDatabase );
     }
   }

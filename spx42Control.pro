@@ -24,6 +24,7 @@ QT                                     += bluetooth
 QT                                     += sql
 QT                                     += charts
 QT                                     += concurrent
+QT                                     += xml
 CONFIG                                 += stl
 CONFIG                                 += c++14
 CONFIG                                 += lrelease
@@ -92,7 +93,8 @@ SOURCES                 += \
     src/database/LogDetailWalker.cpp \
     src/charts/DiveMiniChart.cpp \
     src/database/ChartDataWorker.cpp \
-    src/database/spx42databaseconstants.cpp
+    src/database/spx42databaseconstants.cpp \
+    src/uddf/spx42uddfexport.cpp
 
 HEADERS                 += \
     src/SPX42ControlMainWin.hpp \
@@ -130,7 +132,8 @@ HEADERS                 += \
     src/database/LogDetailWalker.hpp \
     src/charts/DiveMiniChart.hpp \
     src/database/ChartDataWorker.hpp \
-    src/database/spx42databaseconstants.hpp
+    src/database/spx42databaseconstants.hpp \
+    src/uddf/spx42uddfexport.hpp
 
 FORMS                   += \
     src/ui/SPX42ControlMainWin.ui \

@@ -26,6 +26,7 @@
 #include "spx42/SPX42Config.hpp"
 #include "spx42/SPX42Defs.hpp"
 #include "spx42/SPX42LogDirectoryEntry.hpp"
+#include "uddf/spx42uddfexport.hpp"
 #include "ui_LogFragment.h"
 #include "utils/DebugDataSeriesGenerator.hpp"
 #include "utils/DiveDataSeriesGenerator.hpp"
@@ -57,6 +58,8 @@ namespace spx
     QTimer transferTimeout;
     //! schreibt logdetails queue in die DB
     LogDetailWalker logWriter;
+    //! Objekt zum Erzeugen des XML Exportes
+    std::unique_ptr< SPX42UDDFExport > xmlExport;
     //! Liste mit Devices aus der Datenbank
     DeviceAliasHash spxDevicesAliasHash;
     //! nebenläufig daten in DB schreiben
@@ -75,6 +78,9 @@ namespace spx
     QString fragmentTitlePattern;
     //! das ganze offline
     QString fragmentTitleOfflinePattern;
+    //! Pfad für exporte
+    QString exportPath;
+    //
     QString diveNumberStr;
     QString diveDateStr;
     QString diveDepthStr;
@@ -91,6 +97,8 @@ namespace spx
                           std::shared_ptr< SPX42RemotBtDevice > remSPX42 );
     //! Destruktor
     ~LogFragment() override;
+    //! setzte EXPORT Ptad
+    void setExportPath( const QString &_export );
     //! deaktiviere eventuelle signale
     virtual void deactivateTab( void ) override;
 
