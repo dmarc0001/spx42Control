@@ -100,7 +100,7 @@ namespace spx
     //! das template für einen INSERT einer Logzeile
     static const QString loglineInsertTemplate;
     //! Threadsaves schreiben auf die DB
-    QMutex writeMutex;
+    QMutex dbMutex;
 
     public:
     //! Der Konstruktor, explizit der Standartkonstruktor

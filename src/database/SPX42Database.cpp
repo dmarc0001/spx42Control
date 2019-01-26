@@ -228,9 +228,21 @@ namespace spx
     lg->debug( "SPX42Database::getDeviceAliasHash..." );
     DeviceAliasHash aliase;
     //
+    // Sperre DB solange
+    //
+    QMutexLocker locker( &dbMutex );
+    //
     if ( db.isValid() && db.isOpen() )
     {
-      QSqlQuery query( "select mac,name,alias,last from devices", db );
+      QSqlQuery query( db );
+      QString sql = "select mac,name,alias,last from devices";
+      query.setForwardOnly( true );
+      if ( !query.exec( sql ) )
+      {
+        QSqlError err = db.lastError();
+        lg->warn( QString( "SPX42Database::getDeviceAliasHash -> problem while select from database: <%1>" ).arg( err.text() ) );
+        return ( aliase );
+      }
       while ( query.next() )
       {
         QString mac( query.value( 0 ).toString() );
@@ -250,15 +262,15 @@ namespace spx
 
   bool SPX42Database::addAlias( const QString &mac, const QString &name, const QString &alias, bool lastConnected )
   {
-    QSqlQuery query( db );
-    QSqlError err;
-    QString sql;
     // serialize schreibzugriff
-    QMutexLocker locker( &writeMutex );
+    QMutexLocker locker( &dbMutex );
     //
     lg->debug( "SPX42Database::addAlias..." );
     if ( db.isValid() && db.isOpen() )
     {
+      QSqlQuery query( db );
+      QSqlError err;
+      QString sql;
       //
       // guck nach, ob der Eintrag vorhanden ist
       sql = QString( "select mac from devices where mac='%1'" ).arg( mac );
@@ -336,7 +348,7 @@ namespace spx
   bool SPX42Database::setAliasForMac( const QString &mac, const QString &alias )
   {
     // serialize schreibzugriff
-    QMutexLocker locker( &writeMutex );
+    QMutexLocker locker( &dbMutex );
     //
     lg->debug( "SPX42Database::setAliasForMac..." );
     if ( db.isValid() && db.isOpen() )
@@ -372,7 +384,7 @@ namespace spx
   bool SPX42Database::setAliasForName( const QString &name, const QString &alias )
   {
     // serialize schreibzugriff
-    QMutexLocker locker( &writeMutex );
+    QMutexLocker locker( &dbMutex );
     //
     lg->debug( "SPX42Database::setAliasForName..." );
     if ( db.isValid() && db.isOpen() )
@@ -467,7 +479,7 @@ namespace spx
   bool SPX42Database::setLastConnected( const QString &mac )
   {
     // serialize schreibzugriff
-    QMutexLocker locker( &writeMutex );
+    QMutexLocker locker( &dbMutex );
     //
     QString sql;
     QSqlQuery query( db );
@@ -1001,7 +1013,7 @@ namespace spx
   bool SPX42Database::insertLogentry( const DiveLogEntry &entr )
   {
     // serialize schreibzugriff
-    QMutexLocker locker( &writeMutex );
+    QMutexLocker locker( &dbMutex );
     //
     if ( db.isValid() && db.isOpen() )
     {
@@ -1048,7 +1060,7 @@ namespace spx
   bool SPX42Database::insertLogentry( int detail_id, spSingleCommand cmd )
   {
     // serialize schreibzugriff
-    QMutexLocker locker( &writeMutex );
+    QMutexLocker locker( &dbMutex );
     //
     if ( db.isValid() && db.isOpen() )
     {
@@ -1096,7 +1108,7 @@ namespace spx
   int SPX42Database::insertDiveLogInBase( const QString &mac, int diveNum, qint64 timestamp )
   {
     // serialize schreibzugriff
-    QMutexLocker locker( &writeMutex );
+    QMutexLocker locker( &dbMutex );
     //
     int device_id = -1;
 
@@ -1220,7 +1232,7 @@ namespace spx
   bool SPX42Database::delDiveLogFromBase( const QString &mac, int diveNum )
   {
     // serialize schreibzugriff
-    QMutexLocker locker( &writeMutex );
+    QMutexLocker locker( &dbMutex );
     //
     int detailId = 0;
     lg->debug( QString( "SPX42Database::delDiveLogFromBase -> <%1> num: <%2>..." ).arg( mac ).arg( diveNum ) );
@@ -1338,6 +1350,7 @@ namespace spx
       if ( detail_id == -1 )
         return ( chartSet );
       QSqlQuery query( db );
+      query.setForwardOnly( true );
       //
       // suche die Daten aus der Datenbank zusammen
       //
@@ -1404,6 +1417,7 @@ namespace spx
       // suche die Daten aus der Datenbank zusammen
       //
       QSqlQuery query( db );
+      query.setForwardOnly( true );
       sql = QString( "select divenum,ux_timestamp from detaildir where device_id=%1" ).arg( device_id );
       if ( !query.exec( sql ) )
       {
@@ -1434,7 +1448,7 @@ namespace spx
   bool SPX42Database::computeStatistic( int detail_id )
   {
     // serialize schreibzugriff
-    QMutexLocker locker( &writeMutex );
+    QMutexLocker locker( &dbMutex );
     //
     if ( db.isValid() && db.isOpen() )
     {
