@@ -1474,6 +1474,62 @@ namespace spx
     return ( false );
   }
 
+  UsedGasList SPX42Database::getGasList( const QString &mac, const QVector< int > *diveNums )
+  {
+    QString sql;
+    UsedGasList gasList;
+    QStringList diveNumStrList;
+    int device_id = -1;
+    if ( db.isValid() && db.isOpen() )
+    {
+      lg->debug( "SPX42Database::getGasList..." );
+      device_id = getDevicveId( mac );
+      if ( device_id == -1 )
+        return ( gasList );
+      for ( auto num : *diveNums )
+      {
+        diveNumStrList.append( QString( "%1" ).arg( num ) );
+      }
+      QSqlQuery query( db );
+      //
+      // sammle alle gase der angeforderten Tauchgänge
+      //
+      sql = "select n2,he\n";
+      sql += "from logdata\n";
+      sql += "where detail_id in\n";
+      sql += "  ( \n";
+      sql += "    select detail_id \n";
+      sql += "    from detaildir \n";
+      sql += "    where \n";
+      sql += "    device_id = 2 and \n";
+      sql += QString( "    divenum in( %1 ) \n" ).arg( diveNumStrList.join( "," ) );
+      sql += "  ) \n";
+      sql += "group by \n";
+      sql += "  n2, he";
+      if ( !query.exec( sql ) )
+      {
+        //
+        // es gab einen Fehler bei der Anfrage
+        //
+        QSqlError err = db.lastError();
+        lg->warn( QString( "SPX42Database::getGasList -> error: <%1>..." ).arg( err.text() ) );
+        return ( gasList );
+      }
+      //
+      // Daten einsammeln
+      //
+      while ( query.next() )
+      {
+        QPair< int, int > entry( query.value( 0 ).toInt(), query.value( 1 ).toInt() );
+        gasList.append( entry );
+      }
+      lg->debug( "SPX42Database::getGasList...OK" );
+      return ( gasList );
+    }
+    lg->warn( "SPX42Database::computeStatistic -> db is not valid or not opened." );
+    return ( gasList );
+  }
+
   // ##########################################################################
   // ### GETTER UND SETTER
   // ##########################################################################

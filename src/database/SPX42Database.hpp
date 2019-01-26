@@ -24,6 +24,7 @@ namespace spx
   using DeviceAliasHash = QHash< QString, SPX42DeviceAlias >;
   using DiveChartSet = QVector< DiveChartDataset >;
   using DiveChartSetPtr = std::shared_ptr< DiveChartSet >;
+  using UsedGasList = QVector< QPair< int, int > >;  // Liste aus Paaren <N2,HE>
 
   /**
    * @brief The SPX42DeviceAlias class definiert parameter für gerät
@@ -155,6 +156,8 @@ namespace spx
     SPX42LogDirectoryEntryListPtr getLogentrysForDevice( const QString &mac );
     //! erzeuge statistik daten in der verzeichnistabelle
     bool computeStatistic( int detail_id );
+    //! erzeuge eine Liste mit Gasen, welche bei den gewählten TG genutzt wurde
+    UsedGasList getGasList( const QString &mac, const QVector< int > *diveNums );
 
     private:
     //! gibt es folgende Tabelle?
