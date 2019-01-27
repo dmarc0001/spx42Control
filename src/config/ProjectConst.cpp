@@ -6,6 +6,16 @@ namespace spx
   // Der Programmtitel
   //
   const QString ProjectConst::MAIN_TITLE{"SPX42 BT-Controller"};
+  const QString ProjectConst::APP_VERSION = QString( "%1.%2.%3" ).arg( VMAJOR ).arg( VMINOR ).arg( VPATCH );
+  //
+  // export Festlegungen
+  //
+  const QString ProjectConst::MANUFACTURER_APP{"spx42Control"};
+  const QString ProjectConst::MANUFACTURER_APP_NAME{"Dirk Marciniak"};
+  const QString ProjectConst::MANUFACTURER_EMAIL{"dirk@submatix.com"};
+  const QString ProjectConst::MANUFACTURER_WWW{"https://www.submatix.com"};
+  const QString ProjectConst::REBREATHER_SENSOR_TYPE{"PSR 11-39-MDSX-1"};
+
   // für Buggy Firmware, Temperatur-Lesen, Gradienten-Bug unterscheiden
   const QRegExp ProjectConst::FIRMWARE_2_6x{"V2\\.6.*"};
   const QRegExp ProjectConst::FIRMWARE_2_7x{"V2\\.7_V.*"};
@@ -38,4 +48,4 @@ namespace spx
   const QColor ProjectConst::COLOR_CONNECTING{242, 135, 68, 255};
   const QColor ProjectConst::COLOR_BUSY{180, 20, 20, 128};
   const QColor ProjectConst::COLOR_ERROR{255, 20, 20, 180};
-}
+}  // namespace spx

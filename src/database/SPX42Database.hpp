@@ -20,10 +20,11 @@ namespace spx
 {
   //
   class SPX42DeviceAlias;  // forward deklaration
-  class DiveChartDataset;
+  class DiveDataset;
   using DeviceAliasHash = QHash< QString, SPX42DeviceAlias >;
-  using DiveChartSet = QVector< DiveChartDataset >;
-  using DiveChartSetPtr = std::shared_ptr< DiveChartSet >;
+  using DiveDataSetsVector = QVector< DiveDataset >;
+  using DiveDataSetsPtr = std::shared_ptr< DiveDataSetsVector >;
+  using UsedGasList = QVector< QPair< int, int > >;  // Liste aus Paaren <N2,HE>
 
   /**
    * @brief The SPX42DeviceAlias class definiert parameter für gerät
@@ -63,7 +64,7 @@ namespace spx
     DiveLogEntry( const DiveLogEntry &en );
   };
 
-  class DiveChartDataset
+  class DiveDataset
   {
     public:
     int lfdnr;
@@ -74,6 +75,11 @@ namespace spx
     double ppo2_2;
     double ppo2_3;
     int nextStep;
+    int setpoint;
+    int n2;
+    int he;
+    int z_time;
+    double abs_depth;
     void clear( void );
   };
 
@@ -150,11 +156,15 @@ namespace spx
     //! maximale Tiefe für Tauchgang
     int getMaxDepthFor( const QString &mac, int diveNum );
     //! gib daten für CHART für einen Tauchgang
-    DiveChartSetPtr getChartSet( const QString &mac, int diveNum );
+    DiveDataSetsPtr getDiveDataSets( const QString &mac, int diveNum );
     //! gib eine Liste der gespeicherten Tauchgänge für ein Gerät zurück
     SPX42LogDirectoryEntryListPtr getLogentrysForDevice( const QString &mac );
     //! erzeuge statistik daten in der verzeichnistabelle
     bool computeStatistic( int detail_id );
+    //! erzeuge eine Liste mit Gasen, welche bei den gewählten TG genutzt wurde
+    UsedGasList getGasList( const QString &mac, const QVector< int > *diveNums );
+    //! gib den Zeitpunkt eines Tauchganges zurück
+    qint64 getTimestampForDive( const QString &mac, int diveNum );
 
     private:
     //! gibt es folgende Tabelle?
