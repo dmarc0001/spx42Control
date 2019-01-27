@@ -14,6 +14,7 @@ namespace spx
   const QString ProjectConst::MANUFACTURER_APP_NAME{"Dirk Marciniak"};
   const QString ProjectConst::MANUFACTURER_EMAIL{"dirk@submatix.com"};
   const QString ProjectConst::MANUFACTURER_WWW{"https://www.submatix.com"};
+  const QString ProjectConst::REBREATHER_SENSOR_TYPE{"PSR 11-39-MDSX-1"};
 
   // für Buggy Firmware, Temperatur-Lesen, Gradienten-Bug unterscheiden
   const QRegExp ProjectConst::FIRMWARE_2_6x{"V2\\.6.*"};

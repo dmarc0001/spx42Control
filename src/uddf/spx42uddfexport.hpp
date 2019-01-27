@@ -6,6 +6,7 @@
 #include <QVector>
 #include <QXmlStreamWriter>
 #include <QtXml>
+#include <algorithm>
 #include <memory>
 #include "config/ProjectConst.hpp"
 #include "database/SPX42Database.hpp"
@@ -75,8 +76,33 @@ namespace spx
     private:
     //! Schreibe in den Stream den "Generator" block
     bool writeGenerator( QXmlStreamWriter &st );
+    //! Schreibe Taucher Referenzen für Rebreathre Sensoren
+    bool writeDiverDefinitions( QXmlStreamWriter &st );
+    //! Eigentüber Referenzen schreiben
+    bool writeOwnerDefinitions( QXmlStreamWriter &st );
+    //! die Ausrüstung des Eigentümers schreiben
+    bool writeOwnerEquipment( QXmlStreamWriter &st );
+    //! Rebreather als Ausrüstung beschreiben
+    bool writeRebreatherDefinitions( QXmlStreamWriter &st );
+    //! Sauerstoffsensoren innerhalb Rebreather
+    bool writeO2Sensor( int number, QXmlStreamWriter &st );
+    //! Schreibe die Sample-Daten
+    bool writeDiveSamples( DiveDataSetsPtr data, QXmlStreamWriter &st );
+    //! suche die richtge Gasreferenz heraus
+    QString getGasRef( int n2, int he ) const;
+    //! suche den kleinsten Temperaturwert
+    int getLowestTemp( DiveDataSetsPtr data );
+    //! suche grösste Tiefe
+    double getGreatestDepth( DiveDataSetsPtr data );
+
     //! Schreibe Gasdefinitionen
     bool writeGasDefinitions( QXmlStreamWriter &st );
+    //! Schreibe Profiledata Sektion (alle datennzu jedem Tauchgang)
+    bool writeProfileData( QXmlStreamWriter &st );
+    //! Schreibe alle Tauchgänge
+    bool writeAllDives( QXmlStreamWriter &st );
+    //! Schreibe einen Tauchgang in die Dqtei
+    bool writeOneDive( int diveNum, QXmlStreamWriter &st );
 
     signals:
 

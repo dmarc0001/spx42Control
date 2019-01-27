@@ -19,7 +19,7 @@ namespace spx
   {
   }
 
-  void DiveChartDataset::clear( void )
+  void DiveDataset::clear( void )
   {
     lfdnr = 0;
     depth = 0.0;
@@ -29,39 +29,44 @@ namespace spx
     ppo2_2 = 0.0;
     ppo2_3 = 0.0;
     nextStep = 0;
+    setpoint = 10;
+    n2 = 79;
+    he = 0;
+    z_time = 999;
+    abs_depth = 0.0;
   }
 
   DiveLogEntry::DiveLogEntry(){};
-  DiveLogEntry::DiveLogEntry( int di,
-                              int lf,
-                              int pr,
-                              int de,
-                              int te,
-                              double ac,
-                              double p2,
-                              double p21,
-                              double p22,
-                              double p23,
-                              int sp,
-                              int n,
-                              int h,
-                              int z,
-                              int nx )
-      : detailId( di )
-      , lfdNr( lf )
-      , pressure( pr )
-      , depth( de )
-      , temperature( te )
-      , acku( ac )
-      , ppo2( p2 )
-      , ppo2_1( p21 )
-      , ppo2_2( p22 )
-      , ppo2_3( p23 )
-      , setpoint( sp )
-      , n2( n )
-      , he( h )
-      , zeroTime( z )
-      , nextStep( nx )
+  DiveLogEntry::DiveLogEntry( int _di,
+                              int _lf,
+                              int _pr,
+                              int _de,
+                              int _te,
+                              double _ac,
+                              double _p2,
+                              double _p21,
+                              double _p22,
+                              double _p23,
+                              int _sp,
+                              int _n,
+                              int _h,
+                              int _z,
+                              int _nx )
+      : detailId( _di )
+      , lfdNr( _lf )
+      , pressure( _pr )
+      , depth( _de )
+      , temperature( _te )
+      , acku( _ac )
+      , ppo2( _p2 )
+      , ppo2_1( _p21 )
+      , ppo2_2( _p22 )
+      , ppo2_3( _p23 )
+      , setpoint( _sp )
+      , n2( _n )
+      , he( _h )
+      , zeroTime( _z )
+      , nextStep( _nx )
   {
   }
 
@@ -1338,12 +1343,12 @@ namespace spx
    * @param diveNum
    * @return
    */
-  DiveChartSetPtr SPX42Database::getChartSet( const QString &mac, int diveNum )
+  DiveDataSetsPtr SPX42Database::getDiveDataSets( const QString &mac, int diveNum )
   {
     int detail_id = -1;
     QString sql;
-    DiveChartSetPtr chartSet = DiveChartSetPtr( new DiveChartSet() );
-    lg->debug( "SPX42Database::getChartSet..." );
+    DiveDataSetsPtr chartSet = DiveDataSetsPtr( new DiveDataSetsVector() );
+    lg->debug( "SPX42Database::getDiveDataSets..." );
     if ( db.isValid() && db.isOpen() )
     {
       detail_id = getDetailId( mac, diveNum );
@@ -1354,9 +1359,10 @@ namespace spx
       //
       // suche die Daten aus der Datenbank zusammen
       //
-      sql =
-          QString( "select lfnr,depth,temperature,ppo2,ppo2_1,ppo2_2,ppo2_3,next_step from logdata where detail_id=%1 order by lfnr" )
-              .arg( detail_id );
+      sql = QString(
+                "select lfnr,depth,temperature,ppo2,ppo2_1,ppo2_2,ppo2_3,next_step,setpoint,n2,he,zerotime from logdata where "
+                "detail_id=%1 order by lfnr" )
+                .arg( detail_id );
       //
       // jetzt frage die Datenbank
       //
@@ -1366,7 +1372,7 @@ namespace spx
         // es gab einen Fehler bei der Anfrage
         //
         QSqlError err = db.lastError();
-        lg->warn( QString( "SPX42Database::getMaxDepthFor -> <%1>..." ).arg( err.text() ) );
+        lg->warn( QString( "SPX42Database::getDiveDataSets -> <%1>..." ).arg( err.text() ) );
         chartSet->clear();
         return ( chartSet );
       }
@@ -1375,21 +1381,26 @@ namespace spx
       //
       while ( query.next() )
       {
-        DiveChartDataset currSet;
+        DiveDataset currSet;
         currSet.lfdnr = query.value( 0 ).toInt();
         currSet.depth = 0.0 - ( query.value( 1 ).toDouble() / 10.0 );
+        currSet.abs_depth = query.value( 1 ).toDouble() / 10.0;
         currSet.temperature = query.value( 2 ).toInt();
         currSet.ppo2 = query.value( 3 ).toDouble();
         currSet.ppo2_1 = query.value( 4 ).toDouble();
         currSet.ppo2_2 = query.value( 5 ).toDouble();
         currSet.ppo2_3 = query.value( 6 ).toDouble();
         currSet.nextStep = query.value( 7 ).toInt();
+        currSet.setpoint = query.value( 8 ).toInt();
+        currSet.n2 = query.value( 9 ).toInt();
+        currSet.he = query.value( 10 ).toInt();
+        currSet.z_time = query.value( 11 ).toInt();
         chartSet->append( currSet );
       }
-      lg->debug( "SPX42Database::getChartSet...OK" );
+      lg->debug( "SPX42Database::getDiveDataSets...OK" );
       return ( chartSet );
     }
-    lg->warn( "SPX42Database::getMaxDepthFor -> db is not valid or not opened." );
+    lg->warn( "SPX42Database::getDiveDataSets -> db is not valid or not opened." );
     chartSet->clear();
     return ( chartSet );
   }
@@ -1528,6 +1539,44 @@ namespace spx
     }
     lg->warn( "SPX42Database::computeStatistic -> db is not valid or not opened." );
     return ( gasList );
+  }
+
+  qint64 SPX42Database::getTimestampForDive( const QString &mac, int diveNum )
+  {
+    QString sql;
+    int device_id = -1;
+    qint64 ux_timestamp = -1;
+    if ( db.isValid() && db.isOpen() )
+    {
+      lg->debug( "SPX42Database::getTimestampForDive..." );
+      device_id = getDevicveId( mac );
+      if ( device_id == -1 )
+        return ( ux_timestamp );
+      QSqlQuery query( db );
+      sql = "select ux_timestamp \n";
+      sql += "from detaildir \n";
+      sql += QString( "where device_id=%1 and divenum=%2" ).arg( device_id ).arg( diveNum );
+      if ( !query.exec( sql ) )
+      {
+        //
+        // es gab einen Fehler bei der Anfrage
+        //
+        QSqlError err = db.lastError();
+        lg->warn( QString( "SPX42Database::getTimestampForDive -> error: <%1>..." ).arg( err.text() ) );
+        return ( ux_timestamp );
+      }
+      //
+      // bis hier ging es, jetzt Ergebnis abholen
+      //
+      if ( query.next() )
+      {
+        ux_timestamp = static_cast< qint64 >( query.value( 0 ).toLongLong() );
+      }
+      lg->debug( "SPX42Database::getTimestampForDive...OK" );
+      return ( ux_timestamp );
+    }
+    lg->warn( "SPX42Database::getTimestampForDive -> db is not valid or not opened." );
+    return ( ux_timestamp );
   }
 
   // ##########################################################################

@@ -81,7 +81,7 @@ namespace spx
 
   void SPX42UDDFExport::setXmlFileBaseName( const QString &_fileName )
   {
-    XMLFileNameTemplate = _fileName + "%1.uddf";
+    XMLFileNameTemplate = _fileName + "%1-from-%2-to-%3-count-%4.uddf";
     lg->debug( QString( "SPX42UDDFExport::setXmlFileBaseName -> file base name template: %1" ).arg( XMLFileNameTemplate ) );
   }
 
@@ -91,11 +91,16 @@ namespace spx
     device_mac = mac;
     diveNums.clear();
     diveNums.append( numbers );
+    // sortiere nach Nummer, macht es übersichtlicher
+    std::sort( diveNums.begin(), diveNums.end() );
   }
 
   int SPX42UDDFExport::createExportXml()
   {
     int exported = 0;
+    int fromNum = diveNums.first();
+    int toNum = diveNums.last();
+    int diveCount = diveNums.count();
     lg->debug( "SPX42UDDFExport::createExportXml" );
     //
     // Gasliste löschen (für alle Fälle)
@@ -104,7 +109,10 @@ namespace spx
     //
     // erzeuge Datei
     //
-    QString exportFile( XMLFileNameTemplate.arg( QDateTime::currentDateTime().toString( "yyyyMMddHHmmss" ) ) );
+    QString exportFile( XMLFileNameTemplate.arg( QDateTime::currentDateTime().toString( "yyyyMMddHHmmss" ) )
+                            .arg( fromNum, 3, 10, QChar( '0' ) )
+                            .arg( toNum, 3, 10, QChar( '0' ) )
+                            .arg( diveCount, 3, 10, QChar( '0' ) ) );
     QFile file( exportFile );
     if ( !file.open( QIODevice::WriteOnly | QIODevice::Text ) )
     {
@@ -129,7 +137,7 @@ namespace spx
     // jetzt beginne ich mit dem Wurzelelement
     //
     stream.writeStartElement( "uddf" );
-    stream.writeAttribute( "version", "2.2.0" );
+    stream.writeAttribute( "version", "3.2.2" );
 
     //
     // Informationen über den Hersteller schreiben
@@ -140,6 +148,16 @@ namespace spx
     // Gasdefinitionen finden und schreiben
     //
     writeGasDefinitions( stream );
+
+    //
+    // Definition für Rebreather im owner Abschnitt
+    //
+    writeDiverDefinitions( stream );
+
+    //
+    // Profiledata Sektion (null oder genau einmal)
+    //
+    writeProfileData( stream );
 
     stream.writeEndElement();
     stream.writeEndDocument();
@@ -201,6 +219,122 @@ namespace spx
     return ( true );
   }
 
+  bool SPX42UDDFExport::writeDiverDefinitions( QXmlStreamWriter &st )
+  {
+    lg->debug( "SPX42UDDFExport::writeOwnerDefinitions..." );
+    // Block owner eröffnen
+    st.writeStartElement( "diver" );
+
+    //
+    // ich brauche für die Sensoren einen owner (darf nur einmal und muss das erste subtag sein)
+    //
+    writeOwnerDefinitions( st );
+
+    //
+    // Möglich nicht ein bis x buddy Elemente
+    //
+
+    // diver Block schliessen
+    st.writeEndElement();
+    //
+    lg->debug( "SPX42UDDFExport::writeOwnerDefinitions...OK" );
+    return ( true );
+  }
+
+  bool SPX42UDDFExport::writeOwnerDefinitions( QXmlStreamWriter &st )
+  {
+    lg->debug( "SPX42UDDFExport::writeOwnerDefinitions..." );
+    // Block owner öffnen
+    st.writeStartElement( "owner" );
+    // TODO: Eigentümername berücksichtigen
+    st.writeAttribute( "id", "yourself" );
+
+    //
+    // Ausrüstungsblock einfüfen, für Rebreather
+    //
+    writeOwnerEquipment( st );
+    //
+    // TODO: Möglich sind hier noch Angaben zum Taucher selber
+    // <address>, <contact>, <diveinsurances> <divepermissions>, <education>, <medical>, <notes>, <personal>
+    //
+
+    // Block owner wieder schliessen
+    st.writeEndElement();
+    //
+    lg->debug( "SPX42UDDFExport::writeOwnerDefinitions...OK" );
+    return ( true );
+  }
+
+  bool SPX42UDDFExport::writeOwnerEquipment( QXmlStreamWriter &st )
+  {
+    lg->debug( "SPX42UDDFExport::writeOwnerEquipment..." );
+    // equipment block öffnen
+    st.writeStartElement( "equipment" );
+
+    //
+    // an dieser Stele kommt der Rebreather
+    //
+    writeRebreatherDefinitions( st );
+
+    // equipment block schliessen
+    st.writeEndElement();
+    //
+    lg->debug( "SPX42UDDFExport::writeOwnerEquipment...OK" );
+    return ( true );
+  }
+
+  bool SPX42UDDFExport::writeRebreatherDefinitions( QXmlStreamWriter &st )
+  {
+    lg->debug( "SPX42UDDFExport::writeRebreatherDefinitions..." );
+    // rebreather Block öffnen
+    st.writeStartElement( "rebreather" );
+    st.writeAttribute( "id", "submatix_rebreather" );
+
+    //
+    // Name des Gerätes
+    //
+    st.writeTextElement( "name", "REBRETHER ONE" );
+    //
+    // Block Hersteller
+    //
+    st.writeStartElement( "manufacturer" );
+    // Name des Herstellers
+    st.writeTextElement( "name", "SUBMATIX" );
+    // Herstellerblock schliessen
+    st.writeEndElement();
+
+    // Modell
+    st.writeTextElement( "model", "EXP or MINI" );
+
+    // Sauerstoffsensoren
+    writeO2Sensor( 0, st );  // effektive, gemittelter wert
+    writeO2Sensor( 1, st );
+    writeO2Sensor( 2, st );
+    writeO2Sensor( 3, st );
+
+    // rebreather Block schliessen
+    st.writeEndElement();
+    lg->debug( "SPX42UDDFExport::writeRebreatherDefinitions...OK" );
+    return ( true );
+  }
+
+  bool SPX42UDDFExport::writeO2Sensor( int number, QXmlStreamWriter &st )
+  {
+    lg->debug( QString( "SPX42UDDFExport::writeO2Sensor -> write def for sensor #%1..." ).arg( number ) );
+    // Sensorblockeröffnen
+    st.writeStartElement( "o2sensor" );
+    st.writeAttribute( "id", QString( "o2_sensor_%1" ).arg( number, 2, 10, QChar( '0' ) ) );
+
+    // Modell TODO: Konfigurierbar machen?
+    st.writeTextElement( "model", ProjectConst::REBREATHER_SENSOR_TYPE );
+    // TODO: Seriennummer/Kaufdatum
+
+    // swensorblock schliessen
+    st.writeEndElement();
+    lg->debug( "SPX42UDDFExport::writeO2Sensor...OK" );
+    return ( true );
+  }
+
   bool SPX42UDDFExport::writeGasDefinitions( QXmlStreamWriter &st )
   {
     lg->debug( "SPX42UDDFExport::writeGasDefinitions..." );
@@ -216,6 +350,7 @@ namespace spx
       // unterblock "mix"
       st.writeStartElement( "mix" );
       st.writeAttribute( "id", entry.getName() );
+
       // Textnode name => momentan wie id
       st.writeTextElement( "name", entry.getName() );
       // Textnode o2
@@ -228,6 +363,7 @@ namespace spx
       st.writeTextElement( "ar", entry.getAr() );
       // Textnode Wasserstoff
       st.writeTextElement( "h2", entry.getH2() );
+
       // "mix" schliessen
       st.writeEndElement();
     }
@@ -236,6 +372,248 @@ namespace spx
     //
     lg->debug( "SPX42UDDFExport::writeGasDefinitions...OK" );
     return ( true );
+  }
+
+  bool SPX42UDDFExport::writeProfileData( QXmlStreamWriter &st )
+  {
+    bool resultOk = true;
+    lg->debug( "SPX42UDDFExport::writeProfileData..." );
+    // Block "profiledata"
+    st.writeStartElement( "profiledata" );
+    //
+    // da ich nur Tauchgänge archiviere mache ich auch nur eine einzige repetitiongroup
+    // dafür, deko-Berechnungen sind nachträglch etwas verspätet ;-)
+    //
+    // unterblock repetitiongroup
+    st.writeStartElement( "repetitiongroup" );
+    st.writeAttribute( "id", "1" );
+
+    // jetzt füge Tauchgänge ein
+    resultOk = writeAllDives( st );
+
+    // repetitiongroup schliessen
+    st.writeEndElement();
+
+    // Block schliessen
+    st.writeEndElement();
+    //
+    lg->debug( "SPX42UDDFExport::writeProfileData...OK" );
+    return ( true );
+  }
+
+  bool SPX42UDDFExport::writeAllDives( QXmlStreamWriter &st )
+  {
+    bool resultOk = true;
+    lg->debug( "SPX42UDDFExport::writeAllDives..." );
+    //
+    // jetzt alle Tauchgänge durch
+    //
+    for ( auto diveId : diveNums )
+    {
+      lg->debug( QString( "SPX42UDDFExport::writeAllDives -> compute dive num #%1 from device..." ).arg( diveId ) );
+      resultOk = writeOneDive( diveId, st );
+      if ( !resultOk )
+        break;
+    }
+    // alle Tauchgänge durch...
+    lg->debug( "SPX42UDDFExport::writeAllDives...OK" );
+    return ( resultOk );
+  }
+
+  bool SPX42UDDFExport::writeOneDive( int diveNum, QXmlStreamWriter &st )
+  {
+    bool resultOk = true;
+    lg->debug( QString( "SPX42UDDFExport::writeOneDive -> dive #%1..." ).arg( diveNum ) );
+    //
+    // Zeitpunkt des Tauchganges feststellen
+    //
+    qint64 ux_timestamp = database->getTimestampForDive( device_mac, diveNum );
+    QDateTime diveDateTime = QDateTime::fromSecsSinceEpoch( ux_timestamp );
+    DiveDataSetsPtr dataSerie = database->getDiveDataSets( device_mac, diveNum );
+    // ich gehe mal davon aus, das der erste wert noch luft ist... (ist angenähert)
+    double airtemperature = static_cast< double >( dataSerie->first().temperature ) + ProjectConst::KELVINDIFF;
+    // niedrigste Temperatur finden
+    double lowesttemperature = static_cast< double >( getLowestTemp( dataSerie ) ) + ProjectConst::KELVINDIFF;
+    // grösste tiefe finden
+    double greatestdepth = getGreatestDepth( dataSerie );
+    //
+    // Tauchgang Block öffnen
+    //
+    st.writeStartElement( "dive" );
+    st.writeAttribute( "id", QString( "%1" ).arg( diveNum, 4, 10, QChar( '0' ) ) );
+
+    // Block informationbeforedive oeffnen
+    st.writeStartElement( "informationbeforedive" );
+    // Dtetime schreiben
+    st.writeTextElement( "datetime", diveDateTime.toString( "yyyy-MM.ddTHH:mm" ) );
+    // Tauchgangsnummer
+    st.writeTextElement( "divenumber", QString( "%1" ).arg( diveNum, 4, 10, QChar( '0' ) ) );
+    // Luft Temperatur
+    st.writeTextElement( "airtemperature", QString( "%1" ).arg( airtemperature, 0, 'f', 1 ) );
+
+    // informationbeforedive block schliessen
+    st.writeEndElement();
+
+    // die Serie schreiben
+    writeDiveSamples( dataSerie, st );
+
+    // Block informationafterdive öffnen
+    st.writeStartElement( "informationafterdive" );
+    // niedrigste Temperatur
+    st.writeTextElement( "lowesttemperature", QString( "%1" ).arg( lowesttemperature, 0, 'f', 1 ) );
+    // grösste Tiefe
+    st.writeTextElement( "greatestdepth", QString( "%1" ).arg( greatestdepth, 0, 'f', 1 ) );
+    // Bemerkungen Block
+    // TODO: könnte noch erweitert werden
+    st.writeStartElement( "notes" );
+    st.writeTextElement( "text", QString( "dive number %1" ).arg( diveNum, 3, 10, QChar( '0' ) ) );
+    st.writeEndElement();
+    // Block informationafterdive schliessen
+    st.writeEndElement();
+
+    // Tauchgang Block schliessen
+    st.writeEndElement();
+    //
+    lg->debug( "SPX42UDDFExport::writeOneDive... OK" );
+    return ( resultOk );
+  }
+
+  bool SPX42UDDFExport::writeDiveSamples( DiveDataSetsPtr data, QXmlStreamWriter &st )
+  {
+    //
+    // möglich sind hier
+    // <alarm>, <batterychargecondition>, <bodytemperature>,
+    // <calculatedpo2>, <cns>, <decostop/>, <depth>, <divemode/>,
+    // <divetime>, <gradientfactor>, <heading>, <measuredpo2>,
+    // <nodecotime>, <otu>, <pulserate>, <remainingbottomtime>,
+    // <remainingo2time>, <setmarker>, <setpo2>, <switchmix/>,
+    // <tankpressure>, <temperature>
+    //
+    QString currentGas = "";
+    int he = 0;
+    int n2 = 0;
+    int setpoint = 0;
+    double secounds = 0;
+    lg->debug( "SPX42UDDFExport::writeDiveSamples..." );
+    // Block samples oeffnen
+    st.writeStartElement( "samples" );
+
+    //
+    // alle Samples in die Datei schreiben
+    //
+    for ( auto entry : *data.get() )
+    {
+      // vergangene Zeit
+      secounds += static_cast< double >( entry.nextStep );
+      // waypoint block öffnen
+      st.writeStartElement( "waypoint" );
+      //
+      // schaue nach ob sich das gas geändert hat
+      //
+      if ( he != entry.he || n2 != entry.n2 )
+      {
+        //
+        // so, hier muss ein Gaswechsel eingetragen werden
+        //
+        n2 = entry.n2;
+        he = entry.he;
+        currentGas = getGasRef( n2, he );
+        st.writeStartElement( "switchmix" );
+        st.writeAttribute( "ref", currentGas );
+        st.writeEndElement();
+      }
+      //
+      // schaue nach ob sich der setpoint geändert hat
+      //
+      if ( setpoint != entry.setpoint )
+      {
+        //
+        // ok, ein wechsel muss rein
+        //
+        setpoint = entry.setpoint;
+        st.writeStartElement( "setpo2" );
+        st.writeAttribute( "setby", "computer" );
+        st.writeCharacters( QString( "%1" ).arg( setpoint / 10.0, 0, 'f', 1 ) );
+        st.writeEndElement();
+      }
+      // Tiefe
+      st.writeTextElement( "depth", QString( "%1" ).arg( entry.abs_depth, 0, 'f', 1 ) );
+      // Tauchzeit
+      st.writeTextElement( "divetime", QString( "%1" ).arg( secounds, 0, 'f', 1 ) );
+      // Temperatur
+      st.writeTextElement( "temperature",
+                           QString( "%1" ).arg( static_cast< double >( entry.temperature ) + ProjectConst::KELVINDIFF, 0, 'f', 1 ) );
+      //
+      // PPO2 Werte
+      //
+      // zuerst effektivber Wert
+      st.writeStartElement( "measuredpo2" );
+      st.writeAttribute( "ref", "o2_sensor_00" );
+      st.writeCharacters( QString( "%1" ).arg( entry.ppo2, 0, 'f', 2 ) );
+      st.writeEndElement();
+      // Sensor 1
+      st.writeStartElement( "measuredpo2" );
+      st.writeAttribute( "ref", "o2_sensor_01" );
+      st.writeCharacters( QString( "%1" ).arg( entry.ppo2_1, 0, 'f', 2 ) );
+      st.writeEndElement();
+      // Sensor 2
+      st.writeStartElement( "measuredpo2" );
+      st.writeAttribute( "ref", "o2_sensor_02" );
+      st.writeCharacters( QString( "%1" ).arg( entry.ppo2_2, 0, 'f', 2 ) );
+      st.writeEndElement();
+      // Sensor 3
+      st.writeStartElement( "measuredpo2" );
+      st.writeAttribute( "ref", "o2_sensor_03" );
+      st.writeCharacters( QString( "%1" ).arg( entry.ppo2_3, 0, 'f', 2 ) );
+      st.writeEndElement();
+      //
+      // waypoint schliessen
+      //
+      st.writeEndElement();
+    }
+
+    // Block samples schliessen
+    st.writeEndElement();
+    lg->debug( "SPX42UDDFExport::writeDiveSamples...OK" );
+    return ( true );
+  }
+
+  QString SPX42UDDFExport::getGasRef( int n2, int he ) const
+  {
+    QString n2_str = QString( "0.%1%2" ).arg( n2, 2, 10, QChar( '0' ) ).arg( "0" );
+    QString he_str = QString( "0.%1%2" ).arg( he, 2, 10, QChar( '0' ) ).arg( "0" );
+    //
+    for ( auto gasref : gasDefs )
+    {
+      lg->debug( QString( "SPX42UDDFExport::getGasRef -> current test with %1 / %2" ).arg( gasref.getN2() ).arg( gasref.getHe() ) );
+      //
+      if ( n2_str == gasref.getN2() && he_str == gasref.getHe() )
+        return ( gasref.gName );
+    }
+    return ( "0000000000" );
+  }
+
+  int SPX42UDDFExport::getLowestTemp( DiveDataSetsPtr data )
+  {
+    int lowest = 100;
+    //
+    for ( auto entry : *data.get() )
+    {
+      if ( entry.temperature < lowest )
+        lowest = entry.temperature;
+    }
+    return ( lowest );
+  }
+
+  double SPX42UDDFExport::getGreatestDepth( DiveDataSetsPtr data )
+  {
+    double depth = 0;
+    for ( auto entry : *data.get() )
+    {
+      if ( entry.abs_depth > depth )
+        depth = entry.abs_depth;
+    }
+    return ( depth );
   }
 
 }  // namespace spx

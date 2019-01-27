@@ -28,6 +28,7 @@ namespace spx
     static const QString MANUFACTURER_APP_NAME;
     static const QString MANUFACTURER_EMAIL;
     static const QString MANUFACTURER_WWW;
+    static const QString REBREATHER_SENSOR_TYPE;
     // für Buggy Firmware, Temperatur-Lesen, Gradienten-Bug unterscheiden
     static const QRegExp FIRMWARE_2_6x;
     static const QRegExp FIRMWARE_2_7x;
@@ -38,6 +39,8 @@ namespace spx
     //###########################################################################
     //#### Einfache Konstanten                                               ####
     //###########################################################################
+    //! Differenz Celsius zu Kelvin
+    static constexpr double KELVINDIFF{273.15};
     static constexpr int BUFFER_LEN{1200};          //! Empfangspufferlänge
     static constexpr int CXN_SUCCESS{0};            //! Winsock OK Value
     static constexpr int CXN_ERROR{1};              //! Winsock ERROR Value
