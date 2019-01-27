@@ -203,17 +203,27 @@ namespace spx
    */
   bool SPX42ControlMainWin::createLogger()
   {
-    // erzeuge einen Logger mit
-
-    QString logDirStr = QDir( cf.getLogfileName() ).dirName();
+    //
+    // erzeuge einen Logger, untersuche zunächst ob es das Verzeichnis gibt
+    //
+    QStringList list = cf.getLogfileName().split( "/" );
+    list.takeLast();
+    QString logDirStr = list.join( "/" );
     QDir logDir( logDirStr );
+    // Logger erzeugen
     lg = std::shared_ptr< Logger >( new Logger() );
     if ( lg )
     {
+      //
+      // gibt es das Verzeichnis
+      //
       if ( !logDir.exists() )
       {
         if ( !QDir().mkpath( logDirStr ) )
         {
+          //
+          // Das ging schief
+          //
           qDebug() << "SPX42ControlMainWin::createLogger -> path NOT created!";
           QMessageBox msgBox;
           msgBox.setText( tr( "Log dirctory create FAIL!" ) );
@@ -223,9 +233,15 @@ namespace spx
           return ( false );
         }
       }
+      //
+      // das wird wohl klappen
+      //
       lg->startLogging( static_cast< LgThreshold >( cf.getLogTreshold() ), cf.getLogfileName() );
       return ( true );
     }
+    //
+    // Fehler, melde das dem User
+    //
     QMessageBox msgBox;
     msgBox.setText( tr( "Logging start FAIL!" ) );
     msgBox.setDetailedText( tr( "Check write rights for program directory or reinstall software." ) );
