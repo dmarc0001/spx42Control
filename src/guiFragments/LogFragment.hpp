@@ -26,6 +26,7 @@
 #include "spx42/SPX42Config.hpp"
 #include "spx42/SPX42Defs.hpp"
 #include "spx42/SPX42LogDirectoryEntry.hpp"
+#include "uddf/spx42uddfexport.hpp"
 #include "ui_LogFragment.h"
 #include "utils/DebugDataSeriesGenerator.hpp"
 #include "utils/DiveDataSeriesGenerator.hpp"
@@ -57,6 +58,8 @@ namespace spx
     QTimer transferTimeout;
     //! schreibt logdetails queue in die DB
     LogDetailWalker logWriter;
+    //! Objekt zum Erzeugen des XML Exportes
+    SPX42UDDFExport xmlExport;
     //! Liste mit Devices aus der Datenbank
     DeviceAliasHash spxDevicesAliasHash;
     //! nebenläufig daten in DB schreiben
@@ -65,6 +68,8 @@ namespace spx
     QQueue< int > logDetailRead;
     //! nebenläufig daten aus DB löschen
     QFuture< bool > dbDeleteFuture;
+    //! nebenläufig tauchgänge exportieren
+    QFuture< bool > exportFuture;
     //! icon fur anzeige log ist in db
     const QIcon savedIcon;
     //! icon null
@@ -75,12 +80,18 @@ namespace spx
     QString fragmentTitlePattern;
     //! das ganze offline
     QString fragmentTitleOfflinePattern;
+    //! Pfad für exporte
+    QString exportPath;
+    //
     QString diveNumberStr;
     QString diveDateStr;
     QString diveDepthStr;
     QString dbWriteNumTemplate;
     QString dbWriteNumIDLE;
     QString dbDeleteNumTemplate;
+    QString exportDiveStartTemplate;
+    QString exportDiveEndTemplate;
+    QString exportDiveErrorTemplate;
 
     public:
     //! Konstruktor
@@ -91,6 +102,8 @@ namespace spx
                           std::shared_ptr< SPX42RemotBtDevice > remSPX42 );
     //! Destruktor
     ~LogFragment() override;
+    //! setzte EXPORT Ptad
+    void setExportPath( const QString &_export );
     //! deaktiviere eventuelle signale
     virtual void deactivateTab( void ) override;
 
@@ -133,17 +146,34 @@ namespace spx
     virtual void onCommandRecivedSlot( void ) override;
     //! wenn der Transfer ausbleibt
     void onTransferTimeoutSlot( void );
+    //! Button zum lesen des Verzeichisses vom SPX42
     void onReadLogDirectoryClickSlot( void );
+    //! Button zum lesen der Logdaten vom SPX42
     void onReadLogContentClickSlot( void );
+    //! in die Liste des Logverzeichisses geklickt
     void onLogListClickeSlot( const QModelIndex &index );
+    //! Schreiben in die Datenbank füe einen Tauchgang beendet
     void onWriterDoneSlot( int _countProcessed );
+    //! Schreiben der Daten eines neuen Tauchgangs begonnen
     void onNewDiveStartSlot( int newDiveNum );
-    void onLogDetailDeleteClickSlot( void );
-    void onLogDetailExportClickSlot( void );
+    //! Button für Logdaten aus Datenbank löschen
+    void onDeleteLogDetailClickSlot( void );
+    //! Button für das Exportieren der Logdaten aus der Datenbank
+    void onExportLogDetailClickSlot( void );
+    //! Löschen aus der Datenbank für einen Tauchgang erfolgreich
     void onDeleteDoneSlot( int diveNum );
+    //! Neuer Tauchgang daten sichern erfolgreich
     void onNewDiveDoneSlot( int diveNum );
+    //! Eintrag in der Verzeichisliste
     void itemSelectionChangedSlot( void );
+    //! Eintrag in der Offline-Geräteliste geändert
     void onDeviceComboChangedSlot( int index );
+    //! UDDF dive Export gestartet
+    void onStartSaveDiveSlot( int diveNum );
+    //! UDDF dive export für einen TG beendet
+    void onEndSaveDiveSlot( int diveNum );
+    //! UDDF export beendet
+    void onEndSaveUddfFileSlot( bool wasOk );
 
     public slots:
     void onAddLogdirEntrySlot( const QString &entry, bool inDatabase = false );

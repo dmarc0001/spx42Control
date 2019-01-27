@@ -84,9 +84,9 @@ namespace spx
       // setFont( QFont( "DejaVu Sans Mono" ) );
       setFont( QFont( "Hack" ) );
     }
-      //
-      // das folgende wird nur kompiliert, wenn DEBUG NICHT konfiguriert ist
-      //
+    //
+    // das folgende wird nur kompiliert, wenn DEBUG NICHT konfiguriert ist
+    //
 #ifndef DEBUG
     ui->menuDEBUGGING->clear();
     ui->menuDEBUGGING->setParent( Q_NULLPTR );
@@ -689,6 +689,7 @@ namespace spx
         lg->debug( "SPX42ControlMainWin::setApplicationTab -> LOG TAB..." );
         currObj = new LogFragment( this, lg, spx42Database, spx42Config, remoteSPX42 );
         currObj->setObjectName( "spx42log" );
+        static_cast< LogFragment * >( currObj )->setExportPath( cf.getExportPath() );
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::LOG_TAB ) ) );
         currentTab = ApplicationTab::LOG_TAB;
         connect( dynamic_cast< LogFragment * >( currObj ), &LogFragment::onAkkuValueChangedSig, this,

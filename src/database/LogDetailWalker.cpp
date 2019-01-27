@@ -92,6 +92,7 @@ namespace spx
             // also gab es einene Tauchgang, den ich gerade gesichert habe?
             // dann erzeuge maximaltiefe und anzahl der einträge
             // in der Tabellenspalte in detaildir
+            // (compute statistics...)
             //
             if ( !database->computeStatistic( detail_id ) )
             {
@@ -101,7 +102,7 @@ namespace spx
             }
           }
           //
-          // Ok, anpassen
+          // Ok, Signal geben für "neuen Tauchgang sichern FERTIG!"
           //
           emit onNewDiveDoneSig( diveNum );
           diveNum = logentry->getDiveNum();
@@ -137,15 +138,18 @@ namespace spx
               lg->debug( QString( "LogDetailWalker::writeLogDataToDatabase -> start time for dive #%1: %2" )
                              .arg( diveNum, 3, 10, QChar( '0' ) )
                              .arg( entry.getDateTimeStr() ) );
-              // Schleife abbrechen
+              // Schleife abbrechen, wenn ich die nummer gefunden habe
               break;
             }
           }
           //
           // Daten komplett, Tauchgang in der DB anlegen
+          // falls ich keinen Zeitstempel gefunden habe ist das dann 0
           //
           if ( !database->insertDiveLogInBase( deviceMac, diveNum, timestamp ) )
           {
+            //
+            // Da ging dann was schief
             return ( -1 );
           }
           //
@@ -156,22 +160,31 @@ namespace spx
           {
             return ( -1 );
           }
+          //
+          // Ok, Signal geben für "neuen Tauchgang sichern START!"
+          //
           emit onNewDiveStartSig( diveNum );
           processed_per_dive = 0;
         }
         // zähle die Datensätze
         processed++;
+        processed_per_dive++;
         lg->debug( QString( "LogDetailWalker::writeLogDataToDatabase -> write set %1 dive number %2, over all processed: %3" )
-                       .arg( processed_per_dive++, 3, 10, QChar( '0' ) )
+                       .arg( processed_per_dive, 3, 10, QChar( '0' ) )
                        .arg( diveNum, 3, 10, QChar( '0' ) )
                        .arg( processed, 5, 10, QChar( '0' ) ) );
         //
         // in die Datenbank schreiben
+        // (wird via mutex serialisiert mit anderen threads)
         //
         database->insertLogentry( detail_id, logentry );
       }
       else
       {
+        //
+        // wenn es gerade nichts zu arbeiten gibt, in Wartestellung gehen
+        // und abwarten ob da noch was kommt
+        //
         if ( shouldWriterRunning )
         {
           timeoutVal++;
@@ -185,6 +198,8 @@ namespace spx
     if ( diveNum != -1 && detail_id != -1 )
     {
       //
+      // das passiert hier beim letzten Tauchgang, dazwischen wird eingangs
+      // beim wechsel zum nächsten Tauchgang die statistik generiert
       // also gab es einen Tauchgang, den ich gerade gesichert habe?
       // dann erzeuge maximaltiefe und anzahl der einträge
       // in der Tabellenspalte in detaildir
@@ -195,7 +210,10 @@ namespace spx
                       .arg( detail_id ) );
       }
     }
-    emit onWriteDoneSig( processed );
+    //
+    // Ok, Signal geben für "neuen Tauchgang sichern ENDE!"
+    //
+    emit onWriteDoneSig( diveNum );
     return ( processed );
   }
 

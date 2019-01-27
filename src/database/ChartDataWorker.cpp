@@ -25,12 +25,12 @@ namespace spx
   bool ChartDataWorker::makeChartDataMini( QChart *chart, const QString &deviceMac, int diveNum )
   {
     QString tableName;
-    DiveChartSetPtr dataSet;
+    DiveDataSetsPtr dataSet;
     lg->debug( QString( "ChartDataWorker::makeChartDataMini for <%1>, num <%2>..." ).arg( deviceMac ).arg( diveNum ) );
     //
     // jetzt die Daten abholen
     //
-    dataSet = database->getChartSet( deviceMac, diveNum );
+    dataSet = database->getDiveDataSets( deviceMac, diveNum );
     // hat es sich gelohnt
     if ( dataSet->isEmpty() )
       return ( false );

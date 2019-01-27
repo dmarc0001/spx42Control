@@ -17,12 +17,14 @@ namespace spx
   const QString AppConfigClass::constAppTimeoutKey{"watchdogTimeout"};
   const QString AppConfigClass::constAppDatabaseNameKey{"databaseFile"};
   const QString AppConfigClass::constAppDatabasePathKey{"databasePath"};
+  const QString AppConfigClass::constExportPathKey{"uddfExportPath"};
   const int AppConfigClass::defaultWatchdogTimerVal{20};
   const QString AppConfigClass::constAppThresholdKey{"loggingThreshold"};
   const qint8 AppConfigClass::defaultAppThreshold{4};
   const QString AppConfigClass::defaultDatabaseName{"spx42Database.sqlite"};
   const QString AppConfigClass::defaultDatabasePath{
       QStandardPaths::writableLocation( QStandardPaths::AppDataLocation ).append( "/spx42Control" )};
+  const QString AppConfigClass::defaultExportPath{QStandardPaths::writableLocation( QStandardPaths::DownloadLocation )};
 
   /**
    * @brief LoggerClass::LoggerClass Der Konstruktor mit Name der Konfigdatei im Programmverzeichnis
@@ -33,6 +35,7 @@ namespace spx
       , watchdogTimer( 0 )
       , logThreshold( 0 )
       , databasePath( defaultDatabasePath )
+      , exportPath( defaultExportPath )
   {
   }
 
@@ -271,6 +274,11 @@ namespace spx
     databasePath = settings.value( constAppDatabasePathKey, defaultDatabasePath ).toString();
     qDebug().noquote().nospace() << "AppConfigClass::loadAppSettings(): database: <" << databasePath << "/" << databaseName << ">";
     //
+    // lese Pfad des exportes
+    //
+    exportPath = settings.value( constExportPathKey, defaultExportPath ).toString();
+    qDebug().noquote().nospace() << "AppConfigClass::loadAppSettings(): export path: <" << exportPath << ">";
+    //
     // Ende der Gruppe
     //
     settings.endGroup();
@@ -298,6 +306,8 @@ namespace spx
     settings.setValue( constAppDatabaseNameKey, databaseName );
     databasePath = defaultDatabasePath;
     settings.setValue( constAppDatabasePathKey, databasePath );
+    exportPath = defaultExportPath;
+    settings.setValue( constExportPathKey, exportPath );
     //
     // Ende der Gruppe
     //
@@ -368,5 +378,10 @@ namespace spx
     // Fileinfo zur korrekten erzeugung des kompletten Pfdades
     QFileInfo dbFileInfo( dbFile );
     return ( dbFileInfo.filePath() );
+  }
+
+  QString AppConfigClass::getExportPath() const
+  {
+    return ( exportPath );
   }
 }  // namespace spx
