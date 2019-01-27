@@ -71,7 +71,7 @@ namespace spx
     //! Angaben zu den zu exportierenden Tauchgängen
     void setExportDives( const QString &mac, const QVector< int > &numbers );
     //! Erzeuge den Export
-    int createExportXml( void );
+    bool createExportXml( void );
 
     private:
     //! Schreibe in den Stream den "Generator" block
@@ -105,6 +105,9 @@ namespace spx
     bool writeOneDive( int diveNum, QXmlStreamWriter &st );
 
     signals:
+    void onStartSaveDiveSig( int diveNum );
+    void onEndSaveDiveSig( int diveNum );
+    void onEndSavedUddfFiileSig( bool wasOk );
 
     public slots:
   };

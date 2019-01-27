@@ -95,9 +95,8 @@ namespace spx
     std::sort( diveNums.begin(), diveNums.end() );
   }
 
-  int SPX42UDDFExport::createExportXml()
+  bool SPX42UDDFExport::createExportXml()
   {
-    int exported = 0;
     int fromNum = diveNums.first();
     int toNum = diveNums.last();
     int diveCount = diveNums.count();
@@ -117,7 +116,8 @@ namespace spx
     if ( !file.open( QIODevice::WriteOnly | QIODevice::Text ) )
     {
       lg->crit( "SPX42UDDFExport::createExportXml -> can't open export file! ABORT" );
-      return ( -1 );
+      emit onEndSavedUddfFiileSig( false );
+      return ( false );
     }
     //
     // Gase suchen und speichern
@@ -142,28 +142,53 @@ namespace spx
     //
     // Informationen über den Hersteller schreiben
     //
-    writeGenerator( stream );
+    if ( !writeGenerator( stream ) )
+    {
+      file.close();
+      file.remove();
+      emit onEndSavedUddfFiileSig( false );
+      return ( false );
+    }
 
     //
     // Gasdefinitionen finden und schreiben
     //
-    writeGasDefinitions( stream );
+    if ( !writeGasDefinitions( stream ) )
+    {
+      file.close();
+      file.remove();
+      emit onEndSavedUddfFiileSig( false );
+      return ( false );
+    }
 
     //
     // Definition für Rebreather im owner Abschnitt
     //
-    writeDiverDefinitions( stream );
+    if ( !writeDiverDefinitions( stream ) )
+    {
+      file.close();
+      file.remove();
+      emit onEndSavedUddfFiileSig( false );
+      return ( false );
+    }
 
     //
     // Profiledata Sektion (null oder genau einmal)
     //
-    writeProfileData( stream );
+    if ( !writeProfileData( stream ) )
+    {
+      file.close();
+      file.remove();
+      emit onEndSavedUddfFiileSig( false );
+      return ( false );
+    }
 
     stream.writeEndElement();
     stream.writeEndDocument();
     file.close();
     lg->info( QString( "SPX42UDDFExport::createExportXml -> successful exportet to file <%1>" ).arg( exportFile ) );
-    return ( exported );
+    emit onEndSavedUddfFiileSig( true );
+    return ( true );
   }
 
   //###########################################################################
@@ -228,7 +253,8 @@ namespace spx
     //
     // ich brauche für die Sensoren einen owner (darf nur einmal und muss das erste subtag sein)
     //
-    writeOwnerDefinitions( st );
+    if ( !writeOwnerDefinitions( st ) )
+      return ( false );
 
     //
     // Möglich nicht ein bis x buddy Elemente
@@ -252,7 +278,8 @@ namespace spx
     //
     // Ausrüstungsblock einfüfen, für Rebreather
     //
-    writeOwnerEquipment( st );
+    if ( !writeOwnerEquipment( st ) )
+      return ( false );
     //
     // TODO: Möglich sind hier noch Angaben zum Taucher selber
     // <address>, <contact>, <diveinsurances> <divepermissions>, <education>, <medical>, <notes>, <personal>
@@ -274,7 +301,8 @@ namespace spx
     //
     // an dieser Stele kommt der Rebreather
     //
-    writeRebreatherDefinitions( st );
+    if ( !writeRebreatherDefinitions( st ) )
+      return ( false );
 
     // equipment block schliessen
     st.writeEndElement();
@@ -307,10 +335,14 @@ namespace spx
     st.writeTextElement( "model", "EXP or MINI" );
 
     // Sauerstoffsensoren
-    writeO2Sensor( 0, st );  // effektive, gemittelter wert
-    writeO2Sensor( 1, st );
-    writeO2Sensor( 2, st );
-    writeO2Sensor( 3, st );
+    if ( !writeO2Sensor( 0, st ) )  // effektive, gemittelter wert
+      return ( false );
+    if ( !writeO2Sensor( 1, st ) )
+      return ( false );
+    if ( !writeO2Sensor( 2, st ) )
+      return ( false );
+    if ( !writeO2Sensor( 3, st ) )
+      return ( false );
 
     // rebreather Block schliessen
     st.writeEndElement();
@@ -376,7 +408,6 @@ namespace spx
 
   bool SPX42UDDFExport::writeProfileData( QXmlStreamWriter &st )
   {
-    bool resultOk = true;
     lg->debug( "SPX42UDDFExport::writeProfileData..." );
     // Block "profiledata"
     st.writeStartElement( "profiledata" );
@@ -389,7 +420,8 @@ namespace spx
     st.writeAttribute( "id", "1" );
 
     // jetzt füge Tauchgänge ein
-    resultOk = writeAllDives( st );
+    if ( !writeAllDives( st ) )
+      return ( false );
 
     // repetitiongroup schliessen
     st.writeEndElement();
@@ -424,6 +456,7 @@ namespace spx
   {
     bool resultOk = true;
     lg->debug( QString( "SPX42UDDFExport::writeOneDive -> dive #%1..." ).arg( diveNum ) );
+    emit onStartSaveDiveSig( diveNum );
     //
     // Zeitpunkt des Tauchganges feststellen
     //
@@ -455,7 +488,11 @@ namespace spx
     st.writeEndElement();
 
     // die Serie schreiben
-    writeDiveSamples( dataSerie, st );
+    if ( !writeDiveSamples( dataSerie, st ) )
+    {
+      emit onEndSaveDiveSig( diveNum );
+      return ( false );
+    }
 
     // Block informationafterdive öffnen
     st.writeStartElement( "informationafterdive" );
@@ -475,6 +512,7 @@ namespace spx
     st.writeEndElement();
     //
     lg->debug( "SPX42UDDFExport::writeOneDive... OK" );
+    emit onEndSaveDiveSig( diveNum );
     return ( resultOk );
   }
 

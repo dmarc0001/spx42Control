@@ -59,7 +59,7 @@ namespace spx
     //! schreibt logdetails queue in die DB
     LogDetailWalker logWriter;
     //! Objekt zum Erzeugen des XML Exportes
-    std::unique_ptr< SPX42UDDFExport > xmlExport;
+    SPX42UDDFExport xmlExport;
     //! Liste mit Devices aus der Datenbank
     DeviceAliasHash spxDevicesAliasHash;
     //! nebenläufig daten in DB schreiben
@@ -68,6 +68,8 @@ namespace spx
     QQueue< int > logDetailRead;
     //! nebenläufig daten aus DB löschen
     QFuture< bool > dbDeleteFuture;
+    //! nebenläufig tauchgänge exportieren
+    QFuture< bool > exportFuture;
     //! icon fur anzeige log ist in db
     const QIcon savedIcon;
     //! icon null
@@ -87,6 +89,9 @@ namespace spx
     QString dbWriteNumTemplate;
     QString dbWriteNumIDLE;
     QString dbDeleteNumTemplate;
+    QString exportDiveStartTemplate;
+    QString exportDiveEndTemplate;
+    QString exportDiveErrorTemplate;
 
     public:
     //! Konstruktor
@@ -163,6 +168,12 @@ namespace spx
     void itemSelectionChangedSlot( void );
     //! Eintrag in der Offline-Geräteliste geändert
     void onDeviceComboChangedSlot( int index );
+    //! UDDF dive Export gestartet
+    void onStartSaveDiveSlot( int diveNum );
+    //! UDDF dive export für einen TG beendet
+    void onEndSaveDiveSlot( int diveNum );
+    //! UDDF export beendet
+    void onEndSaveUddfFileSlot( bool wasOk );
 
     public slots:
     void onAddLogdirEntrySlot( const QString &entry, bool inDatabase = false );

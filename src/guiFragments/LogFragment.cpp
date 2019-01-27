@@ -1,4 +1,5 @@
 ﻿#include "LogFragment.hpp"
+#include <QMessageBox>
 
 using namespace QtCharts;
 namespace spx
@@ -21,6 +22,7 @@ namespace spx
       , dummyChart( new QtCharts::QChart() )
       , chartView( std::unique_ptr< QtCharts::QChartView >( new QtCharts::QChartView( dummyChart ) ) )
       , logWriter( this, logger, spx42Database, spxCfg )
+      , xmlExport( logger, spx42Database, this )
       , savedIcon( ":/icons/saved_black" )
       , nullIcon()
       , offlineDeviceAddr()
@@ -50,6 +52,9 @@ namespace spx
     dbWriteNumTemplate = tr( "WRITE DIVE #%1 TO DB..." );
     dbWriteNumIDLE = tr( "WAIT FOR START..." );
     dbDeleteNumTemplate = tr( "DELETE DIVE %1 DONE." );
+    exportDiveStartTemplate = tr( "EXPORT DIVE #%1..." );
+    exportDiveEndTemplate = tr( "EXPORT DIVE #%1 DONE." );
+    exportDiveErrorTemplate = tr( "EXPORT FAILED!" );
     ui->diveNumberLabel->setText( diveNumberStr.arg( "-" ) );
     ui->diveDateLabel->setText( diveDateStr.arg( "-" ) );
     ui->diveDepthLabel->setText( diveDepthStr.arg( "-" ) );
@@ -89,7 +94,7 @@ namespace spx
       // Alle Einträge sortiert in die Liste
       //
       auto sortKeys = dirList.get()->keys();
-      qSort( sortKeys.begin(), sortKeys.end() );
+      std::sort( sortKeys.begin(), sortKeys.end() );
       for ( auto entr : sortKeys )
       {
         SPX42LogDirectoryEntry dEntry = dirList->value( entr );
@@ -119,6 +124,9 @@ namespace spx
     connect( &logWriter, &LogDetailWalker::onNewDiveStartSig, this, &LogFragment::onNewDiveStartSlot );
     connect( &logWriter, &LogDetailWalker::onDeleteDoneSig, this, &LogFragment::onDeleteDoneSlot );
     connect( &logWriter, &LogDetailWalker::onNewDiveDoneSig, this, &LogFragment::onNewDiveDoneSlot );
+    connect( &xmlExport, &SPX42UDDFExport::onStartSaveDiveSig, this, &LogFragment::onStartSaveDiveSlot );
+    connect( &xmlExport, &SPX42UDDFExport::onEndSaveDiveSig, this, &LogFragment::onEndSaveDiveSlot );
+    connect( &xmlExport, &SPX42UDDFExport::onEndSavedUddfFiileSig, this, &LogFragment::onEndSaveUddfFileSlot );
   }
 
   /**
@@ -526,16 +534,11 @@ namespace spx
       lg->debug( QString( "LogFragment::onLogDetailExportClickSlot -> export <%1>..." ).arg( i ) );
     }
 #endif
-    if ( !xmlExport )
-    {
-      lg->debug( "LogFragment::onLogDetailExportClickSlot -> create a new instance from SPX42UDDFExport..." );
-      xmlExport = std::unique_ptr< SPX42UDDFExport >( new SPX42UDDFExport( lg, database, this ) );
-    }
     lg->debug( "LogFragment::onLogDetailExportClickSlot -> set parameters for export..." );
     if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
     {
       //
-      // mit wem bin ich verbunden ==> dessen Daten lösche ich
+      // mit wem bin ich verbunden ==> dessen Daten exportiere ich
       //
       device_mac = remoteSPX42->getRemoteConnected();
     }
@@ -546,22 +549,22 @@ namespace spx
       //
       device_mac = offlineDeviceAddr;
     }
-    xmlExport->setExportDives( device_mac, *( exportList.get() ) );
-    QString uddfFile = exportPath + "/" + database->getAliasForMac( device_mac ) + "_";
-    xmlExport->setXmlFileBaseName( uddfFile );
-    //
-    // TODO: ERZEUGEN!
-    //
-    xmlExport->createExportXml();
-
-    // DEBUG: erst mal nur Nachricht
-    /*
-    QMessageBox msgBox;
-    msgBox.setText( tr( "FUNCTION NOT IMPLEMENTED YET" ) );
-    msgBox.setInformativeText( "Keep in mind: it is an test version..." );
-    msgBox.setIcon( QMessageBox::Information );
-    msgBox.exec();
-    */
+    if ( exportFuture.isFinished() )
+    {
+      xmlExport.setExportDives( device_mac, *( exportList.get() ) );
+      QString uddfFile = exportPath + "/" + database->getAliasForMac( device_mac ) + "_";
+      xmlExport.setXmlFileBaseName( uddfFile );
+      //
+      // starte einen Thread zum exportieren
+      //
+      exportFuture = QtConcurrent::run( &this->xmlExport, &SPX42UDDFExport::createExportXml );
+    }
+    else
+    {
+      // FEHLER - läuft noch
+      QMessageBox::warning( this, tr( "EXPORT WARNING" ), tr( "An other export is current running..." ), QMessageBox::Close,
+                            QMessageBox::Close );
+    }
   }
 
   /**
@@ -1090,7 +1093,7 @@ namespace spx
     // Alle Einträge sortiert in die Liste
     //
     auto sortKeys = dirList.get()->keys();
-    qSort( sortKeys.begin(), sortKeys.end() );
+    std::sort( sortKeys.begin(), sortKeys.end() );
     for ( auto entr : sortKeys )
     {
       SPX42LogDirectoryEntry dEntry = dirList->value( entr );
@@ -1098,4 +1101,51 @@ namespace spx
                             dEntry.inDatabase );
     }
   }
+
+  /**
+   * @brief LogFragment::onStartSaveDiveSlot
+   * @param diveNum
+   */
+  void LogFragment::onStartSaveDiveSlot( int diveNum )
+  {
+    if ( !ui->transferProgressBar->isVisible() )
+      ui->transferProgressBar->setVisible( true );
+    if ( !ui->dbWriteNumLabel - isVisible() )
+      ui->dbWriteNumLabel->setVisible( true );
+    ui->dbWriteNumLabel->setText( exportDiveStartTemplate.arg( diveNum, 3, 10, QChar( '0' ) ) );
+  }
+
+  /**
+   * @brief LogFragment::onEndSaveDiveSlot
+   * @param diveNum
+   */
+  void LogFragment::onEndSaveDiveSlot( int diveNum )
+  {
+    ui->dbWriteNumLabel->setText( exportDiveEndTemplate.arg( diveNum, 3, 10, QChar( '0' ) ) );
+  }
+
+  /**
+   * @brief LogFragment::onEndSaveUddfFileSlot
+   * @param wasOk
+   */
+  void LogFragment::onEndSaveUddfFileSlot( bool wasOk )
+  {
+    ui->transferProgressBar->setVisible( false );
+    if ( wasOk )
+    {
+      ui->dbWriteNumLabel->setVisible( false );
+      ui->dbWriteNumLabel->setText( dbWriteNumIDLE );
+      if ( exportFuture.isFinished() )
+      {
+        lg->debug( "LogFragment::onEndSaveUddfFileSlot -> export finished!" );
+      }
+    }
+    else
+    {
+      ui->dbWriteNumLabel->setText( exportDiveErrorTemplate );
+      QMessageBox::critical( this, tr( "EXPORT ERROR" ), tr( "Can't export dives to UDDF file" ), QMessageBox::Close,
+                             QMessageBox::Close );
+    }
+  }
+
 }  // namespace spx

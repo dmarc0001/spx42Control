@@ -73,7 +73,7 @@
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="183"/>
         <source>settings for decompression...</source>
-        <translation>Einstellungen zur dekompression...</translation>
+        <translation>Einstellungen zur Dekompression...</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="195"/>
@@ -143,7 +143,7 @@
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="468"/>
         <source>switch dynamic gradients on or of (show manual)...</source>
-        <translation>Dnamische gradienten an oder aus (Handbuch lesen!)...</translation>
+        <translation>Dnamische Gradienten an oder aus (Handbuch lesen!)...</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="471"/>
@@ -459,7 +459,7 @@
         <location filename="../ui/DeviceConfigFragment.ui" line="1437"/>
         <location filename="../ui/DeviceConfigFragment.ui" line="1499"/>
         <source>set the time between measurings (and logentrys)...</source>
-        <translation>Zeit zwichen den geloggten Messungen...</translation>
+        <translation>Zeit zwischen den geloggten Messungen...</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1444"/>
@@ -676,7 +676,7 @@
     <message>
         <location filename="../ui/GasFragment.ui" line="395"/>
         <source>diluent #1...</source>
-        <translation>Das Verdünergas Nummer 1...</translation>
+        <translation>Das Verdünnergas Nummer 1...</translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="398"/>
@@ -701,7 +701,7 @@
     <message>
         <location filename="../ui/GasFragment.ui" line="600"/>
         <source>diluent #2...</source>
-        <translation>VErdünnergas Nummer 2...</translation>
+        <translation>Verdünnergas Nummer 2...</translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="603"/>
@@ -850,7 +850,7 @@
     <message>
         <location filename="../ui/LogFragment.ui" line="161"/>
         <source>log directory from connected SPX42 (push read log directory)...</source>
-        <translation>Verzeichnis der Logs auf dem SPX42 (Clicke &quot;Lese Log Verzeichnis&quot;)...</translation>
+        <translation>Verzeichnis der Logs auf dem SPX42 (Klicke &quot;Lese Log Verzeichnis&quot;)...</translation>
     </message>
     <message>
         <location filename="../ui/LogFragment.ui" line="234"/>
@@ -860,7 +860,7 @@
     <message>
         <location filename="../ui/LogFragment.ui" line="264"/>
         <source>select device for list dives...</source>
-        <translation>wähle ein GErät für die Anzeige aus der Liste...</translation>
+        <translation>wähle ein Gerät für die Anzeige aus der Liste...</translation>
     </message>
     <message>
         <location filename="../ui/LogFragment.ui" line="289"/>
@@ -905,7 +905,7 @@
     <message>
         <location filename="../ui/LogFragment.ui" line="396"/>
         <source>details from log if on of entrys selected...</source>
-        <translation>DEtails des selektierten Logs...</translation>
+        <translation>Details des selektierten Logs...</translation>
     </message>
     <message>
         <location filename="../ui/LogFragment.ui" line="399"/>
@@ -945,7 +945,7 @@
     <message>
         <location filename="../ui/LogFragment.ui" line="559"/>
         <source>read selected details from device...</source>
-        <translation>lese selektierte Daten vom GErät...</translation>
+        <translation>lese selektierte Daten vom Gerät...</translation>
     </message>
     <message>
         <location filename="../ui/LogFragment.ui" line="564"/>
@@ -1148,7 +1148,7 @@
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="305"/>
         <source>state of the connected spx42</source>
-        <translation>stsatus des verbundenen SPX42</translation>
+        <translation>Status des verbundenen SPX42</translation>
     </message>
     <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="318"/>
@@ -1206,7 +1206,7 @@
     <message>
         <location filename="../ui/ConnectFragment.ui" line="296"/>
         <source>Discover bluetooth SPX42 devices...</source>
-        <translation>finde via bluetooht SPX42 GEräte...</translation>
+        <translation>finde via bluetooht SPX42 Geräte...</translation>
     </message>
     <message>
         <location filename="../ui/ConnectFragment.ui" line="299"/>
@@ -1511,57 +1511,95 @@
 <context>
     <name>spx::LogFragment</name>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="44"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="47"/>
         <source>LOGFILES SPX42 Serial [%1] LIC: %2</source>
         <translation>Logdaten SPX42 Seriennummer [%1] Lizenz %2</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="45"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="48"/>
         <source>LOGFILES SPX42 [%1] in database</source>
         <translation>Logdaten SPX42 [%1] in Datenbank</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="46"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="49"/>
         <source>DIVE NUMBER: %1</source>
         <translation>Tauchgang Nr: %1</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="47"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="50"/>
         <source>DIVE DATE: %1</source>
         <translation>Datum: %1</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="48"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="51"/>
         <source>DIVE DEPTH: %1m</source>
         <translation>Tiefe: %1m</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="49"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="52"/>
         <source>WRITE DIVE #%1 TO DB...</source>
         <translation>Sichere TG #%1 in DB...</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="50"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="53"/>
         <source>WAIT FOR START...</source>
         <translation>Warte auf Datenbank...</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="51"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="54"/>
         <source>DELETE DIVE %1 DONE.</source>
         <translation>Lösche Tg %1 Fertig.</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="521"/>
-        <source>FUNCTION NOT IMPLEMENTED YET</source>
-        <translation>Funktion nicht implementiert</translation>
+        <location filename="../guiFragments/LogFragment.cpp" line="55"/>
+        <source>EXPORT DIVE #%1...</source>
+        <translation>Exportiere TG #%1...</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="794"/>
+        <source>EXPORT DIVE #1...</source>
+        <translation type="obsolete">Exportiere TG #%1</translation>
+    </message>
+    <message>
+        <location filename="../guiFragments/LogFragment.cpp" line="56"/>
+        <source>EXPORT DIVE #%1 DONE.</source>
+        <translation>Export TG #%1 OK.</translation>
+    </message>
+    <message>
+        <location filename="../guiFragments/LogFragment.cpp" line="57"/>
+        <source>EXPORT FAILED!</source>
+        <translation>Export Fehlgeschlagen!</translation>
+    </message>
+    <message>
+        <location filename="../guiFragments/LogFragment.cpp" line="565"/>
+        <source>EXPORT WARNING</source>
+        <translation>EXPORT WARNUNG</translation>
+    </message>
+    <message>
+        <location filename="../guiFragments/LogFragment.cpp" line="565"/>
+        <source>An other export is current running...</source>
+        <translation>Ein anderer Export arbeitet momentan...</translation>
+    </message>
+    <message>
+        <location filename="../guiFragments/LogFragment.cpp" line="1146"/>
+        <source>EXPORT ERROR</source>
+        <translation>EXPORT FEHLER</translation>
+    </message>
+    <message>
+        <location filename="../guiFragments/LogFragment.cpp" line="1146"/>
+        <source>Can&apos;t export dives to UDDF file</source>
+        <translation>Kann Tauchgänge nicht in UDDF Datei exportieren</translation>
+    </message>
+    <message>
+        <source>FUNCTION NOT IMPLEMENTED YET</source>
+        <translation type="vanished">Funktion nicht implementiert</translation>
+    </message>
+    <message>
+        <location filename="../guiFragments/LogFragment.cpp" line="837"/>
         <source>unknown</source>
         <translation>unbekannt</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="805"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="848"/>
         <source>database empty</source>
         <translation>Datenbank leer</translation>
     </message>
@@ -1609,7 +1647,7 @@
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="19"/>
-        <location filename="../SPX42ControlMainWin.cpp" line="1014"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="1015"/>
         <source>CLEAR</source>
         <translation>FREI</translation>
     </message>
@@ -1691,7 +1729,7 @@
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="537"/>
-        <location filename="../SPX42ControlMainWin.cpp" line="1016"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="1017"/>
         <source>spx42 is online, click for disconnect...</source>
         <translation>SPX42 ist inline, Klicke zum trennen...</translation>
     </message>
@@ -1711,17 +1749,17 @@
         <translation>SPX42 hatte Verbindungsfehler...</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="815"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="816"/>
         <source>AKKU</source>
         <translation>AKKU</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="1038"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="1039"/>
         <source>BUSY</source>
         <translation>Besetzt</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="1040"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="1041"/>
         <source>spx42 is online and wait for write config data...</source>
         <translation>SPX42 ist online und wartet auf das schriben der Konfigurationsdaten...</translation>
     </message>
