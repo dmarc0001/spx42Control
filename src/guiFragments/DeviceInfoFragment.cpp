@@ -40,7 +40,6 @@ namespace spx
   DeviceInfoFragment::~DeviceInfoFragment()
   {
     lg->debug( "DeviceInfoFragment::~DeviceInfoFragment..." );
-    deactivateTab();
   }
 
   void DeviceInfoFragment::prepareGuiWithConfig()
@@ -116,12 +115,6 @@ namespace spx
       ui->isSixMetersAutoSetpointLabel->setText( sixMetersAutoSetpointTemplate.arg( unknownString ) );
 #endif
     }
-  }
-
-  void DeviceInfoFragment::deactivateTab()
-  {
-    disconnect( spxConfig.get(), nullptr, this, nullptr );
-    disconnect( remoteSPX42.get(), nullptr, this, nullptr );
   }
 
   void DeviceInfoFragment::onOnlineStatusChangedSlot( bool )

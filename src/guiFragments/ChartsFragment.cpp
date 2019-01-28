@@ -20,12 +20,6 @@ namespace spx
   ChartsFragment::~ChartsFragment()
   {
     lg->debug( "ChartsFragment::~ChartsFragment..." );
-    deactivateTab();
-  }
-
-  void ChartsFragment::deactivateTab()
-  {
-    disconnect( spxConfig.get(), nullptr, this, nullptr );
   }
 
   void ChartsFragment::onOnlineStatusChangedSlot( bool )
@@ -55,4 +49,4 @@ namespace spx
   {
     // TODO: implementieren
   }
-}
+}  // namespace spx

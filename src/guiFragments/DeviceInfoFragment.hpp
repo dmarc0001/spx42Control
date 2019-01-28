@@ -48,7 +48,6 @@ namespace spx
                                  std::shared_ptr< SPX42Config > spxCfg,
                                  std::shared_ptr< SPX42RemotBtDevice > remSPX42 );  //! Konstruktor
     ~DeviceInfoFragment() override;                                                 //! Destruktor, muss GUI säubern
-    virtual void deactivateTab( void ) override;                                    //! deaktiviere eventuelle signale
 
     private:
     void prepareGuiWithConfig( void );  //! GUI mit werten aus der Config machen
@@ -65,5 +64,5 @@ namespace spx
     virtual void onConfLicChangedSlot( void ) override;                              //! Wenn sich die Lizenz ändert
     virtual void onCloseDatabaseSlot( void ) override;                               //! wenn die Datenbank geschlosen wird
   };
-}
+}  // namespace spx
 #endif  // DeviceInfoFragment_HPP

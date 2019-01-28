@@ -34,13 +34,6 @@ namespace spx
   GasFragment::~GasFragment()
   {
     lg->debug( "GasFragment::~GasFragment..." );
-    deactivateTab();
-    // delete ui;
-  }
-
-  void GasFragment::deactivateTab()
-  {
-    disconnect( spxConfig.get(), nullptr, this, nullptr );
   }
 
   void GasFragment::initGuiWithConfig()

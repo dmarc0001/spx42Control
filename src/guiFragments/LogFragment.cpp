@@ -138,22 +138,11 @@ namespace spx
     // setze wieder den Dummy ein und lasse den
     // die Objekte im ChartView entsorgen
     chartView->setChart( dummyChart );
-    // ui->logentryTableWidget->setModel( Q_NULLPTR );
-    deactivateTab();
   }
 
   void LogFragment::setExportPath( const QString &_export )
   {
     exportPath = _export;
-  }
-
-  /**
-   * @brief LogFragment::deactivateTab
-   */
-  void LogFragment::deactivateTab()
-  {
-    disconnect( spxConfig.get(), nullptr, this, nullptr );
-    disconnect( remoteSPX42.get(), nullptr, this, nullptr );
   }
 
   /**

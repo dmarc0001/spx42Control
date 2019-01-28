@@ -49,7 +49,6 @@ namespace spx
                           std::shared_ptr< SPX42Config > spxCfg,
                           std::shared_ptr< SPX42RemotBtDevice > remSPX42 );  //! Konstruktor
     ~GasFragment() override;                                                 //! der Zerstörer
-    virtual void deactivateTab( void ) override;                             //! deaktiviere eventuelle signale
 
     private:
     void initGuiWithConfig( void );                                //! Initialisiere die GUI mit Werten aus der Config
@@ -82,5 +81,5 @@ namespace spx
     void onBailoutCheckChangeSlot( int state );                                      //! wenn sich das Bailout ändert
     void onWaterTypeChanged( int state );                                            //! wenn sich der wassertyp zum berechnen ändert
   };
-}
+}  // namespace spx
 #endif  // GASFORM_HPP

@@ -47,7 +47,6 @@ namespace spx
                               std::shared_ptr< SPX42Config > spxCfg,
                               std::shared_ptr< SPX42RemotBtDevice > remSPX42 );  //! Konstruktor
     ~ConnectFragment() override;                                                 //! Destruktor, muss GUI säubern
-    virtual void deactivateTab( void ) override;                                 //! deaktiviere eventuelle signale
 
     private:
     void setGuiConnected( bool isConnected );                      //! Stati in der GUI setzten

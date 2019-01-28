@@ -57,7 +57,6 @@ namespace spx
                                    std::shared_ptr< SPX42Config > spxCfg,
                                    std::shared_ptr< SPX42RemotBtDevice > remSPX42 );  //! Konstruktor
     ~DeviceConfigFragment() override;                                                 //! Destruktor
-    virtual void deactivateTab( void ) override;                                      //! deaktiviere eventuelle signale
     void initGuiWithConfig( void );  //! Initialisiere die GUI mit Werten aus der Config
 
     protected:
@@ -112,5 +111,5 @@ namespace spx
     void onIndividualTempstickChangedSlot( int state );     //! wenn sich die Einstellung für den TempStick ändert
     void onConfigUpdateSlot( void );  //! ereignis wenn der Timer abgelaufen ist für das Update der Einstellungen (vom spx lesen)
   };
-}
+}  // namespace spx
 #endif  // DEVICECONFIG_HPP
