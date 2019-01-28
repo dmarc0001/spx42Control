@@ -71,7 +71,6 @@ int main( int argc, char *argv[] )
   // damit wird der logger NACH w gelöscht, es gibt keinen Absturz
   //
   lg = w.getLogger();
-  lg->debug( "ControlMain -> logger copy..." );
   //
   // Die Einstellugnen (für QT) auf Systemlocale setzen
   //

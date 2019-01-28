@@ -478,7 +478,7 @@ namespace spx
     // Block informationbeforedive oeffnen
     st.writeStartElement( "informationbeforedive" );
     // Dtetime schreiben
-    st.writeTextElement( "datetime", diveDateTime.toString( "yyyy-MM.ddTHH:mm" ) );
+    st.writeTextElement( "datetime", diveDateTime.toString( "yyyy-MM-ddTHH:mm::ss" ) );
     // Tauchgangsnummer
     st.writeTextElement( "divenumber", QString( "%1" ).arg( diveNum, 4, 10, QChar( '0' ) ) );
     // Luft Temperatur
