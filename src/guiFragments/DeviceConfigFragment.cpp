@@ -45,6 +45,9 @@ namespace spx
   DeviceConfigFragment::~DeviceConfigFragment()
   {
     lg->debug( "DeviceConfigFragment::~DeviceConfigFragment..." );
+    spxConfig->disconnect( this );
+    remoteSPX42->disconnect( this );
+    lg->debug( "DeviceConfigFragment::~DeviceConfigFragment...OK" );
   }
 
   /**

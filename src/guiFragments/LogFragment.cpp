@@ -138,6 +138,11 @@ namespace spx
     // setze wieder den Dummy ein und lasse den
     // die Objekte im ChartView entsorgen
     chartView->setChart( dummyChart );
+    spxConfig->disconnect( this );
+    logWriter.disconnect();
+    xmlExport.disconnect();
+    remoteSPX42->disconnect( this );
+    lg->debug( "LogFragment::~LogFragment...OK" );
   }
 
   void LogFragment::setExportPath( const QString &_export )

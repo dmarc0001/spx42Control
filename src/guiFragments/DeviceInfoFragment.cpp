@@ -40,6 +40,9 @@ namespace spx
   DeviceInfoFragment::~DeviceInfoFragment()
   {
     lg->debug( "DeviceInfoFragment::~DeviceInfoFragment..." );
+    spxConfig->disconnect( this );
+    remoteSPX42->disconnect( this );
+    lg->debug( "DeviceInfoFragment::~DeviceInfoFragment...OK" );
   }
 
   void DeviceInfoFragment::prepareGuiWithConfig()

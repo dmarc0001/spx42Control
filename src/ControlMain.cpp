@@ -4,6 +4,7 @@
 int main( int argc, char *argv[] )
 {
   QApplication app( argc, argv );
+  std::shared_ptr< spx::Logger > lg;  // das hier auch speichern damit das Objekt als letztes gelöscht wird
   //
   // Übersetzter...
   //
@@ -66,6 +67,12 @@ int main( int argc, char *argv[] )
   //
   spx::SPX42ControlMainWin w;
   //
+  // und nun den logger (zeiger) holen
+  // damit wird der logger NACH w gelöscht, es gibt keinen Absturz
+  //
+  lg = w.getLogger();
+  lg->debug( "ControlMain -> logger copy..." );
+  //
   // Die Einstellugnen (für QT) auf Systemlocale setzen
   //
   w.setLocale( QLocale::system() );
@@ -74,6 +81,7 @@ int main( int argc, char *argv[] )
   // den eventloop starten
   //
   int retcode = QApplication::exec();
+  lg->debug( "ControlMain -> app ends..." );
   qDebug() << "app ends with returncode <" << retcode << ">";
   return ( retcode );
 }

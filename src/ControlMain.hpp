@@ -8,6 +8,8 @@
 #include <QLocale>
 #include <QRegularExpression>
 #include <QTranslator>
+#include <memory>
+#include "logging/Logger.hpp"
 
 #include "SPX42ControlMainWin.hpp"
 
