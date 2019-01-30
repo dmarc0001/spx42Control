@@ -20,7 +20,8 @@ namespace spx
 
   Logger::~Logger()
   {
-    shutdown();
+    qDebug().noquote().nospace() << "SHUTDOWN LOGGING...";
+    // shutdown();
   }
 
   int Logger::startLogging( LgThreshold th, const QString &fn )

@@ -91,6 +91,10 @@ namespace spx
   ConnectFragment::~ConnectFragment()
   {
     lg->debug( "ConnectFragment::~ConnectFragment..." );
+    spxConfig->disconnect( this );
+    remoteSPX42->disconnect( this );
+    discoverObj->disconnect( this );
+    lg->debug( "ConnectFragment::~ConnectFragment...OK" );
   }
 
   /**

@@ -75,14 +75,16 @@ namespace spx
     int id3 = QFontDatabase::addApplicationFont( ":/fonts/Hack-Bold.ttf" );
     int id4 = QFontDatabase::addApplicationFont( ":/fonts/Hack-Italic.ttf" );
     int id5 = QFontDatabase::addApplicationFont( ":/fonts/Hack-BoldItalic.ttf" );
-    if ( id1 < 0 || id2 < 0 || id3 < 0 || id4 < 0 || id5 < 0 )
+    int id6 = QFontDatabase::addApplicationFont( ":/fonts/bahnschrift.ttf" );
+    if ( id1 < 0 || id2 < 0 || id3 < 0 || id4 < 0 || id5 < 0 || id6 < 0 )
     {
       QMessageBox::critical( this, tr( "CRITICAL" ), tr( "internal font can't load!" ) );
     }
     else
     {
       // setFont( QFont( "DejaVu Sans Mono" ) );
-      setFont( QFont( "Hack" ) );
+      // setFont( QFont( "Hack" ) );
+      setFont( QFont( "Bahnschrift" ) );
     }
     //
     // das folgende wird nur kompiliert, wenn DEBUG NICHT konfiguriert ist
@@ -178,6 +180,14 @@ namespace spx
     QMainWindow::closeEvent( event );
   }
 
+  /**
+   * @brief SPX42ControlMainWin::getLogger
+   * @return
+   */
+  std::shared_ptr< Logger > SPX42ControlMainWin::getLogger( void )
+  {
+    return ( lg );
+  }
   /**
    * @brief SPX42ControlMainWin::makeOnlineStatus
    */
@@ -499,21 +509,8 @@ namespace spx
       QWidget *currObj = ui->areaTabWidget->widget( i );
       if ( !QString( currObj->metaObject()->className() ).startsWith( "QWidget" ) )
       {
-        lg->debug( QString( "SPX42ControlMainWin::clearApplicationTabs -> <%1> should delete" ).arg( currObj->objectName() ) );
-        auto *oldFragment = reinterpret_cast< IFragmentInterface * >( currObj );
-        if ( nullptr != oldFragment )
-        {
-          lg->debug( "SPX42ControlMainWin::clearApplicationTabs -> deactivate..." );
-          // wenn das ein Fragment ist deaktiviere signale
-          oldFragment->deactivateTab();
-          // und als QWidget die löschung verfügen, sobald das möglich ist
-          lg->debug( "SPX42ControlMainWin::clearApplicationTabs -> deactivate...OK" );
-        }
-        else
-        {
-          lg->debug( "SPX42ControlMainWin::clearApplicationTabs -> not deactivated..." );
-        }
         ui->areaTabWidget->removeTab( i );
+        lg->debug( QString( "SPX42ControlMainWin::clearApplicationTabs -> <%1> should delete" ).arg( currObj->objectName() ) );
         delete currObj;
         currObj = new QWidget();
         currObj->setObjectName( "DUMMY" );

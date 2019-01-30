@@ -34,6 +34,9 @@ namespace spx
   GasFragment::~GasFragment()
   {
     lg->debug( "GasFragment::~GasFragment..." );
+    spxConfig->disconnect( this );
+    remoteSPX42->disconnect( this );
+    lg->debug( "GasFragment::~GasFragment...OK" );
   }
 
   void GasFragment::initGuiWithConfig()
