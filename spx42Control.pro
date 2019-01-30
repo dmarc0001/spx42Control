@@ -6,8 +6,8 @@
 ####                                                                       ####
 ###############################################################################
 MAJOR                                  = 0 # Major Verion Nummer
-MINOR                                  = 5 # Minor Version Number
-PATCH                                  = 5 # Patch Version Number
+MINOR                                  = 6 # Minor Version Number
+PATCH                                  = 1 # Patch Version Number
 BUILD                                  = 0 # win build number
 
 win32:VERSION_PE_HEADER                = $${MAJOR}.$${MINOR}
@@ -40,6 +40,21 @@ RCC_DIR                                = rcc
 UI_DIR                                 = ui
 
 # %{CurrentProject:NativePath}\%{CurrentKit:FileSystemName}\%{CurrentBuild:Name}
+# %{CurrentProject:NativePath}/%{CurrentKit:FileSystemName}/%{CurrentBuild:Name}
+#
+# build:
+#
+# python(3)
+# %{CurrentProject:NativePath}/tools/makeBuildTemplate.py  --srcdir  %{CurrentProject:NativePath}/src/config --build Debug|Release
+# %{CurrentProject:NativePath}\tools
+#
+# deployment
+#
+# cp
+# -f  %{CurrentProject:NativePath}/src/translations/*.qm %{CurrentProject:NativePath}/%{CurrentKit:FileSystemName}/%{CurrentBuild:Name}/out/
+# %{buildDir}
+#
+
 
 #
 # momentan noch als TESTVERSION markieren
@@ -75,7 +90,6 @@ SOURCES                 += \
     src/bluetooth/BtLocalDevicesManager.cpp \
     src/bluetooth/SPX42BtDevicesManager.cpp \
     src/bluetooth/SPX42RemotBtDevice.cpp \
-    src/charts/DiveChart.cpp \
     src/charts/DiveMiniChart.cpp \
     src/config/AppConfigClass.cpp \
     src/config/ProjectConst.cpp \
@@ -113,7 +127,6 @@ HEADERS                 += \
     src/bluetooth/BtTypes.hpp \
     src/bluetooth/SPX42BtDevicesManager.hpp \
     src/bluetooth/SPX42RemotBtDevice.hpp \
-    src/charts/DiveChart.hpp \
     src/charts/DiveMiniChart.hpp \
     src/config/AppConfigClass.hpp \
     src/config/CurrBuildDef.hpp \

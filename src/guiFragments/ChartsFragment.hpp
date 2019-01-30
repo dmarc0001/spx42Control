@@ -4,10 +4,10 @@
 #include <QWidget>
 #include <QtCharts>
 #include <QtConcurrent>
+#include <database/ChartDataWorker.hpp>
 #include <memory>
 #include "IFragmentInterface.hpp"
 #include "bluetooth/SPX42RemotBtDevice.hpp"
-#include "charts/DiveChart.hpp"
 #include "database/SPX42Database.hpp"
 #include "logging/Logger.hpp"
 #include "spx42/SPX42Config.hpp"
@@ -26,11 +26,15 @@ namespace spx
     Q_INTERFACES( spx::IFragmentInterface )
     std::unique_ptr< Ui::ChartsFragment > ui;  //! Zeiger auf die GUI Objekte
     //! Zeiger auf das eigene Chart
-    std::unique_ptr< DiveChart > diveChart;
-    //! Zeiger auf das weisse, leere chart
+    QtCharts::QChart *diveChart;
+    //! Zeiger auf DUMMY
     QtCharts::QChart *dummyChart;
     //! Zeiger auf das ChartView
     std::unique_ptr< QtCharts::QChartView > chartView;
+    //! Prozess zum abarbeiten
+    std::unique_ptr< ChartDataWorker > chartWorker;
+    //! Nebenläufiges future Objekt
+    QFuture< bool > dbgetDataFuture;
     //! Liste mit Devices aus der Datenbank
     DeviceAliasHash spxDevicesAliasHash;
     //! mac adresse des ausgewählten gerätes
@@ -62,6 +66,7 @@ namespace spx
     virtual void onCloseDatabaseSlot( void ) override;                               //! wenn die Datenbank geschlosen wird
     void onDeviceComboChangedSlot( int index );
     void onDiveComboChangedSlot( int index );
+    void onChartReadySlot( void );
   };
 }  // namespace spx
 #endif  // CHARTSFRAGMENT_HPP

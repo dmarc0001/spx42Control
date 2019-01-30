@@ -3,8 +3,8 @@
 
 namespace spx
 {
-  constexpr char SPX_BUILDTIME[]{"2019-01-28 23:08:11"};
-  constexpr char SPX_BUILDCOUNT[]{"00002023"};
+  constexpr char SPX_BUILDTIME[]{"2019-01-30 22:58:22"};
+  constexpr char SPX_BUILDCOUNT[]{"00002160"};
   constexpr char SPX_BUILDTYPE[]{"Debug"};
 }
 

@@ -53,9 +53,29 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/ChartsFragment.ui" line="123"/>
-        <source>transfer status...</source>
-        <translation></translation>
+        <location filename="../ui/ChartsFragment.ui" line="154"/>
+        <source>select device for display data...</source>
+        <translation>Gerät für Anzeige auswählen...</translation>
+    </message>
+    <message>
+        <location filename="../ui/ChartsFragment.ui" line="199"/>
+        <source>select dive for display data...</source>
+        <translation>Tauchgang für Anzeige auswählen...</translation>
+    </message>
+    <message>
+        <location filename="../ui/ChartsFragment.ui" line="280"/>
+        <source>NOTES:</source>
+        <translation>Bemerkungen:</translation>
+    </message>
+    <message>
+        <location filename="../ui/ChartsFragment.ui" line="312"/>
+        <source>describes the dive as an note...</source>
+        <translation>Beschreibt den Tauchgang als Bemerkung...</translation>
+    </message>
+    <message>
+        <location filename="../ui/ChartsFragment.ui" line="315"/>
+        <source>...INPUT YOUR NOTES HERE...</source>
+        <translation>... Bemerkungen zum Tauchgang hier...</translation>
     </message>
 </context>
 <context>
@@ -1215,9 +1235,47 @@
     </message>
 </context>
 <context>
+    <name>spx::ChartDataWorker</name>
+    <message>
+        <location filename="../database/ChartDataWorker.cpp" line="99"/>
+        <source>DIVE VIEW</source>
+        <translation>Taucgang Ansicht</translation>
+    </message>
+    <message>
+        <location filename="../database/ChartDataWorker.cpp" line="170"/>
+        <source>DEPTH [m]</source>
+        <translation>Tiefe [m]</translation>
+    </message>
+    <message>
+        <location filename="../database/ChartDataWorker.cpp" line="200"/>
+        <source>PPO2 [bar]</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../database/ChartDataWorker.cpp" line="212"/>
+        <source>DIVE TIME [min]</source>
+        <translation>Tauchzeit [min]</translation>
+    </message>
+</context>
+<context>
     <name>spx::ChartsFragment</name>
     <message>
-        <location filename="../guiFragments/ChartsFragment.cpp" line="46"/>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="23"/>
+        <source>LOGFILES SPX42 [%1] in database</source>
+        <translation>Logdaten SPX42 [%1] in Datenbank</translation>
+    </message>
+    <message>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="54"/>
+        <source>unknown</source>
+        <translation>unbekannt</translation>
+    </message>
+    <message>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="64"/>
+        <source>database empty</source>
+        <translation>Datenbank leer</translation>
+    </message>
+    <message>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="209"/>
         <source>LOGCHARTS SPX42 Serial [%1] Lic: %2</source>
         <translation>Log Grafiken SPX32 Seriennummer [%1] Lizenz: %2</translation>
     </message>
@@ -1245,42 +1303,42 @@
         <translation>Gerätealias</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="164"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="155"/>
         <source>UNKNOWN ERROR</source>
         <translation>Unbekannter Fehler</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="167"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="158"/>
         <source>NO BT SOCKET FOUND</source>
         <translation>Keine Bluethooth Verbindung gefunden</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="170"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="161"/>
         <source>REMOTE HOST NOT FOUND</source>
         <translation>Entferntes Gerät nicht gefunden</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="173"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="164"/>
         <source>REMOTE HOST CLOSED CONNECTION</source>
         <translation>Entferntes Gerät hat Verbindung beendet</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="176"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="167"/>
         <source>COMMUNICATION ERROR</source>
         <translation>Kommunikationsfehler</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="222"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="213"/>
         <source>NOT SELECTED A DEVICE TO CONNECT</source>
         <translation>Kein Gerät für die Verbindung gewählt</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="463"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="454"/>
         <source>DISCONNECT DEVICE</source>
         <translation>Gerät trennen</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="463"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="454"/>
         <source>CONNECT DEVICE</source>
         <translation>Gerät verbinden</translation>
     </message>
@@ -1468,33 +1526,33 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../guiFragments/GasFragment.cpp" line="73"/>
-        <location filename="../guiFragments/GasFragment.cpp" line="535"/>
+        <location filename="../guiFragments/GasFragment.cpp" line="69"/>
+        <location filename="../guiFragments/GasFragment.cpp" line="531"/>
         <source>COMPUTE FRESHWATER</source>
         <translation>Rechne mit Süßwasser</translation>
     </message>
     <message>
-        <location filename="../guiFragments/GasFragment.cpp" line="89"/>
+        <location filename="../guiFragments/GasFragment.cpp" line="85"/>
         <source>GASLIST SPX42 SERIAL [%1] LIC: %2</source>
         <translation>Gasliste SPX42 Seriennummer [%1] Lizenz: %2</translation>
     </message>
     <message>
-        <location filename="../guiFragments/GasFragment.cpp" line="251"/>
+        <location filename="../guiFragments/GasFragment.cpp" line="247"/>
         <source>MOD: %1m</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../guiFragments/GasFragment.cpp" line="252"/>
+        <location filename="../guiFragments/GasFragment.cpp" line="248"/>
         <source>EAD: %1m</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../guiFragments/GasFragment.cpp" line="382"/>
+        <location filename="../guiFragments/GasFragment.cpp" line="378"/>
         <source>GASLIST SPX42 Serial [%1] Lic: %2</source>
         <translation>Gasliste SPX42 Seriennummer [%1] Lizenz %2</translation>
     </message>
     <message>
-        <location filename="../guiFragments/GasFragment.cpp" line="540"/>
+        <location filename="../guiFragments/GasFragment.cpp" line="536"/>
         <source>COMPUTE SALTWATER</source>
         <translation>Rechne mit Salzwasser</translation>
     </message>
@@ -1570,22 +1628,22 @@
         <translation>Export Fehlgeschlagen!</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="565"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="559"/>
         <source>EXPORT WARNING</source>
         <translation>EXPORT WARNUNG</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="565"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="559"/>
         <source>An other export is current running...</source>
         <translation>Ein anderer Export arbeitet momentan...</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1146"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1140"/>
         <source>EXPORT ERROR</source>
         <translation>EXPORT FEHLER</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1146"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1140"/>
         <source>Can&apos;t export dives to UDDF file</source>
         <translation>Kann Tauchgänge nicht in UDDF Datei exportieren</translation>
     </message>
@@ -1594,12 +1652,12 @@
         <translation type="vanished">Funktion nicht implementiert</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="837"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="831"/>
         <source>unknown</source>
         <translation>unbekannt</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="848"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="842"/>
         <source>database empty</source>
         <translation>Datenbank leer</translation>
     </message>
@@ -1641,19 +1699,19 @@
     <name>spx::SPX42ControlMainWin</name>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="17"/>
-        <location filename="../SPX42ControlMainWin.cpp" line="522"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="550"/>
         <source>SPX42 OFFLINE</source>
         <translation>SPX42 Offline</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="19"/>
-        <location filename="../SPX42ControlMainWin.cpp" line="1015"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="1043"/>
         <source>CLEAR</source>
         <translation>FREI</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="63"/>
-        <location filename="../SPX42ControlMainWin.cpp" line="80"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="81"/>
         <source>CRITICAL</source>
         <translation>KRITISCH</translation>
     </message>
@@ -1663,103 +1721,115 @@
         <translation>Konnte Datenbank ncht öffnen!</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="80"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="81"/>
         <source>internal font can&apos;t load!</source>
         <translation>Interner Font kann nicht geladen werden!</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="164"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="166"/>
         <source>Really EXIT?</source>
         <translation>Wirklich beenden?</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="165"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="167"/>
         <source>Will you really quit this programm and close all files, databases, connections?</source>
         <translation>Wollen Sie das Programm wirklich beenden und alle Verbindeungen und Datenbanken schleißen?</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="215"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="239"/>
+        <source>Log dirctory create FAIL!</source>
+        <translation>Logverzeichnis erstellen schlug fehl!</translation>
+    </message>
+    <message>
+        <location filename="../SPX42ControlMainWin.cpp" line="240"/>
+        <source>Check write rights for log directory or reinstall software.
+(%1)</source>
+        <translation>Prüfe Schreibrechte für das Logverzeichnis oder instlliere Software neu.
+(%1)</translation>
+    </message>
+    <message>
+        <location filename="../SPX42ControlMainWin.cpp" line="256"/>
         <source>Logging start FAIL!</source>
         <translation>Logging konnte nicht gestartet werden!</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="216"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="257"/>
         <source>Check write rights for program directory or reinstall software.</source>
         <translation>Prüfe Schreibrechte im Programmverzeichnis oder instsalliere die Software neu.</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="228"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="269"/>
         <source>CONNECTION</source>
         <translation>VERBINDUNG</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="229"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="270"/>
         <source>INFO</source>
         <translation>INFO</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="230"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="271"/>
         <source>CONFIG</source>
         <translation>KONFIG</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="231"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="272"/>
         <source>GAS</source>
         <translation>GAS</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="232"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="273"/>
         <source>LOG</source>
         <translation>LOG</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="233"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="274"/>
         <source>CHARTS</source>
         <translation>DIAGRAMME</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="526"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="554"/>
         <source>spx42 is offline...</source>
         <translation>SPX42 ist offline...</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="532"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="560"/>
         <source>SPX42 ONLINE</source>
         <translation>SPX42 ist online</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="537"/>
-        <location filename="../SPX42ControlMainWin.cpp" line="1017"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="565"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="1045"/>
         <source>spx42 is online, click for disconnect...</source>
         <translation>SPX42 ist inline, Klicke zum trennen...</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="543"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="571"/>
         <source>SPX42 CONNECTING</source>
         <translation>SPX42 verbindet</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="550"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="578"/>
         <source>SPX42 OFFLINE/ERROR</source>
         <translation>SPX42 getrennt/Fehler</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="553"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="581"/>
         <source>spx42 had connection error...</source>
         <translation>SPX42 hatte Verbindungsfehler...</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="816"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="844"/>
         <source>AKKU</source>
         <translation>AKKU</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="1039"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="1067"/>
         <source>BUSY</source>
         <translation>Besetzt</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="1041"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="1069"/>
         <source>spx42 is online and wait for write config data...</source>
         <translation>SPX42 ist online und wartet auf das schriben der Konfigurationsdaten...</translation>
     </message>
