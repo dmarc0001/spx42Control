@@ -1,8 +1,14 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Installer>
   <Name>SPX42 Control App</Name>
   <Version>0.5.2</Version>
+=======
+<?xml version="1.0" ?><Installer>
+  <Name>SPX42 Control App</Name>
+  <Version>2.5.7</Version>
+>>>>>>> dev/stabilizing
   <Title>SUBMATIX SPX42 Controller App</Title>
   <Publisher>SUBMATIX</Publisher>
   <ProductUrl>http://www.submatix.com</ProductUrl>
@@ -11,7 +17,11 @@
   <Watermark>spx_watermark.png</Watermark>
   <InstallerWindowIcon>BTTransferDialog</InstallerWindowIcon>
   <StartMenuDir>SUBMATIX-SPX42-Control App</StartMenuDir>
+<<<<<<< HEAD
   <TargetDir>@ApplicationsDir@/SUBMATIX/SPX42Control</TargetDir>
+=======
+  <TargetDir>@ApplicationsDir@/SPX42Control</TargetDir>
+>>>>>>> dev/stabilizing
   <RemoteRepositories>
     <Repository>
       <Url>http://update.submatix.com/spx42Control</Url>
@@ -24,8 +34,11 @@
       <DisplayName>TESTING Repository</DisplayName>
     </Repository>
   </RemoteRepositories>
+<<<<<<< HEAD
 </Installer>
 
+=======
+>>>>>>> dev/stabilizing
 =======
 <?xml version="1.0" ?><Installer>
   <Name>SPX42 Control App</Name>
@@ -51,5 +64,10 @@
       <DisplayName>TESTING Repository</DisplayName>
     </Repository>
   </RemoteRepositories>
+<<<<<<< HEAD
+</Installer>
+>>>>>>> dev/stabilizing
+=======
+>>>>>>> dev/dive-chart
 </Installer>
 >>>>>>> dev/stabilizing

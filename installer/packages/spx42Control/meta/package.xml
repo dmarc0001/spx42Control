@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Package>
     <DisplayName>SPX42 app execute</DisplayName>
@@ -9,6 +10,9 @@
     <Script>installscript.qs</Script>
     <Dependencies>qtRuntime</Dependencies>
 =======
+=======
+<<<<<<< Updated upstream
+>>>>>>> dev/stabilizing
 <?xml version="1.0" ?><Package>
     <DisplayName>SPX42 app execute</DisplayName>
     <Description>Binary executable files for the spx42Control application.</Description> 
@@ -17,5 +21,18 @@
     <Default>true</Default>
     <Script>installscript.qs</Script>
     <Dependencies>qtRuntime</Dependencies>
+<<<<<<< HEAD
+>>>>>>> dev/stabilizing
+=======
+=======
+<?xml version="1.0" ?><Package>
+    <DisplayName>SPX42 app execute</DisplayName>
+    <Description>Binary executable files for the spx42Control application.</Description> 
+    <Version>2.5.7</Version>
+    <ReleaseDate>2019-01-27</ReleaseDate>
+    <Default>true</Default>
+    <Script>installscript.qs</Script>
+    <Dependencies>qtRuntime</Dependencies>
+>>>>>>> Stashed changes
 >>>>>>> dev/stabilizing
 </Package>
