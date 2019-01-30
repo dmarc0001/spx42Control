@@ -27,7 +27,6 @@ namespace spx
                                  std::shared_ptr< SPX42Config > spxCfg,
                                  std::shared_ptr< SPX42RemotBtDevice > remSPX42 );  //! Standartkonstruktor
     virtual ~IFragmentInterface( void ) = default;                                  //! standartverhalten
-    virtual void deactivateTab( void ) = 0;                                         //! deaktiviere alle eventuellen signale etc.
 
     signals:
     virtual void onWarningMessageSig( const QString &msg, bool asPopup = false ) = 0;  //! eine Warnmeldung soll das Main darstellen
@@ -43,7 +42,7 @@ namespace spx
     virtual void onConfLicChangedSlot( void ) = 0;                              //! Wenn sich die Lizenz ändert
     virtual void onCloseDatabaseSlot( void ) = 0;                               //! Wenn die Datenbank geschlossen wird
   };
-}
+}  // namespace spx
 
 // INTERFACE deklarieren
 Q_DECLARE_INTERFACE( spx::IFragmentInterface, "IFragmentInterface" )

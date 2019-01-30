@@ -4,6 +4,7 @@
 int main( int argc, char *argv[] )
 {
   QApplication app( argc, argv );
+  std::shared_ptr< spx::Logger > lg;  // das hier auch speichern damit das Objekt als letztes gelöscht wird
   //
   // Übersetzter...
   //
@@ -12,11 +13,13 @@ int main( int argc, char *argv[] )
   QString fileName = "spx42Control";
   QString prefix = "_";
   QString suffix = ".qm";
-  QString destPath = currDir.absolutePath() + "/";
+  QString destPath = currDir.absolutePath().append( "/" );
+  QString destPath2 = QStandardPaths::writableLocation( QStandardPaths::AppDataLocation ).append( "/" );
   qDebug() << "File: " << fileName;
   qDebug() << "Locale: " << QLocale::system().name();
   qDebug() << "Path: " << currDir.absolutePath();
   qDebug() << "searchFile: " << destPath + fileName + prefix + QLocale::system().name() + suffix;
+  qDebug() << "searchFile: " << destPath2 + fileName + prefix + QLocale::system().name() + suffix;
   qDebug() << "Translation load: " << qtTranslator.load( QLocale::system().name(), fileName, prefix, destPath, suffix );
   qDebug() << "Tanslator isEmpty: " << qtTranslator.isEmpty();
   QApplication::installTranslator( &qtTranslator );
@@ -33,16 +36,23 @@ int main( int argc, char *argv[] )
   }
   else
   {
-    qWarning() << "Can't load external stylesheet, try internal...";
+    if ( readStylesheetFromFile( &app, destPath2 ) )
+    {
+      qDebug() << "Stylesheet correct loadet...";
+    }
+    else
+    {
+      qWarning() << "Can't load external stylesheet, try internal...";
 #ifdef UNIX
-    destPath = ":/style/defaultStyleUx.css";
+      destPath = ":/style/defaultStyleUx.css";
 #else
 #ifdef TARGET_OS_MAC
-    destPath = ":/style/defaultStyleMac.css";
+      destPath = ":/style/defaultStyleMac.css";
 #else
-    destPath = ":/style/defaultStyle.css";
+      destPath = ":/style/defaultStyle.css";
 #endif
 #endif
+    }
     if ( readStylesheetFromFile( &app, destPath ) )
     {
       qDebug() << "internal Stylesheet correct loadet...";
@@ -57,6 +67,11 @@ int main( int argc, char *argv[] )
   //
   spx::SPX42ControlMainWin w;
   //
+  // und nun den logger (zeiger) holen
+  // damit wird der logger NACH w gelöscht, es gibt keinen Absturz
+  //
+  lg = w.getLogger();
+  //
   // Die Einstellugnen (für QT) auf Systemlocale setzen
   //
   w.setLocale( QLocale::system() );
@@ -65,6 +80,7 @@ int main( int argc, char *argv[] )
   // den eventloop starten
   //
   int retcode = QApplication::exec();
+  lg->debug( "ControlMain -> app ends..." );
   qDebug() << "app ends with returncode <" << retcode << ">";
   return ( retcode );
 }

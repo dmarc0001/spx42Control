@@ -37,6 +37,18 @@ namespace spx
       , databasePath( defaultDatabasePath )
       , exportPath( defaultExportPath )
   {
+    QFile iniFile( configFile );
+    if ( iniFile.exists() && iniFile.isWritable() )
+    {
+      // Alles OK
+    }
+    else
+    {
+      configFile = QStandardPaths::writableLocation( QStandardPaths::AppDataLocation )
+                       .append( "/" )
+                       .append( QApplication::applicationName() )
+                       .append( ".ini" );
+    }
   }
 
   AppConfigClass::~AppConfigClass()
@@ -190,7 +202,10 @@ namespace spx
     //
     // defaultwerte setzten
     //
-    logfileName = QApplication::applicationName() + ".log";
+    logfileName = QStandardPaths::writableLocation( QStandardPaths::AppDataLocation )
+                      .append( "/" )
+                      .append( QApplication::applicationName() )
+                      .append( ".log" );
     settings.setValue( constLogFileKey, logfileName );
     //
     // Ende der Gruppe

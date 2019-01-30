@@ -7,6 +7,7 @@
         <file>Hack-Regular.ttf</file>
         <file>DejaVuSansMono.ttf</file>
         <file>TlwgTypewriter.ttf</file>
+        <file>bahnschrift.ttf</file>
     </qresource>
     <qresource prefix="/icons">
         <file>ic_bluetooth_black_24dp_1x.png</file>

@@ -45,13 +45,9 @@ namespace spx
   DeviceConfigFragment::~DeviceConfigFragment()
   {
     lg->debug( "DeviceConfigFragment::~DeviceConfigFragment..." );
-    deactivateTab();
-  }
-
-  void DeviceConfigFragment::deactivateTab()
-  {
-    // alle signale trennen...
-    disconnectSlots();
+    spxConfig->disconnect( this );
+    remoteSPX42->disconnect( this );
+    lg->debug( "DeviceConfigFragment::~DeviceConfigFragment...OK" );
   }
 
   /**

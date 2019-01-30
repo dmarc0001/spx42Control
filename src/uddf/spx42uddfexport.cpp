@@ -478,7 +478,7 @@ namespace spx
     // Block informationbeforedive oeffnen
     st.writeStartElement( "informationbeforedive" );
     // Dtetime schreiben
-    st.writeTextElement( "datetime", diveDateTime.toString( "yyyy-MM.ddTHH:mm" ) );
+    st.writeTextElement( "datetime", diveDateTime.toString( "yyyy-MM-ddTHH:mm::ss" ) );
     // Tauchgangsnummer
     st.writeTextElement( "divenumber", QString( "%1" ).arg( diveNum, 4, 10, QChar( '0' ) ) );
     // Luft Temperatur
@@ -532,6 +532,7 @@ namespace spx
     int n2 = 0;
     int setpoint = 0;
     double secounds = 0;
+    bool isFirstWaypoint = true;
     lg->debug( "SPX42UDDFExport::writeDiveSamples..." );
     // Block samples oeffnen
     st.writeStartElement( "samples" );
@@ -545,6 +546,20 @@ namespace spx
       secounds += static_cast< double >( entry.nextStep );
       // waypoint block öffnen
       st.writeStartElement( "waypoint" );
+      //
+      // beim ersten wegpunkt Tachgangstyp einschreiben
+      //
+      if ( isFirstWaypoint )
+      {
+        //
+        // da das Gerät ein emCCR ist gehe ich mal von CCR aus
+        // TODO: konfigurierbar auch semiclosedcircuit
+        //
+        isFirstWaypoint = false;
+        st.writeStartElement( "divemode" );
+        st.writeAttribute( "type", "closedcircuit" );
+        st.writeEndElement();
+      }
       //
       // schaue nach ob sich das gas geändert hat
       //

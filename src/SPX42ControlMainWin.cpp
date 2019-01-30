@@ -75,14 +75,16 @@ namespace spx
     int id3 = QFontDatabase::addApplicationFont( ":/fonts/Hack-Bold.ttf" );
     int id4 = QFontDatabase::addApplicationFont( ":/fonts/Hack-Italic.ttf" );
     int id5 = QFontDatabase::addApplicationFont( ":/fonts/Hack-BoldItalic.ttf" );
-    if ( id1 < 0 || id2 < 0 || id3 < 0 || id4 < 0 || id5 < 0 )
+    int id6 = QFontDatabase::addApplicationFont( ":/fonts/bahnschrift.ttf" );
+    if ( id1 < 0 || id2 < 0 || id3 < 0 || id4 < 0 || id5 < 0 || id6 < 0 )
     {
       QMessageBox::critical( this, tr( "CRITICAL" ), tr( "internal font can't load!" ) );
     }
     else
     {
       // setFont( QFont( "DejaVu Sans Mono" ) );
-      setFont( QFont( "Hack" ) );
+      // setFont( QFont( "Hack" ) );
+      setFont( QFont( "Bahnschrift" ) );
     }
     //
     // das folgende wird nur kompiliert, wenn DEBUG NICHT konfiguriert ist
@@ -179,6 +181,14 @@ namespace spx
   }
 
   /**
+   * @brief SPX42ControlMainWin::getLogger
+   * @return
+   */
+  std::shared_ptr< Logger > SPX42ControlMainWin::getLogger( void )
+  {
+    return ( lg );
+  }
+  /**
    * @brief SPX42ControlMainWin::makeOnlineStatus
    */
   void SPX42ControlMainWin::makeOnlineStatus()
@@ -203,14 +213,45 @@ namespace spx
    */
   bool SPX42ControlMainWin::createLogger()
   {
-    // erzeuge einen Logger mit
+    //
+    // erzeuge einen Logger, untersuche zunächst ob es das Verzeichnis gibt
+    //
+    QStringList list = cf.getLogfileName().split( "/" );
+    list.takeLast();
+    QString logDirStr = list.join( "/" );
+    QDir logDir( logDirStr );
+    // Logger erzeugen
     lg = std::shared_ptr< Logger >( new Logger() );
     if ( lg )
     {
+      //
+      // gibt es das Verzeichnis
+      //
+      if ( !logDir.exists() )
+      {
+        if ( !QDir().mkpath( logDirStr ) )
+        {
+          //
+          // Das ging schief
+          //
+          qDebug() << "SPX42ControlMainWin::createLogger -> path NOT created!";
+          QMessageBox msgBox;
+          msgBox.setText( tr( "Log dirctory create FAIL!" ) );
+          msgBox.setDetailedText( tr( "Check write rights for log directory or reinstall software.\n(%1)" ).arg( logDirStr ) );
+          msgBox.setIcon( QMessageBox::Critical );
+          msgBox.exec();
+          return ( false );
+        }
+      }
+      //
+      // das wird wohl klappen
+      //
       lg->startLogging( static_cast< LgThreshold >( cf.getLogTreshold() ), cf.getLogfileName() );
       return ( true );
     }
-
+    //
+    // Fehler, melde das dem User
+    //
     QMessageBox msgBox;
     msgBox.setText( tr( "Logging start FAIL!" ) );
     msgBox.setDetailedText( tr( "Check write rights for program directory or reinstall software." ) );
@@ -468,21 +509,8 @@ namespace spx
       QWidget *currObj = ui->areaTabWidget->widget( i );
       if ( !QString( currObj->metaObject()->className() ).startsWith( "QWidget" ) )
       {
-        lg->debug( QString( "SPX42ControlMainWin::clearApplicationTabs -> <%1> should delete" ).arg( currObj->objectName() ) );
-        auto *oldFragment = reinterpret_cast< IFragmentInterface * >( currObj );
-        if ( nullptr != oldFragment )
-        {
-          lg->debug( "SPX42ControlMainWin::clearApplicationTabs -> deactivate..." );
-          // wenn das ein Fragment ist deaktiviere signale
-          oldFragment->deactivateTab();
-          // und als QWidget die löschung verfügen, sobald das möglich ist
-          lg->debug( "SPX42ControlMainWin::clearApplicationTabs -> deactivate...OK" );
-        }
-        else
-        {
-          lg->debug( "SPX42ControlMainWin::clearApplicationTabs -> not deactivated..." );
-        }
         ui->areaTabWidget->removeTab( i );
+        lg->debug( QString( "SPX42ControlMainWin::clearApplicationTabs -> <%1> should delete" ).arg( currObj->objectName() ) );
         delete currObj;
         currObj = new QWidget();
         currObj->setObjectName( "DUMMY" );

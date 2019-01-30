@@ -6,8 +6,8 @@
 ####                                                                       ####
 ###############################################################################
 MAJOR                                  = 0 # Major Verion Nummer
-MINOR                                  = 5 # Minor Version Number
-PATCH                                  = 5 # Patch Version Number
+MINOR                                  = 6 # Minor Version Number
+PATCH                                  = 1 # Patch Version Number
 BUILD                                  = 0 # win build number
 
 win32:VERSION_PE_HEADER                = $${MAJOR}.$${MINOR}
@@ -50,6 +50,21 @@ RCC_DIR                                = rcc
 UI_DIR                                 = ui
 
 # %{CurrentProject:NativePath}\%{CurrentKit:FileSystemName}\%{CurrentBuild:Name}
+# %{CurrentProject:NativePath}/%{CurrentKit:FileSystemName}/%{CurrentBuild:Name}
+#
+# build:
+#
+# python(3)
+# %{CurrentProject:NativePath}/tools/makeBuildTemplate.py  --srcdir  %{CurrentProject:NativePath}/src/config --build Debug|Release
+# %{CurrentProject:NativePath}\tools
+#
+# deployment
+#
+# cp
+# -f  %{CurrentProject:NativePath}/src/translations/*.qm %{CurrentProject:NativePath}/%{CurrentKit:FileSystemName}/%{CurrentBuild:Name}/out/
+# %{buildDir}
+#
+
 
 #
 # momentan noch als TESTVERSION markieren
@@ -80,33 +95,40 @@ unix:!macos {
 }
 
 SOURCES                 += \
-    src/SPX42ControlMainWin.cpp \
-    src/ControlMain.cpp \
-    src/config/AppConfigClass.cpp \
-    src/config/ProjectConst.cpp \
-    src/logging/Logger.cpp \
-    src/utils/AboutDialog.cpp \
-    src/guiFragments/ConnectFragment.cpp \
-    src/guiFragments/GasFragment.cpp \
-    src/spx42/SPX42Config.cpp \
-    src/spx42/SPX42Gas.cpp \
-    src/guiFragments/IFragmentInterface.cpp \
-    src/guiFragments/DeviceConfigFragment.cpp \
-    src/spx42/SPX42Defs.cpp \
-    src/guiFragments/LogFragment.cpp \
-    src/utils/IDataSeriesGenerator.cpp \
-    src/utils/DebugDataSeriesGenerator.cpp \
-    src/utils/DiveDataSeriesGenerator.cpp \
-    src/guiFragments/ChartsFragment.cpp \
-    src/database/SPX42Database.cpp \
-    src/bluetooth/SPX42RemotBtDevice.cpp \
-    src/spx42/SPX42Commands.cpp \
-    src/bluetooth/BtLocalDevicesManager.cpp \
     src/bluetooth/BtDiscoverRemoteDevice.cpp \
     src/bluetooth/BtDiscoverRemoteService.cpp \
+    src/bluetooth/BtLocalDevicesManager.cpp \
     src/bluetooth/SPX42BtDevicesManager.cpp \
+    src/bluetooth/SPX42RemotBtDevice.cpp \
+    src/charts/DiveMiniChart.cpp \
+    src/config/AppConfigClass.cpp \
+    src/config/ProjectConst.cpp \
+    src/ControlMain.cpp \
+    src/database/ChartDataWorker.cpp \
+    src/database/LogDetailWalker.cpp \
+    src/database/SPX42Database.cpp \
+    src/database/spx42databaseconstants.cpp \
+    src/guiFragments/ChartsFragment.cpp \
+    src/guiFragments/ConnectFragment.cpp \
+    src/guiFragments/DeviceConfigFragment.cpp \
+    src/guiFragments/DeviceInfoFragment.cpp \
+    src/guiFragments/GasFragment.cpp \
+    src/guiFragments/IFragmentInterface.cpp \
+    src/guiFragments/LogFragment.cpp \
+    src/logging/Logger.cpp \
+    src/spx42/SPX42Commands.cpp \
+    src/spx42/SPX42Config.cpp \
+    src/spx42/SPX42Defs.cpp \
+    src/spx42/SPX42Gas.cpp \
+    src/spx42/SPX42LogDirectoryEntry.cpp \
     src/spx42/SPX42SingleCommand.cpp \
+    src/SPX42ControlMainWin.cpp \
+    src/uddf/spx42uddfexport.cpp \
+    src/utils/AboutDialog.cpp \
+    src/utils/DebugDataSeriesGenerator.cpp \
+    src/utils/DiveDataSeriesGenerator.cpp \
     src/utils/HelpDialog.cpp \
+<<<<<<< HEAD
     src/guiFragments/DeviceInfoFragment.cpp \
     src/spx42/SPX42LogDirectoryEntry.cpp \
     src/database/LogDetailWalker.cpp \
@@ -122,37 +144,48 @@ SOURCES                 += \
     src/database/spx42databaseconstants.cpp \
     src/uddf/spx42uddfexport.cpp
 >>>>>>> dev/stabilizing
+=======
+    src/utils/IDataSeriesGenerator.cpp
+>>>>>>> dev/dive-chart
 
 HEADERS                 += \
-    src/SPX42ControlMainWin.hpp \
-    src/config/AppConfigClass.hpp \
-    src/config/ProjectConst.hpp \
-    src/logging/Logger.hpp \
-    src/utils/AboutDialog.hpp \
-    src/guiFragments/ConnectFragment.hpp \
-    src/guiFragments/GasFragment.hpp \
-    src/spx42/SPX42Config.hpp \
-    src/spx42/SPX42Gas.hpp \
-    src/spx42/SPX42Defs.hpp \
-    src/guiFragments/IFragmentInterface.hpp \
-    src/guiFragments/DeviceConfigFragment.hpp \
-    src/guiFragments/LogFragment.hpp \
-    src/ControlMain.hpp \
-    src/utils/IDataSeriesGenerator.hpp \
-    src/utils/DebugDataSeriesGenerator.hpp \
-    src/utils/DiveDataSeriesGenerator.hpp \
-    src/guiFragments/ChartsFragment.hpp \
-    src/spx42/SPX42Commands.hpp \
-    src/database/SPX42Database.hpp \
-    src/bluetooth/SPX42RemotBtDevice.hpp \
-    src/bluetooth/BtTypes.hpp \
-    src/spx42/SPX42CommandDef.hpp \
-    src/bluetooth/BtLocalDevicesManager.hpp \
     src/bluetooth/BtDiscoverRemoteDevice.hpp \
     src/bluetooth/BtDiscoverRemoteService.hpp \
+    src/bluetooth/BtLocalDevicesManager.hpp \
+    src/bluetooth/BtTypes.hpp \
     src/bluetooth/SPX42BtDevicesManager.hpp \
+    src/bluetooth/SPX42RemotBtDevice.hpp \
+    src/charts/DiveMiniChart.hpp \
+    src/config/AppConfigClass.hpp \
+    src/config/CurrBuildDef.hpp \
+    src/config/ProjectConst.hpp \
+    src/ControlMain.hpp \
+    src/database/ChartDataWorker.hpp \
+    src/database/LogDetailWalker.hpp \
+    src/database/SPX42Database.hpp \
+    src/database/spx42databaseconstants.hpp \
+    src/guiFragments/ChartsFragment.hpp \
+    src/guiFragments/ConnectFragment.hpp \
+    src/guiFragments/DeviceConfigFragment.hpp \
+    src/guiFragments/DeviceInfoFragment.hpp \
+    src/guiFragments/GasFragment.hpp \
+    src/guiFragments/IFragmentInterface.hpp \
+    src/guiFragments/LogFragment.hpp \
+    src/logging/Logger.hpp \
+    src/spx42/SPX42CommandDef.hpp \
+    src/spx42/SPX42Commands.hpp \
+    src/spx42/SPX42Config.hpp \
+    src/spx42/SPX42Defs.hpp \
+    src/spx42/SPX42Gas.hpp \
+    src/spx42/SPX42LogDirectoryEntry.hpp \
     src/spx42/SPX42SingleCommand.hpp \
+    src/SPX42ControlMainWin.hpp \
+    src/uddf/spx42uddfexport.hpp \
+    src/utils/AboutDialog.hpp \
+    src/utils/DebugDataSeriesGenerator.hpp \
+    src/utils/DiveDataSeriesGenerator.hpp \
     src/utils/HelpDialog.hpp \
+<<<<<<< HEAD
     src/guiFragments/DeviceInfoFragment.hpp \
     src/config/CurrBuildDef.hpp \
     src/spx42/SPX42LogDirectoryEntry.hpp \
@@ -169,6 +202,9 @@ HEADERS                 += \
     src/database/spx42databaseconstants.hpp \
     src/uddf/spx42uddfexport.hpp
 >>>>>>> dev/stabilizing
+=======
+    src/utils/IDataSeriesGenerator.hpp
+>>>>>>> dev/dive-chart
 
 FORMS                   += \
     src/ui/SPX42ControlMainWin.ui \
@@ -200,7 +236,8 @@ DISTFILES               += \
     src/res/Hack-Regular.ttf \
     src/res/spx42Control.css \
     src/res/spx42ControlMac.css \
-    src/res/TlwgTypewriter.ttf
+    src/res/TlwgTypewriter.ttf \
+    src/res/bahnschrift.ttf
 
 
 ###############################################################################

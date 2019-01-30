@@ -34,7 +34,7 @@ namespace Ui
   // Vorwärtsdeklaration, include in der CPP
   //
   class SPX42ControlMainWin;
-}
+}  // namespace Ui
 
 namespace spx
 {
@@ -73,6 +73,7 @@ namespace spx
     explicit SPX42ControlMainWin( QWidget *parent = nullptr );
     ~SPX42ControlMainWin();
     void closeEvent( QCloseEvent *event );  //! Das Beenden-Ereignis
+    std::shared_ptr< Logger > getLogger( void );
 
     private:
     bool createLogger();                                     //! Erzeuge den Logger
@@ -102,6 +103,6 @@ namespace spx
     void onConfigWriteBackSlot( void );                                     //! timer wenn configs zurück geschrieben werden müssen
     void onGetHelpForUser( void );                                          //! Hilfe anzeigen
   };
-}  // namespace spx42
+}  // namespace spx
 
 #endif  // SPX42CONTROLMAINWIN_HPP

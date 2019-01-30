@@ -91,19 +91,10 @@ namespace spx
   ConnectFragment::~ConnectFragment()
   {
     lg->debug( "ConnectFragment::~ConnectFragment..." );
-    deactivateTab();
-  }
-
-  /**
-   * @brief ConnectFragment::deactivateTab
-   */
-  void ConnectFragment::deactivateTab()
-  {
-    //
-    // deaktiviere signale für reciver
-    //
-    disconnect( spxConfig.get(), nullptr, this, nullptr );
-    disconnect( remoteSPX42.get(), nullptr, this, nullptr );
+    spxConfig->disconnect( this );
+    remoteSPX42->disconnect( this );
+    discoverObj->disconnect( this );
+    lg->debug( "ConnectFragment::~ConnectFragment...OK" );
   }
 
   /**

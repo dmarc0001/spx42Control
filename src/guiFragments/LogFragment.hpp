@@ -104,8 +104,6 @@ namespace spx
     ~LogFragment() override;
     //! setzte EXPORT Ptad
     void setExportPath( const QString &_export );
-    //! deaktiviere eventuelle signale
-    virtual void deactivateTab( void ) override;
 
     protected:
     void changeEvent( QEvent *e ) override;
