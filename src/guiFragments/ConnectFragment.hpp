@@ -30,50 +30,82 @@ namespace spx
     private:
     Q_OBJECT
     Q_INTERFACES( spx::IFragmentInterface )
-    static SPXDeviceList spx42Devices;      //! Liste mit gefundenen (discover) SPX42, statisch um nicht dauernd nachzufragen
-    std::unique_ptr< Ui::connectForm > ui;  //! Zeiger auf die GUI Objekte
-    DeviceAliasHash spxDevicesAliasHash;    //! gehashte Liste der verfügbaren Geräte aus DB
-    QString errMsg;                         //! Fehlermeldungen BT Connection
-    std::unique_ptr< BtDiscoverRemoteDevice > discoverObj;  //! Objekt zum Discovern der Geräte
-    const QPixmap connectedSpx;                             //! Bild verbundener SPX
-    const QPixmap disConnectedSpx;                          //! Bild nicht verbundener SPX
-    const QPixmap errorSpx;                                 //! Fehlerbild
-    QString fragmentTitlePattern;                           //! das Muster (lokalisierungsfähig) für Fragmentüberschrift
+    //! Liste mit gefundenen (discover) SPX42, statisch um nicht dauernd nachzufragen
+    static SPXDeviceList spx42Devices;
+    //! Zeiger auf die GUI Objekte
+    std::unique_ptr< Ui::connectForm > ui;
+    //! gehashte Liste der verfügbaren Geräte aus DB
+    DeviceAliasHash spxDevicesAliasHash;
+    //! Fehlermeldungen BT Connection
+    QString errMsg;
+    //! Objekt zum Discovern der Geräte
+    std::unique_ptr< BtDiscoverRemoteDevice > discoverObj;
+    //! ansicht SPX42 ohne Status (beim Start...)
+    const QPixmap normalSpx;
+    //! Bild verbundener SPX
+    const QPixmap connectedSpx;
+    //! Bild nicht verbundener SPX
+    const QPixmap disConnectedSpx;
+    //! Fehlerbild
+    const QPixmap errorSpx;
+    //! das Muster (lokalisierungsfähig) für Fragmentüberschrift
+    QString fragmentTitlePattern;
 
     public:
+    //! Konstruktor
     explicit ConnectFragment( QWidget *parent,
                               std::shared_ptr< Logger > logger,
                               std::shared_ptr< SPX42Database > spx42Database,
                               std::shared_ptr< SPX42Config > spxCfg,
-                              std::shared_ptr< SPX42RemotBtDevice > remSPX42 );  //! Konstruktor
-    ~ConnectFragment() override;                                                 //! Destruktor, muss GUI säubern
+                              std::shared_ptr< SPX42RemotBtDevice > remSPX42 );
+    //! Destruktor, muss GUI säubern
+    ~ConnectFragment() override;
 
     private:
-    void setGuiConnected( bool isConnected );                      //! Stati in der GUI setzten
-    void addDeviceComboEntry( const SPXDeviceDescr &deviceInfo );  //! trage einen eintrag in die Liste ein
-    void fillDeviceCombo( void );                                  //! fülle die Dropdownliste
-    void trySetIndex( void );                                      //! versuche einen eintrag zu selektieren
+    //! Stati in der GUI setzten
+    void setGuiConnected( bool isConnected );
+    //! trage einen eintrag in die Liste ein
+    void addDeviceComboEntry( const SPXDeviceDescr &deviceInfo );
+    //! fülle die Dropdownliste
+    void fillDeviceCombo( void );
+    //! versuche einen eintrag zu selektieren
+    void trySetIndex( void );
 
     signals:
-    void onWarningMessageSig( const QString &msg, bool asPopup = false ) override;  //! eine Warnmeldung soll das Main darstellen
-    void onErrorgMessageSig( const QString &msg, bool asPopup = false ) override;   //! eine Warnmeldung soll das Main darstellen
-    void onAkkuValueChangedSig( double aValue ) override;                           //! signalisiert, dass der Akku eine Spanniung hat
+    //! eine Warnmeldung soll das Main darstellen
+    void onWarningMessageSig( const QString &msg, bool asPopup = false ) override;
+    //! eine Warnmeldung soll das Main darstellen
+    void onErrorgMessageSig( const QString &msg, bool asPopup = false ) override;
+    //! signalisiert, dass der Akku eine Spanniung hat
+    void onAkkuValueChangedSig( double aValue ) override;
 
     public slots:
-    virtual void onOnlineStatusChangedSlot( bool isOnline ) override;                //! Wenn sich der Onlinestatus des SPX42 ändert
-    virtual void onSocketErrorSlot( QBluetoothSocket::SocketError error ) override;  //! wenn bei einer Verbindung ein Fehler auftritt
-    virtual void onConfLicChangedSlot( void ) override;                              //! Wenn sich die Lizenz ändert
-    virtual void onCloseDatabaseSlot( void ) override;                               //! wenn die Datenbank geschlosen wird
+    //! Wenn sich der Onlinestatus des SPX42 ändert
+    virtual void onOnlineStatusChangedSlot( bool isOnline ) override;
+    //! wenn bei einer Verbindung ein Fehler auftritt
+    virtual void onSocketErrorSlot( QBluetoothSocket::SocketError error ) override;
+    //! Wenn sich die Lizenz ändert
+    virtual void onConfLicChangedSlot( void ) override;
+    //! wenn die Datenbank geschlosen wird
+    virtual void onCloseDatabaseSlot( void ) override;
 
     private slots:
-    virtual void onCommandRecivedSlot( void ) override;               //! wenn ein Datentelegramm empfangen wurde
-    void onConnectButtonSlot( void );                                 //! Wenn der Verbinde-Knopf gedrückt wurde
-    void onPropertyButtonSlot( void );                                //! Verbindungs/Geräte eigenschaften
-    void onDiscoverButtonSlot( void );                                //! Suche nach BT Geräten
-    void onCurrentIndexChangedSlot( int index );                      //! Dropdown box: Auswahl geändert
-    void onDiscoveredDeviceSlot( const SPXDeviceDescr &deviceInfo );  //! wurde ein neues gerät gefunden...
-    void onDiscoverScanFinishedSlot( void );                          //! wenn das discovering abgeschlossen ist
-    void onAliasEditItemChanged( QTableWidgetItem *edItem );          //! wenn im Editor er Alias geändert wurde
+    //! wenn ein Datentelegramm empfangen wurde
+    virtual void onCommandRecivedSlot( void ) override;
+    //! Wenn der Verbinde-Knopf gedrückt wurde
+    void onConnectButtonSlot( void );
+    //! Verbindungs/Geräte eigenschaften
+    void onPropertyButtonSlot( void );
+    //! Suche nach BT Geräten
+    void onDiscoverButtonSlot( void );
+    //! Dropdown box: Auswahl geändert
+    void onCurrentIndexChangedSlot( int index );
+    //! wurde ein neues gerät gefunden...
+    void onDiscoveredDeviceSlot( const SPXDeviceDescr &deviceInfo );
+    //! wenn das discovering abgeschlossen ist
+    void onDiscoverScanFinishedSlot( void );
+    //! wenn im Editor er Alias geändert wurde
+    void onAliasEditItemChanged( QTableWidgetItem *edItem );
   };
 }  // namespace spx
 #endif  // CONNECTFORM_HPP

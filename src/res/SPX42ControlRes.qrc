@@ -50,6 +50,7 @@
         <file alias="spx42-normal">SPX42.png</file>
         <file alias="spx42-error">SPX42-error.png</file>
         <file alias="spx42-no-connection">SPX42-no-connection.png</file>
+        <file alias="spx42-connected">SPX42_ok.png</file>
     </qresource>
     <qresource prefix="/scanner">
         <file alias="worker">no_working.gif</file>
