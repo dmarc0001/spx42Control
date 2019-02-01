@@ -69,8 +69,8 @@ namespace spx
     // GUI dem Onlinestatus entsprechend vorbereiten
     setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
     // ist der online gleich noch die Lizenz setzten
-    if(remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED)
-    onConfLicChangedSlot();
+    if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
+      onConfLicChangedSlot();
     //
     // signale verbinden
     //
@@ -278,7 +278,7 @@ namespace spx
       QString entry = ui->logentryTableWidget->item( row, 0 )->text();
       QStringList el = entry.split( ':' );
       // in die Liste kommt die Nummer!
-      if(!el.isEmpty() && el.count() > 1)
+      if ( !el.isEmpty() && el.count() > 1 )
         logDetailRead.enqueue( el.at( 0 ).toInt() );
     }
     //
@@ -1075,8 +1075,8 @@ namespace spx
     //
     // Liste leeren
     //
-    ui->logentryTableWidget->clear();
-    if( index == -1 )
+    ui->logentryTableWidget->setRowCount( 0 );
+    if ( index == -1 )
     {
       offlineDeviceAddr.clear();
       return;
