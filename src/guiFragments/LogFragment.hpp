@@ -109,6 +109,7 @@ namespace spx
     void changeEvent( QEvent *e ) override;
 
     private:
+    //! setze alle Einstellungen für die GUI
     void setGuiConnected( bool isConnected );
     //! schreibe alle Daten aus der Queue in die Datenbank
     void processLogDetails( void );

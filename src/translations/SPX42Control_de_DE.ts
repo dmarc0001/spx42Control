@@ -1260,22 +1260,22 @@
 <context>
     <name>spx::ChartsFragment</name>
     <message>
-        <location filename="../guiFragments/ChartsFragment.cpp" line="23"/>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="26"/>
         <source>LOGFILES SPX42 [%1] in database</source>
         <translation>Logdaten SPX42 [%1] in Datenbank</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ChartsFragment.cpp" line="54"/>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="57"/>
         <source>unknown</source>
         <translation>unbekannt</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ChartsFragment.cpp" line="64"/>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="67"/>
         <source>database empty</source>
         <translation>Datenbank leer</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ChartsFragment.cpp" line="209"/>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="212"/>
         <source>LOGCHARTS SPX42 Serial [%1] Lic: %2</source>
         <translation>Log Grafiken SPX32 Seriennummer [%1] Lizenz: %2</translation>
     </message>
@@ -1614,10 +1614,6 @@
         <translation>Exportiere TG #%1...</translation>
     </message>
     <message>
-        <source>EXPORT DIVE #1...</source>
-        <translation type="obsolete">Exportiere TG #%1</translation>
-    </message>
-    <message>
         <location filename="../guiFragments/LogFragment.cpp" line="56"/>
         <source>EXPORT DIVE #%1 DONE.</source>
         <translation>Export TG #%1 OK.</translation>
@@ -1646,10 +1642,6 @@
         <location filename="../guiFragments/LogFragment.cpp" line="1140"/>
         <source>Can&apos;t export dives to UDDF file</source>
         <translation>Kann Tauchgänge nicht in UDDF Datei exportieren</translation>
-    </message>
-    <message>
-        <source>FUNCTION NOT IMPLEMENTED YET</source>
-        <translation type="vanished">Funktion nicht implementiert</translation>
     </message>
     <message>
         <location filename="../guiFragments/LogFragment.cpp" line="831"/>

@@ -33,6 +33,8 @@ namespace spx
     chartView->setChart( dummyChart );
     chartView->setRenderHint( QPainter::Antialiasing );
     initDeviceSelection();
+    if ( ui->diveSelectComboBox->currentIndex() > -1 )
+      onDiveComboChangedSlot( ui->diveSelectComboBox->currentIndex() );
     connect( ui->deviceSelectComboBox, static_cast< void ( QComboBox::* )( int ) >( &QComboBox::currentIndexChanged ), this,
              &ChartsFragment::onDeviceComboChangedSlot );
     connect( ui->diveSelectComboBox, static_cast< void ( QComboBox::* )( int ) >( &QComboBox::currentIndexChanged ), this,
@@ -131,9 +133,9 @@ namespace spx
   {
     ui->diveSelectComboBox->clear();
     deviceAddr = ui->deviceSelectComboBox->itemData( index ).toString();
+    chartView->setChart( dummyChart );
     if ( deviceAddr.isEmpty() )
     {
-      chartView->setChart( dummyChart );
       return;
     }
     lg->debug( QString( "ChartsFragment::onDeviceComboChangedSlot -> index changed to <%1>. addr: <%2>" )
@@ -163,7 +165,7 @@ namespace spx
     // zuerst das Chart entfernen
     //
     chartView->setChart( dummyChart );
-    delete diveChart;
+    diveChart->deleteLater();
     //
     // nichts markiert => dann bin ich schon fertig
     //
