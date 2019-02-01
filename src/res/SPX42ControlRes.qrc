@@ -62,6 +62,6 @@
         <file alias="defaultStyleUx.css">spx42ControlUx.css</file>
     </qresource>
     <qresource prefix="/help">
-        <file>help_en.html</file>
+        <file alias="help_de.html">help_en.html</file>
     </qresource>
 </RCC>
