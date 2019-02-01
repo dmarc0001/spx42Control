@@ -90,7 +90,6 @@ SOURCES                 += \
     src/bluetooth/BtLocalDevicesManager.cpp \
     src/bluetooth/SPX42BtDevicesManager.cpp \
     src/bluetooth/SPX42RemotBtDevice.cpp \
-    src/charts/DiveMiniChart.cpp \
     src/config/AppConfigClass.cpp \
     src/config/ProjectConst.cpp \
     src/ControlMain.cpp \
@@ -127,7 +126,6 @@ HEADERS                 += \
     src/bluetooth/BtTypes.hpp \
     src/bluetooth/SPX42BtDevicesManager.hpp \
     src/bluetooth/SPX42RemotBtDevice.hpp \
-    src/charts/DiveMiniChart.hpp \
     src/config/AppConfigClass.hpp \
     src/config/CurrBuildDef.hpp \
     src/config/ProjectConst.hpp \

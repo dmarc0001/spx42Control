@@ -18,9 +18,10 @@ namespace spx
       : QWidget( parent )
       , IFragmentInterface( logger, spx42Database, spxCfg, remSPX42 )
       , ui( new Ui::LogFragment() )
-      , miniChart( std::unique_ptr< DiveMiniChart >( new DiveMiniChart( logger, spx42Database ) ) )
+      , miniChart( new QtCharts::QChart() )
       , dummyChart( new QtCharts::QChart() )
       , chartView( std::unique_ptr< QtCharts::QChartView >( new QtCharts::QChartView( dummyChart ) ) )
+      , chartWorker( std::unique_ptr< ChartDataWorker >( new ChartDataWorker( logger, database, this ) ) )
       , logWriter( this, logger, spx42Database, spxCfg )
       , xmlExport( logger, spx42Database, this )
       , savedIcon( ":/icons/saved_black" )
@@ -365,6 +366,10 @@ namespace spx
         //
         deviceAddr = offlineDeviceAddr;
       }
+      //
+      // zuerst dummychart setzten
+      //
+      chartView->setChart( dummyChart );
       if ( !deviceAddr.isEmpty() )
       {
         depth = ( database->getMaxDepthFor( deviceAddr, diveNum ) / 10.0 );
@@ -377,14 +382,25 @@ namespace spx
           //
           // das Chart anzeigen, wenn Daten vorhanden sind
           //
-          miniChart->showDiveDataInMiniGraph( deviceAddr, diveNum );
-          //
-          chartView->setChart( miniChart.get() );
+          miniChart->deleteLater();
+          if ( dbgetDataFuture.isFinished() )
+          {
+            miniChart = new QtCharts::QChart();
+            chartWorker->prepareMiniChart( miniChart );
+            chartView->setChart( miniChart );
+            dbgetDataFuture =
+                QtConcurrent::run( chartWorker.get(), &ChartDataWorker::makeChartDataMini, miniChart, deviceAddr, diveNum );
+          }
+          else
+          {
+            // später nochmal...
+            lg->debug( "LogFragment::onLogListClickeSlot -> last chart is under construction, try later (automatic) again..." );
+            QTimer::singleShot( 100, this, [=]() { this->onLogListClickeSlot( index ); } );
+          }
         }
         else
         {
           ui->diveDepthLabel->setText( diveDepthStr.arg( depthStr ) );
-          chartView->setChart( dummyChart );
         }
       }
     }

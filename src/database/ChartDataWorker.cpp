@@ -22,6 +22,31 @@ namespace spx
       maxTimeoutVal = waitTimeout;
   }
 
+  void ChartDataWorker::prepareMiniChart( QChart *chart )
+  {
+    lg->debug( "DiveMiniChart::prepareChart..." );
+    chart->legend()->hide();  // Keine Legende in der Minivorschau
+    // Chart Titel aufhübschen
+    QFont font;
+    font.setPixelSize( 8 );
+    chart->setTitleFont( font );
+    chart->setTitleBrush( QBrush( Qt::darkBlue ) );
+    chart->setTitle( tr( "PREVIEW" ) );
+    // Hintergrund aufhübschen
+    QBrush backgroundBrush( Qt::NoBrush );
+    chart->setBackgroundBrush( backgroundBrush );
+    // Malhintergrund auch noch
+    QLinearGradient plotAreaGradient;
+    plotAreaGradient.setStart( QPointF( 0, 1 ) );
+    plotAreaGradient.setFinalStop( QPointF( 1, 0 ) );
+    plotAreaGradient.setColorAt( 0.0, QRgb( 0x202040 ) );
+    plotAreaGradient.setColorAt( 1.0, QRgb( 0x2020f0 ) );
+    plotAreaGradient.setCoordinateMode( QGradient::ObjectBoundingMode );
+    chart->setPlotAreaBackgroundBrush( plotAreaGradient );
+    chart->setPlotAreaBackgroundVisible( true );
+    lg->debug( "DiveMiniChart::prepareChart...OK" );
+  }
+
   bool ChartDataWorker::makeChartDataMini( QChart *chart, const QString &deviceMac, int diveNum )
   {
     QString tableName;

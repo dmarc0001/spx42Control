@@ -18,8 +18,8 @@
 #include <memory>
 #include "IFragmentInterface.hpp"
 #include "bluetooth/SPX42RemotBtDevice.hpp"
-#include "charts/DiveMiniChart.hpp"
 #include "config/ProjectConst.hpp"
+#include "database/ChartDataWorker.hpp"
 #include "database/LogDetailWalker.hpp"
 #include "database/SPX42Database.hpp"
 #include "logging/Logger.hpp"
@@ -49,11 +49,15 @@ namespace spx
     //! Zeiger auf GUI-Objekte
     std::unique_ptr< Ui::LogFragment > ui;
     //! Zeiger auf das eigene Minichart
-    std::unique_ptr< DiveMiniChart > miniChart;
+    QtCharts::QChart *miniChart;
     //! Zeiger auf das weisse, leere chart
     QtCharts::QChart *dummyChart;
     //! Zeiger auf das ChartView
     std::unique_ptr< QtCharts::QChartView > chartView;
+    //! Prozess zum abarbeiten
+    std::unique_ptr< ChartDataWorker > chartWorker;
+    //! Nebenläufiges future Objekt
+    QFuture< bool > dbgetDataFuture;
     //! timer für timeout bei transfers
     QTimer transferTimeout;
     //! schreibt logdetails queue in die DB

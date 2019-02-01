@@ -185,7 +185,7 @@ namespace spx
     else
     {
       // später nochmal...
-      lg->debug( "ChartsFragment::onDiveComboChangedSlot -> last chart is under construction, tzry later (automatic) again..." );
+      lg->debug( "ChartsFragment::onDiveComboChangedSlot -> last chart is under construction, try later (automatic) again..." );
       QTimer::singleShot( 100, this, [=]() { this->onDiveComboChangedSlot( index ); } );
     }
   }
