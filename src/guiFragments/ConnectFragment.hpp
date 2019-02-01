@@ -2,6 +2,7 @@
 #define CONNECTFORM_HPP
 
 #include <QDateTime>
+#include <QMovie>
 #include <QPair>
 #include <QPixmap>
 #include <QTableWidgetItem>
@@ -42,6 +43,8 @@ namespace spx
     std::unique_ptr< BtDiscoverRemoteDevice > discoverObj;
     //! ansicht SPX42 ohne Status (beim Start...)
     const QPixmap normalSpx;
+    //! spx42 beschäftigt
+    QMovie *busySpx;
     //! Bild verbundener SPX
     const QPixmap connectedSpx;
     //! Bild nicht verbundener SPX

@@ -51,6 +51,7 @@
         <file alias="spx42-error">SPX42-error.png</file>
         <file alias="spx42-no-connection">SPX42-no-connection.png</file>
         <file alias="spx42-connected">SPX42_ok.png</file>
+        <file alias="spx42-busy">SPX42-anim.gif</file>
     </qresource>
     <qresource prefix="/scanner">
         <file alias="worker">no_working.gif</file>
