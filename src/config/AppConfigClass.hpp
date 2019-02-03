@@ -24,6 +24,8 @@ namespace spx
     static const QString constLogGroupName;
     //! Einstellung für Logdatei
     static const QString constLogFileKey;
+    //! Einstellung für den Pfad zur Logdatei
+    static const QString constLogPathKey;
     //! Kennzeichner für keine Daten
     static const QString constNoData;
     //! Gruppenname für App Einstellungen
@@ -55,6 +57,8 @@ namespace spx
     QString configFile;
     //! Wie heisst das Logfile
     QString logfileName;
+    // Wo ist die Logdatei gespeichert
+    QString logfilePath;
     //! welchen Wert hat der Timer
     int watchdogTimer;
     //! welche Loggerstufe hat die App
@@ -81,8 +85,14 @@ namespace spx
     QString getConfigFile( void ) const;
     //! Name der Logdatei ausgeben
     QString getLogfileName( void ) const;
+    // Pfad zur Logdatei zurück geben
+    QString getLogfilePath( void ) const;
     //! Name der Logdatei setzten
     void setLogfileName( const QString &value );
+    //! Name des Pfades zur Logdatei setzten
+    void setLogFilePath( const QString &value );
+    //! den vollen Pfas/Namen der logdatei...
+    QString getFullLogFilePath( void );
     //! Wert des Watchdog holen
     int getWatchdogTime( void );
     //! setzte Loggingstufe in Config

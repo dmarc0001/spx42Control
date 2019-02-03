@@ -16,10 +16,10 @@ namespace spx
   enum LgThreshold : quint8
   {
     LG_NONE = 0,
-    LG_CRIT,
-    LG_WARN,
-    LG_INFO,
-    LG_DEBUG
+    LG_CRIT,  // 1
+    LG_WARN,  // 2
+    LG_INFO,  // 3
+    LG_DEBUG  // 4
   };
 
   class Logger
