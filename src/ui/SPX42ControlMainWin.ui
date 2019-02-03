@@ -96,7 +96,6 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionActionPrint"/>
     <addaction name="separator"/>
     <addaction name="actionQUIT"/>
    </widget>
@@ -146,8 +145,6 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionQUIT"/>
-   <addaction name="actionOpenDB"/>
-   <addaction name="actionActionPrint"/>
    <addaction name="actionSettings"/>
    <addaction name="actionGetHelp"/>
    <addaction name="separator"/>
@@ -182,44 +179,6 @@
    </property>
    <property name="menuRole">
     <enum>QAction::AboutRole</enum>
-   </property>
-  </action>
-  <action name="actionOpenDB">
-   <property name="icon">
-    <iconset resource="../res/SPX42ControlRes.qrc">
-     <normaloff>:/icons/ic_folder_open.png</normaloff>
-     <activeoff>:/icons/ic_folder_open_blue.png</activeoff>:/icons/ic_folder_open.png</iconset>
-   </property>
-   <property name="text">
-    <string>Open Database...</string>
-   </property>
-   <property name="iconText">
-    <string>Open Database...</string>
-   </property>
-   <property name="toolTip">
-    <string>Open SPX42 database...</string>
-   </property>
-   <property name="statusTip">
-    <string>open an database with SPX42 logs...</string>
-   </property>
-  </action>
-  <action name="actionActionPrint">
-   <property name="icon">
-    <iconset resource="../res/SPX42ControlRes.qrc">
-     <normaloff>:/icons/ic_print.png</normaloff>
-     <activeoff>:/icons/ic_folder_open_blue.png</activeoff>:/icons/ic_print.png</iconset>
-   </property>
-   <property name="text">
-    <string>Print...</string>
-   </property>
-   <property name="iconText">
-    <string>Print...</string>
-   </property>
-   <property name="toolTip">
-    <string>print current content</string>
-   </property>
-   <property name="statusTip">
-    <string>print current content...</string>
    </property>
   </action>
   <action name="actionSettings">

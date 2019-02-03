@@ -30,6 +30,7 @@ namespace spx
     explicit ChartDataWorker( std::shared_ptr< Logger > logger,
                               std::shared_ptr< SPX42Database > _database,
                               QObject *parent = nullptr );
+    void prepareMiniChart( QtCharts::QChart *chart );
     bool makeChartDataMini( QtCharts::QChart *chart, const QString &deviceMac, int diveNum );
     bool prepareDiveChart( QtCharts::QChart *chart );
     bool makeDiveChart( QtCharts::QChart *chart, const QString &deviceMac, int diveNum );

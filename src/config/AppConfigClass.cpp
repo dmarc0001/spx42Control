@@ -12,6 +12,7 @@ namespace spx
   const QString AppConfigClass::constBuildTypeStr{static_cast< const char * >( &SPX_BUILDTYPE[ 0 ] )};
   const QString AppConfigClass::constLogGroupName{"logger"};
   const QString AppConfigClass::constLogFileKey{"logFileName"};
+  const QString AppConfigClass::constLogPathKey{"logFilePath"};
   const QString AppConfigClass::constNoData{"-"};
   const QString AppConfigClass::constAppGroupName{"application"};
   const QString AppConfigClass::constAppTimeoutKey{"watchdogTimeout"};
@@ -147,12 +148,39 @@ namespace spx
   }
 
   /**
+   * @brief AppConfigClass::getLogfilePath
+   * @return
+   */
+  QString AppConfigClass::getLogfilePath( void ) const
+  {
+    return ( logfilePath );
+  }
+
+  /**
    * @brief AppConfigClass::setLogfileName Setze den Dateinamen des LOGFILES
    * @param value
    */
   void AppConfigClass::setLogfileName( const QString &value )
   {
     logfileName = value;
+  }
+
+  /**
+   * @brief AppConfigClass::setLogFilePath
+   * @param value
+   */
+  void AppConfigClass::setLogFilePath( const QString &value )
+  {
+    logfilePath = value;
+  }
+
+  /**
+   * @brief AppConfigClass::getFullLogFilePath
+   * @return
+   */
+  QString AppConfigClass::getFullLogFilePath()
+  {
+    return ( logfilePath.append( "/" ).append( logfileName ) );
   }
 
   /**
@@ -168,6 +196,15 @@ namespace spx
     // Öffne die Gruppe Logeinstellungen
     //
     settings.beginGroup( constLogGroupName );
+    //
+    // lese den Logpfad aus
+    //
+    logfilePath = settings.value( constLogPathKey, AppConfigClass::constNoData ).toString();
+    if ( QString::compare( logfilePath, constNoData ) == 0 )
+    {
+      // Nicht gefunden -> Fehler markieren
+      retval = false;
+    }
     //
     // Lese den Dateinamen aus
     //
@@ -202,10 +239,9 @@ namespace spx
     //
     // defaultwerte setzten
     //
-    logfileName = QStandardPaths::writableLocation( QStandardPaths::AppDataLocation )
-                      .append( "/" )
-                      .append( QApplication::applicationName() )
-                      .append( ".log" );
+    logfilePath = QStandardPaths::writableLocation( QStandardPaths::AppDataLocation );
+    settings.setValue( constLogPathKey, logfilePath );
+    logfileName = QApplication::applicationName().append( ".log" );
     settings.setValue( constLogFileKey, logfileName );
     //
     // Ende der Gruppe
@@ -227,6 +263,8 @@ namespace spx
     settings.beginGroup( constLogGroupName );
     //
     settings.setValue( constLogFileKey, logfileName );
+    //
+    settings.setValue( constLogPathKey, logfilePath );
     //
     // Ende der Gruppe
     //

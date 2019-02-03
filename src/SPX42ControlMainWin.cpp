@@ -284,20 +284,14 @@ namespace spx
     {
       case ApplicationStat::STAT_OFFLINE:
         ui->actionAbout->setEnabled( true );
-        ui->actionActionPrint->setEnabled( false );
-        ui->actionOpenDB->setEnabled( true );
         ui->actionSettings->setEnabled( true );
         break;
       case ApplicationStat::STAT_ONLINE:
         ui->actionAbout->setEnabled( true );
-        ui->actionActionPrint->setEnabled( false );
-        ui->actionOpenDB->setEnabled( true );
         ui->actionSettings->setEnabled( true );
         break;
       case ApplicationStat::STAT_ERROR:
         ui->actionAbout->setEnabled( true );
-        ui->actionActionPrint->setEnabled( false );
-        ui->actionOpenDB->setEnabled( false );
         ui->actionSettings->setEnabled( true );
         break;
     }
@@ -312,6 +306,10 @@ namespace spx
   {
     try
     {
+      //
+      // Optionen action
+      //
+      connect( ui->actionSettings, &QAction::triggered, this, &SPX42ControlMainWin::onOptionsActionSlot );
       //
       // About angeklickt
       //
@@ -1070,10 +1068,32 @@ namespace spx
     emit onSendBufferStateChangedSig( true );
   }
 
+  /**
+   * @brief SPX42ControlMainWin::onGetHelpForUser
+   */
   void SPX42ControlMainWin::onGetHelpForUser()
   {
     lg->debug( "SPX42ControlMainWin::onGetHelpForUser..." );
     HelpDialog helpDial( currentTab, this, lg );
     helpDial.exec();
+  }
+
+  /**
+   * @brief SPX42ControlMainWin::onOptionsActionSlot
+   */
+  void SPX42ControlMainWin::onOptionsActionSlot()
+  {
+    lg->debug( "SPX42ControlMainWin::onOptionsActionSlot..." );
+    if ( !optionsDlg )
+    {
+      optionsDlg = std::unique_ptr< OptionsDialog >( new OptionsDialog( this, cf, lg ) );
+    }
+    optionsDlg->init();
+    if ( QDialog::Accepted == optionsDlg->exec() )
+    {
+      lg->info( "SPX42ControlMainWin::onOptionsActionSlot -> dialog accepted" );
+      QMessageBox::information( this, tr( "CAUTION" ), tr( "TO APPLY CHANGES RESTART APPLICATION" ), QMessageBox::Ok,
+                                QMessageBox::Ok );
+    }
   }
 }  // namespace spx

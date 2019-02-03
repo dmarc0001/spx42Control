@@ -22,10 +22,41 @@ namespace spx
       maxTimeoutVal = waitTimeout;
   }
 
+  void ChartDataWorker::prepareMiniChart( QChart *chart )
+  {
+    lg->debug( "DiveMiniChart::prepareChart..." );
+    chart->legend()->hide();  // Keine Legende in der Minivorschau
+    // Chart Titel aufhübschen
+    QFont font;
+    font.setPixelSize( 8 );
+    chart->setTitleFont( font );
+    chart->setTitleBrush( QBrush( Qt::darkBlue ) );
+    chart->setTitle( tr( "PREVIEW" ) );
+    // Hintergrund aufhübschen
+    QBrush backgroundBrush( Qt::NoBrush );
+    chart->setBackgroundBrush( backgroundBrush );
+    // Malhintergrund auch noch
+    QLinearGradient plotAreaGradient;
+    plotAreaGradient.setStart( QPointF( 0, 1 ) );
+    plotAreaGradient.setFinalStop( QPointF( 1, 0 ) );
+    plotAreaGradient.setColorAt( 0.0, QRgb( 0x202040 ) );
+    plotAreaGradient.setColorAt( 1.0, QRgb( 0x2020f0 ) );
+    plotAreaGradient.setCoordinateMode( QGradient::ObjectBoundingMode );
+    chart->setPlotAreaBackgroundBrush( plotAreaGradient );
+    chart->setPlotAreaBackgroundVisible( true );
+    lg->debug( "DiveMiniChart::prepareChart...OK" );
+  }
+
   bool ChartDataWorker::makeChartDataMini( QChart *chart, const QString &deviceMac, int diveNum )
   {
     QString tableName;
     DiveDataSetsPtr dataSet;
+    QLineSeries *depthSeries;
+    QValueAxis *axisYDepth;
+    QLineSeries *ppo2Series;
+    QValueAxis *axisYPPO2;
+    QValueAxis *axisX;
+
     lg->debug( QString( "ChartDataWorker::makeChartDataMini for <%1>, num <%2>..." ).arg( deviceMac ).arg( diveNum ) );
     //
     // jetzt die Daten abholen
@@ -39,49 +70,43 @@ namespace spx
     //
     lg->debug( "ChartDataWorker::makeChartDataMini -> create depth serie..." );
     // tiefe Datenserie
-    QSplineSeries *depthSeries = new QSplineSeries();
+    depthSeries = new QLineSeries();
     // berülle Daten
     for ( auto singleSet : *dataSet.get() )
     {
       depthSeries->append( singleSet.lfdnr, singleSet.depth );
     }
     chart->addSeries( depthSeries );
-    QValueAxis *axisYDepth = new QValueAxis;
+    axisYDepth = new QValueAxis();
     axisYDepth->setLinePenColor( depthSeries->pen().color() );
+    axisYDepth->setLabelFormat( "%.1f m" );
+
     chart->addAxis( axisYDepth, Qt::AlignLeft );
     depthSeries->attachAxis( axisYDepth );
     axisYDepth->setMax( 0.0 );
 
     lg->debug( "ChartDataWorker::makeChartDataMini -> create ppo2 serie..." );
     // ppo2 Serie
-    QSplineSeries *ppo2Series = new QSplineSeries();
+    ppo2Series = new QLineSeries();
     for ( auto singleSet : *dataSet.get() )
     {
       ppo2Series->append( singleSet.lfdnr, singleSet.ppo2 );
     }
     chart->addSeries( ppo2Series );
-    QValueAxis *axisYPPO2 = new QValueAxis;
+    axisYPPO2 = new QValueAxis();
     axisYPPO2->setLinePenColor( depthSeries->pen().color() );
+    axisYPPO2->setLabelFormat( "%.2f bar" );
+    axisYPPO2->setTickCount( 4 );
+    axisYPPO2->setRange( 0.0, 3.0 );
+
     chart->addAxis( axisYPPO2, Qt::AlignRight );
     ppo2Series->attachAxis( axisYPPO2 );
 
     lg->debug( "ChartDataWorker::makeChartDataMini -> create time axis..." );
     // Zeitachse, dimension aus DB lesen
-    QValueAxis *axisX = new QValueAxis();
+    axisX = new QValueAxis();
     axisX->setTickCount( dataSet->count() );
     chart->addAxis( axisX, Qt::AlignBottom );
-
-    /*
-    // Kategorie für ppo2
-    QCategoryAxis *axisY3 = new QCategoryAxis;
-    axisY3->append( "Low", .21 );
-    axisY3->append( "Medium", 1.0 );
-    axisY3->append( "High", 1.6 );
-    axisY3->setLinePenColor( ppo2Series->pen().color() );
-    axisY3->setGridLinePen( ( ppo2Series->pen() ) );
-    chart->addAxis( axisY3, Qt::AlignRight );
-    ppo2Series->attachAxis( axisY3 );
-    */
     return ( true );
   }
 

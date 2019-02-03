@@ -18,9 +18,10 @@ namespace spx
       : QWidget( parent )
       , IFragmentInterface( logger, spx42Database, spxCfg, remSPX42 )
       , ui( new Ui::LogFragment() )
-      , miniChart( std::unique_ptr< DiveMiniChart >( new DiveMiniChart( logger, spx42Database ) ) )
+      , miniChart( new QtCharts::QChart() )
       , dummyChart( new QtCharts::QChart() )
       , chartView( std::unique_ptr< QtCharts::QChartView >( new QtCharts::QChartView( dummyChart ) ) )
+      , chartWorker( std::unique_ptr< ChartDataWorker >( new ChartDataWorker( logger, database, this ) ) )
       , logWriter( this, logger, spx42Database, spxCfg )
       , xmlExport( logger, spx42Database, this )
       , savedIcon( ":/icons/saved_black" )
@@ -68,42 +69,9 @@ namespace spx
     delete ui->logDetailsGroupBox->layout()->replaceWidget( ui->diveProfileGraphicsView, chartView.get() );
     // GUI dem Onlinestatus entsprechend vorbereiten
     setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
-    //
-    // ist der SPX online?
-    //
+    // ist der online gleich noch die Lizenz setzten
     if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
-    {
-      //
-      // ist das Verzeichnis im cache?
-      //
-      SPX42LogDirectoryEntryListPtr dirList;
-      if ( !spxConfig->getLogDirectory()->isEmpty() )
-      {
-        // Daten im Cache
-        // Speicherstatus sollte auch drin stehen
-        lg->debug( QString( "LogFragment::LogFragment -> fill log directory list from cache..." ) );
-        dirList = spxConfig->getLogDirectory();
-      }
-      else
-      {
-        // Daten in der DB
-        lg->debug( QString( "LogFragment::LogFragment -> fill log directory list from database..." ) );
-        dirList = database->getLogentrysForDevice( remoteSPX42->getRemoteConnected() );
-      }
-      //
-      // Alle Einträge sortiert in die Liste
-      //
-      auto sortKeys = dirList.get()->keys();
-      std::sort( sortKeys.begin(), sortKeys.end() );
-      for ( auto entr : sortKeys )
-      {
-        SPX42LogDirectoryEntry dEntry = dirList->value( entr );
-        onAddLogdirEntrySlot( QString( "%1:[%2]" ).arg( dEntry.number, 3, 10, QChar( '0' ) ).arg( dEntry.getDateTimeStr() ),
-                              dEntry.inDatabase );
-      }
-      // ist der online gleich noch die Lizenz setzten
       onConfLicChangedSlot();
-    }
     //
     // signale verbinden
     //
@@ -311,7 +279,8 @@ namespace spx
       QString entry = ui->logentryTableWidget->item( row, 0 )->text();
       QStringList el = entry.split( ':' );
       // in die Liste kommt die Nummer!
-      logDetailRead.enqueue( el.at( 0 ).toInt() );
+      if ( !el.isEmpty() && el.count() > 1 )
+        logDetailRead.enqueue( el.at( 0 ).toInt() );
     }
     //
     // und nun starte ich die Ereigniskette
@@ -350,6 +319,7 @@ namespace spx
     double depth = 0;
     int row = index.row();
     // items finden
+    // TODO: absichern wenn kene Daten vorhanden sind (kann vorkommen)
     QTableWidgetItem *clicked1stItem = ui->logentryTableWidget->item( row, 0 );
     QTableWidgetItem *clicked2ndItem = ui->logentryTableWidget->item( row, 1 );
     // Aus dem Text die Nummer extraieren
@@ -396,6 +366,10 @@ namespace spx
         //
         deviceAddr = offlineDeviceAddr;
       }
+      //
+      // zuerst dummychart setzten
+      //
+      chartView->setChart( dummyChart );
       if ( !deviceAddr.isEmpty() )
       {
         depth = ( database->getMaxDepthFor( deviceAddr, diveNum ) / 10.0 );
@@ -408,14 +382,25 @@ namespace spx
           //
           // das Chart anzeigen, wenn Daten vorhanden sind
           //
-          miniChart->showDiveDataInMiniGraph( deviceAddr, diveNum );
-          //
-          chartView->setChart( miniChart.get() );
+          miniChart->deleteLater();
+          if ( dbgetDataFuture.isFinished() )
+          {
+            miniChart = new QtCharts::QChart();
+            chartWorker->prepareMiniChart( miniChart );
+            chartView->setChart( miniChart );
+            dbgetDataFuture =
+                QtConcurrent::run( chartWorker.get(), &ChartDataWorker::makeChartDataMini, miniChart, deviceAddr, diveNum );
+          }
+          else
+          {
+            // später nochmal...
+            lg->debug( "LogFragment::onLogListClickeSlot -> last chart is under construction, try later (automatic) again..." );
+            QTimer::singleShot( 100, this, [=]() { this->onLogListClickeSlot( index ); } );
+          }
         }
         else
         {
           ui->diveDepthLabel->setText( diveDepthStr.arg( depthStr ) );
-          chartView->setChart( dummyChart );
         }
       }
     }
@@ -812,6 +797,10 @@ namespace spx
     ui->deviceSelectLabel->setVisible( !isConnected );
     ui->deviceSelectComboBox->setVisible( !isConnected );
     //
+    // Liste löschen
+    //
+    ui->logentryTableWidget->setRowCount( 0 );
+    //
     if ( isConnected )
     {
       //
@@ -819,13 +808,41 @@ namespace spx
       //
       offlineDeviceAddr.clear();
       ui->tabHeaderLabel->setText( fragmentTitlePattern.arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) );
+      ui->logentryTableWidget->setRowCount( 0 );
+      //
+      // ist das Verzeichnis im cache?
+      //
+      SPX42LogDirectoryEntryListPtr dirList;
+      if ( !spxConfig->getLogDirectory()->isEmpty() )
+      {
+        // Daten im Cache
+        // Speicherstatus sollte auch drin stehen
+        lg->debug( QString( "LogFragment::LogFragment -> fill log directory list from cache..." ) );
+        dirList = spxConfig->getLogDirectory();
+      }
+      else
+      {
+        // Daten in der DB
+        lg->debug( QString( "LogFragment::LogFragment -> fill log directory list from database..." ) );
+        dirList = database->getLogentrysForDevice( remoteSPX42->getRemoteConnected() );
+      }
+      //
+      // Alle Einträge sortiert in die Liste
+      //
+      auto sortKeys = dirList.get()->keys();
+      std::sort( sortKeys.begin(), sortKeys.end() );
+      for ( auto entr : sortKeys )
+      {
+        SPX42LogDirectoryEntry dEntry = dirList->value( entr );
+        onAddLogdirEntrySlot( QString( "%1:[%2]" ).arg( dEntry.number, 3, 10, QChar( '0' ) ).arg( dEntry.getDateTimeStr() ),
+                              dEntry.inDatabase );
+      }
     }
     else
     {
       //
       // wenn kein SPX42 verbunden ist
       //
-      ui->logentryTableWidget->setRowCount( 0 );
       // preview löschen
       chartView->setChart( dummyChart );
       ui->tabHeaderLabel->setText( fragmentTitleOfflinePattern.arg( tr( "unknown" ) ) );
@@ -1071,15 +1088,20 @@ namespace spx
    */
   void LogFragment::onDeviceComboChangedSlot( int index )
   {
+    //
+    // Liste leeren
+    //
+    ui->logentryTableWidget->setRowCount( 0 );
+    if ( index == -1 )
+    {
+      offlineDeviceAddr.clear();
+      return;
+    }
     offlineDeviceAddr = ui->deviceSelectComboBox->itemData( index ).toString();
     lg->debug( QString( "LogFragment::onDeviceComboChangedSlot -> index changed to <%1>. addr: <%2>" )
                    .arg( index, 2, 10, QChar( '0' ) )
                    .arg( offlineDeviceAddr ) );
     ui->tabHeaderLabel->setText( fragmentTitleOfflinePattern.arg( database->getAliasForMac( offlineDeviceAddr ) ) );
-    //
-    // Liste leeren
-    //
-    ui->logentryTableWidget->clear();
     // Daten in der DB
     lg->debug( QString( "LogFragment::LogFragment -> fill log directory list from database..." ) );
     SPX42LogDirectoryEntryListPtr dirList = database->getLogentrysForDevice( offlineDeviceAddr );

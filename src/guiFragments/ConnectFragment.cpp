@@ -23,7 +23,9 @@ namespace spx
       , ui( new Ui::connectForm )
       , errMsg( tr( "CONNECTION BLUETHOOTH ERROR: %1" ) )
       , discoverObj( std::unique_ptr< BtDiscoverRemoteDevice >( new BtDiscoverRemoteDevice( lg ) ) )
-      , connectedSpx( ":/images/spx42-normal" )
+      , normalSpx( ":/images/spx42-normal" )
+      , busySpx( new QMovie( ":/images/spx42-busy" ) )
+      , connectedSpx( ":/images/spx42-connected" )
       , disConnectedSpx( ":/images/spx42-no-connection" )
       , errorSpx( ":/images/spx42-error" )
   {
@@ -40,7 +42,7 @@ namespace spx
     ui->setupUi( this );
     ui->connectProgressBar->setVisible( false );
     ui->spx42ImageLabel->setVisible( true );
-    ui->spx42ImageLabel->setPixmap( disConnectedSpx );
+    ui->spx42ImageLabel->setPixmap( normalSpx );
     ui->editAliasesTableWidget->setVisible( false );
     ui->editAliasesTableWidget->setColumnCount( 2 );
     ui->editAliasesTableWidget->setHorizontalHeaderItem( 0, new QTableWidgetItem( tr( "DEVICE" ) ) );
@@ -91,6 +93,8 @@ namespace spx
   ConnectFragment::~ConnectFragment()
   {
     lg->debug( "ConnectFragment::~ConnectFragment..." );
+    ui->spx42ImageLabel->setText( "" );
+    delete busySpx;
     spxConfig->disconnect( this );
     remoteSPX42->disconnect( this );
     discoverObj->disconnect( this );
@@ -458,7 +462,13 @@ namespace spx
     if ( isConnected )
     {
       ui->spx42ImageLabel->setVisible( true );
-      ui->spx42ImageLabel->setPixmap( connectedSpx );
+      if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTING )
+      {
+        ui->spx42ImageLabel->setMovie( busySpx );
+        busySpx->start();
+      }
+      else
+        ui->spx42ImageLabel->setPixmap( connectedSpx );
       ui->editAliasesTableWidget->setVisible( false );
     }
     else

@@ -27,6 +27,7 @@
 #include "spx42/SPX42Config.hpp"
 #include "utils/AboutDialog.hpp"
 #include "utils/HelpDialog.hpp"
+#include "utils/OptionsDialog.hpp"
 
 namespace Ui
 {
@@ -44,64 +45,116 @@ namespace spx
   {
     private:
     Q_OBJECT
-    static const CmdMarker marker;                      //! zur initialisierung von Einträgen
-    static const QByteArray ar;                         //! zur initialisierung von Einträgen
-    std::unique_ptr< Ui::SPX42ControlMainWin > ui;      //! das GUI Objekt
-    std::shared_ptr< Logger > lg;                       //! Loggerobjekt für Logs
-    const std::shared_ptr< SPX42Config > spx42Config;   //! Konfiguration des verbundenen SPX42
-    std::shared_ptr< SPX42RemotBtDevice > remoteSPX42;  //! Objekt des entfernten SPX42 (verbunden oder nicht verbunden)
-    std::shared_ptr< SPX42Database > spx42Database;     //! Datenbankobjekt zur Speicherung der SPX Daten/Einstellungen
-    std::unique_ptr< QLabel > onlineLabel;              //! Label signalisiert online oder offline
-    std::unique_ptr< QLabel > akkuLabel;                //! Label signalisiert online oder offline
-    std::unique_ptr< QLabel > waitForWriteLabel;        //! Label zeigt an, wenn noch Daten zum Schreiben offen sind
-    QStringList tabTitle;                               //! Tab Titel (nicht statisch, das Objekt gibts eh nur einmal)
-    AppConfigClass cf;                                  //! Konfiguration aus Datei
-    QTimer watchdog;                                    //! Wachhund für Timeouts
-    QTimer configWriteTimer;        //! Nach Änderungen der Konfiguration zurück zum SPX schreiben (etwas verzögert)
-    QStringList spx42GasHashes;     //! Hashwerte der Gaseinstellungen (acht Stück)
-    ApplicationStat currentStatus;  //! welchen Status hat die App?
-    qint16 watchdogCounter;         //! Zeitspanne zum Timeout
-    qint16 zyclusCounter;           //! zählt die Timerzyklen
-    ApplicationTab currentTab;      //! welcher Tab ist aktiv?
-    QPalette offlinePalette;        //! Pallette für offline Schrift
-    QPalette onlinePalette;         //! Pallette für offline Schrift
-    QPalette busyPalette;           //! Pallette für "offline Schrift"ist beschäftigt"
-    QPalette connectingPalette;     //! Pallette für verbinden
-    QPalette errorPalette;          //! Pallette für den Fehlerfall
+    //! zur initialisierung von Einträgen
+    static const CmdMarker marker;
+    //! zur initialisierung von Einträgen
+    static const QByteArray ar;
+    //! das GUI Objekt
+    std::unique_ptr< Ui::SPX42ControlMainWin > ui;
+    //! Loggerobjekt für Logs
+    std::shared_ptr< Logger > lg;
+    //! Konfiguration des verbundenen SPX42
+    const std::shared_ptr< SPX42Config > spx42Config;
+    //! Objekt des entfernten SPX42 (verbunden oder nicht verbunden)
+    std::shared_ptr< SPX42RemotBtDevice > remoteSPX42;
+    //! Datenbankobjekt zur Speicherung der SPX Daten/Einstellungen
+    std::shared_ptr< SPX42Database > spx42Database;
+    //! Label signalisiert online oder offline
+    std::unique_ptr< QLabel > onlineLabel;
+    //! Label signalisiert online oder offline
+    std::unique_ptr< QLabel > akkuLabel;
+    //! Label zeigt an, wenn noch Daten zum Schreiben offen sind
+    std::unique_ptr< QLabel > waitForWriteLabel;
+    //! Dialog zum verändern/anzeigen der Programmoptionen
+    std::unique_ptr< OptionsDialog > optionsDlg;
+    //! Tab Titel (nicht statisch, das Objekt gibts eh nur einmal)
+    QStringList tabTitle;
+    //! Konfiguration aus Datei
+    AppConfigClass cf;
+    //! Wachhund für Timeouts
+    QTimer watchdog;
+    //! Nach Änderungen der Konfiguration zurück zum SPX schreiben (etwas verzögert)
+    QTimer configWriteTimer;
+    //! Hashwerte der Gaseinstellungen (acht Stück)
+    QStringList spx42GasHashes;
+    //! welchen Status hat die App?
+    ApplicationStat currentStatus;
+    //! Zeitspanne zum Timeout
+    qint16 watchdogCounter;
+    //! zählt die Timerzyklen
+    qint16 zyclusCounter;
+    //! welcher Tab ist aktiv?
+    ApplicationTab currentTab;
+    //! Pallette für offline Schrift
+    QPalette offlinePalette;
+    //! Pallette für offline Schrift
+    QPalette onlinePalette;
+    //! Pallette für "offline Schrift"ist beschäftigt"
+    QPalette busyPalette;
+    //! Pallette für verbinden
+    QPalette connectingPalette;
+    //! Pallette für den Fehlerfall
+    QPalette errorPalette;
 
     public:
     explicit SPX42ControlMainWin( QWidget *parent = nullptr );
     ~SPX42ControlMainWin();
-    void closeEvent( QCloseEvent *event );  //! Das Beenden-Ereignis
+    //! Das Beenden-Ereignis
+    void closeEvent( QCloseEvent *event );
+    //! gib dem shared zeiger auf den logger zurück
     std::shared_ptr< Logger > getLogger( void );
 
     private:
-    bool createLogger();                                     //! Erzeuge den Logger
-    void fillTabTitleArray( void );                          //! Fülle das Titelarray lokalisiert
-    bool setActionStati( void );                             //! setze Actions entsprchend des Status
-    bool connectActions( void );                             //! Verbinde Actions mit Slots
-    bool disconnectActions( void );                          //! alle slots freigeben
-    void createApplicationTabs( void );                      //! Erzeuge die (noch leeren) Tabs
-    void clearApplicationTabs( void );                       //! Leere die Tabs
-    void simulateLicenseChanged( LicenseType lType );        //! Simuliere lizenzwechsel
-    ApplicationTab getApplicationTab( void );                //! Welcher Tab war noch aktiv?
-    void setOnlineStatusMessage( const QString &msg = "" );  //! setze eine Meldung in den Fenstertitel
-    void makeOnlineStatus( void );                           //! Mache einen Online Status
+    //! Erzeuge den Logger
+    bool createLogger();
+    //! Fülle das Titelarray lokalisiert
+    void fillTabTitleArray( void );
+    //! setze Actions entsprchend des Status
+    bool setActionStati( void );
+    //! Verbinde Actions mit Slots
+    bool connectActions( void );
+    //! alle slots freigeben
+    bool disconnectActions( void );
+    //! Erzeuge die (noch leeren) Tabs
+    void createApplicationTabs( void );
+    //! Leere die Tabs
+    void clearApplicationTabs( void );
+    //! Simuliere lizenzwechsel
+    void simulateLicenseChanged( LicenseType lType );
+    //! Welcher Tab war noch aktiv?
+    ApplicationTab getApplicationTab( void );
+    //! setze eine Meldung in den Fenstertitel
+    void setOnlineStatusMessage( const QString &msg = "" );
+    //! Mache einen Online Status
+    void makeOnlineStatus( void );
 
     signals:
-    void onSendBufferStateChangedSig( bool isBusy );  //! statusänderungeen im Puffer oder rledigt
+    //! statusänderungeen im Puffer oder rledigt
+    void onSendBufferStateChangedSig( bool isBusy );
 
     private slots:
-    void onWatchdogTimerSlot( void );                                       //! timer für zyklische Sachen, watchdog...
-    void onTabCurrentChangedSlot( int idx );                                //! TAB Index gewechselt
-    void onLicenseChangedSlot( void );                                      //! Lizenztyp getriggert
-    void onAkkuValueChangedSlot( double akkuValue = 0.0 );                  //! Akkuwert setzen
-    void onOnlineStatusChangedSlot( bool isOnline );                        //! Wenn sich der Onlinestatus des SPX42 ändert
-    void onWarningMessageSlot( const QString &msg, bool asPopup = false );  //! eine Warnmeldung soll das Main darstellen
-    void onErrorgMessageSlot( const QString &msg, bool asPopup = false );   //! eine Warnmeldung soll das Main darstellen
-    void onConfigWasChangedSlot( void );                                    //! Signal empfangen, dass config geschrieben wurde
-    void onConfigWriteBackSlot( void );                                     //! timer wenn configs zurück geschrieben werden müssen
-    void onGetHelpForUser( void );                                          //! Hilfe anzeigen
+    //! timer für zyklische Sachen, watchdog...
+    void onWatchdogTimerSlot( void );
+    //! TAB Index gewechselt
+    void onTabCurrentChangedSlot( int idx );
+    //! Lizenztyp getriggert
+    void onLicenseChangedSlot( void );
+    //! Akkuwert setzen
+    void onAkkuValueChangedSlot( double akkuValue = 0.0 );
+    //! Wenn sich der Onlinestatus des SPX42 ändert
+    void onOnlineStatusChangedSlot( bool isOnline );
+    //! eine Warnmeldung soll das Main darstellen
+    void onWarningMessageSlot( const QString &msg, bool asPopup = false );
+    //! eine Warnmeldung soll das Main darstellen
+    void onErrorgMessageSlot( const QString &msg, bool asPopup = false );
+    //! Signal empfangen, dass config geschrieben wurde
+    void onConfigWasChangedSlot( void );
+    //! timer wenn configs zurück geschrieben werden müssen
+    void onConfigWriteBackSlot( void );
+    //! Hilfe anzeigen
+    void onGetHelpForUser( void );
+    //! Wenn der User nach Optionen bettelt
+    void onOptionsActionSlot( void );
   };
 }  // namespace spx
 

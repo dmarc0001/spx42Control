@@ -50,6 +50,9 @@
         <file alias="spx42-normal">SPX42.png</file>
         <file alias="spx42-error">SPX42-error.png</file>
         <file alias="spx42-no-connection">SPX42-no-connection.png</file>
+        <file alias="spx42-connected">SPX42_ok.png</file>
+        <file alias="spx42-busy">SPX42-anim.gif</file>
+        <file alias="binaer-background.jpg">binaeer.jpg</file>
     </qresource>
     <qresource prefix="/scanner">
         <file alias="worker">no_working.gif</file>
@@ -61,6 +64,6 @@
         <file alias="defaultStyleUx.css">spx42ControlUx.css</file>
     </qresource>
     <qresource prefix="/help">
-        <file>help_en.html</file>
+        <file alias="help_de.html">help_en.html</file>
     </qresource>
 </RCC>
