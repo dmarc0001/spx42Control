@@ -3,7 +3,8 @@
 
 from argparse import ArgumentParser
 import datetime
-import os.path
+from os import path
+import platform
 import re
 from xml.dom import minidom
 
@@ -59,6 +60,7 @@ def main():
     #
     force_set_version = False
     version_list = [0, 0, 0]
+    os_version = platform.system().lower()
     #
     # parse argumente
     #
@@ -70,7 +72,7 @@ def main():
     args = parser.parse_args()
     if args.prjdir:
         project_dir = args.prjdir
-        if os.path.isdir(project_dir):
+        if path.isdir(project_dir):
             print("set project dir to {}".format(project_dir))
         else:
             print("error: not given project path!")
@@ -87,8 +89,8 @@ def main():
     #
     # erst mal die config datei
     #
-    config_file = os.path.join(project_dir, INSTALLDIR, CONFIGDIR, 'config.xml')
-    if not os.path.isfile(config_file):
+    config_file = path.join(project_dir, INSTALLDIR, CONFIGDIR, "config_{}.xml".format(os_version))
+    if not path.isfile(config_file):
         print("error: config file not found: {}".format(config_file))
         exit(-1)
     #
@@ -115,8 +117,8 @@ def main():
     # Packages bearbeiten
     #
     for package_file in PACKAGELIST:
-        current_file = os.path.join(project_dir, INSTALLDIR, PACKAGESDIR, package_file, 'meta', 'package.xml')
-        if not os.path.isfile(current_file):
+        current_file = path.join(project_dir, INSTALLDIR, PACKAGESDIR, package_file, 'meta', 'package.xml')
+        if not path.isfile(current_file):
             print("error: package file not found: {}".format(current_file))
             exit(-1)
         print("compute package {} file {}".format(package_file, current_file))

@@ -33,6 +33,7 @@ SET ARCHIVEGEN=%QT_INSTALLER_DIR%\archivegen.exe
 SET REPOGEN=%QT_INSTALLER_DIR%\repogen.exe
 SET BINARYCREATOR=%QT_INSTALLER_DIR%\binarycreator.exe
 SET MAKE_DONE=false
+SET APP_INSTALLER_CONFIG=config_windows.xml
 
 echo.
 echo.
@@ -146,16 +147,16 @@ if "%MAKE_DONE%" == "false" goto false_end
 cd %INSTALLERBASE%
 echo erzeuge das installerprogramm online...
 
-echo %BINARYCREATOR% -n -c config\config.xml -p packages -i qtRuntime,spx42Control %ONLINEINSTALLER%
-%BINARYCREATOR% -n -c config\config.xml -p packages -i qtRuntime,spx42Control %ONLINEINSTALLER%
+echo %BINARYCREATOR% -n -c config\%APP_INSTALLER_CONFIG% -p packages -i qtRuntime,spx42Control %ONLINEINSTALLER%
+%BINARYCREATOR% -n -c config\%APP_INSTALLER_CONFIG% -p packages -i qtRuntime,spx42Control %ONLINEINSTALLER%
 :: repository generate
 echo %REPOGEN% -p packages -i qtRuntime,spx42Control ../repository/
 %REPOGEN% -p packages -i qtRuntime,spx42Control ../repository/
 
 ::sleep 2
 ::echo erzeuge das installerprogramm offline...
-::echo %BINARYCREATOR% -f -c config\config.xml -p packages -i qtRuntime,spx42Control %OFFLINEINSTALLER%
-::%BINARYCREATOR% -f -c config\config.xml -p packages -i qtRuntime,spx42Control %OFFLINEINSTALLER%
+::echo %BINARYCREATOR% -f -c config\%APP_INSTALLER_CONFIG% -p packages -i qtRuntime,spx42Control %OFFLINEINSTALLER%
+::%BINARYCREATOR% -f -c config\%APP_INSTALLER_CONFIG% -p packages -i qtRuntime,spx42Control %OFFLINEINSTALLER%
 
 :: jetzt die META Daten zippen
 

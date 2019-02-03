@@ -20,8 +20,7 @@ INSTALLERBASE=$PROJECTBASE/installer
 REPOSITORY_DIR=repository
 APP_INSTALLER_FILE=spx42Control.7z
 APP_INSTALLER_FILE_PATH=$INSTALLERBASE/packages/spx42ControlMac/data/
-#RUNTIME_INSTALLER_FILE=qtRuntime_5120.7z
-#RUNTIME_INSTALLER_FILE_PATH=$INSTALLERBASE/packages/qtRuntime/data/
+APP_INSTALLER_CONFIG=config_darwin.xml
 
 QT_BASEDIR=/Users/dmarcini/Qt/$QT_PREFIX/clang_64/bin
 QT_QMAKE=$QT_BASEDIR/qmake
@@ -115,8 +114,8 @@ echo "make repository..."
 $REPOGEN -p packages -i spx42ControlMac ../repository
 
 echo "make binary creator..."
-echo $BINARYCREATOR -n -c config/config_mac.xml -p packages -i spx42ControlMac $ONLINEINSTALLER
-$BINARYCREATOR -n -c config/config_mac.xml -p packages -i spx42ControlMac $ONLINEINSTALLER
+echo $BINARYCREATOR -n -c config/$APP_INSTALLER_CONFIG -p packages -i spx42ControlMac $ONLINEINSTALLER
+$BINARYCREATOR -n -c config/$APP_INSTALLER_CONFIG -p packages -i spx42ControlMac $ONLINEINSTALLER
 
 
 popd

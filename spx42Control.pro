@@ -191,7 +191,11 @@ DISTFILES               += \
     src/res/spx42Control.css \
     src/res/spx42ControlMac.css \
     src/res/TlwgTypewriter.ttf \
-    src/res/bahnschrift.ttf
+    src/res/bahnschrift.ttf \
+    tools/makeDeliverBuild_osx.sh \
+    tools/makeDeliverBuild_win.cmd \
+    tools/makeBuildTemplate.py \
+    tools/setAppVersion.py
 
 
 ###############################################################################
