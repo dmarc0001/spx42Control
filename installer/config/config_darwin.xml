@@ -1,7 +1,6 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<Installer>
+<?xml version="1.0" ?><Installer>
   <Name>SPX42 Control App (MAC)</Name>
-  <Version>0.5.2</Version>
+  <Version>0.5.4</Version>
   <Title>SUBMATIX SPX42 Controller App</Title>
   <Publisher>SUBMATIX</Publisher>
   <ProductUrl>http://www.submatix.com</ProductUrl>
@@ -24,4 +23,3 @@
     </Repository>
   </RemoteRepositories>
 </Installer>
-
