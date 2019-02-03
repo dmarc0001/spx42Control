@@ -52,7 +52,8 @@ namespace spx
     //
     // Loglevel darstellen
     //
-    switch ( cf.getLogTreshold() )
+    logThreshold = cf.getLogTreshold();
+    switch ( logThreshold )
     {
       default:
       case LgThreshold::LG_NONE:
@@ -83,6 +84,7 @@ namespace spx
       cf.setLogFilePath( logfileDirName );
     if ( !databaseFileDirName.isEmpty() )
       cf.setDatabasePath( databaseFileDirName );
+    cf.setLogThreshold( logThreshold );
     QDialog::accept();
   }
 
