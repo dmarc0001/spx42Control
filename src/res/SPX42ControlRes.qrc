@@ -52,6 +52,7 @@
         <file alias="spx42-no-connection">SPX42-no-connection.png</file>
         <file alias="spx42-connected">SPX42_ok.png</file>
         <file alias="spx42-busy">SPX42-anim.gif</file>
+        <file alias="binaer-background.jpg">binaeer.jpg</file>
     </qresource>
     <qresource prefix="/scanner">
         <file alias="worker">no_working.gif</file>

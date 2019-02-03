@@ -30,6 +30,9 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">background-image: url(&quot;:/images/binaer-background.jpg&quot;);</string>
+  </property>
   <property name="locale">
    <locale language="English" country="UnitedStates"/>
   </property>
