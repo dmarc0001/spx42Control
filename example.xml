@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<uddf version="2.2.0">
+  <!--SUBMATIX SPX42 Manager-->
+  <generator>
+    <name>SPX42</name>
+    <manufacturer>
+      <name>Dirk Marciniak</name>
+      <contact>
+        <email>dirk@submatix.com</email>
+        <homepage>http://www.submatix.com</homepage>
+      </contact>
+    </manufacturer>
+    <version>1.2.6</version>
+    <date>
+      <year>2018</year>
+      <month>05</month>
+      <day>18</day>
+    </date>
+  </generator>
+  <gasdefinitions>
+    <mix id="217900">
+      <name>217900</name>
+      <o2>0.210</o2>
+      <n2>0.790</n2>
+      <he>0.000</he>
+      <ar>0.000</ar>
+      <h2>0.000</h2>
+    </mix>
+  </gasdefinitions>
+  <profiledata>
+    <repetitiongroup id="1">
+      <dive id="138">
+        <date>
+          <year>2012</year>
+          <month>03</month>
+          <day>09</day>
+        </date>
+        <time>
+          <hour>05</hour>
+          <minute>34</minute>
+        </time>
+        <divenumber>138</divenumber>
+        <airtemperature>278.1</airtemperature>
+        <lowesttemperature>277.1</lowesttemperature>
+        <greatestdepth>32.1</greatestdepth>
+        <density>1034.0</density>
+        <notes>
+          <text/>
+        </notes>
+        <samples>
+          <waypoint>
+            <depth>1.70</depth>
+            <divetime>30.0</divetime>
+            <temperature>278.1</temperature>
+            <switchmix ref="217900"/>
+            <setpo2>7.00</setpo2>
+          </waypoint>
+          <waypoint>
+            <depth>2.50</depth>
+            <divetime>60.0</divetime>
+            <temperature>278.1</temperature>
+          </waypoint>
+          <waypoint>
+            <depth>3.00</depth>
+            <divetime>90.0</divetime>
+            <temperature>278.1</temperature>
+          </waypoint>
+        </samples>
+      </dive>
+    </repetitiongroup>
+  </profiledata>
+</uddf>
