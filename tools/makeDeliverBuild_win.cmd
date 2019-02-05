@@ -12,7 +12,6 @@ SET PACKAGES=packages
 SET PROJECTBASE=C:\localProg\QT-Projekte\spx42Control
 SET QT_DIR=C:\localProg\Qt
 SET QT_BASEDIR=%QT_DIR%\%QT_PREFIX%\msvc2017_64\bin
-::SET QT_BASEDIR=%QT_DIR%\%QT_PREFIX%\msvc2017\bin
 SET QT_TOOLS=%QT_DIR%\Tools
 SET QT_INSTALLER_DIR=%QT_TOOLS%\QtInstallerFramework\3.0\bin
 SET PROJECTBUILDDIR=DEPLOYDIR
@@ -56,7 +55,7 @@ echo directory %cd%
 
 echo Umgebung einrichten...
 SET PATH=%PATH%;%WINKIT%
-call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
+call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
 
 echo.
 echo qmake ausfuehren

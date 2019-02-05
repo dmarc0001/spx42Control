@@ -1,7 +1,7 @@
 <?xml version="1.0" ?><Package>
     <DisplayName>SPX42 app execute (MAC)</DisplayName>
     <Description>Executable files for the spx42Control application.</Description> 
-    <Version>2.5.10</Version>
-    <ReleaseDate>2019-02-03</ReleaseDate>
+    <Version>2.5.12</Version>
+    <ReleaseDate>2019-02-05</ReleaseDate>
     <Default>true</Default>
 </Package>

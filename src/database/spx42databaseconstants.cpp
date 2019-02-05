@@ -24,6 +24,7 @@ CREATE TABLE 'detaildir' ( \
   ux_timestamp INTEGER DEFAULT 0, \
   detail_count INTEGER DEFAULT 0, \
   max_depth    INTEGER DEFAULT 0, \
+  notes        TEXT(120) DEFAULT NULL, \
   FOREIGN KEY ( \
                device_id \
               ) \
