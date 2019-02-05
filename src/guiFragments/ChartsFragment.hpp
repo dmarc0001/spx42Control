@@ -73,6 +73,7 @@ namespace spx
     void onDeviceComboChangedSlot( int index );
     void onDiveComboChangedSlot( int index );
     void onChartReadySlot( void );
+    void onNotesLineEditFinishedSlot( void );
   };
 }  // namespace spx
 #endif  // CHARTSFRAGMENT_HPP

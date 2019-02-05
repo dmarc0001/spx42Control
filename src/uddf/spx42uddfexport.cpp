@@ -463,6 +463,8 @@ namespace spx
     qint64 ux_timestamp = database->getTimestampForDive( device_mac, diveNum );
     QDateTime diveDateTime = QDateTime::fromSecsSinceEpoch( ux_timestamp );
     DiveDataSetsPtr dataSerie = database->getDiveDataSets( device_mac, diveNum );
+    // TODO: Bemerkungen aus Datenbank lesen
+    QString diveNotes = "not notes implemented yet";
     // ich gehe mal davon aus, das der erste wert noch luft ist... (ist angenähert)
     double airtemperature = static_cast< double >( dataSerie->first().temperature ) + ProjectConst::KELVINDIFF;
     // niedrigste Temperatur finden
@@ -501,9 +503,8 @@ namespace spx
     // grösste Tiefe
     st.writeTextElement( "greatestdepth", QString( "%1" ).arg( greatestdepth, 0, 'f', 1 ) );
     // Bemerkungen Block
-    // TODO: könnte noch erweitert werden
     st.writeStartElement( "notes" );
-    st.writeTextElement( "text", QString( "dive number %1" ).arg( diveNum, 3, 10, QChar( '0' ) ) );
+    st.writeTextElement( "text", diveNotes );
     st.writeEndElement();
     // Block informationafterdive schliessen
     st.writeEndElement();

@@ -46,6 +46,7 @@ namespace spx
     ppo2ChartView->setRenderHint( QPainter::Antialiasing );
     ppo2ChartView->setRubberBand( QChartView::HorizontalRubberBand );
     //
+    ui->notesLineEdit->setClearButtonEnabled( true );
     initDeviceSelection();
     if ( ui->diveSelectComboBox->currentIndex() > -1 )
       onDiveComboChangedSlot( ui->diveSelectComboBox->currentIndex() );
@@ -54,6 +55,7 @@ namespace spx
     connect( ui->diveSelectComboBox, static_cast< void ( QComboBox::* )( int ) >( &QComboBox::currentIndexChanged ), this,
              &ChartsFragment::onDiveComboChangedSlot );
     connect( chartWorker.get(), &ChartDataWorker::onChartReadySig, this, &ChartsFragment::onChartReadySlot );
+    connect( ui->notesLineEdit, &QLineEdit::editingFinished, this, &ChartsFragment::onNotesLineEditFinishedSlot );
   }
 
   ChartsFragment::~ChartsFragment()
@@ -216,6 +218,11 @@ namespace spx
   {
     // QTimer::singleShot( 20, this, [=]() { ChartsFragment::onDiveComboChangedSlot( int index ); } );
     lg->debug( "ChartsFragment::onChartReadySlot" );
+  }
+
+  void ChartsFragment::onNotesLineEditFinishedSlot()
+  {
+    lg->debug( "ChartsFragment::onNotesLineEditFinishedSlot -> edit finished..." );
   }
 
   void ChartsFragment::onOnlineStatusChangedSlot( bool )

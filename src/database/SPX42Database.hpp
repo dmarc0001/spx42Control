@@ -16,6 +16,9 @@
 #include "spx42/SPX42SingleCommand.hpp"
 #include "spx42databaseconstants.hpp"
 
+// TODO: Bemerkungen lesen und schreiben
+// TODO: Datenbank erweitern für Bemerkungen
+
 namespace spx
 {
   //
