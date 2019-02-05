@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="de_DE">
+<TS version="2.1" language="de_DE" sourcelanguage="en_US">
 <context>
     <name>AboutDialog</name>
     <message>
@@ -1332,7 +1332,7 @@
     <message>
         <location filename="../database/ChartDataWorker.cpp" line="124"/>
         <source>DIVE VIEW</source>
-        <translation>Taucgang Ansicht</translation>
+        <translation>Tauchgang Ansicht</translation>
     </message>
     <message>
         <location filename="../database/ChartDataWorker.cpp" line="195"/>
@@ -1593,17 +1593,6 @@
     </message>
 </context>
 <context>
-    <name>spx::DiveMiniChart</name>
-    <message>
-        <source>PREVIEW</source>
-        <translation type="vanished">Vorschau</translation>
-    </message>
-    <message>
-        <source>DIVE NR %1</source>
-        <translation type="vanished">Tauchgang %1</translation>
-    </message>
-</context>
-<context>
     <name>spx::GasFragment</name>
     <message>
         <location filename="../guiFragments/GasFragment.cpp" line="20"/>
@@ -1730,44 +1719,44 @@
         <translation>Das gewählte Verzeichnis existiert nicht!</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="573"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="580"/>
         <source>EXPORT WARNING</source>
         <translation>EXPORT WARNUNG</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="573"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="580"/>
         <source>An other export is current running...</source>
         <translation>Ein anderer Export arbeitet momentan...</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1186"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1193"/>
         <source>EXPORT SUCCESS</source>
         <translation>Export Erfolgreich</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1186"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1193"/>
         <source>Export was successful to file: 
 &lt;%1&gt;</source>
         <translation>Der Export war erfolgreich, Datei: 
 &lt;%1&gt;</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1193"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1200"/>
         <source>EXPORT ERROR</source>
         <translation>EXPORT FEHLER</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1193"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1200"/>
         <source>Can&apos;t export dives to UDDF file</source>
         <translation>Kann Tauchgänge nicht in UDDF Datei exportieren</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="877"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="884"/>
         <source>unknown</source>
         <translation>unbekannt</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="888"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="895"/>
         <source>database empty</source>
         <translation>Datenbank leer</translation>
     </message>

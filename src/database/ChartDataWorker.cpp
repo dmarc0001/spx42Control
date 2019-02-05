@@ -52,8 +52,8 @@ namespace spx
     QString tableName;
     DiveDataSetsPtr dataSet;
     QLineSeries *depthSeries;
-    QValueAxis *axisYDepth;
     QLineSeries *ppo2Series;
+    QValueAxis *axisYDepth;
     QValueAxis *axisYPPO2;
     QValueAxis *axisX;
 
@@ -68,40 +68,36 @@ namespace spx
     //
     // jetzt die Daten für das Chart machen
     //
-    lg->debug( "ChartDataWorker::makeChartDataMini -> create depth serie..." );
+    lg->debug( "ChartDataWorker::makeChartDataMini -> create series..." );
     // tiefe Datenserie
     depthSeries = new QLineSeries();
+    // ppo2 Serie
+    ppo2Series = new QLineSeries();
+
     // berülle Daten
     for ( auto singleSet : *dataSet.get() )
     {
       depthSeries->append( singleSet.lfdnr, singleSet.depth );
+      ppo2Series->append( singleSet.lfdnr, singleSet.ppo2 );
     }
+    // Tiefe Datenserie
     chart->addSeries( depthSeries );
     axisYDepth = new QValueAxis();
     axisYDepth->setLinePenColor( depthSeries->pen().color() );
     axisYDepth->setLabelFormat( "%.1f m" );
-
     chart->addAxis( axisYDepth, Qt::AlignLeft );
     depthSeries->attachAxis( axisYDepth );
     axisYDepth->setMax( 0.0 );
-
-    lg->debug( "ChartDataWorker::makeChartDataMini -> create ppo2 serie..." );
     // ppo2 Serie
-    ppo2Series = new QLineSeries();
-    for ( auto singleSet : *dataSet.get() )
-    {
-      ppo2Series->append( singleSet.lfdnr, singleSet.ppo2 );
-    }
     chart->addSeries( ppo2Series );
     axisYPPO2 = new QValueAxis();
     axisYPPO2->setLinePenColor( depthSeries->pen().color() );
     axisYPPO2->setLabelFormat( "%.2f bar" );
     axisYPPO2->setTickCount( 4 );
     axisYPPO2->setRange( 0.0, 3.0 );
-
     chart->addAxis( axisYPPO2, Qt::AlignRight );
     ppo2Series->attachAxis( axisYPPO2 );
-
+    //
     lg->debug( "ChartDataWorker::makeChartDataMini -> create time axis..." );
     // Zeitachse, dimension aus DB lesen
     axisX = new QValueAxis();
@@ -110,7 +106,7 @@ namespace spx
     return ( true );
   }
 
-  bool ChartDataWorker::prepareDiveChart( QChart *chart )
+  bool ChartDataWorker::prepareDiveCharts( QChart *bigchart, QChart *ppo2chart )
   {
     QFont font;
     QBrush backgroundBrush( Qt::NoBrush );
@@ -118,49 +114,67 @@ namespace spx
     //
     lg->debug( "ChartDataWorker::makeDiveChart ->prepareChart..." );
     // Chart Titel aufhübschen
-    font.setPointSize( 11 );
-    chart->setTitleFont( font );
-    chart->setTitleBrush( QBrush( Qt::darkBlue ) );
-    chart->setTitle( tr( "DIVE VIEW" ) );
-    // chart->setTheme( QChart::ChartTheme::ChartThemeDark );
-    chart->setTheme( QChart::ChartTheme::ChartThemeQt );
-    // chart->setTheme( QChart::ChartTheme::ChartThemeBrownSand );
-    // chart->setTheme( QChart::ChartTheme::ChartThemeLight );
-    chart->setAnimationOptions( QChart::SeriesAnimations );
-    chart->legend()->setAlignment( Qt::AlignBottom );
+    font.setPointSize( 13 );
+    for ( auto ch : {bigchart, ppo2chart} )
+    {
+      ch->setTitleBrush( QBrush( Qt::darkBlue ) );
+      ch->setTitleFont( font );
+      ch->setTheme( QChart::ChartTheme::ChartThemeQt );
+      // ch->setTheme( QChart::ChartTheme::ChartThemeDark );
+      // ch->setTheme( QChart::ChartTheme::ChartThemeBrownSand );
+      // ch->setTheme( QChart::ChartTheme::ChartThemeLight );
+      ch->setAnimationOptions( QChart::SeriesAnimations );
+      ch->legend()->setAlignment( Qt::AlignBottom );
+      ch->legend()->hide();
+      QMargins mar = ch->margins();
+      mar.setTop( 0 );
+      mar.setBottom( 0 );
+      ch->setMargins( mar );
+    }
+    // bigchart->setTitle( tr( "DIVE VIEW" ) );
+    bigchart->title().clear();
+    ppo2chart->title().clear();
     lg->debug( "ChartDataWorker::makeDiveChart ->prepareChart...OK" );
     return ( true );
   }
 
-  bool ChartDataWorker::makeDiveChart( QtCharts::QChart *chart, const QString &deviceMac, int diveNum )
+  bool ChartDataWorker::makeDiveChart( QtCharts::QChart *bigchart, QChart *ppo2chart, const QString &deviceMac, int diveNum )
   {
     qint64 milisecounds = 0;
     DiveDataSetsPtr dataSet;
     QAreaSeries *depthAreaSeries;
     QLineSeries *depthSeries;
     QLineSeries *nullDepthSeries;
+    QLineSeries *tempSeries;
     QLineSeries *ppo2Series;
+    QLineSeries *setpointSeries;
     QValueAxis *axisY_depth;
     QValueAxis *axisY_ppo2;
+    QValueAxis *axisY_setpoint;
+    QValueAxis *axisY_temp;
     QDateTimeAxis *axisX_time;
-    QCategoryAxis *axisY_category_ppo2;
-    //
-    // jetzt Daten holen
-    //
+    QDateTimeAxis *axisX_time2;
+    // QCategoryAxis *axisY_category_ppo2;
+    lg->debug( "ChartDataWorker::makeChartData..." );
+    bigchart->setParent( nullptr );
+    ppo2chart->setParent( nullptr );
     //
     // aufräumen
     //
-    chart->removeAllSeries();
-    for ( auto ax : chart->axes( Qt::Horizontal ) )
+    for ( auto ch : {bigchart, ppo2chart} )
     {
-      chart->removeAxis( ax );
+      ch->removeAllSeries();
+      for ( auto ax : bigchart->axes( Qt::Horizontal ) )
+      {
+        ch->removeAxis( ax );
+      }
+      for ( auto ax : bigchart->axes( Qt::Vertical ) )
+      {
+        ch->removeAxis( ax );
+      }
+      lg->debug( "ChartDataWorker::makeDiveChart -> cleaned series and axis..." );
+      ch->createDefaultAxes();
     }
-    for ( auto ax : chart->axes( Qt::Vertical ) )
-    {
-      chart->removeAxis( ax );
-    }
-    lg->debug( "ChartDataWorker::makeDiveChart -> cleaned series and axis..." );
-    chart->createDefaultAxes();
     //
     // jetzt die Daten abholen
     //
@@ -173,73 +187,153 @@ namespace spx
     // jetzt die Daten für das Chart machen
     // ########################################################################
     //
-    lg->debug( "ChartDataWorker::makeChartData -> create depth serie..." );
+    lg->debug( "ChartDataWorker::makeChartData -> create series..." );
     //
-    // Tauchtiefe Datenserie
+    // Datenserien machen
     //
+    // Tiefe Serie
     depthSeries = new QLineSeries();
+    // Null Tiefenlinie
     nullDepthSeries = new QLineSeries();
-    // berülle Daten
+    // Temperatur Serie
+    tempSeries = new QLineSeries();
+    // PO2 Serie
+    ppo2Series = new QLineSeries();
+    // Setpoint Serie
+    setpointSeries = new QLineSeries();
+    //
+    // berülle Daten in die Serien
+    //
     milisecounds = 0;
     for ( auto singleSet : *dataSet.get() )
     {
       depthSeries->append( milisecounds, singleSet.depth );
+      tempSeries->append( milisecounds, singleSet.temperature );
+      ppo2Series->append( milisecounds, singleSet.ppo2 );
+      setpointSeries->append( milisecounds, singleSet.setpoint );
       nullDepthSeries->append( milisecounds, 0 );
       milisecounds += singleSet.nextStep * 1000;
     }
+    depthAreaSeries = new QAreaSeries( nullDepthSeries, depthSeries );
+    //
+    // Seiien aufhübschen, Design festlegen
+    //
+    lg->debug( "ChartDataWorker::makeChartData -> make designs..." );
+    depthAreaSeries->setColor( QColor( "#30404040" ) );
+    QPen myPen = depthAreaSeries->pen();
+    myPen.setColor( Qt::darkBlue );
+    myPen.setWidth( 4 );
+    depthAreaSeries->setPen( myPen );
+    //
+    myPen = ppo2Series->pen();
+    myPen.setColor( QColor( "#B0ff0000" ) );
+    myPen.setWidth( 3 );
+    ppo2Series->setPen( myPen );
+    //
+    myPen = setpointSeries->pen();
+    myPen.setColor( QColor( "#B000ED77" ) );
+    myPen.setWidth( 2 );
+    setpointSeries->setPen( myPen );
+    //
+    myPen = tempSeries->pen();
+    myPen.setColor( QColor( "#ff8A1CC9" ) );
+    myPen.setWidth( 3 );
+    tempSeries->setPen( myPen );
+    //
+    // Serien zum Chart zufügen
+    //
+    lg->debug( "ChartDataWorker::makeChartData -> add serieas to charts..." );
+    bigchart->addSeries( depthAreaSeries );
+    bigchart->addSeries( tempSeries );
+    ppo2chart->addSeries( ppo2Series );
+    ppo2chart->addSeries( setpointSeries );
+    //
     // Achse für die Tiefe machen
+    //
+    lg->debug( "ChartDataWorker::makeChartData -> depth axis..." );
     axisY_depth = new QValueAxis();
-    axisY_depth->setGridLineColor( QColor( "#FF000050" ) );
-    chart->addAxis( axisY_depth, Qt::AlignLeft );
+    axisY_depth->setGridLineColor( QColor( "#FF202020" ) );
     axisY_depth->setMax( 0.0 );
     axisY_depth->setTitleText( tr( "DEPTH [m]" ) );
     axisY_depth->setLabelFormat( "%.1f m" );
-    axisY_depth->setLabelsColor( QColor( "#FF000050" ) );
-
+    axisY_depth->setLabelsColor( QColor( "#FF202020" ) );
+    bigchart->addAxis( axisY_depth, Qt::AlignLeft );
+    //
     // Area für die Tiefe machen
-    depthAreaSeries = new QAreaSeries( nullDepthSeries, depthSeries );
-    depthAreaSeries->setColor( QColor( "#B0000060" ) );
-    depthAreaSeries->setBorderColor( Qt::darkBlue );
-    chart->addSeries( depthAreaSeries );
+    //
     depthAreaSeries->attachAxis( axisY_depth );
     //
-    // Serie für O2 Partialdruck machen
+    // Achse für die Temperatur machen
     //
-    lg->debug( "ChartDataWorker::makeChartData -> create ppo2 serie..." );
-    // ppo2 Serie
-    milisecounds = 0;
-    ppo2Series = new QLineSeries();
-    for ( auto singleSet : *dataSet.get() )
-    {
-      ppo2Series->append( milisecounds, singleSet.ppo2 );
-      milisecounds += singleSet.nextStep * 1000;
-    }
-    chart->addSeries( ppo2Series );
-    ppo2Series->setColor( QColor( "#B0f080ff" ) );
-    // achse für den Partialdruck machen
-    axisY_ppo2 = new QValueAxis();
-    axisY_ppo2->setLinePenColor( QColor( "#FFF0B0ff" ) );
-    axisY_ppo2->setLabelsColor( QColor( "#FFF0B0ff" ) );
-    chart->addAxis( axisY_ppo2, Qt::AlignRight );
-    ppo2Series->attachAxis( axisY_ppo2 );
-    axisY_ppo2->setTitleText( tr( "PPO2 [bar]" ) );
-    axisY_ppo2->setLabelFormat( "%.2f" );
-    axisY_ppo2->setTickCount( 12 );
+    lg->debug( "ChartDataWorker::makeChartData -> temperature axis..." );
+    axisY_temp = new QValueAxis();
+    axisY_temp->setGridLineColor( tempSeries->color() );
+    axisY_temp->setTitleText( tr( "TEMP [&ordm;C]" ) );
+    axisY_temp->setLabelFormat( "%d&ordm;" );
+    axisY_temp->setLabelsColor( tempSeries->color() );
+    QBrush br = axisY_temp->titleBrush();
+    br.setColor( tempSeries->color() );
+    axisY_temp->setTitleBrush( br );
+    QPair< int, int > tempRange = getTempBorders( dataSet );
+    axisY_temp->setRange( 0 /*tempRange.first - 1*/, tempRange.second * 2 );
+    bigchart->addAxis( axisY_temp, Qt::AlignRight );
+    tempSeries->attachAxis( axisY_temp );
     //
     // Achse für die Zeit machen
     //
-    lg->debug( "ChartDataWorker::makeChartDataMini -> create time axis..." );
+    lg->debug( "ChartDataWorker::makeChartData -> create time axis..." );
     // Zeitachse
     axisX_time = new QDateTimeAxis();
     axisX_time->setTickCount( 10 );
     axisX_time->setFormat( "mm:ss' min'" );
     axisX_time->setTitleText( "DIVETIME" );
     axisX_time->setTitleText( tr( "DIVE TIME [min]" ) );
-    chart->addAxis( axisX_time, Qt::AlignBottom );
+    bigchart->addAxis( axisX_time, Qt::AlignBottom );
     depthAreaSeries->attachAxis( axisX_time );
-    // depthSeries->attachAxis( axisX_time );
+    // ppo2chart->addAxis( axisX_time, Qt::AlignBottom );
 
-    // Kategorie für ppo2
+    lg->debug( "ChartDataWorker::makeChartData -> ppo2 axis..." );
+    // achse für den Partialdruck machen
+    axisY_ppo2 = new QValueAxis();
+    axisY_ppo2->setLinePenColor( ppo2Series->color() );
+    axisY_ppo2->setLabelsColor( ppo2Series->color() );
+    axisY_ppo2->setTitleText( tr( "PPO2" ) );
+    axisY_ppo2->setLabelFormat( "%.1f bar" );
+    axisY_ppo2->setTickCount( 4 );
+    axisY_ppo2->setRange( 0.0, 3.0 );
+    br = axisY_ppo2->titleBrush();
+    br.setColor( ppo2Series->color() );
+    axisY_ppo2->setTitleBrush( br );
+    ppo2chart->addAxis( axisY_ppo2, Qt::AlignLeft );
+    ppo2Series->attachAxis( axisY_ppo2 );
+
+    lg->debug( "ChartDataWorker::makeChartData -> setpoint axis..." );
+    // achse für den setpoint
+    axisY_setpoint = new QValueAxis();
+    axisY_setpoint->setLinePenColor( setpointSeries->color() );
+    axisY_setpoint->setLabelsColor( setpointSeries->color() );
+    axisY_setpoint->setTitleText( tr( "SETPOINT" ) );
+    axisY_setpoint->setLabelFormat( "%.1f bar" );
+    axisY_setpoint->setTickCount( 4 );
+    axisY_setpoint->setRange( 0.0, 3.0 );
+    br = axisY_setpoint->titleBrush();
+    br.setColor( setpointSeries->color() );
+    axisY_setpoint->setTitleBrush( br );
+    ppo2chart->addAxis( axisY_setpoint, Qt::AlignRight );
+    setpointSeries->attachAxis( axisY_setpoint );
+
+    lg->debug( "ChartDataWorker::makeChartData -> create 2`nd time axis..." );
+    // Zeitachse
+    axisX_time2 = new QDateTimeAxis();
+    axisX_time2->setTickCount( 10 );
+    axisX_time2->setFormat( "mm:ss' min'" );
+    axisX_time2->setTitleText( "DIVETIME" );
+    axisX_time2->setTitleText( tr( "DIVE TIME [min]" ) );
+    ppo2chart->addAxis( axisX_time2, Qt::AlignBottom );
+    ppo2Series->attachAxis( axisX_time2 );
+    // TODO: Kategorie für ppo2
+    /*
+    lg->debug( "ChartDataWorker::makeChartData -> create category..." );
     axisY_category_ppo2 = new QCategoryAxis();
     axisY_category_ppo2->append( "Low", .21 );
     axisY_category_ppo2->append( "Medium", 1.0 );
@@ -247,12 +341,26 @@ namespace spx
     axisY_category_ppo2->setRange( 0.0, 3.0 );
     axisY_category_ppo2->setLinePenColor( ppo2Series->pen().color() );
     axisY_category_ppo2->setGridLinePen( ( ppo2Series->pen() ) );
-    chart->addAxis( axisY_category_ppo2, Qt::AlignRight );
+    lg->debug( "ChartDataWorker::makeChartData -> attach category..." );
     ppo2Series->attachAxis( axisY_category_ppo2 );
-
-    chart->legend()->show();
+    ppo2chart->addAxis( axisY_category_ppo2, Qt::AlignRight );
+   */
+    //
+    lg->debug( "ChartDataWorker::makeChartData...OK" );
     emit onChartReadySig();
     return ( true );
   }
 
+  QPair< int, int > ChartDataWorker::getTempBorders( const DiveDataSetsPtr dataSet )
+  {
+    QPair< int, int > borders{100, -100};
+    for ( auto dSet : *dataSet.get() )
+    {
+      if ( dSet.temperature < borders.first )
+        borders.first = dSet.temperature;
+      if ( dSet.temperature > borders.second )
+        borders.second = dSet.temperature;
+    }
+    return ( borders );
+  }
 }  // namespace spx

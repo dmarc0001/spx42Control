@@ -75,7 +75,7 @@ namespace spx
     double ppo2_2;
     double ppo2_3;
     int nextStep;
-    int setpoint;
+    double setpoint;
     int n2;
     int he;
     int z_time;

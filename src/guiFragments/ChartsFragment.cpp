@@ -14,9 +14,12 @@ namespace spx
       : QWidget( parent )
       , IFragmentInterface( logger, spx42Database, spxCfg, remSPX42 )
       , ui( new Ui::ChartsFragment )
-      , diveChart( nullptr )
-      , dummyChart( new QtCharts::QChart() )
-      , chartView( std::unique_ptr< QtCharts::QChartView >( new QtCharts::QChartView( dummyChart ) ) )
+      , bigDiveChart( nullptr )
+      , ppo2DiveChart( nullptr )
+      , bigDummyChart( new QtCharts::QChart() )
+      , ppo2DummyChart( new QtCharts::QChart() )
+      , bigChartView( std::unique_ptr< QtCharts::QChartView >( new QtCharts::QChartView( bigDummyChart ) ) )
+      , ppo2ChartView( std::unique_ptr< QtCharts::QChartView >( new QtCharts::QChartView( ppo2DummyChart ) ) )
       , chartWorker( std::unique_ptr< ChartDataWorker >( new ChartDataWorker( logger, database, this ) ) )
   {
     lg->debug( "ChartsFragment::ChartsFragment..." );
@@ -27,11 +30,22 @@ namespace spx
     connect( spxConfig.get(), &SPX42Config::licenseChangedSig, this, &ChartsFragment::onConfLicChangedSlot );
     // tausche den Platzhalter aus und entsorge den gleich
     // kopiere die policys und größe
-    chartView->setMinimumSize( ui->placeHolderWidget->minimumSize() );
-    chartView->setSizePolicy( ui->placeHolderWidget->sizePolicy() );
-    delete ui->chartFrame->layout()->replaceWidget( ui->placeHolderWidget, chartView.get() );
-    chartView->setChart( dummyChart );
-    chartView->setRenderHint( QPainter::Antialiasing );
+    bigChartView->setMinimumSize( ui->placeHolderWidget->minimumSize() );
+    bigChartView->setSizePolicy( ui->placeHolderWidget->sizePolicy() );
+    delete ui->chartFrame->layout()->replaceWidget( ui->placeHolderWidget, bigChartView.get() );
+    bigChartView->setChart( bigDummyChart );
+    bigChartView->setRenderHint( QPainter::Antialiasing );
+    //
+    ppo2ChartView->setMinimumSize( ui->placeHolderWidget2->minimumSize() );
+    ppo2ChartView->setSizePolicy( ui->placeHolderWidget2->sizePolicy() );
+    ppo2ChartView->setMaximumSize( ui->placeHolderWidget2->maximumSize() );
+    ppo2ChartView->setMinimumSize( ui->placeHolderWidget2->minimumSize() );
+    delete ui->chartFrame->layout()->replaceWidget( ui->placeHolderWidget2, ppo2ChartView.get() );
+    //
+    ppo2ChartView->setChart( ppo2DummyChart );
+    ppo2ChartView->setRenderHint( QPainter::Antialiasing );
+    ppo2ChartView->setRubberBand( QChartView::HorizontalRubberBand );
+    //
     initDeviceSelection();
     if ( ui->diveSelectComboBox->currentIndex() > -1 )
       onDiveComboChangedSlot( ui->diveSelectComboBox->currentIndex() );
@@ -48,8 +62,10 @@ namespace spx
     //
     // das Ding einfügen und vom destruktor entsorgen lassen
     //
-    chartView->setChart( dummyChart );
-    delete diveChart;
+    bigChartView->setChart( bigDummyChart );
+    ppo2ChartView->setChart( ppo2DummyChart );
+    delete bigDiveChart;
+    delete ppo2DiveChart;
   }
 
   void ChartsFragment::initDeviceSelection( void )
@@ -133,7 +149,8 @@ namespace spx
   {
     ui->diveSelectComboBox->clear();
     deviceAddr = ui->deviceSelectComboBox->itemData( index ).toString();
-    chartView->setChart( dummyChart );
+    bigChartView->setChart( bigDummyChart );
+    ppo2ChartView->setChart( ppo2DummyChart );
     if ( deviceAddr.isEmpty() )
     {
       return;
@@ -164,8 +181,10 @@ namespace spx
     //
     // zuerst das Chart entfernen
     //
-    chartView->setChart( dummyChart );
-    diveChart->deleteLater();
+    bigChartView->setChart( bigDummyChart );
+    ppo2ChartView->setChart( ppo2DummyChart );
+    bigDiveChart->deleteLater();
+    ppo2DiveChart->deleteLater();
     //
     // nichts markiert => dann bin ich schon fertig
     //
@@ -177,10 +196,13 @@ namespace spx
     if ( dbgetDataFuture.isFinished() )
     {
       // QThreadPool::globalInstance()
-      diveChart = new QtCharts::QChart();
-      chartWorker->prepareDiveChart( diveChart );
-      chartView->setChart( diveChart );
-      dbgetDataFuture = QtConcurrent::run( chartWorker.get(), &ChartDataWorker::makeDiveChart, diveChart, deviceAddr, diveNum );
+      bigDiveChart = new QtCharts::QChart( nullptr );
+      ppo2DiveChart = new QtCharts::QChart( nullptr );
+      chartWorker->prepareDiveCharts( bigDiveChart, ppo2DiveChart );
+      bigChartView->setChart( bigDiveChart );
+      ppo2ChartView->setChart( ppo2DiveChart );
+      dbgetDataFuture =
+          QtConcurrent::run( chartWorker.get(), &ChartDataWorker::makeDiveChart, bigDiveChart, ppo2DiveChart, deviceAddr, diveNum );
     }
     else
     {

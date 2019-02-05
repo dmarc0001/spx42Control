@@ -1391,7 +1391,7 @@ namespace spx
         currSet.ppo2_2 = query.value( 5 ).toDouble();
         currSet.ppo2_3 = query.value( 6 ).toDouble();
         currSet.nextStep = query.value( 7 ).toInt();
-        currSet.setpoint = query.value( 8 ).toInt();
+        currSet.setpoint = ( query.value( 8 ).toDouble() / 10.0 );
         currSet.n2 = query.value( 9 ).toInt();
         currSet.he = query.value( 10 ).toInt();
         currSet.z_time = query.value( 11 ).toInt();
