@@ -5,6 +5,7 @@
 #include <QCategoryAxis>
 #include <QChart>
 #include <QDateTimeAxis>
+#include <QPair>
 #include <QSplineSeries>
 #include <QValueAxis>
 #include <QtCore/QObject>
@@ -32,10 +33,13 @@ namespace spx
                               QObject *parent = nullptr );
     void prepareMiniChart( QtCharts::QChart *chart );
     bool makeChartDataMini( QtCharts::QChart *chart, const QString &deviceMac, int diveNum );
-    bool prepareDiveChart( QtCharts::QChart *chart );
-    bool makeDiveChart( QtCharts::QChart *chart, const QString &deviceMac, int diveNum );
+    bool prepareDiveCharts( QtCharts::QChart *bigchart, QtCharts::QChart *ppo2chart );
+    bool makeDiveChart( QtCharts::QChart *bigchart, QtCharts::QChart *ppo2chart, const QString &deviceMac, int diveNum );
     void reset( void );
     void nowait( bool _shouldNoWait = true );  //! nicht mehr warten wenn die queue leer ist
+
+    private:
+    QPair< int, int > getTempBorders( const DiveDataSetsPtr dataSet );
 
     signals:
     void onChartReadySig( void );

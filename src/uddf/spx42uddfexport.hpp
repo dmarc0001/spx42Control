@@ -107,7 +107,7 @@ namespace spx
     signals:
     void onStartSaveDiveSig( int diveNum );
     void onEndSaveDiveSig( int diveNum );
-    void onEndSavedUddfFiileSig( bool wasOk );
+    void onEndSavedUddfFiileSig( bool wasOk, const QString &fileName );
 
     public slots:
   };

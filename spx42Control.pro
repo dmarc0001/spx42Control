@@ -7,7 +7,7 @@
 ###############################################################################
 MAJOR                                  = 0 # Major Verion Nummer
 MINOR                                  = 6 # Minor Version Number
-PATCH                                  = 1 # Patch Version Number
+PATCH                                  = 4 # Patch Version Number
 BUILD                                  = 0 # win build number
 
 win32:VERSION_PE_HEADER                = $${MAJOR}.$${MINOR}
@@ -15,18 +15,8 @@ win32:QMAKE_TARGET_COMPANY             = submatix.com
 win32:QMAKE_TARGET_COPYRIGHT           = D. Marciniak
 win32:QMAKE_TARGET_PRODUCT             = SPX42 BT-Controller
 win32:RC_ICONS                         = src/res/programIcon.ico
-<<<<<<< HEAD
-<<<<<<< HEAD
-win32:VERSION                          = 0.5.2.0  # major.minor.patch.build
-else:VERSION                           = 0.5.2    # major.minor.patch
-=======
-win32:VERSION                          = 0.5.4.0  # major.minor.patch.build
-else:VERSION                           = 0.5.4    # major.minor.patch
->>>>>>> dev/stabilizing
-=======
 win32:VERSION                          = $${MAJOR}.$${MINOR}.$${PATCH}.$${BUILD} # major.minor.patch.build
 else:VERSION                           = $${MAJOR}.$${MINOR}.$${PATCH}    # major.minor.patch
->>>>>>> dev/stabilizing
 macx:ICON                              = src/res/programIcon.ico
 #
 TARGET                                 = spx42Control
@@ -100,7 +90,6 @@ SOURCES                 += \
     src/bluetooth/BtLocalDevicesManager.cpp \
     src/bluetooth/SPX42BtDevicesManager.cpp \
     src/bluetooth/SPX42RemotBtDevice.cpp \
-    src/charts/DiveMiniChart.cpp \
     src/config/AppConfigClass.cpp \
     src/config/ProjectConst.cpp \
     src/ControlMain.cpp \
@@ -128,25 +117,8 @@ SOURCES                 += \
     src/utils/DebugDataSeriesGenerator.cpp \
     src/utils/DiveDataSeriesGenerator.cpp \
     src/utils/HelpDialog.cpp \
-<<<<<<< HEAD
-    src/guiFragments/DeviceInfoFragment.cpp \
-    src/spx42/SPX42LogDirectoryEntry.cpp \
-    src/database/LogDetailWalker.cpp \
-    src/charts/DiveMiniChart.cpp \
-<<<<<<< HEAD
-    src/database/ChartDataWorker.cpp
-=======
-    src/database/ChartDataWorker.cpp \
-<<<<<<< HEAD
-    src/database/spx42databaseconstants.cpp
->>>>>>> dev/stabilizing
-=======
-    src/database/spx42databaseconstants.cpp \
-    src/uddf/spx42uddfexport.cpp
->>>>>>> dev/stabilizing
-=======
-    src/utils/IDataSeriesGenerator.cpp
->>>>>>> dev/dive-chart
+    src/utils/IDataSeriesGenerator.cpp \
+    src/utils/OptionsDialog.cpp
 
 HEADERS                 += \
     src/bluetooth/BtDiscoverRemoteDevice.hpp \
@@ -155,7 +127,6 @@ HEADERS                 += \
     src/bluetooth/BtTypes.hpp \
     src/bluetooth/SPX42BtDevicesManager.hpp \
     src/bluetooth/SPX42RemotBtDevice.hpp \
-    src/charts/DiveMiniChart.hpp \
     src/config/AppConfigClass.hpp \
     src/config/CurrBuildDef.hpp \
     src/config/ProjectConst.hpp \
@@ -185,26 +156,8 @@ HEADERS                 += \
     src/utils/DebugDataSeriesGenerator.hpp \
     src/utils/DiveDataSeriesGenerator.hpp \
     src/utils/HelpDialog.hpp \
-<<<<<<< HEAD
-    src/guiFragments/DeviceInfoFragment.hpp \
-    src/config/CurrBuildDef.hpp \
-    src/spx42/SPX42LogDirectoryEntry.hpp \
-    src/database/LogDetailWalker.hpp \
-    src/charts/DiveMiniChart.hpp \
-<<<<<<< HEAD
-    src/database/ChartDataWorker.hpp
-=======
-    src/database/ChartDataWorker.hpp \
-<<<<<<< HEAD
-    src/database/spx42databaseconstants.hpp
->>>>>>> dev/stabilizing
-=======
-    src/database/spx42databaseconstants.hpp \
-    src/uddf/spx42uddfexport.hpp
->>>>>>> dev/stabilizing
-=======
-    src/utils/IDataSeriesGenerator.hpp
->>>>>>> dev/dive-chart
+    src/utils/IDataSeriesGenerator.hpp \
+    src/utils/OptionsDialog.hpp
 
 FORMS                   += \
     src/ui/SPX42ControlMainWin.ui \
@@ -215,7 +168,8 @@ FORMS                   += \
     src/ui/ChartsFragment.ui \
     src/ui/ConnectFragment.ui \
     src/ui/HelpDialog.ui \
-    src/ui/DeviceInfoFragment.ui
+    src/ui/DeviceInfoFragment.ui \
+    src/ui/OptionsDialog.ui
 
 RESOURCES               = \
     src/res/SPX42ControlRes.qrc
@@ -237,7 +191,11 @@ DISTFILES               += \
     src/res/spx42Control.css \
     src/res/spx42ControlMac.css \
     src/res/TlwgTypewriter.ttf \
-    src/res/bahnschrift.ttf
+    src/res/bahnschrift.ttf \
+    tools/makeDeliverBuild_osx.sh \
+    tools/makeDeliverBuild_win.cmd \
+    tools/makeBuildTemplate.py \
+    tools/setAppVersion.py
 
 
 ###############################################################################

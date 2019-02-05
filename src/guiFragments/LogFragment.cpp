@@ -502,6 +502,7 @@ namespace spx
   void LogFragment::onExportLogDetailClickSlot()
   {
     QString device_mac;
+    QString _exportPath;
     //
     lg->debug( "LogFragment::onLogDetailExportClickSlot..." );
     std::shared_ptr< QVector< int > > exportList = getSelectedInDb();
@@ -513,6 +514,41 @@ namespace spx
       lg->debug( QString( "LogFragment::onLogDetailExportClickSlot -> export <%1>..." ).arg( i ) );
     }
 #endif
+    //
+    // welches Verzeichnis?
+    //
+    QFileDialog fileDial( this, tr( "SELECT EXPORT DIR" ), exportPath, nullptr );
+    fileDial.setFileMode( QFileDialog::Directory );
+    fileDial.setViewMode( QFileDialog::Detail );
+    if ( QDialog::Accepted == fileDial.exec() )
+    {
+      _exportPath = fileDial.selectedFiles().first();
+      QDir fileDir( _exportPath );
+      if ( fileDir.exists() )
+      {
+        lg->info( QString( "LogFragment::onExportLogDetailClickSlott -> %1..." ).arg( exportPath ) );
+        exportPath = _exportPath;
+      }
+      else
+      {
+        //
+        // default lassen, user bescheid geben
+        //
+        QMessageBox::critical( this, tr( "EXPORT DIRECTORY ERROR" ), tr( "The selected Directory don't exist!" ), QMessageBox::Close,
+                               QMessageBox::Close );
+        return;
+      }
+    }
+    else
+    {
+      //
+      // Abgebrochen!
+      //
+      return;
+    }
+    //
+    // kann los gehen
+    //
     lg->debug( "LogFragment::onLogDetailExportClickSlot -> set parameters for export..." );
     if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
     {
@@ -1144,7 +1180,7 @@ namespace spx
    * @brief LogFragment::onEndSaveUddfFileSlot
    * @param wasOk
    */
-  void LogFragment::onEndSaveUddfFileSlot( bool wasOk )
+  void LogFragment::onEndSaveUddfFileSlot( bool wasOk, const QString &fileName )
   {
     ui->transferProgressBar->setVisible( false );
     if ( wasOk )
@@ -1154,6 +1190,8 @@ namespace spx
       if ( exportFuture.isFinished() )
       {
         lg->debug( "LogFragment::onEndSaveUddfFileSlot -> export finished!" );
+        QMessageBox::information( this, tr( "EXPORT SUCCESS" ), tr( "Export was successful to file: \n<%1>" ).arg( fileName ),
+                                  QMessageBox::Close, QMessageBox::Close );
       }
     }
     else

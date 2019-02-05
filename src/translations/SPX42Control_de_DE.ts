@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="de_DE">
+<TS version="2.1" language="de_DE" sourcelanguage="en_US">
 <context>
     <name>AboutDialog</name>
     <message>
@@ -63,17 +63,17 @@
         <translation>Tauchgang für Anzeige auswählen...</translation>
     </message>
     <message>
-        <location filename="../ui/ChartsFragment.ui" line="280"/>
+        <location filename="../ui/ChartsFragment.ui" line="283"/>
         <source>NOTES:</source>
         <translation>Bemerkungen:</translation>
     </message>
     <message>
-        <location filename="../ui/ChartsFragment.ui" line="312"/>
+        <location filename="../ui/ChartsFragment.ui" line="315"/>
         <source>describes the dive as an note...</source>
         <translation>Beschreibt den Tauchgang als Bemerkung...</translation>
     </message>
     <message>
-        <location filename="../ui/ChartsFragment.ui" line="315"/>
+        <location filename="../ui/ChartsFragment.ui" line="318"/>
         <source>...INPUT YOUR NOTES HERE...</source>
         <translation>... Bemerkungen zum Tauchgang hier...</translation>
     </message>
@@ -990,6 +990,102 @@
     </message>
 </context>
 <context>
+    <name>OptionsDialog</name>
+    <message>
+        <location filename="../ui/OptionsDialog.ui" line="31"/>
+        <source>Dialog</source>
+        <translation>Optionen</translation>
+    </message>
+    <message>
+        <location filename="../ui/OptionsDialog.ui" line="58"/>
+        <location filename="../ui/OptionsDialog.ui" line="78"/>
+        <location filename="../ui/OptionsDialog.ui" line="81"/>
+        <source>select where the database directory is. CAUTION: directory must bi writable...</source>
+        <translation>wähle das Verzeichnis für die Datenbankdatei. ACHTUNG das Verzeichnis muss besschreibbar sein...</translation>
+    </message>
+    <message>
+        <location filename="../ui/OptionsDialog.ui" line="61"/>
+        <source>[ DATABASE (!) ] </source>
+        <translation>[ DATENBANK (!) ] </translation>
+    </message>
+    <message>
+        <location filename="../ui/OptionsDialog.ui" line="87"/>
+        <source>LOCATION DATABASE</source>
+        <translation>VERZEICHNIS DER DATENBANK</translation>
+    </message>
+    <message>
+        <location filename="../ui/OptionsDialog.ui" line="111"/>
+        <location filename="../ui/OptionsDialog.ui" line="225"/>
+        <source>open  file selector...</source>
+        <translation>öffne Dialog zum wählen des Verzeichnisses...</translation>
+    </message>
+    <message>
+        <location filename="../ui/OptionsDialog.ui" line="114"/>
+        <location filename="../ui/OptionsDialog.ui" line="228"/>
+        <source>select the database via graphical selector...</source>
+        <translation>wähle datenbankverzeichnis mit grafischem Dialog...</translation>
+    </message>
+    <message>
+        <location filename="../ui/OptionsDialog.ui" line="117"/>
+        <location filename="../ui/OptionsDialog.ui" line="231"/>
+        <source>[ SELECT ]</source>
+        <translation>[ WÄHLEN ]</translation>
+    </message>
+    <message>
+        <location filename="../ui/OptionsDialog.ui" line="142"/>
+        <source>propertys about logging...</source>
+        <translation>Einstellungen zumprotokillieren...</translation>
+    </message>
+    <message>
+        <location filename="../ui/OptionsDialog.ui" line="145"/>
+        <source>[ LOGGING ] </source>
+        <translation>[ PROTOKOLL ] </translation>
+    </message>
+    <message>
+        <location filename="../ui/OptionsDialog.ui" line="192"/>
+        <location filename="../ui/OptionsDialog.ui" line="195"/>
+        <source>select where the logfile location is...</source>
+        <translation>wähle das Verzeichnios der Protokolldatei...</translation>
+    </message>
+    <message>
+        <location filename="../ui/OptionsDialog.ui" line="201"/>
+        <source>LOCATION LOGFILE</source>
+        <translation>VERZEICHNIS DER PROTOKOLLDATEI</translation>
+    </message>
+    <message>
+        <location filename="../ui/OptionsDialog.ui" line="244"/>
+        <location filename="../ui/OptionsDialog.ui" line="254"/>
+        <location filename="../ui/OptionsDialog.ui" line="264"/>
+        <source>sets the logging threshold (level)...</source>
+        <translation>setzte die Protokollschwelle (Loglevel)...</translation>
+    </message>
+    <message>
+        <location filename="../ui/OptionsDialog.ui" line="247"/>
+        <source>log hhreshold WARNING</source>
+        <translation>Protokollschwelle WARNUNG</translation>
+    </message>
+    <message>
+        <location filename="../ui/OptionsDialog.ui" line="257"/>
+        <source>log threshold INFO</source>
+        <translation>Protokollschwelle INFORMATION</translation>
+    </message>
+    <message>
+        <location filename="../ui/OptionsDialog.ui" line="267"/>
+        <source>log threshold DEBUG</source>
+        <translation>Protokollschwelle DEBUG (FEHLERSUCHE)</translation>
+    </message>
+    <message>
+        <location filename="../ui/OptionsDialog.ui" line="330"/>
+        <source>[ CANCEL ]</source>
+        <translation>[ ABBRUCH ]</translation>
+    </message>
+    <message>
+        <location filename="../ui/OptionsDialog.ui" line="359"/>
+        <source>[ SAVE ]</source>
+        <translation>[ SICHERN ]</translation>
+    </message>
+</context>
+<context>
     <name>QObject</name>
     <message>
         <location filename="../spx42/SPX42Gas.cpp" line="134"/>
@@ -1042,141 +1138,133 @@
         <translation>Datei</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="105"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="104"/>
         <source>Help</source>
         <translation>Hilfe</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="112"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="111"/>
         <source>Edit</source>
         <translation>Bearbeiten</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="118"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="117"/>
         <source>DEBUGGING</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="122"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="121"/>
         <source>Lizences</source>
         <translation>Lizenzen</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="140"/>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="222"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="139"/>
         <source>print current content...</source>
         <translation>drucke aktellen Inhalt...</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="164"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="161"/>
         <source>QUIT</source>
         <translation>ENDE</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="167"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="164"/>
         <source>QUIT application</source>
         <translation>Beende Programm</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="170"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="167"/>
         <source>quit this application...</source>
         <translation>beende das Programm...</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="178"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="175"/>
         <source>About...</source>
         <translation>Über...</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="181"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="178"/>
         <source>about this application...</source>
         <translation>über diese Programm...</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="194"/>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="197"/>
         <source>Open Database...</source>
-        <translation>öffne Datenbank...</translation>
+        <translation type="vanished">öffne Datenbank...</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="200"/>
         <source>Open SPX42 database...</source>
-        <translation>öffne SPX42 Datenbank...</translation>
+        <translation type="vanished">öffne SPX42 Datenbank...</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="203"/>
         <source>open an database with SPX42 logs...</source>
-        <translation>öffne eine Datenbank mit SPX42 Logdaten...</translation>
+        <translation type="vanished">öffne eine Datenbank mit SPX42 Logdaten...</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="213"/>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="216"/>
         <source>Print...</source>
-        <translation>Drucke...</translation>
+        <translation type="vanished">Drucke...</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="219"/>
         <source>print current content</source>
-        <translation>drucke aktuellen Inhalt</translation>
+        <translation type="vanished">drucke aktuellen Inhalt</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="232"/>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="235"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="191"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="194"/>
         <source>Settings...</source>
         <translation>Einstellungen...</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="238"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="197"/>
         <source>Application settings</source>
         <translation>Programmeinstellungen</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="241"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="200"/>
         <source>set application settings...</source>
         <translation>setze Programmeinstellungen...</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="252"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="211"/>
         <source>Nitrox</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="260"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="219"/>
         <source>Normoxic TMX</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="268"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="227"/>
         <source>Full TMX</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="276"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="235"/>
         <source>Military</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="284"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="243"/>
         <source>INDIVIDUAL-LIC</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="302"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="261"/>
         <source>SPX STATE</source>
         <translation>SPX42 Status</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="305"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="264"/>
         <source>state of the connected spx42</source>
         <translation>Status des verbundenen SPX42</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="318"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="277"/>
         <source>Get Help...</source>
         <translation>Zeige Hilfe...</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="321"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="280"/>
         <source>help für using this program...</source>
         <translation>Hilfe zur Nutzung des Programmes...</translation>
     </message>
@@ -1237,22 +1325,27 @@
 <context>
     <name>spx::ChartDataWorker</name>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="99"/>
-        <source>DIVE VIEW</source>
-        <translation>Taucgang Ansicht</translation>
+        <location filename="../database/ChartDataWorker.cpp" line="34"/>
+        <source>PREVIEW</source>
+        <translation>Vorschau</translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="170"/>
+        <location filename="../database/ChartDataWorker.cpp" line="124"/>
+        <source>DIVE VIEW</source>
+        <translation>Tauchgang Ansicht</translation>
+    </message>
+    <message>
+        <location filename="../database/ChartDataWorker.cpp" line="195"/>
         <source>DEPTH [m]</source>
         <translation>Tiefe [m]</translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="200"/>
+        <location filename="../database/ChartDataWorker.cpp" line="225"/>
         <source>PPO2 [bar]</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="212"/>
+        <location filename="../database/ChartDataWorker.cpp" line="237"/>
         <source>DIVE TIME [min]</source>
         <translation>Tauchzeit [min]</translation>
     </message>
@@ -1265,17 +1358,17 @@
         <translation>Logdaten SPX42 [%1] in Datenbank</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ChartsFragment.cpp" line="57"/>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="59"/>
         <source>unknown</source>
         <translation>unbekannt</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ChartsFragment.cpp" line="67"/>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="69"/>
         <source>database empty</source>
         <translation>Datenbank leer</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ChartsFragment.cpp" line="212"/>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="214"/>
         <source>LOGCHARTS SPX42 Serial [%1] Lic: %2</source>
         <translation>Log Grafiken SPX32 Seriennummer [%1] Lizenz: %2</translation>
     </message>
@@ -1288,57 +1381,57 @@
         <translation>Bluetooth Verbindungsfehler: %1</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="36"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="38"/>
         <source>CONNECTSTATE SPX42 Serial [%1] LIC: %2</source>
         <translation>Verbindungsstatus SPX42 Seriennummer [%1] Lizenz: %2</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="46"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="48"/>
         <source>DEVICE</source>
         <translation>Gerät</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="47"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="49"/>
         <source>DEVICE ALIAS</source>
         <translation>Gerätealias</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="155"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="159"/>
         <source>UNKNOWN ERROR</source>
         <translation>Unbekannter Fehler</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="158"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="162"/>
         <source>NO BT SOCKET FOUND</source>
         <translation>Keine Bluethooth Verbindung gefunden</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="161"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="165"/>
         <source>REMOTE HOST NOT FOUND</source>
         <translation>Entferntes Gerät nicht gefunden</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="164"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="168"/>
         <source>REMOTE HOST CLOSED CONNECTION</source>
         <translation>Entferntes Gerät hat Verbindung beendet</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="167"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="171"/>
         <source>COMMUNICATION ERROR</source>
         <translation>Kommunikationsfehler</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="213"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="217"/>
         <source>NOT SELECTED A DEVICE TO CONNECT</source>
         <translation>Kein Gerät für die Verbindung gewählt</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="454"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="458"/>
         <source>DISCONNECT DEVICE</source>
         <translation>Gerät trennen</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="454"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="458"/>
         <source>CONNECT DEVICE</source>
         <translation>Gerät verbinden</translation>
     </message>
@@ -1500,19 +1593,6 @@
     </message>
 </context>
 <context>
-    <name>spx::DiveMiniChart</name>
-    <message>
-        <location filename="../charts/DiveMiniChart.cpp" line="29"/>
-        <source>PREVIEW</source>
-        <translation>Vorschau</translation>
-    </message>
-    <message>
-        <location filename="../charts/DiveMiniChart.cpp" line="64"/>
-        <source>DIVE NR %1</source>
-        <translation>Tauchgang %1</translation>
-    </message>
-</context>
-<context>
     <name>spx::GasFragment</name>
     <message>
         <location filename="../guiFragments/GasFragment.cpp" line="20"/>
@@ -1569,89 +1649,134 @@
 <context>
     <name>spx::LogFragment</name>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="47"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="48"/>
         <source>LOGFILES SPX42 Serial [%1] LIC: %2</source>
         <translation>Logdaten SPX42 Seriennummer [%1] Lizenz %2</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="48"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="49"/>
         <source>LOGFILES SPX42 [%1] in database</source>
         <translation>Logdaten SPX42 [%1] in Datenbank</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="49"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="50"/>
         <source>DIVE NUMBER: %1</source>
         <translation>Tauchgang Nr: %1</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="50"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="51"/>
         <source>DIVE DATE: %1</source>
         <translation>Datum: %1</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="51"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="52"/>
         <source>DIVE DEPTH: %1m</source>
         <translation>Tiefe: %1m</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="52"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="53"/>
         <source>WRITE DIVE #%1 TO DB...</source>
         <translation>Sichere TG #%1 in DB...</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="53"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="54"/>
         <source>WAIT FOR START...</source>
         <translation>Warte auf Datenbank...</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="54"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="55"/>
         <source>DELETE DIVE %1 DONE.</source>
         <translation>Lösche Tg %1 Fertig.</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="55"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="56"/>
         <source>EXPORT DIVE #%1...</source>
         <translation>Exportiere TG #%1...</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="56"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="57"/>
         <source>EXPORT DIVE #%1 DONE.</source>
         <translation>Export TG #%1 OK.</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="57"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="58"/>
         <source>EXPORT FAILED!</source>
         <translation>Export Fehlgeschlagen!</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="559"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="520"/>
+        <source>SELECT EXPORT DIR</source>
+        <translation>EXPORT VERZEICHNIS</translation>
+    </message>
+    <message>
+        <location filename="../guiFragments/LogFragment.cpp" line="537"/>
+        <source>EXPORT DIRECTORY ERROR</source>
+        <translation>EXPORT VERZEICHNIS FEHLER</translation>
+    </message>
+    <message>
+        <location filename="../guiFragments/LogFragment.cpp" line="537"/>
+        <source>The selected Directory don&apos;t exist!</source>
+        <translation>Das gewählte Verzeichnis existiert nicht!</translation>
+    </message>
+    <message>
+        <location filename="../guiFragments/LogFragment.cpp" line="580"/>
         <source>EXPORT WARNING</source>
         <translation>EXPORT WARNUNG</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="559"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="580"/>
         <source>An other export is current running...</source>
         <translation>Ein anderer Export arbeitet momentan...</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1140"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1193"/>
+        <source>EXPORT SUCCESS</source>
+        <translation>Export Erfolgreich</translation>
+    </message>
+    <message>
+        <location filename="../guiFragments/LogFragment.cpp" line="1193"/>
+        <source>Export was successful to file: 
+&lt;%1&gt;</source>
+        <translation>Der Export war erfolgreich, Datei: 
+&lt;%1&gt;</translation>
+    </message>
+    <message>
+        <location filename="../guiFragments/LogFragment.cpp" line="1200"/>
         <source>EXPORT ERROR</source>
         <translation>EXPORT FEHLER</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1140"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1200"/>
         <source>Can&apos;t export dives to UDDF file</source>
         <translation>Kann Tauchgänge nicht in UDDF Datei exportieren</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="831"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="884"/>
         <source>unknown</source>
         <translation>unbekannt</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="842"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="895"/>
         <source>database empty</source>
         <translation>Datenbank leer</translation>
+    </message>
+</context>
+<context>
+    <name>spx::OptionsDialog</name>
+    <message>
+        <location filename="../utils/OptionsDialog.cpp" line="22"/>
+        <source>APPLICATION OPTIONS</source>
+        <translation>Programm Optionen</translation>
+    </message>
+    <message>
+        <location filename="../utils/OptionsDialog.cpp" line="96"/>
+        <source>SELECT DATABASE DIR</source>
+        <translation>Datenbank Verzeichnis wählen</translation>
+    </message>
+    <message>
+        <location filename="../utils/OptionsDialog.cpp" line="119"/>
+        <source>SELECT LOGFILE DIR</source>
+        <translation>Verzeichnis für Lpogdatei wählen</translation>
     </message>
 </context>
 <context>
@@ -1691,13 +1816,13 @@
     <name>spx::SPX42ControlMainWin</name>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="17"/>
-        <location filename="../SPX42ControlMainWin.cpp" line="550"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="548"/>
         <source>SPX42 OFFLINE</source>
         <translation>SPX42 Offline</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="19"/>
-        <location filename="../SPX42ControlMainWin.cpp" line="1043"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="1041"/>
         <source>CLEAR</source>
         <translation>FREI</translation>
     </message>
@@ -1725,7 +1850,7 @@
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="167"/>
         <source>Will you really quit this programm and close all files, databases, connections?</source>
-        <translation>Wollen Sie das Programm wirklich beenden und alle Verbindeungen und Datenbanken schleißen?</translation>
+        <translation>Wollen Sie das Programm wirklich beenden und alle Verbindeungen und Datenbanken schließen?</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="239"/>
@@ -1780,50 +1905,60 @@
         <translation>DIAGRAMME</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="554"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="552"/>
         <source>spx42 is offline...</source>
         <translation>SPX42 ist offline...</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="560"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="558"/>
         <source>SPX42 ONLINE</source>
         <translation>SPX42 ist online</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="565"/>
-        <location filename="../SPX42ControlMainWin.cpp" line="1045"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="563"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="1043"/>
         <source>spx42 is online, click for disconnect...</source>
         <translation>SPX42 ist inline, Klicke zum trennen...</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="571"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="569"/>
         <source>SPX42 CONNECTING</source>
         <translation>SPX42 verbindet</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="578"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="576"/>
         <source>SPX42 OFFLINE/ERROR</source>
         <translation>SPX42 getrennt/Fehler</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="581"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="579"/>
         <source>spx42 had connection error...</source>
         <translation>SPX42 hatte Verbindungsfehler...</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="844"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="842"/>
         <source>AKKU</source>
         <translation>AKKU</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="1067"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="1065"/>
         <source>BUSY</source>
         <translation>Besetzt</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="1069"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="1067"/>
         <source>spx42 is online and wait for write config data...</source>
         <translation>SPX42 ist online und wartet auf das schriben der Konfigurationsdaten...</translation>
+    </message>
+    <message>
+        <location filename="../SPX42ControlMainWin.cpp" line="1095"/>
+        <source>CAUTION</source>
+        <translation>ACHTUNG</translation>
+    </message>
+    <message>
+        <location filename="../SPX42ControlMainWin.cpp" line="1095"/>
+        <source>TO APPLY CHANGES RESTART APPLICATION</source>
+        <translation>Um die Änderungen anzuwenden muss das Programm neu gestartet werden</translation>
     </message>
 </context>
 </TS>

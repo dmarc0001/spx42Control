@@ -26,11 +26,17 @@ namespace spx
     Q_INTERFACES( spx::IFragmentInterface )
     std::unique_ptr< Ui::ChartsFragment > ui;  //! Zeiger auf die GUI Objekte
     //! Zeiger auf das eigene Chart
-    QtCharts::QChart *diveChart;
-    //! Zeiger auf DUMMY
-    QtCharts::QChart *dummyChart;
-    //! Zeiger auf das ChartView
-    std::unique_ptr< QtCharts::QChartView > chartView;
+    QtCharts::QChart *bigDiveChart;
+    //! Zeiger auf das eigene Chart PPO2
+    QtCharts::QChart *ppo2DiveChart;
+    //! Zeiger auf DUMMY gross
+    QtCharts::QChart *bigDummyChart;
+    //! Zeiger auf DUMMY ppo2
+    QtCharts::QChart *ppo2DummyChart;
+    //! Zeiger auf das ChartView für Hauptdaten
+    std::unique_ptr< QtCharts::QChartView > bigChartView;
+    //! Zeiger auf das ChartView für PPO2
+    std::unique_ptr< QtCharts::QChartView > ppo2ChartView;
     //! Prozess zum abarbeiten
     std::unique_ptr< ChartDataWorker > chartWorker;
     //! Nebenläufiges future Objekt
@@ -39,6 +45,8 @@ namespace spx
     DeviceAliasHash spxDevicesAliasHash;
     //! mac adresse des ausgewählten gerätes
     QString deviceAddr;
+    //! Nummer des ausgewählten Tauchganges
+    int diveNum;
     //! das ganze offline
     QString fragmentTitleOfflinePattern;
 
@@ -67,6 +75,7 @@ namespace spx
     void onDeviceComboChangedSlot( int index );
     void onDiveComboChangedSlot( int index );
     void onChartReadySlot( void );
+    void onNotesLineEditFinishedSlot( void );
   };
 }  // namespace spx
 #endif  // CHARTSFRAGMENT_HPP

@@ -7,18 +7,11 @@ SET QT_PREFIX=5.12.0
 SET ONLINEINSTALLER=spx42ControlOnlineInstaller
 SET OFFLINEINSTALLER=spx42ControlOfflineInstaller
 ::
-<<<<<<< HEAD
-SET PACKAGES=packages
-SET PROJECTBASE=C:\DATEN\Entwicklung\QT-Projekte\spx42Control
-SET QT_DIR=C:\Qt
-=======
 SET WINKIT=C:\Program Files (x86)\Windows Kits\10\bin\10.0.17763.0\x64
 SET PACKAGES=packages
 SET PROJECTBASE=C:\localProg\QT-Projekte\spx42Control
 SET QT_DIR=C:\localProg\Qt
->>>>>>> dev/stabilizing
 SET QT_BASEDIR=%QT_DIR%\%QT_PREFIX%\msvc2017_64\bin
-::SET QT_BASEDIR=%QT_DIR%\%QT_PREFIX%\msvc2017\bin
 SET QT_TOOLS=%QT_DIR%\Tools
 SET QT_INSTALLER_DIR=%QT_TOOLS%\QtInstallerFramework\3.0\bin
 SET PROJECTBUILDDIR=DEPLOYDIR
@@ -39,6 +32,7 @@ SET ARCHIVEGEN=%QT_INSTALLER_DIR%\archivegen.exe
 SET REPOGEN=%QT_INSTALLER_DIR%\repogen.exe
 SET BINARYCREATOR=%QT_INSTALLER_DIR%\binarycreator.exe
 SET MAKE_DONE=false
+SET APP_INSTALLER_CONFIG=config_windows.xml
 
 echo.
 echo.
@@ -48,35 +42,20 @@ cd %PROJECTBASE%
 :: das Projekt Buildverzechnis testen und ggf anlegen
 if exist %PROJECTBUILDDIR% (
   rmdir /q /s %PROJECTBUILDDIR%
-<<<<<<< HEAD
 )
 mkdir %PROJECTBUILDDIR%
 :: das Repository Verzeichnis testen und ggf anlegen
 if exist %REPOSITORY_DIR% (
   rmdir /q /s %REPOSITORY_DIR%
 )
-=======
-)
-mkdir %PROJECTBUILDDIR%
-:: das Repository Verzeichnis testen und ggf anlegen
-if exist %REPOSITORY_DIR% (
-  rmdir /q /s %REPOSITORY_DIR%
-)
->>>>>>> dev/stabilizing
 mkdir %REPOSITORY_DIR%
 cd %PROJECTBUILDDIR%
 
 echo directory %cd%
 
 echo Umgebung einrichten...
-<<<<<<< HEAD
-SET PATH=%PATH%;C:\Program Files (x86)\Windows Kits\10\bin\10.0.17763.0\x64
-call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
-::call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community/VC\Auxiliary\Build\vcvars32.bat"
-=======
 SET PATH=%PATH%;%WINKIT%
-call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
->>>>>>> dev/stabilizing
+call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
 
 echo.
 echo qmake ausfuehren
@@ -90,12 +69,8 @@ if "%MAKE_DONE%" == "false" goto false_end
 
 echo Deployment... 
 SET MAKE_DONE=false
-<<<<<<< HEAD
-%DEPLOY% --%PROJECTTYPE% --no-quick-import --no-system-d3d-compiler --compiler-runtime --no-opengl-sw "out" && SET MAKE_DONE=true
-=======
 %DEPLOY% --%PROJECTTYPE% --no-quick-import --no-system-d3d-compiler --no-compiler-runtime --no-opengl-sw "out" && SET MAKE_DONE=true
 ::%DEPLOY% --%PROJECTTYPE% --no-quick-import --no-system-d3d-compiler --compiler-runtime --no-opengl-sw "out" && SET MAKE_DONE=true
->>>>>>> dev/stabilizing
 
 :: falls das falsch ist, zum Ende kommen
 if "%MAKE_DONE%" == "false" goto false_end
@@ -129,19 +104,11 @@ if exist "%INSTALLERBASE%\%OFFLINEINSTALLER%" (
   del /F /Q "%INSTALLERBASE%\%OFFLINEINSTALLER%"
 )
 
-<<<<<<< HEAD
-
-=======
->>>>>>> dev/stabilizing
 echo erzeuge updater packages
 
 SET MAKE_DONE=false
 :: BUGFIX von visual studio/qt deploy
 cp -f %EXTRAS%\ucrtbased.dll ucrtbased.dll
-<<<<<<< HEAD
-echo %ARCHIVEGEN% %APP_INSTALLER_FILE_PATH%\%APP_INSTALLER_FILE% *.exe *.qm *.ilk *.pdb ucrtbased.dll
-%ARCHIVEGEN% %APP_INSTALLER_FILE_PATH%\%APP_INSTALLER_FILE% *.exe *.qm *.ilk *.pdb ucrtbased.dll && SET MAKE_DONE=true
-=======
 cp -f %EXTRAS%\libEGL.dll libEGL.dll
 cp -f %EXTRAS%\libGLESv2.dll libGLESv2.dll
 cp -f %EXTRAS%\msvcp140.dll msvcp140.dll
@@ -151,7 +118,6 @@ cp -f %EXTRAS%\vcruntime140.dll vcruntime140.dll
 
 echo %ARCHIVEGEN% %APP_INSTALLER_FILE_PATH%\%APP_INSTALLER_FILE% *.exe *.qm *.ilk *.pdb ucrtbased.dll libEGL.dll libGLESv2.dll msvcp140.dll opengl32sw.dll vccorlib140.dll vcruntime140.dll
 %ARCHIVEGEN% %APP_INSTALLER_FILE_PATH%\%APP_INSTALLER_FILE% *.exe *.qm *.ilk *.pdb ucrtbased.dll libEGL.dll libGLESv2.dll msvcp140.dll opengl32sw.dll vccorlib140.dll vcruntime140.dll && SET MAKE_DONE=true
->>>>>>> dev/stabilizing
 
 :: falls das falsch ist, zum Ende kommen
 if "%MAKE_DONE%" == "false" goto false_end
@@ -159,15 +125,12 @@ if "%MAKE_DONE%" == "false" goto false_end
 del /f /q  spx42Control.*
 del /f /q  *.qm
 del /f /q ucrtbased.dll
-<<<<<<< HEAD
-=======
 del /f /q libEGL.dll
 del /f /q libGLESv2.dll
 del /f /q msvcp140.dll
 del /f /q opengl32sw.dll
 del /f /q vccorlib140.dll
 del /f /q vcruntime140.dll
->>>>>>> dev/stabilizing
 del /f /q "%RUNTIME_INSTALLER_FILE_PATH%%RUNTIME_INSTALLER_FILE%"
 
 SET MAKE_DONE=false
@@ -183,19 +146,16 @@ if "%MAKE_DONE%" == "false" goto false_end
 cd %INSTALLERBASE%
 echo erzeuge das installerprogramm online...
 
-echo %BINARYCREATOR% -n -c config\config.xml -p packages -i qtRuntime,spx42Control %ONLINEINSTALLER%
-%BINARYCREATOR% -n -c config\config.xml -p packages -i qtRuntime,spx42Control %ONLINEINSTALLER%
+echo %BINARYCREATOR% -n -c config\%APP_INSTALLER_CONFIG% -p packages -i qtRuntime,spx42Control %ONLINEINSTALLER%
+%BINARYCREATOR% -n -c config\%APP_INSTALLER_CONFIG% -p packages -i qtRuntime,spx42Control %ONLINEINSTALLER%
 :: repository generate
-<<<<<<< HEAD
-=======
 echo %REPOGEN% -p packages -i qtRuntime,spx42Control ../repository/
->>>>>>> dev/stabilizing
 %REPOGEN% -p packages -i qtRuntime,spx42Control ../repository/
 
 ::sleep 2
 ::echo erzeuge das installerprogramm offline...
-::echo %BINARYCREATOR% -f -c config\config.xml -p packages -i qtRuntime,spx42Control %OFFLINEINSTALLER%
-::%BINARYCREATOR% -f -c config\config.xml -p packages -i qtRuntime,spx42Control %OFFLINEINSTALLER%
+::echo %BINARYCREATOR% -f -c config\%APP_INSTALLER_CONFIG% -p packages -i qtRuntime,spx42Control %OFFLINEINSTALLER%
+::%BINARYCREATOR% -f -c config\%APP_INSTALLER_CONFIG% -p packages -i qtRuntime,spx42Control %OFFLINEINSTALLER%
 
 :: jetzt die META Daten zippen
 

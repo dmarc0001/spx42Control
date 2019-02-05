@@ -75,7 +75,7 @@ namespace spx
     double ppo2_2;
     double ppo2_3;
     int nextStep;
-    int setpoint;
+    double setpoint;
     int n2;
     int he;
     int z_time;
@@ -165,6 +165,10 @@ namespace spx
     UsedGasList getGasList( const QString &mac, const QVector< int > *diveNums );
     //! gib den Zeitpunkt eines Tauchganges zurück
     qint64 getTimestampForDive( const QString &mac, int diveNum );
+    //! Schreibe eine Bemerkung in die datenbank (max 120 Zeichen)
+    bool writeNotesForDive( const QString &mac, int diveNum, const QString &notes );
+    //! lese Bemerkung aus der DB, wenn vorhanden
+    QString getNotesForDive( const QString &mac, int diveNum );
 
     private:
     //! gibt es folgende Tabelle?
@@ -185,6 +189,8 @@ namespace spx
     bool createVersionTable( void );
     //! teste ob alle Tabellen vorhanden sind, wenn ncht erzeuge diese
     bool checkOrCreateTables( void );
+    //! Update Tabelle detaildir, füge feld "notes" hinzu
+    bool updateDetailDirTableFromFour( void );
 
     // GETTER und SETTER
     bool isDbOpen() const;
