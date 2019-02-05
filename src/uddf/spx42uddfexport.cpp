@@ -116,7 +116,7 @@ namespace spx
     if ( !file.open( QIODevice::WriteOnly | QIODevice::Text ) )
     {
       lg->crit( "SPX42UDDFExport::createExportXml -> can't open export file! ABORT" );
-      emit onEndSavedUddfFiileSig( false );
+      emit onEndSavedUddfFiileSig( false, exportFile );
       return ( false );
     }
     //
@@ -146,7 +146,7 @@ namespace spx
     {
       file.close();
       file.remove();
-      emit onEndSavedUddfFiileSig( false );
+      emit onEndSavedUddfFiileSig( false, exportFile );
       return ( false );
     }
 
@@ -157,7 +157,7 @@ namespace spx
     {
       file.close();
       file.remove();
-      emit onEndSavedUddfFiileSig( false );
+      emit onEndSavedUddfFiileSig( false, exportFile );
       return ( false );
     }
 
@@ -168,7 +168,7 @@ namespace spx
     {
       file.close();
       file.remove();
-      emit onEndSavedUddfFiileSig( false );
+      emit onEndSavedUddfFiileSig( false, exportFile );
       return ( false );
     }
 
@@ -179,7 +179,7 @@ namespace spx
     {
       file.close();
       file.remove();
-      emit onEndSavedUddfFiileSig( false );
+      emit onEndSavedUddfFiileSig( false, exportFile );
       return ( false );
     }
 
@@ -187,7 +187,7 @@ namespace spx
     stream.writeEndDocument();
     file.close();
     lg->info( QString( "SPX42UDDFExport::createExportXml -> successful exportet to file <%1>" ).arg( exportFile ) );
-    emit onEndSavedUddfFiileSig( true );
+    emit onEndSavedUddfFiileSig( true, exportFile );
     return ( true );
   }
 

@@ -3,6 +3,7 @@
 
 #include <float.h>
 #include <QAbstractItemView>
+#include <QFileDialog>
 #include <QFuture>
 #include <QMargins>
 #include <QQueue>
@@ -176,7 +177,7 @@ namespace spx
     //! UDDF dive export für einen TG beendet
     void onEndSaveDiveSlot( int diveNum );
     //! UDDF export beendet
-    void onEndSaveUddfFileSlot( bool wasOk );
+    void onEndSaveUddfFileSlot( bool wasOk, const QString &fileName );
 
     public slots:
     void onAddLogdirEntrySlot( const QString &entry, bool inDatabase = false );
