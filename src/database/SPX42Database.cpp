@@ -3,7 +3,7 @@
 namespace spx
 {
   const QString SPX42Database::sqlDriver{"QSQLITE"};
-  const qint16 SPX42Database::databaseVersion{4};
+  const qint16 SPX42Database::databaseVersion{5};
 
   SPX42DeviceAlias::SPX42DeviceAlias() : mac(), name(), alias(), lastConnected( false )
   {
@@ -774,6 +774,17 @@ namespace spx
         return ( false );
       }
     }
+    else
+    {
+      if ( currentDatabaseVersionNumber < databaseVersion )
+      {
+        //
+        // von 4 zu 5 kommt das Feld NOTES dazu...
+        // und wenn es klappt, Versiontabelle erzeugen
+        //
+        haveToCreateNewVersionTable = updateDetailDirTableFromFour();
+      }
+    }
     //
     if ( !existTable( "logdata" ) )
     {
@@ -794,6 +805,26 @@ namespace spx
       createVersionTable();
     }
     return ( true );
+  }
+
+  bool SPX42Database::updateDetailDirTableFromFour( void )
+  {
+    QString sql;
+    lg->debug( "SPX42Database::updateDetailDirTableFromFour..." );
+    if ( db.isValid() && db.isOpen() )
+    {
+      QSqlQuery query( db );
+      sql = "alter table detaildir add column notes text(120) default null";
+      if ( !query.exec( sql ) )
+      {
+        QSqlError err = db.lastError();
+        lg->crit( QString( "SPX42Database::updateDetailDirTableFromFour -> failed alter table  <%1>" ).arg( err.text() ) );
+        return ( false );
+      }
+      lg->debug( "SPX42Database::updateDetailDirTableFromFour...OK" );
+      return ( true );
+    }
+    return ( false );
   }
 
   /**
@@ -1577,6 +1608,75 @@ namespace spx
     }
     lg->warn( "SPX42Database::getTimestampForDive -> db is not valid or not opened." );
     return ( ux_timestamp );
+  }
+
+  bool SPX42Database::writeNotesForDive( const QString &mac, int diveNum, const QString &notes )
+  {
+    QString sql;
+    int device_id = -1;
+    if ( db.isValid() && db.isOpen() )
+    {
+      lg->debug( "SPX42Database::getNotesForDive..." );
+      device_id = getDevicveId( mac );
+      if ( device_id == -1 )
+        return ( false );
+      QSqlQuery query( db );
+      sql = "update detaildir \n";
+      sql += QString( "  set notes = '%1'\n" ).arg( notes.left( 120 ) );
+      sql += QString( "where device_id=%1 and divenum=%2" ).arg( device_id ).arg( diveNum );
+      if ( !query.exec( sql ) )
+      {
+        //
+        // es gab einen Fehler bei der Anfrage
+        //
+        QSqlError err = db.lastError();
+        lg->warn( QString( "SPX42Database::getNotesForDive -> error: <%1>..." ).arg( err.text() ) );
+        return ( false );
+      }
+      lg->debug( "SPX42Database::getNotesForDive...OK" );
+      return ( true );
+    }
+    lg->warn( "SPX42Database::getNotesForDive -> db is not valid or not opened." );
+    return ( false );
+  }
+
+  QString SPX42Database::getNotesForDive( const QString &mac, int diveNum )
+  {
+    QString sql;
+    int device_id = -1;
+    QString notes;
+    if ( db.isValid() && db.isOpen() )
+    {
+      lg->debug( "SPX42Database::getNotesForDive..." );
+      device_id = getDevicveId( mac );
+      if ( device_id == -1 )
+        return ( notes );
+      QSqlQuery query( db );
+      sql = "select notes\n";
+      sql += "from detaildir \n";
+      sql += QString( "where device_id=%1 and divenum=%2" ).arg( device_id ).arg( diveNum );
+      if ( !query.exec( sql ) )
+      {
+        //
+        // es gab einen Fehler bei der Anfrage
+        //
+        QSqlError err = db.lastError();
+        lg->warn( QString( "SPX42Database::getNotesForDive -> error: <%1>..." ).arg( err.text() ) );
+        return ( notes );
+      }
+      //
+      // bis hier ging es, jetzt Ergebnis abholen
+      //
+      if ( query.next() )
+      {
+        if ( !query.value( 0 ).isNull() )
+          notes = query.value( 0 ).toString();
+      }
+      lg->debug( "SPX42Database::getNotesForDive...OK" );
+      return ( notes );
+    }
+    lg->warn( "SPX42Database::getNotesForDive -> db is not valid or not opened." );
+    return ( notes );
   }
 
   // ##########################################################################

@@ -16,9 +16,6 @@
 #include "spx42/SPX42SingleCommand.hpp"
 #include "spx42databaseconstants.hpp"
 
-// TODO: Bemerkungen lesen und schreiben
-// TODO: Datenbank erweitern für Bemerkungen
-
 namespace spx
 {
   //
@@ -168,6 +165,10 @@ namespace spx
     UsedGasList getGasList( const QString &mac, const QVector< int > *diveNums );
     //! gib den Zeitpunkt eines Tauchganges zurück
     qint64 getTimestampForDive( const QString &mac, int diveNum );
+    //! Schreibe eine Bemerkung in die datenbank (max 120 Zeichen)
+    bool writeNotesForDive( const QString &mac, int diveNum, const QString &notes );
+    //! lese Bemerkung aus der DB, wenn vorhanden
+    QString getNotesForDive( const QString &mac, int diveNum );
 
     private:
     //! gibt es folgende Tabelle?
@@ -188,6 +189,8 @@ namespace spx
     bool createVersionTable( void );
     //! teste ob alle Tabellen vorhanden sind, wenn ncht erzeuge diese
     bool checkOrCreateTables( void );
+    //! Update Tabelle detaildir, füge feld "notes" hinzu
+    bool updateDetailDirTableFromFour( void );
 
     // GETTER und SETTER
     bool isDbOpen() const;

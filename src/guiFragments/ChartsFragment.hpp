@@ -45,6 +45,8 @@ namespace spx
     DeviceAliasHash spxDevicesAliasHash;
     //! mac adresse des ausgewählten gerätes
     QString deviceAddr;
+    //! Nummer des ausgewählten Tauchganges
+    int diveNum;
     //! das ganze offline
     QString fragmentTitleOfflinePattern;
 

@@ -335,8 +335,11 @@ namespace spx
     st.writeTextElement( "model", "EXP or MINI" );
 
     // Sauerstoffsensoren
-    if ( !writeO2Sensor( 0, st ) )  // effektive, gemittelter wert
-      return ( false );
+    st.writeStartElement( "o2sensor" );
+    st.writeAttribute( "id", "o2_sensor_00" );
+    st.writeTextElement( "model", "RESULT" );
+    st.writeEndElement();
+    //
     if ( !writeO2Sensor( 1, st ) )
       return ( false );
     if ( !writeO2Sensor( 2, st ) )
@@ -463,8 +466,8 @@ namespace spx
     qint64 ux_timestamp = database->getTimestampForDive( device_mac, diveNum );
     QDateTime diveDateTime = QDateTime::fromSecsSinceEpoch( ux_timestamp );
     DiveDataSetsPtr dataSerie = database->getDiveDataSets( device_mac, diveNum );
-    // TODO: Bemerkungen aus Datenbank lesen
-    QString diveNotes = "not notes implemented yet";
+    // Bemerkungen aus Datenbank lesen
+    QString diveNotes = database->getNotesForDive( device_mac, diveNum );
     // ich gehe mal davon aus, das der erste wert noch luft ist... (ist angenähert)
     double airtemperature = static_cast< double >( dataSerie->first().temperature ) + ProjectConst::KELVINDIFF;
     // niedrigste Temperatur finden
@@ -480,7 +483,7 @@ namespace spx
     // Block informationbeforedive oeffnen
     st.writeStartElement( "informationbeforedive" );
     // Dtetime schreiben
-    st.writeTextElement( "datetime", diveDateTime.toString( "yyyy-MM-ddTHH:mm::ss" ) );
+    st.writeTextElement( "datetime", diveDateTime.toString( "yyyy-MM-ddTHH:mm:ss" ) );
     // Tauchgangsnummer
     st.writeTextElement( "divenumber", QString( "%1" ).arg( diveNum, 4, 10, QChar( '0' ) ) );
     // Luft Temperatur

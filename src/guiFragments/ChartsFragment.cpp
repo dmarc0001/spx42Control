@@ -192,7 +192,9 @@ namespace spx
     //
     if ( index == -1 || deviceAddr.isEmpty() )
       return;
-    int diveNum = ui->diveSelectComboBox->itemData( index ).toInt();
+    diveNum = ui->diveSelectComboBox->itemData( index ).toInt();
+    if ( diveNum == -1 )
+      return;
     lg->debug( QString( "ChartsFragment::onDiveComboChangedSlot -> change to dive #%1..." ).arg( diveNum, 3, 10, QChar( '0' ) ) );
     // chartView->setChart( diveChart.get() );
     if ( dbgetDataFuture.isFinished() )
@@ -203,6 +205,7 @@ namespace spx
       chartWorker->prepareDiveCharts( bigDiveChart, ppo2DiveChart );
       bigChartView->setChart( bigDiveChart );
       ppo2ChartView->setChart( ppo2DiveChart );
+      ui->notesLineEdit->setText( database->getNotesForDive( deviceAddr, diveNum ) );
       dbgetDataFuture =
           QtConcurrent::run( chartWorker.get(), &ChartDataWorker::makeDiveChart, bigDiveChart, ppo2DiveChart, deviceAddr, diveNum );
     }
@@ -223,6 +226,14 @@ namespace spx
   void ChartsFragment::onNotesLineEditFinishedSlot()
   {
     lg->debug( "ChartsFragment::onNotesLineEditFinishedSlot -> edit finished..." );
+    if ( database->writeNotesForDive( deviceAddr, diveNum, ui->notesLineEdit->text() ) )
+    {
+      lg->debug( "ChartsFragment::onNotesLineEditFinishedSlot -> notes saved...OK" );
+    }
+    else
+    {
+      lg->warn( "ChartsFragment::onNotesLineEditFinishedSlot -> notes NOT saved!" );
+    }
   }
 
   void ChartsFragment::onOnlineStatusChangedSlot( bool )
