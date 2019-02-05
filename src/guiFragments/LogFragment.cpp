@@ -520,7 +520,7 @@ namespace spx
     QFileDialog fileDial( this, tr( "SELECT EXPORT DIR" ), exportPath, nullptr );
     fileDial.setFileMode( QFileDialog::Directory );
     fileDial.setViewMode( QFileDialog::Detail );
-    if ( fileDial.exec() )
+    if ( QDialog::Accepted == fileDial.exec() )
     {
       _exportPath = fileDial.selectedFiles().first();
       QDir fileDir( _exportPath );
@@ -538,6 +538,13 @@ namespace spx
                                QMessageBox::Close );
         return;
       }
+    }
+    else
+    {
+      //
+      // Abgebrochen!
+      //
+      return;
     }
     //
     // kann los gehen
