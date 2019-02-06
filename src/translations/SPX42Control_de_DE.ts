@@ -53,27 +53,27 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/ChartsFragment.ui" line="154"/>
+        <location filename="../ui/ChartsFragment.ui" line="184"/>
         <source>select device for display data...</source>
         <translation>Gerät für Anzeige auswählen...</translation>
     </message>
     <message>
-        <location filename="../ui/ChartsFragment.ui" line="199"/>
+        <location filename="../ui/ChartsFragment.ui" line="229"/>
         <source>select dive for display data...</source>
         <translation>Tauchgang für Anzeige auswählen...</translation>
     </message>
     <message>
-        <location filename="../ui/ChartsFragment.ui" line="283"/>
+        <location filename="../ui/ChartsFragment.ui" line="359"/>
         <source>NOTES:</source>
         <translation>Bemerkungen:</translation>
     </message>
     <message>
-        <location filename="../ui/ChartsFragment.ui" line="315"/>
+        <location filename="../ui/ChartsFragment.ui" line="391"/>
         <source>describes the dive as an note...</source>
         <translation>Beschreibt den Tauchgang als Bemerkung...</translation>
     </message>
     <message>
-        <location filename="../ui/ChartsFragment.ui" line="318"/>
+        <location filename="../ui/ChartsFragment.ui" line="394"/>
         <source>...INPUT YOUR NOTES HERE...</source>
         <translation>... Bemerkungen zum Tauchgang hier...</translation>
     </message>
@@ -323,7 +323,7 @@
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="979"/>
         <source>settings for display orientation...</source>
-        <translation>Einstellungen fpr Anzeige Ausrichtung...</translation>
+        <translation>Einstellungen für Anzeige Ausrichtung...</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="986"/>
@@ -1330,22 +1330,32 @@
         <translation>Vorschau</translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="124"/>
-        <source>DIVE VIEW</source>
-        <translation>Tauchgang Ansicht</translation>
+        <location filename="../database/ChartDataWorker.cpp" line="271"/>
+        <source>TEMP [&amp;ordm;C]</source>
+        <translation></translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="195"/>
+        <location filename="../database/ChartDataWorker.cpp" line="300"/>
+        <source>PPO2</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../database/ChartDataWorker.cpp" line="315"/>
+        <source>SETPOINT</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>DIVE VIEW</source>
+        <translation type="vanished">Tauchgang Ansicht</translation>
+    </message>
+    <message>
+        <location filename="../database/ChartDataWorker.cpp" line="257"/>
         <source>DEPTH [m]</source>
         <translation>Tiefe [m]</translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="225"/>
-        <source>PPO2 [bar]</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../database/ChartDataWorker.cpp" line="237"/>
+        <location filename="../database/ChartDataWorker.cpp" line="290"/>
+        <location filename="../database/ChartDataWorker.cpp" line="331"/>
         <source>DIVE TIME [min]</source>
         <translation>Tauchzeit [min]</translation>
     </message>
@@ -1353,22 +1363,22 @@
 <context>
     <name>spx::ChartsFragment</name>
     <message>
-        <location filename="../guiFragments/ChartsFragment.cpp" line="26"/>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="29"/>
         <source>LOGFILES SPX42 [%1] in database</source>
         <translation>Logdaten SPX42 [%1] in Datenbank</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ChartsFragment.cpp" line="59"/>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="77"/>
         <source>unknown</source>
         <translation>unbekannt</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ChartsFragment.cpp" line="69"/>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="87"/>
         <source>database empty</source>
         <translation>Datenbank leer</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ChartsFragment.cpp" line="214"/>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="254"/>
         <source>LOGCHARTS SPX42 Serial [%1] Lic: %2</source>
         <translation>Log Grafiken SPX32 Seriennummer [%1] Lizenz: %2</translation>
     </message>
@@ -1850,7 +1860,7 @@
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="167"/>
         <source>Will you really quit this programm and close all files, databases, connections?</source>
-        <translation>Wollen Sie das Programm wirklich beenden und alle Verbindeungen und Datenbanken schließen?</translation>
+        <translation>Wollen Sie das Programm wirklich beenden und alle Verbindungen und Datenbanken schließen?</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="239"/>

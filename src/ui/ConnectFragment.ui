@@ -212,11 +212,16 @@
           <height>58</height>
          </size>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>16</pointsize>
+         </font>
+        </property>
         <property name="statusTip">
          <string>connect selected device...</string>
         </property>
         <property name="text">
-         <string>connect device</string>
+         <string>CONNECT DEVICE</string>
         </property>
         <property name="icon">
          <iconset resource="../res/SPX42ControlRes.qrc">
@@ -292,11 +297,16 @@
           <height>58</height>
          </size>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>16</pointsize>
+         </font>
+        </property>
         <property name="statusTip">
          <string>Discover bluetooth SPX42 devices...</string>
         </property>
         <property name="text">
-         <string>discover devices</string>
+         <string>DISCOVER DEVICES</string>
         </property>
         <property name="icon">
          <iconset resource="../res/SPX42ControlRes.qrc">
