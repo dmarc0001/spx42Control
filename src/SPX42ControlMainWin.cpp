@@ -78,7 +78,7 @@ namespace spx
     int id6 = QFontDatabase::addApplicationFont( ":/fonts/bahnschrift.ttf" );
     if ( id1 < 0 || id2 < 0 || id3 < 0 || id4 < 0 || id5 < 0 || id6 < 0 )
     {
-      QMessageBox::critical( this, tr( "CRITICAL" ), tr( "internal font can't load!" ) );
+      QMessageBox::critical( this, tr( "CRITICAL" ), tr( "internal font(s) can't load!" ) );
     }
     else
     {
