@@ -162,13 +162,11 @@ namespace spx
    */
   void SPX42ControlMainWin::closeEvent( QCloseEvent *event )
   {
-    QMessageBox msgBox;
-    msgBox.setText( tr( "Really EXIT?" ) );
-    msgBox.setDetailedText( tr( "Will you really quit this programm and close all files, databases, connections?" ) );
-    msgBox.setIcon( QMessageBox::Question );
-    msgBox.setStandardButtons( QMessageBox::No | QMessageBox::Yes );
-    lg->debug( "SPX42ControlMainWin::closeEvent -> show dialogbox..." );
-    if ( QMessageBox::Yes != msgBox.exec() )
+    QMessageBox::StandardButton result;
+    result = QMessageBox::question( this, tr( "Really EXIT?" ),
+                                    tr( "Will you really quit this programm and close all files, databases, connections?" ),
+                                    QMessageBox::No | QMessageBox::Yes, QMessageBox::No );
+    if ( QMessageBox::Yes != result )
     {
       event->ignore();
       lg->debug( "SPX42ControlMainWin::closeEvent -> ignore close application..." );
