@@ -13,6 +13,15 @@
             }
         },
         {
+            "label": "LESS spx42Control WIN",
+            "type": "shell",
+            "command": "lessc spx42Control.less spx42Control.css",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
             "label": "LESS spx42ControlMac",
             "type": "shell",
             "command": "lessc spx42ControlMac.less spx42ControlMac.css",
