@@ -1,222 +1,178 @@
-﻿/******************************************************************************
+/******************************************************************************
 **** Stylesheets für die App spx42Control                                  ****
 ******************************************************************************/
-
-/* Alle Anzeigeelemente */
-
-QWidget
-{
-  font-family: "DejaVu Sans Mono";
+/* Schrift */
+/* button */
+/* Farben */
+/******************************************************************************
+**** Alle Anzeigeelemente                                                  ****
+******************************************************************************/
+QWidget {
+  font-family: "Bahnschrift";
   font-style: normal;
+  color: #161616;
   font-size: 16pt;
 }
-
-QPushButton
-{
-  font-size: 16pt;
+QMainWindoww {
+  background-color: #f3f3f3f1;
 }
-
-QPushButton#closeButton, QPushButton#cancelButton
-{
-  font-size: 21pt;
-}
-
-/* mit hover-Effekt */
-QPushButton:hover:!pressed, QComboBox:hover, QSpinBox:hover
-{
-  color: green;
-  border: 1px solid green;
-}
-
-/* gepresst */
-QPushButton:hover:pressed
-{
-  color: red;
-  border: 2px solid red;
-}
-
-/* kopf überschriften in den TABS */
-QLabel#tabHeaderLabel
-{
-  font-style: bold;
+QPushButton {
+  font-family: "Hack";
   font-size: 18pt;
-  color: red;
+  border-radius: 4px;
 }
-
-/*
-###############################################################################
-#### tabs stylen                                                           ####
-###############################################################################
-*/
-
-/* linie zum hauptbereicvh */
-QTabWidget::pane
-{
-  border-top: 2px solid #295732;
+QPushButton:disabled {
+  color: silver;
 }
-
-/* abstand zur linken Seite unter Windows, bei mac ist mitte standart */
-QTabWidget::tab-bar
-{
-    left: 5px;
+QPushButton:hover,
+QComboBox:hover,
+QSpinBox:hover {
+  color: #222fa5;
+  border: 1px solid #00E604;
+  font-size: 18pt;
 }
-
-/* grundstyle des einzelnen TAB */
-QTabBar::tab
-{
-    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                stop: 0 #E1E1E1, stop: 0.4 #DDDDDD,
-                                stop: 0.5 #D8D8D8, stop: 1.0 #D3D3D3);
-    border: 2px solid #C4C4C3;
-    border-bottom-color: #295732; /* same as the pane color */
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-    min-width: 10ex;
-    padding-top: 4px;
-    padding-bottom: 2px;
-    padding-left: 4px;
-    padding-right: 4px;
+QPushButton:hover:pressed {
+  color: #222fa5;
+  border: 1px solid #ff0000;
 }
-
-/* drüber mit der Maus */
-QTabBar::tab:selected, QTabBar::tab:hover
-{
-    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                stop: 0 #fafafa, stop: 0.4 #f4f4f4,
-                                stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);
+/* kopf überschriften in den TABS */
+QLabel#tabHeaderLabel {
+  font-style: bold;
+  font-size: 19pt;
+  color: #04049e;
 }
-
-/* der markierte TAB */
-QTabBar::tab:selected
-{
-    border-color: #278C23;
-    border-bottom-color: #295732; /* same as pane color */
-}
-
-/* NICHT selektierter Tabs sollen kleiner erscheinen */
-QTabBar::tab:!selected
-{
-    margin-top: 2px;
-}
-
-/* selektierte tabs sollen überlappen */
-QTabBar::tab:selected
-{
-    margin-left: -2px;
-    margin-right: -2px;
-}
-
-/* der erste tab überlappt natürlich nicht links */
-QTabBar::tab:first:selected
-{
-    margin-left: 0;
-}
-
-/* und der letzte tab überlapt natürlich nicht rechts */
-QTabBar::tab:last:selected
-{
-    margin-right: 0;
-}
-
-/* wenn nur ein tab da sein sollte */
-QTabBar::tab:only-one
-{
-    margin: 0;
-}
-
-
 /*
 ##################################################################
 #  Device Info Tab                                               #
 ##################################################################
 */
-
-QWidget#deviceInfoBodyWidget>QLabel
-{
-  font-family: "Hack";
+QWidget#deviceInfoBodyWidget > QLabel {
+  font-family: "Bahnschrift";
   font-style: bold;
-  font-size: 22pt;
-  color:gray;
-  background-color: silver;
+  font-size: 20pt;
+  color: #333232;
+  background-color: #707070;
 }
-
-QGroupBox#firmwarePartGroupBox>QLabel
-{
+QGroupBox#firmwarePartGroupBox > QLabel {
   font-style: italic;
-  font-size: 12pt;
-  color:gray;
+  font-size: 16pt;
+  color: #333232;
 }
-
-QGroupBox#firmwarePartGroupBox>QLabel:enabled
-{
+QGroupBox#firmwarePartGroupBox > QLabel:enabled {
   font-style: bold;
-  font-size: 12pt;
-  color:green;
+  font-size: 16pt;
+  color: #0c9400;
 }
-
-
 /*
 ##################################################################
 #  Gas Tab - current gas edit                                    #
 ##################################################################
 */
-QGroupBox#currGasGroupBox>QWidget
-{
+QGroupBox#currGasGroupBox > QWidget {
   background-color: silver;
 }
-
-QGroupBox#currGasGroupBox>QLabel
-{
+QGroupBox#currGasGroupBox > QLabel {
   background-color: none;
-  color:blue;
+  color: #04049e;
 }
-
-QGroupBox#currGasGroupBox>QWidget>QLabel,
- QGroupBox#currGasGroupBox>QWidget>QCheckBox ,
- QGroupBox#currGasGroupBox>QWidget>QSpinBox,
- QGroupBox#currGasGroupBox>QWidget>QLineEdit,
- QLabel#currNameLabel
-{
+QGroupBox#currGasGroupBox > QWidget > QLabel,
+QGroupBox#currGasGroupBox > QWidget > QCheckBox,
+QGroupBox#currGasGroupBox > QWidget > QSpinBox,
+QGroupBox#currGasGroupBox > QWidget > QLineEdit,
+QLabel#currNameLabel {
   font-style: bold;
-  font-size: 22pt;
-  color:rgb(0, 30, 161);
+  font-size: 20pt;
+  color: #04049e;
   background-color: silver;
 }
-
-QGroupBox#currGasGroupBox>QWidget>QCheckBox#currWaterTypeCheckBox
-{
-  color:#6060ff;
-  font-size: 14pt;
+QGroupBox#currGasGroupBox > QWidget > QSpinBox {
+  font-family: "Hack";
 }
-
-QGroupBox#gasesGroupBox>QRadioButton
-{
-  color:gray;
-  font-size:14pt;
+QGroupBox#currGasGroupBox > QWidget > QCheckBox#currWaterTypeCheckBox {
+  color: #04049e;
+  font-size: 19pt;
 }
-
-QGroupBox#gasesGroupBox>QRadioButton:checked
-{
-  color:rgb(10, 41, 179);
+QGroupBox#gasesGroupBox > QRadioButton {
+  color: #cecece;
+}
+QGroupBox#gasesGroupBox > QRadioButton:checked {
+  color: #04049e;
   background-color: silver;
 }
-
-QGroupBox#gasesGroupBox>QRadioButton:hover
-{
-  color:rgb(47, 79, 223);
-  background-color: rgb(170, 183, 241);
+QGroupBox#gasesGroupBox > QRadioButton:hover {
+  color: #662ffd;
+  background-color: #f0f0f0;
 }
-
 /*
 ###############################################################################
 LOG TAB
 ###############################################################################
 */
-QGroupBox#logDetailsGroupBox>QLabel#dbWriteNumLabel
-{
-  font-size: 14pt;
+QGroupBox#logDetailsGroupBox > QLabel#dbWriteNumLabel {
   font-style: bold;
-  color: rgb(182, 21, 133);
+  color: #b61585;
   background-color: #D6D6D6;
 }
-
+QTableWidget#logentryTableWidget {
+  font-family: "Hack";
+}
+/*
+###############################################################################
+#### tabs stylen                                                           ####
+###############################################################################
+*/
+/* linie zum hauptbereich */
+QTabWidget::pane {
+  border-top: 2px solid #295732;
+}
+/* abstand zur linken Seite unter Windows, bei mac ist mitte standart */
+QTabWidget::tab-bar {
+  left: 5px;
+}
+QTabBar::tab {
+  background: #e7e7e7;
+  border: 2px solid #C4C4C3;
+  border-bottom-color: #295732;
+  /* same as the pane color */
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  min-width: 10ex;
+  padding-top: 4px;
+  padding-bottom: 2px;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+/* drüber mit der Maus */
+QTabBar::tab:selected {
+  background-color: #d9eef8;
+}
+QTabBar::tab:hover {
+  background: #eee5d0;
+  color: #222fa5;
+}
+/* der markierte TAB */
+QTabBar::tab:selected {
+  border-color: #278C23;
+  border-bottom-color: #295732;
+}
+/* NICHT selektierter Tabs sollen kleiner erscheinen */
+QTabBar::tab {
+  margin-top: 2px;
+}
+/* selektierte tabs sollen überlappen */
+QTabBar::tab:selected {
+  margin-left: -2px;
+  margin-right: -2px;
+}
+/* der erste tab überlappt natürlich nicht links */
+QTabBar::tab:first:selected {
+  margin-left: 0;
+}
+/* und der letzte tab überlapt natürlich nicht rechts */
+QTabBar::tab:last:selected {
+  margin-right: 0;
+}
+/* wenn nur ein tab da sein sollte */
+QTabBar::tab:only-one {
+  margin: 0;
+}

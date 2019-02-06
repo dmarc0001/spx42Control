@@ -66,6 +66,7 @@ int main( int argc, char *argv[] )
   // Hauptfenster erzeugen, Fenster zeigen
   //
   spx::SPX42ControlMainWin w;
+  w.setLocale( QLocale::system() );
   //
   // und nun den logger (zeiger) holen
   // damit wird der logger NACH w gelöscht, es gibt keinen Absturz

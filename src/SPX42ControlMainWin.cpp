@@ -78,7 +78,7 @@ namespace spx
     int id6 = QFontDatabase::addApplicationFont( ":/fonts/bahnschrift.ttf" );
     if ( id1 < 0 || id2 < 0 || id3 < 0 || id4 < 0 || id5 < 0 || id6 < 0 )
     {
-      QMessageBox::critical( this, tr( "CRITICAL" ), tr( "internal font can't load!" ) );
+      QMessageBox::critical( this, tr( "CRITICAL" ), tr( "internal font(s) can't load!" ) );
     }
     else
     {
@@ -162,13 +162,11 @@ namespace spx
    */
   void SPX42ControlMainWin::closeEvent( QCloseEvent *event )
   {
-    QMessageBox msgBox;
-    msgBox.setText( tr( "Really EXIT?" ) );
-    msgBox.setDetailedText( tr( "Will you really quit this programm and close all files, databases, connections?" ) );
-    msgBox.setIcon( QMessageBox::Question );
-    msgBox.setStandardButtons( QMessageBox::No | QMessageBox::Yes );
-    lg->debug( "SPX42ControlMainWin::closeEvent -> show dialogbox..." );
-    if ( QMessageBox::Yes != msgBox.exec() )
+    QMessageBox::StandardButton result;
+    result = QMessageBox::question( this, tr( "Really EXIT?" ),
+                                    tr( "Will you really quit this programm and close all files, databases, connections?" ),
+                                    QMessageBox::No | QMessageBox::Yes, QMessageBox::No );
+    if ( QMessageBox::Yes != result )
     {
       event->ignore();
       lg->debug( "SPX42ControlMainWin::closeEvent -> ignore close application..." );
