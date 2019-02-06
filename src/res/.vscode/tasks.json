@@ -6,10 +6,17 @@
         {
             "label": "LESS spx42Control",
             "type": "shell",
-            "command": "lessc spx42Control.less spx42Control.css",
+            "command": "lessc spx42Control.less spx42Control.css && lessc spx42ControlMac.less spx42ControlMac.css",
             "group": {
                 "kind": "build",
                 "isDefault": true
+            }
+        },
+        {
+            "label": "LESS spx42ControlMac",
+            "type": "shell",
+            "command": "lessc spx42ControlMac.less spx42ControlMac.css",
+            "group":"build"
         }
-    
+      ]
 }

@@ -11,14 +11,14 @@ QWidget {
   font-family: "Bahnschrift";
   font-style: normal;
   color: #161616;
-  font-size: 11pt;
+  font-size: 16pt;
 }
 QMainWindoww {
   background-color: #f3f3f3f1;
 }
 QPushButton {
   font-family: "Hack";
-  font-size: 15pt;
+  font-size: 18pt;
   border-radius: 4px;
 }
 QPushButton:disabled {
@@ -29,7 +29,7 @@ QComboBox:hover,
 QSpinBox:hover {
   color: #222fa5;
   border: 1px solid #00E604;
-  font-size: 15pt;
+  font-size: 18pt;
 }
 QPushButton:hover:pressed {
   color: #222fa5;
@@ -38,7 +38,7 @@ QPushButton:hover:pressed {
 /* kopf überschriften in den TABS */
 QLabel#tabHeaderLabel {
   font-style: bold;
-  font-size: 14pt;
+  font-size: 19pt;
   color: #04049e;
 }
 /*
@@ -49,18 +49,18 @@ QLabel#tabHeaderLabel {
 QWidget#deviceInfoBodyWidget > QLabel {
   font-family: "Bahnschrift";
   font-style: bold;
-  font-size: 18pt;
+  font-size: 20pt;
   color: #333232;
   background-color: #707070;
 }
 QGroupBox#firmwarePartGroupBox > QLabel {
   font-style: italic;
-  font-size: 11pt;
+  font-size: 16pt;
   color: #333232;
 }
 QGroupBox#firmwarePartGroupBox > QLabel:enabled {
   font-style: bold;
-  font-size: 11pt;
+  font-size: 16pt;
   color: #0c9400;
 }
 /*
@@ -81,7 +81,7 @@ QGroupBox#currGasGroupBox > QWidget > QSpinBox,
 QGroupBox#currGasGroupBox > QWidget > QLineEdit,
 QLabel#currNameLabel {
   font-style: bold;
-  font-size: 18pt;
+  font-size: 20pt;
   color: #04049e;
   background-color: silver;
 }
@@ -90,7 +90,7 @@ QGroupBox#currGasGroupBox > QWidget > QSpinBox {
 }
 QGroupBox#currGasGroupBox > QWidget > QCheckBox#currWaterTypeCheckBox {
   color: #04049e;
-  font-size: 14pt;
+  font-size: 19pt;
 }
 QGroupBox#gasesGroupBox > QRadioButton {
   color: #cecece;
