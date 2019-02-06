@@ -35,6 +35,7 @@ namespace spx
     delete ui->chartFrame->layout()->replaceWidget( ui->placeHolderWidget, bigChartView.get() );
     bigChartView->setChart( bigDummyChart );
     bigChartView->setRenderHint( QPainter::Antialiasing );
+    bigChartView->setRubberBand( QChartView::HorizontalRubberBand );
     //
     ppo2ChartView->setMinimumSize( ui->placeHolderWidget2->minimumSize() );
     ppo2ChartView->setSizePolicy( ui->placeHolderWidget2->sizePolicy() );
@@ -263,4 +264,58 @@ namespace spx
   {
     // IGNORIEREN
   }
+
+  //  void ChartsFragment::keyPressEvent( QKeyEvent *event )
+  //  {
+  //    if ( ppo2DiveChart && bigDiveChart )
+  //    {
+  //      switch ( event->key() )
+  //      {
+  //        case Qt::Key_Plus:
+  //          ppo2DiveChart->zoomIn();
+  //          bigDiveChart->zoomIn();
+  //          break;
+  //        case Qt::Key_Minus:
+  //          ppo2DiveChart->zoomOut();
+  //          bigDiveChart->zoomOut();
+  //          break;
+  //          //![1]
+  //        case Qt::Key_Left:
+  //          ppo2DiveChart->scroll( -10, 0 );
+  //          bigDiveChart->scroll( -10, 0 );
+  //          break;
+  //        case Qt::Key_Right:
+  //          ppo2DiveChart->scroll( 10, 0 );
+  //          bigDiveChart->scroll( 10, 0 );
+  //          break;
+  //        default:
+  //          ChartsFragment::keyPressEvent( event );
+  //          break;
+  //      }
+  //    }
+  //    else
+  //    {
+  //      ChartsFragment::keyPressEvent( event );
+  //    }
+  //  }
 }  // namespace spx
+
+/*
+void wheelEvent(QWheelEvent *event)
+{
+  if(chart() && mDirectionZoom != NotZoom){
+    const qreal factor = 1.001;
+    QRectF r = chart()->plotArea();
+    QPointF c = r.center();
+    qreal val = std::pow(factor, event->delta());
+    if(mDirectionZoom & VerticalZoom)
+      r.setHeight(r.height()*val);
+    if (mDirectionZoom & HorizontalZoom) {
+      r.setWidth(r.width()*val);
+    }
+    r.moveCenter(c);
+    chart()->zoomIn(r);
+  }
+  QChartView::wheelEvent(event);
+}
+*/

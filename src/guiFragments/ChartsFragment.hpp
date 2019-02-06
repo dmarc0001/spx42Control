@@ -58,6 +58,9 @@ namespace spx
                              std::shared_ptr< SPX42RemotBtDevice > remSPX42 );  //! Konstruktor
     ~ChartsFragment() override;                                                 //! Destruktor, muss GUI säubern
 
+    protected:
+    // void keyPressEvent( QKeyEvent *event ) override;
+
     private:
     void initDeviceSelection( void );
 
