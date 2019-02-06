@@ -2,6 +2,7 @@
 **** Stylesheets für die App spx42Control                                  ****
 ******************************************************************************/
 /* Schrift */
+/* button */
 /* Farben */
 /******************************************************************************
 **** Alle Anzeigeelemente                                                  ****
@@ -12,22 +13,27 @@ QWidget {
   color: #161616;
   font-size: 11pt;
 }
-/* mit hover-Effekt */
+QMainWindoww {
+  background-color: #f3f3f3f1;
+}
+QPushButton {
+  font-family: "Hack";
+  font-size: 15pt;
+  border-radius: 4px;
+}
+QPushButton:disabled {
+  color: silver;
+}
 QPushButton:hover,
 QComboBox:hover,
 QSpinBox:hover {
-  color: #05128d;
+  color: #222fa5;
   border: 1px solid #00E604;
+  font-size: 15pt;
 }
-/* gepresst */
 QPushButton:hover:pressed {
-  color: #05128d;
-  border: 2px solid #ff0000;
-}
-QWidget > QPushButton,
-QPushButton {
-  font-family: "Hack";
-  font-size: 16pt;
+  color: #222fa5;
+  border: 1px solid #ff0000;
 }
 /* kopf überschriften in den TABS */
 QLabel#tabHeaderLabel {
@@ -87,7 +93,7 @@ QGroupBox#currGasGroupBox > QWidget > QCheckBox#currWaterTypeCheckBox {
   font-size: 14pt;
 }
 QGroupBox#gasesGroupBox > QRadioButton {
-  color: gray;
+  color: #cecece;
 }
 QGroupBox#gasesGroupBox > QRadioButton:checked {
   color: #04049e;
@@ -124,16 +130,7 @@ QTabWidget::tab-bar {
   left: 5px;
 }
 QTabBar::tab {
-  background: #cedce7;
-  /* Old browsers */
-  background: -moz-linear-gradient(-45deg, #cedce7 0%, #596a72 100%);
-  /* FF3.6-15 */
-  background: -webkit-linear-gradient(-45deg, #cedce7 0%, #596a72 100%);
-  /* Chrome10-25,Safari5.1-6 */
-  background: linear-gradient(135deg, #cedce7 0%, #596a72 100%);
-  /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#cedce7', endColorstr='#596a72', GradientType=1);
-  /* IE6-9 fallback on horizontal gradient */
+  background: #e7e7e7;
   border: 2px solid #C4C4C3;
   border-bottom-color: #295732;
   /* same as the pane color */
@@ -146,27 +143,17 @@ QTabBar::tab {
   padding-right: 4px;
 }
 /* drüber mit der Maus */
-QTabBar::tab:selected,
-QTabBar::tab:hover {
-  background: #b5bdc8;
-  /* Old browsers */
-  background: -moz-linear-gradient(-45deg, #b5bdc8 0%, #828c95 36%, #28343b 100%);
-  /* FF3.6-15 */
-  background: -webkit-linear-gradient(-45deg, #b5bdc8 0%, #828c95 36%, #28343b 100%);
-  /* Chrome10-25,Safari5.1-6 */
-  background: linear-gradient(135deg, #b5bdc8 0%, #828c95 36%, #28343b 100%);
-  /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#b5bdc8', endColorstr='#28343b', GradientType=1);
-  /* IE6-9 fallback on horizontal gradient */
+QTabBar::tab:selected {
+  background-color: #d9eef8;
 }
 QTabBar::tab:hover {
-  color: #05128d;
+  background: #eee5d0;
+  color: #222fa5;
 }
 /* der markierte TAB */
 QTabBar::tab:selected {
   border-color: #278C23;
   border-bottom-color: #295732;
-  /* same as pane color */
 }
 /* NICHT selektierter Tabs sollen kleiner erscheinen */
 QTabBar::tab {

@@ -7,16 +7,25 @@
 @font-family: "Bahnschrift";
 @font-family-mono: "Hack";
 @font-size-normal: 11pt;
-@font-size-button: 16pt;
+@font-size-button: 15pt;
 @font-header-label-size: 14pt;
 @font-big-size: 18pt;
+/* button */
+
+@button-border-radius: 4px;
 /* Farben */
+
 @elem-color: #161616;
+@elem-disabled-color: silver;
+@elem-background-bolor: #f3f3f3f1;
+@tab-background-color: #e7e7e7;
+@tab-hover-background-color: #eee5d0;
+@tab-selected-background-color: #d9eef8;
 @elem-hover-border-color: #00E604;
-@elem-hover-color: #05128d;
+@elem-hover-color: #222fa5;
 @elem-pressed-color: #ff0000;
 @label-color: #04049e;
-@gas-groub-radio-button-color: gray;
+@gas-groub-radio-button-color: #cecece;
 @gas-label-background-color: silver;
 @gas-label-hover-color: #662ffd;
 @gas-label-hover-background-color: #f0f0f0;
@@ -24,8 +33,6 @@
 @device-info-text-color: #333232;
 @device-info-label-background-color: #707070;
 @device-info-enabled-text-color: #0c9400;
-
-
 /******************************************************************************
 **** Alle Anzeigeelemente                                                  ****
 ******************************************************************************/
@@ -37,28 +44,32 @@ QWidget {
     font-size: @font-size-normal;
 }
 
-/* mit hover-Effekt */
+QMainWindoww {
+    background-color: @elem-background-bolor;
+}
+
+QPushButton {
+    font-family: @font-family-mono;
+    font-size: @font-size-button;
+    border-radius: @button-border-radius;
+}
+
+QPushButton:disabled {
+    color: @elem-disabled-color;
+}
 
 QPushButton:hover,
 QComboBox:hover,
 QSpinBox:hover {
     color: @elem-hover-color;
     border: 1px solid @elem-hover-border-color;
-}
-
-/* gepresst */
-
-QPushButton:hover:pressed {
-    color: @elem-hover-color;
-    border: 2px solid @elem-pressed-color;
-}
-
-QWidget>QPushButton,
-QPushButton {
-    font-family: @font-family-mono;
     font-size: @font-size-button;
 }
 
+QPushButton:hover:pressed {
+    color: @elem-hover-color;
+    border: 1px solid @elem-pressed-color;
+}
 
 /* kopf überschriften in den TABS */
 
@@ -124,7 +135,6 @@ QGroupBox#currGasGroupBox>QWidget>QSpinBox {
     font-family: @font-family-mono;
 }
 
-
 QGroupBox#currGasGroupBox>QWidget>QCheckBox#currWaterTypeCheckBox {
     color: @label-color;
     font-size: @font-header-label-size;
@@ -156,7 +166,7 @@ QGroupBox#logDetailsGroupBox>QLabel#dbWriteNumLabel {
     background-color: #D6D6D6;
 }
 
-QTableWidget#logentryTableWidget {   
+QTableWidget#logentryTableWidget {
     font-family: @font-family-mono;
 }
 
@@ -179,16 +189,7 @@ QTabWidget::tab-bar {
 }
 
 QTabBar::tab {
-    background: #cedce7;
-    /* Old browsers */
-    background: -moz-linear-gradient(-45deg, #cedce7 0%, #596a72 100%);
-    /* FF3.6-15 */
-    background: -webkit-linear-gradient(-45deg, #cedce7 0%, #596a72 100%);
-    /* Chrome10-25,Safari5.1-6 */
-    background: linear-gradient(135deg, #cedce7 0%, #596a72 100%);
-    /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cedce7', endColorstr='#596a72', GradientType=1);
-    /* IE6-9 fallback on horizontal gradient */
+    background: @tab-background-color;
     border: 2px solid #C4C4C3;
     border-bottom-color: #295732;
     /* same as the pane color */
@@ -203,21 +204,12 @@ QTabBar::tab {
 
 /* drüber mit der Maus */
 
-QTabBar::tab:selected,
-QTabBar::tab:hover {
-    background: #b5bdc8;
-    /* Old browsers */
-    background: -moz-linear-gradient(-45deg, #b5bdc8 0%, #828c95 36%, #28343b 100%);
-    /* FF3.6-15 */
-    background: -webkit-linear-gradient(-45deg, #b5bdc8 0%, #828c95 36%, #28343b 100%);
-    /* Chrome10-25,Safari5.1-6 */
-    background: linear-gradient(135deg, #b5bdc8 0%, #828c95 36%, #28343b 100%);
-    /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b5bdc8', endColorstr='#28343b', GradientType=1);
-    /* IE6-9 fallback on horizontal gradient */
+QTabBar::tab:selected {
+    background-color: @tab-selected-background-color;
 }
 
 QTabBar::tab:hover {
+    background: @tab-hover-background-color;
     color: @elem-hover-color;
 }
 
@@ -226,7 +218,6 @@ QTabBar::tab:hover {
 QTabBar::tab:selected {
     border-color: #278C23;
     border-bottom-color: #295732;
-    /* same as pane color */
 }
 
 /* NICHT selektierter Tabs sollen kleiner erscheinen */
@@ -259,4 +250,3 @@ QTabBar::tab:last:selected {
 QTabBar::tab:only-one {
     margin: 0;
 }
-
