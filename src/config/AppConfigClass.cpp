@@ -20,6 +20,8 @@ namespace spx
   const QString AppConfigClass::constAppDatabasePathKey{"databasePath"};
   const QString AppConfigClass::constExportPathKey{"uddfExportPath"};
   const int AppConfigClass::defaultWatchdogTimerVal{20};
+  const QString AppConfigClass::constThemeKey{"guiTheme"};
+  const QString AppConfigClass::constThemeDefaultName{"Light"};
   const QString AppConfigClass::constAppThresholdKey{"loggingThreshold"};
   const qint8 AppConfigClass::defaultAppThreshold{4};
   const QString AppConfigClass::defaultDatabaseName{"spx42Database.sqlite"};
@@ -73,7 +75,7 @@ namespace spx
    */
   bool AppConfigClass::loadSettings()
   {
-    qDebug().noquote() << "AppConfigClass::loadSettings(void) CONFIG: <" + configFile + ">";
+    qDebug().noquote() << "AppConfigClass::loadSettings(void) CONFIG: <" << configFile << ">";
     QSettings settings( configFile, QSettings::IniFormat );
     if ( !loadLogSettings( settings ) )
     {
@@ -115,7 +117,7 @@ namespace spx
   {
     qDebug().noquote() << "AppConfigClass::saveSettings()";
     bool retVal = true;
-    qDebug().noquote() << "AppConfigClass::saveSettings(void) CONFIG: <" + configFile + ">";
+    qDebug().noquote() << "AppConfigClass::saveSettings(void) CONFIG: <" << configFile << ">";
     // QSettings settings(configFile, QSettings::NativeFormat);
     QSettings settings( configFile, QSettings::IniFormat );
     //
@@ -180,7 +182,11 @@ namespace spx
    */
   QString AppConfigClass::getFullLogFilePath()
   {
-    return ( logfilePath.append( "/" ).append( logfileName ) );
+    // um korrekte Pfade zu erzeugen ein QFileobjekt
+    QFile logFile( QString().append( logfilePath ).append( "/" ).append( logfileName ) );
+    // Fileinfo zur korrekten erzeugung des kompletten Pfdades
+    QFileInfo logFileInfo( logFile );
+    return ( logFileInfo.filePath() );
   }
 
   /**
@@ -191,7 +197,7 @@ namespace spx
   bool AppConfigClass::loadLogSettings( QSettings &settings )
   {
     bool retval = true;
-    qDebug().noquote() << "AppConfigClass::loadLogSettings()";
+    qDebug().noquote() << "AppConfigClass::loadLogSettings() START...";
     //
     // Öffne die Gruppe Logeinstellungen
     //
@@ -205,6 +211,7 @@ namespace spx
       // Nicht gefunden -> Fehler markieren
       retval = false;
     }
+    qDebug().noquote().nospace() << "AppConfigClass::loadLogSettings(): Logfile Path: <" << logfilePath << ">";
     //
     // Lese den Dateinamen aus
     //
@@ -214,7 +221,7 @@ namespace spx
       // Nicht gefunden -> Fehler markieren
       retval = false;
     }
-    qDebug().noquote().nospace() << "AppConfigClass::loadLogSettings(): Logfile: <" + logfileName + ">";
+    qDebug().noquote().nospace() << "AppConfigClass::loadLogSettings(): Logfile: <" << logfileName << ">";
     //
     // Ende der Gruppe
     //
@@ -256,7 +263,7 @@ namespace spx
    */
   bool AppConfigClass::saveLogSettings( QSettings &settings )
   {
-    qDebug().noquote().nospace() << "AppConfigClass::saveLogSettings() DATEI: <" + configFile + ">";
+    qDebug().noquote().nospace() << "AppConfigClass::saveLogSettings() DATEI: <" << configFile << ">";
     //
     // Öffne die Gruppe Logeinstellungen
     //
@@ -295,7 +302,7 @@ namespace spx
   bool AppConfigClass::loadAppSettings( QSettings &settings )
   {
     bool retval = true;
-    qDebug().noquote() << "AppConfigClass::loadAppSettings()";
+    qDebug().noquote() << "AppConfigClass::loadAppSettings() START...";
     //
     // Öffne die Gruppe app
     //
@@ -332,6 +339,11 @@ namespace spx
     exportPath = settings.value( constExportPathKey, defaultExportPath ).toString();
     qDebug().noquote().nospace() << "AppConfigClass::loadAppSettings(): export path: <" << exportPath << ">";
     //
+    // lese Thema der GUI
+    //
+    guiThemeName = settings.value( constThemeKey, constThemeDefaultName ).toString();
+    qDebug().noquote().nospace() << "AppConfigClass::loadAppSettings(): gui theme name: <" << guiThemeName << ">";
+    //
     // Ende der Gruppe
     //
     settings.endGroup();
@@ -361,6 +373,8 @@ namespace spx
     settings.setValue( constAppDatabasePathKey, databasePath );
     exportPath = defaultExportPath;
     settings.setValue( constExportPathKey, exportPath );
+    guiThemeName = constThemeDefaultName;
+    settings.setValue( constThemeKey, guiThemeName );
     //
     // Ende der Gruppe
     //
@@ -382,6 +396,8 @@ namespace spx
     settings.setValue( constAppDatabaseNameKey, databaseName );
     qDebug().noquote().nospace() << "AppConfigClass::saveAppSettings databasepath: <" << databasePath << ">";
     settings.setValue( constAppDatabasePathKey, databasePath );
+    qDebug().noquote().nospace() << "AppConfigClass::saveAppSettings gui theme Name: <" << guiThemeName << ">";
+    settings.setValue( constThemeKey, guiThemeName );
     //
     // Ende der Gruppe
     //
@@ -437,4 +453,15 @@ namespace spx
   {
     return ( exportPath );
   }
+
+  QString AppConfigClass::getGuiThemeName() const
+  {
+    return guiThemeName;
+  }
+
+  void AppConfigClass::setGuiThemeName( const QString &value )
+  {
+    guiThemeName = value;
+  }
+
 }  // namespace spx

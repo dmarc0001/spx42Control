@@ -1376,17 +1376,17 @@
         <translation>Logdaten SPX42 [%1] in Datenbank</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ChartsFragment.cpp" line="77"/>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="78"/>
         <source>unknown</source>
         <translation>unbekannt</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ChartsFragment.cpp" line="87"/>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="88"/>
         <source>database empty</source>
         <translation>Datenbank leer</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ChartsFragment.cpp" line="254"/>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="255"/>
         <source>LOGCHARTS SPX42 Serial [%1] Lic: %2</source>
         <translation>Log Grafiken SPX32 Seriennummer [%1] Lizenz: %2</translation>
     </message>
@@ -1856,9 +1856,13 @@
         <translation>Konnte Datenbank ncht öffnen!</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="81"/>
         <source>internal font can&apos;t load!</source>
-        <translation>Interner Font kann nicht geladen werden!</translation>
+        <translation type="vanished">Interner Font kann nicht geladen werden!</translation>
+    </message>
+    <message>
+        <location filename="../SPX42ControlMainWin.cpp" line="81"/>
+        <source>internal font(s) can&apos;t load!</source>
+        <translation>kann interne Fonts nicht laden!</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="166"/>

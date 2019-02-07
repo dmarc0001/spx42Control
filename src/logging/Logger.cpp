@@ -24,19 +24,19 @@ namespace spx
     // shutdown();
   }
 
-  int Logger::startLogging( LgThreshold th, const QString &fn )
+  int Logger::startLogging( LgThreshold th, const QString &fileName )
   {
     threshold = th;
     //
     // gibt es einen Lognamen
     //
-    if ( fn != nullptr )
+    if ( fileName != nullptr )
     {
-      if ( fn.length() > 4 )
+      if ( fileName.length() > 4 )
       {
         // Super, das Logfile ist benannt!
-        qDebug().noquote().nospace() << "START LOGGING...";
-        logFile = std::unique_ptr< QFile >( new QFile( fn ) );
+        qDebug().noquote().nospace() << "START LOGGING...(" << fileName << ")";
+        logFile = std::unique_ptr< QFile >( new QFile( fileName ) );
         logFile->open( QIODevice::WriteOnly | QIODevice::Append );
         textStream = std::unique_ptr< QTextStream >( new QTextStream( logFile.get() ) );
         *textStream << getDateString() << "START LOGGING" << endl;

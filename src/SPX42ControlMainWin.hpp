@@ -49,6 +49,8 @@ namespace spx
     static const CmdMarker marker;
     //! zur initialisierung von Einträgen
     static const QByteArray ar;
+    //! Konfiguration aus Datei, als referenz übergeben von ControlMain
+    AppConfigClass cf;
     //! das GUI Objekt
     std::unique_ptr< Ui::SPX42ControlMainWin > ui;
     //! Loggerobjekt für Logs
@@ -69,8 +71,6 @@ namespace spx
     std::unique_ptr< OptionsDialog > optionsDlg;
     //! Tab Titel (nicht statisch, das Objekt gibts eh nur einmal)
     QStringList tabTitle;
-    //! Konfiguration aus Datei
-    AppConfigClass cf;
     //! Wachhund für Timeouts
     QTimer watchdog;
     //! Nach Änderungen der Konfiguration zurück zum SPX schreiben (etwas verzögert)
@@ -103,6 +103,8 @@ namespace spx
     void closeEvent( QCloseEvent *event );
     //! gib dem shared zeiger auf den logger zurück
     std::shared_ptr< Logger > getLogger( void );
+    //! gib eine referenz auf die Config zurück
+    AppConfigClass &getConfig( void );
 
     private:
     //! Erzeuge den Logger

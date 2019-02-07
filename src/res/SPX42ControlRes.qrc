@@ -59,9 +59,10 @@
         <file alias="workerAnimation">working.gif</file>
     </qresource>
     <qresource prefix="/style">
-        <file alias="defaultStyle.css">spx42Control.css</file>
-        <file alias="defaultStyleMac.css">spx42ControlMac.css</file>
-        <file alias="defaultStyleUx.css">spx42ControlUx.css</file>
+        <file>spx42ControlMacDark.css</file>
+        <file>spx42ControlMacLight.css</file>
+        <file>spx42ControlWinDark.css</file>
+        <file>spx42ControlWinLight.css</file>
     </qresource>
     <qresource prefix="/help">
         <file alias="help_de.html">help_en.html</file>

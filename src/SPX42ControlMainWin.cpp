@@ -31,9 +31,6 @@ namespace spx
     // Hilfebutton ausblenden...
     //
     this->setWindowFlags( this->windowFlags() & ~Qt::WindowContextHelpButtonHint );
-    //
-    // lade die Einstellungen des Programmes
-    //
     cf.loadSettings();
     //
     // Programmlogger initialisieren
@@ -186,6 +183,16 @@ namespace spx
   {
     return ( lg );
   }
+
+  /**
+   * @brief SPX42ControlMainWin::getConfig
+   * @return
+   */
+  AppConfigClass &SPX42ControlMainWin::getConfig()
+  {
+    return ( cf );
+  }
+
   /**
    * @brief SPX42ControlMainWin::makeOnlineStatus
    */
@@ -214,9 +221,7 @@ namespace spx
     //
     // erzeuge einen Logger, untersuche zunächst ob es das Verzeichnis gibt
     //
-    QStringList list = cf.getLogfileName().split( "/" );
-    list.takeLast();
-    QString logDirStr = list.join( "/" );
+    QString logDirStr = cf.getLogfilePath();
     QDir logDir( logDirStr );
     // Logger erzeugen
     lg = std::shared_ptr< Logger >( new Logger() );

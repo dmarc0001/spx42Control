@@ -9,6 +9,7 @@
 #include <QRegularExpression>
 #include <QTranslator>
 #include <memory>
+#include "config/AppConfigClass.hpp"
 #include "logging/Logger.hpp"
 
 #include "SPX42ControlMainWin.hpp"
