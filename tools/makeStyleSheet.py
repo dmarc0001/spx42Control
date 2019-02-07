@@ -87,6 +87,7 @@ def main():
             style_file.close()
             s_file.close()
             print("schreibe datei...OK")
+            print("compiliere less datei  - {}".format(final_template_file))
             print("compiliere less datei zu stylesheet - {}".format(stylesheet))
             command = []
             command.append(LESSCOMPILER)

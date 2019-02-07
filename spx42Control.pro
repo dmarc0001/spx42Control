@@ -65,6 +65,10 @@ DEFINES                                += VMINOR=$$MINOR
 DEFINES                                += VPATCH=$$PATCH
 DEFINES                                += QT_DEPRECATED_WARNINGS
 
+macos {
+  DEFINES                              += MACOS
+}
+
 CONFIG(debug, debug|release) {
   DEFINES                              += DEBUG
   #unix: TARGET                         = $$join(TARGET,,,_debug)

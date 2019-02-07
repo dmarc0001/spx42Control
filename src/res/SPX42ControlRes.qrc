@@ -65,6 +65,7 @@
         <file>spx42ControlWinLight.css</file>
     </qresource>
     <qresource prefix="/help">
-        <file alias="help_de.html">help_en.html</file>
+        <file>help_en.html</file>
+        <file>help_de.html</file>
     </qresource>
 </RCC>

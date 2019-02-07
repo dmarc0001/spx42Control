@@ -10,7 +10,7 @@ int main( int argc, char *argv[] )
 #ifdef WIN32
   sytemType = "Win";
 #endif
-#ifdef DARWIN
+#ifdef MACOS
   sytemType = "Mac";
 #endif
 #ifdef LINUX
