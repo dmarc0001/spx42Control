@@ -28,6 +28,9 @@ namespace spx
   const QString AppConfigClass::defaultDatabasePath{
       QStandardPaths::writableLocation( QStandardPaths::AppDataLocation ).append( "/spx42Control" )};
   const QString AppConfigClass::defaultExportPath{QStandardPaths::writableLocation( QStandardPaths::DownloadLocation )};
+  const QString AppConfigClass::lightStr{AppConfigClass::constThemeDefaultName};
+  const QString AppConfigClass::darktStr{"Dark"};
+  const QString AppConfigClass::customtStr{"Custom"};
 
   /**
    * @brief LoggerClass::LoggerClass Der Konstruktor mit Name der Konfigdatei im Programmverzeichnis

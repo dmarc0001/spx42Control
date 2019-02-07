@@ -17,5 +17,6 @@
 int main( int argc, char *argv[] );
 
 bool readStylesheetFromFile( QApplication *app, QString &file );
+bool readStylesheetFromFile( QMainWindow *app, QString &file );
 
 #endif  // CONTROLMAIN_HPP

@@ -52,13 +52,15 @@ int main( int argc, char *argv[] )
 
   qDebug().nospace().noquote() << "style sheet filename: " << styleSheetFile;
   qDebug().nospace() << "search style sheet at: " << destPath.append( styleSheetFile );
-  if ( readStylesheetFromFile( &app, destPath ) )
+  // if ( readStylesheetFromFile( &app, destPath ) )
+  if ( readStylesheetFromFile( &w, destPath ) )
   {
     qDebug() << "Stylesheet correct loadet...";
   }
   else
   {
-    if ( readStylesheetFromFile( &app, destPath2 ) )
+    // if ( readStylesheetFromFile( &app, destPath2 ) )
+    if ( readStylesheetFromFile( &w, destPath2 ) )
     {
       qDebug() << "Stylesheet correct loadet...";
     }
@@ -67,7 +69,8 @@ int main( int argc, char *argv[] )
       qWarning() << "Can't load external stylesheet, try internal...";
       destPath = QString( ":/style/" ).append( styleSheetFile );
     }
-    if ( readStylesheetFromFile( &app, destPath ) )
+    // if ( readStylesheetFromFile( &app, destPath ) )
+    if ( readStylesheetFromFile( &w, destPath ) )
     {
       qDebug() << "internal Stylesheet correct loadet...";
     }
@@ -93,6 +96,27 @@ int main( int argc, char *argv[] )
   lg->debug( "ControlMain -> app ends..." );
   qDebug() << "app ends with returncode <" << retcode << ">";
   return ( retcode );
+}
+
+bool readStylesheetFromFile( QMainWindow *app, QString &file )
+{
+  QFile styleFile( file );
+  //
+  if ( !styleFile.open( QIODevice::ReadOnly ) )
+  {
+    qDebug() << "Cant open stylesheet readonly: " << styleFile.errorString();
+    return ( false );
+  }
+  //
+  // die Datei einlesen
+  //
+  QString line = styleFile.readAll();
+  // Zeilenvorschübe entfernen (global)
+  line.replace( QRegularExpression( "(\n|\r)" ), " " );
+  // Kommentare entfernen (globel)
+  line.remove( QRegularExpression( "/\\*.*?\\*/" ) );
+  app->setStyleSheet( line );
+  return ( true );
 }
 
 bool readStylesheetFromFile( QApplication *app, QString &file )

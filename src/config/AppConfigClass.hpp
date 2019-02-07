@@ -54,6 +54,14 @@ namespace spx
     static const QString defaultDatabasePath;
     //! defaultwert für export (download path, OS abhängig)
     static const QString defaultExportPath;
+
+    public:
+    //! mögliche Werte für Themen
+    static const QString lightStr;
+    static const QString darktStr;
+    static const QString customtStr;
+
+    private:
     //
     // ab hier die Konfiguration lagern
     //

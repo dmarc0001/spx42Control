@@ -7,19 +7,19 @@
     <x>0</x>
     <y>0</y>
     <width>750</width>
-    <height>429</height>
+    <height>525</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>750</width>
-    <height>380</height>
+    <height>525</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>750</width>
-    <height>450</height>
+    <height>550</height>
    </size>
   </property>
   <property name="font">
@@ -31,7 +31,7 @@
    <string>Dialog</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-image: url(&quot;:/images/binaer-background.jpg&quot;);</string>
+   <string notr="true"/>
   </property>
   <property name="locale">
    <locale language="English" country="UnitedStates"/>
@@ -39,7 +39,7 @@
   <property name="modal">
    <bool>false</bool>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
     <widget class="QGroupBox" name="databaseGroupBox">
      <property name="minimumSize">
@@ -265,6 +265,63 @@
         </property>
         <property name="text">
          <string>log threshold DEBUG</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="themeGroupBox">
+     <property name="minimumSize">
+      <size>
+       <width>650</width>
+       <height>130</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>140</height>
+      </size>
+     </property>
+     <property name="statusTip">
+      <string>gui theme...</string>
+     </property>
+     <property name="title">
+      <string>[ THEME ] </string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QRadioButton" name="lightRadioButton">
+        <property name="toolTip">
+         <string>sets the dark theme...</string>
+        </property>
+        <property name="text">
+         <string>LIGHT THEME FOR GUI</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="darkRadioButton">
+        <property name="toolTip">
+         <string>sets the logging threshold (level)...</string>
+        </property>
+        <property name="text">
+         <string>DARK THEME FOR GUI</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="customRadioButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="toolTip">
+         <string>sets the logging threshold (level)...</string>
+        </property>
+        <property name="text">
+         <string>CUSTOM (EXTERNAL - not active yet)</string>
         </property>
        </widget>
       </item>

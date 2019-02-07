@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from argparse import ArgumentParser
-from os import path, chdir
+from os import path, chdir, remove
 import subprocess
 
 """
@@ -95,6 +95,7 @@ def main():
             print("compiliere less datei zu stylesheet...")
             subprocess.run(command, shell=True, check=True)
             print("compiliere less datei zu stylesheet...OK")
+            remove(final_template_file)
             print("-")
 
 

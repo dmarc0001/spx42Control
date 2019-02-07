@@ -11,13 +11,14 @@
 **** Alle Anzeigeelemente                                                  ****
 ******************************************************************************/
 QWidget {
-  font-family: "Bahnschrift";
+  font-family: "Bahnschrift light";
   font-style: normal;
-  color: #161616;
+  color: #fffeb5;
   font-size: 16pt;
+  background-color: #2c2c2c;
 }
 QMainWindoww {
-  background-color: #f3f3f3f1;
+  background-color: #2c2c2c;
 }
 QPushButton {
   font-family: "Hack";
@@ -25,24 +26,33 @@ QPushButton {
   border-radius: 4px;
 }
 QPushButton:disabled {
-  color: silver;
+  color: #8f8f8f;
 }
 QPushButton:hover,
 QComboBox:hover,
 QSpinBox:hover {
-  color: #222fa5;
+  color: #66b5ff;
   border: 1px solid #00E604;
   font-size: 18pt;
 }
 QPushButton:hover:pressed {
-  color: #222fa5;
+  color: #66b5ff;
   border: 1px solid #ff0000;
+}
+QProgressBar {
+  border: 1px solid #00E604;
+  border-radius: 4px;
+}
+QProgressBar::chunk {
+  background-color: #fffeb5;
+  width: 40px;
+  margin: 3px;
 }
 /* kopf überschriften in den TABS */
 QLabel#tabHeaderLabel {
   font-style: bold;
   font-size: 19pt;
-  color: #04049e;
+  color: #68aef0;
 }
 /*
 ##################################################################
@@ -50,16 +60,16 @@ QLabel#tabHeaderLabel {
 ##################################################################
 */
 QWidget#deviceInfoBodyWidget > QLabel {
-  font-family: "Bahnschrift";
+  font-family: "Bahnschrift light";
   font-style: bold;
   font-size: 20pt;
-  color: #333232;
-  background-color: #707070;
+  color: #b6b6b6;
+  background-color: #424242;
 }
 QGroupBox#firmwarePartGroupBox > QLabel {
   font-style: italic;
   font-size: 16pt;
-  color: #333232;
+  color: #b6b6b6;
 }
 QGroupBox#firmwarePartGroupBox > QLabel:enabled {
   font-style: bold;
@@ -72,11 +82,11 @@ QGroupBox#firmwarePartGroupBox > QLabel:enabled {
 ##################################################################
 */
 QGroupBox#currGasGroupBox > QWidget {
-  background-color: silver;
+  background-color: #414141;
 }
 QGroupBox#currGasGroupBox > QLabel {
   background-color: none;
-  color: #04049e;
+  color: #68aef0;
 }
 QGroupBox#currGasGroupBox > QWidget > QLabel,
 QGroupBox#currGasGroupBox > QWidget > QCheckBox,
@@ -85,26 +95,26 @@ QGroupBox#currGasGroupBox > QWidget > QLineEdit,
 QLabel#currNameLabel {
   font-style: bold;
   font-size: 20pt;
-  color: #04049e;
-  background-color: silver;
+  color: #68aef0;
+  background-color: #414141;
 }
 QGroupBox#currGasGroupBox > QWidget > QSpinBox {
   font-family: "Hack";
 }
 QGroupBox#currGasGroupBox > QWidget > QCheckBox#currWaterTypeCheckBox {
-  color: #04049e;
+  color: #68aef0;
   font-size: 19pt;
 }
 QGroupBox#gasesGroupBox > QRadioButton {
-  color: #cecece;
+  color: #888686;
 }
 QGroupBox#gasesGroupBox > QRadioButton:checked {
-  color: #04049e;
-  background-color: silver;
+  color: #68aef0;
+  background-color: #424242;
 }
 QGroupBox#gasesGroupBox > QRadioButton:hover {
-  color: #662ffd;
-  background-color: #f0f0f0;
+  color: #9876f7;
+  background-color: #4b4b4b;
 }
 /*
 ###############################################################################
@@ -133,7 +143,7 @@ QTabWidget::tab-bar {
   left: 5px;
 }
 QTabBar::tab {
-  background: #e7e7e7;
+  background: #494949;
   border: 2px solid #C4C4C3;
   border-bottom-color: #295732;
   /* same as the pane color */
@@ -147,11 +157,11 @@ QTabBar::tab {
 }
 /* drüber mit der Maus */
 QTabBar::tab:selected {
-  background-color: #d9eef8;
+  background-color: #374b53;
 }
 QTabBar::tab:hover {
-  background: #eee5d0;
-  color: #222fa5;
+  background: #5a564f;
+  color: #66b5ff;
 }
 /* der markierte TAB */
 QTabBar::tab:selected {

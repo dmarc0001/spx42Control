@@ -3,23 +3,23 @@
 ******************************************************************************/
 
 /* Farben */
-@elem-color: #161616;
-@elem-disabled-color: silver;
-@elem-background-bolor: #f3f3f3f1;
-@tab-background-color: #e7e7e7;
-@tab-hover-background-color: #eee5d0;
-@tab-selected-background-color: #d9eef8;
+@elem-color: #fffeb5;
+@elem-disabled-color: #8f8f8f;
+@elem-background-color: #2c2c2c;
+@tab-background-color: #494949;
+@tab-hover-background-color: #5a564f;
+@tab-selected-background-color: #374b53;
 @elem-hover-border-color: #00E604;
-@elem-hover-color: #222fa5;
+@elem-hover-color: #66b5ff;
 @elem-pressed-color: #ff0000;
-@label-color: #04049e;
-@gas-groub-radio-button-color: #cecece;
-@gas-label-background-color: silver;
-@gas-label-hover-color: #662ffd;
-@gas-label-hover-background-color: #f0f0f0;
-@gas-group-background-color: silver;
-@device-info-text-color: #333232;
-@device-info-label-background-color: #707070;
+@label-color: #68aef0;
+@gas-group-radio-button-color: #888686;
+@gas-label-background-color: #424242;
+@gas-label-hover-color: #9876f7;
+@gas-label-hover-background-color: #4b4b4b;
+@gas-group-background-color: #414141;
+@device-info-text-color: #b6b6b6;
+@device-info-label-background-color: #424242;
 @device-info-enabled-text-color: #0c9400;
 
 /******************************************************************************
@@ -31,10 +31,11 @@ QWidget {
     font-style: normal;
     color: @elem-color;
     font-size: @font-size-normal;
+    background-color: @elem-background-color;
 }
 
 QMainWindoww {
-    background-color: @elem-background-bolor;
+    background-color: @elem-background-color;
 }
 
 QPushButton {
@@ -58,6 +59,17 @@ QSpinBox:hover {
 QPushButton:hover:pressed {
     color: @elem-hover-color;
     border: 1px solid @elem-pressed-color;
+}
+
+QProgressBar {
+    border: 1px solid @elem-hover-border-color;
+    border-radius: 4px;
+}
+
+QProgressBar::chunk {
+    background-color: @elem-color;
+    width: 40px;
+    margin: 3px;
 }
 
 /* kopf überschriften in den TABS */
@@ -130,7 +142,7 @@ QGroupBox#currGasGroupBox>QWidget>QCheckBox#currWaterTypeCheckBox {
 }
 
 QGroupBox#gasesGroupBox>QRadioButton {
-    color: @gas-groub-radio-button-color;
+    color: @gas-group-radio-button-color;
 }
 
 QGroupBox#gasesGroupBox>QRadioButton:checked {
