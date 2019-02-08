@@ -19,8 +19,21 @@ namespace spx
   class ChartDataWorker : public QObject
   {
     Q_OBJECT
+    private:
     static const qint64 waitTimeout{( 1000 / 50 ) * 20};
     static const qint64 waitUnits{50};
+
+    public:
+    //! Name für die Tiefenserie (zum wiederfinden mapToValue/mapToPosition)
+    static const QString deptSeriesName;
+    //! Name für die Temperaturserie (zum wiederfinden mapToValue/mapToPosition)
+    static const QString tempSeriesName;
+    //! Name für die PPO2 Serie (zum wiederfinden mapToValue/mapToPosition)
+    static const QString ppo2SeriesName;
+    //! Name für die Setpointserie (zum wiederfinden mapToValue/mapToPosition)
+    static const QString setpointSeriesName;
+
+    private:
     std::shared_ptr< Logger > lg;               // der Logger
     std::shared_ptr< SPX42Database > database;  // Datenbankverbindung
     bool shouldWriterRunning;                   // thread soll laufen und auf daten warten

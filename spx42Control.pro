@@ -122,7 +122,8 @@ SOURCES                 += \
     src/utils/DiveDataSeriesGenerator.cpp \
     src/utils/HelpDialog.cpp \
     src/utils/IDataSeriesGenerator.cpp \
-    src/utils/OptionsDialog.cpp
+    src/utils/OptionsDialog.cpp \
+    src/utils/ChartGraphicalValueCallout.cpp
 
 HEADERS                 += \
     src/bluetooth/BtDiscoverRemoteDevice.hpp \
@@ -161,7 +162,8 @@ HEADERS                 += \
     src/utils/DiveDataSeriesGenerator.hpp \
     src/utils/HelpDialog.hpp \
     src/utils/IDataSeriesGenerator.hpp \
-    src/utils/OptionsDialog.hpp
+    src/utils/OptionsDialog.hpp \
+    src/utils/ChartGraphicalValueCallout.hpp
 
 FORMS                   += \
     src/ui/SPX42ControlMainWin.ui \

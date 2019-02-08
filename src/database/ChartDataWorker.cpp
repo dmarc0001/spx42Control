@@ -2,6 +2,11 @@
 
 namespace spx
 {
+  const QString ChartDataWorker::deptSeriesName{"depthSeries"};
+  const QString ChartDataWorker::tempSeriesName{"tempSeries"};
+  const QString ChartDataWorker::ppo2SeriesName{"ppo2Series"};
+  const QString ChartDataWorker::setpointSeriesName{"setpointSeries"};
+  //
   using namespace QtCharts;
 
   ChartDataWorker::ChartDataWorker( std::shared_ptr< Logger > logger, std::shared_ptr< SPX42Database > _database, QObject *parent )
@@ -193,14 +198,18 @@ namespace spx
     //
     // Tiefe Serie
     depthSeries = new QLineSeries();
+    depthSeries->setName( ChartDataWorker::deptSeriesName );
     // Null Tiefenlinie
     nullDepthSeries = new QLineSeries();
     // Temperatur Serie
     tempSeries = new QLineSeries();
+    tempSeries->setName( ChartDataWorker::tempSeriesName );
     // PO2 Serie
     ppo2Series = new QLineSeries();
+    ppo2Series->setName( ChartDataWorker::ppo2SeriesName );
     // Setpoint Serie
     setpointSeries = new QLineSeries();
+    setpointSeries->setName( ChartDataWorker::setpointSeriesName );
     //
     // berülle Daten in die Serien
     //
