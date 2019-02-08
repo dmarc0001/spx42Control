@@ -6,7 +6,7 @@
         {
             "label": "Stylesheets erzeugen",
             "type": "shell",
-            "command": "python makeStyleSheet.py --prjdir=../",
+            "command": "python makeStyleSheet.py --prjdir=${workspaceFolder}/../",
             "group": {
                 "kind": "build",
                 "isDefault": true
