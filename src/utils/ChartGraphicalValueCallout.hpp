@@ -6,7 +6,7 @@
 #include <QtGui/QFont>
 #include <QtWidgets>
 
-namespace sqx
+namespace spx
 {
   class ChartGraphicalValueCallout : public QGraphicsItem
   {
@@ -44,5 +44,5 @@ namespace sqx
     //! Mausbewegungen bemerken
     void mouseMoveEvent( QGraphicsSceneMouseEvent *event );
   };
-}  // namespace sqx
+}  // namespace spx
 #endif  // CHARTGRAPHICALVALUECALLOUT_HPP

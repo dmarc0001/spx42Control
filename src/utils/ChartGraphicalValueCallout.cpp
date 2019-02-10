@@ -1,6 +1,6 @@
 #include "ChartGraphicalValueCallout.hpp"
 
-namespace sqx
+namespace spx
 {
   /**
    * @brief ChartGraphicalValueCallout::ChartGraphicalValueCallout gefunden in den QT Beispielen
@@ -180,4 +180,4 @@ namespace sqx
     setPos( parentChart->mapToPosition( calloutAnchor ) + QPoint( 10, -50 ) );
   }
 
-}  // namespace sqx
+}  // namespace spx

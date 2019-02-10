@@ -2,7 +2,7 @@
 
 namespace spx
 {
-  const QString ChartDataWorker::deptSeriesName{"depthSeries"};
+  const QString ChartDataWorker::depthAreaSeriesName{"depthAreaSeries"};
   const QString ChartDataWorker::tempSeriesName{"tempSeries"};
   const QString ChartDataWorker::ppo2SeriesName{"ppo2Series"};
   const QString ChartDataWorker::setpointSeriesName{"setpointSeries"};
@@ -198,7 +198,6 @@ namespace spx
     //
     // Tiefe Serie
     depthSeries = new QLineSeries();
-    depthSeries->setName( ChartDataWorker::deptSeriesName );
     // Null Tiefenlinie
     nullDepthSeries = new QLineSeries();
     // Temperatur Serie
@@ -224,6 +223,7 @@ namespace spx
       milisecounds += singleSet.nextStep * 1000;
     }
     depthAreaSeries = new QAreaSeries( nullDepthSeries, depthSeries );
+    depthAreaSeries->setName( ChartDataWorker::depthAreaSeriesName );
     //
     // Seiien aufhübschen, Design festlegen
     //

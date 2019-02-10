@@ -24,8 +24,8 @@ namespace spx
     static const qint64 waitUnits{50};
 
     public:
-    //! Name für die Tiefenserie (zum wiederfinden mapToValue/mapToPosition)
-    static const QString deptSeriesName;
+    //! Name für die Area TIEFE
+    static const QString depthAreaSeriesName;
     //! Name für die Temperaturserie (zum wiederfinden mapToValue/mapToPosition)
     static const QString tempSeriesName;
     //! Name für die PPO2 Serie (zum wiederfinden mapToValue/mapToPosition)
