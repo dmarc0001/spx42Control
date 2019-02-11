@@ -19,7 +19,7 @@ namespace spx
 {
   class QChartViewPrivate;
 
-  class SpxChartView : public QGraphicsView
+  class SPXChartView : public QGraphicsView
   {
     Q_OBJECT
     Q_ENUMS( RubberBand )
@@ -33,28 +33,29 @@ namespace spx
     };
     Q_DECLARE_FLAGS( RubberBands, RubberBand )
     QGraphicsScene *m_scene;
-    QChart *m_chart;
+    QChart *currChart;
     QPoint m_rubberBandOrigin;
     QRubberBand *m_rubberBand;
-    SpxChartView::RubberBands m_rubberBandFlags;
+    SPXChartView::RubberBands m_rubberBandFlags;
 
     private:
     std::shared_ptr< Logger > lg;
     ChartGraphicalValueCallout *currCallout;
-    // QLineSeries *depthSeries;
-    // QLineSeries *ppo2Series;
-    QAreaSeries *depthArea;
+    QLineSeries *depthSeries;
+    QLineSeries *ppo2Series;
+    QAreaSeries *depthAreaSeries;
     QDateTimeAxis *dtAxis;
     QLineSeries *tempSeries;
-    // QDateTime minRange;
-    // QDateTime maxRamge;
+    QLineSeries *currSeries;
+    QDateTime minTime;
+    QDateTime maxTime;
     static int counter;
     int currNumber;
 
     public:
-    explicit SpxChartView( std::shared_ptr< Logger > logger, QWidget *parent = nullptr );
-    explicit SpxChartView( std::shared_ptr< Logger > logger, QChart *chart, QWidget *parent = nullptr );
-    ~SpxChartView() override;
+    explicit SPXChartView( std::shared_ptr< Logger > logger, QWidget *parent = nullptr );
+    explicit SPXChartView( std::shared_ptr< Logger > logger, QChart *chart, QWidget *parent = nullptr );
+    ~SPXChartView() override;
     void setRubberBand( const RubberBands &rubberBands );
     RubberBands rubberBand() const;
 
@@ -74,10 +75,11 @@ namespace spx
     void init( void );
     void axisAndSeries( void );
     void c_resize( void );
+    void setTimeAxis( QDateTimeAxis *axis, QLineSeries *dataSeries, QRectF *rectF );
     void tooltip( QPointF point, bool state );
 
     private:
-    Q_DISABLE_COPY( SpxChartView )
+    Q_DISABLE_COPY( SPXChartView )
   };
 
 }  // namespace spx

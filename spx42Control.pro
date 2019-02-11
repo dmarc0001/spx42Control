@@ -124,7 +124,7 @@ SOURCES                 += \
     src/utils/IDataSeriesGenerator.cpp \
     src/utils/OptionsDialog.cpp \
     src/utils/ChartGraphicalValueCallout.cpp \
-    src/utils/SpxChartView.cpp
+    src/utils/SPXChartView.cpp
 
 HEADERS                 += \
     src/bluetooth/BtDiscoverRemoteDevice.hpp \
@@ -165,7 +165,7 @@ HEADERS                 += \
     src/utils/IDataSeriesGenerator.hpp \
     src/utils/OptionsDialog.hpp \
     src/utils/ChartGraphicalValueCallout.hpp \
-    src/utils/SpxChartView.hpp
+    src/utils/SPXChartView.hpp
 
 FORMS                   += \
     src/ui/SPX42ControlMainWin.ui \
@@ -243,4 +243,4 @@ INCLUDEPATH             += \
 
 
 
-message( app version $$VERSION kit $${KIT} )
+message( app version $$VERSION  )

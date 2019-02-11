@@ -18,8 +18,8 @@ namespace spx
       , ppo2DiveChart( nullptr )
       , bigDummyChart( new QtCharts::QChart() )
       , ppo2DummyChart( new QtCharts::QChart() )
-      , bigChartView( std::unique_ptr< SpxChartView >( new SpxChartView( logger, bigDummyChart ) ) )
-      , ppo2ChartView( std::unique_ptr< SpxChartView >( new SpxChartView( logger, ppo2DummyChart ) ) )
+      , bigChartView( std::unique_ptr< SPXChartView >( new SPXChartView( logger, bigDummyChart ) ) )
+      , ppo2ChartView( std::unique_ptr< SPXChartView >( new SPXChartView( logger, ppo2DummyChart ) ) )
       , chartWorker( std::unique_ptr< ChartDataWorker >( new ChartDataWorker( logger, database, this ) ) )
   {
     lg->debug( "ChartsFragment::ChartsFragment..." );
@@ -223,8 +223,8 @@ namespace spx
     lg->debug( "ChartsFragment::onChartReadySlot..." );
     bigChartView->setChart( bigDiveChart );
     ppo2ChartView->setChart( ppo2DiveChart );
-    bigChartView->setRubberBand( SpxChartView::HorizontalRubberBand );
-    ppo2ChartView->setRubberBand( SpxChartView::HorizontalRubberBand );
+    bigChartView->setRubberBand( SPXChartView::HorizontalRubberBand );
+    ppo2ChartView->setRubberBand( SPXChartView::HorizontalRubberBand );
     lg->debug( "ChartsFragment::onChartReadySlot...OK" );
   }
 

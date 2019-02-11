@@ -14,7 +14,7 @@
 #include "database/SPX42Database.hpp"
 #include "logging/Logger.hpp"
 #include "spx42/SPX42Config.hpp"
-#include "utils/SpxChartView.hpp"
+#include "utils/SPXChartView.hpp"
 
 namespace Ui
 {
@@ -38,9 +38,9 @@ namespace spx
     //! Zeiger auf DUMMY ppo2
     QtCharts::QChart *ppo2DummyChart;
     //! Zeiger auf das ChartView für Hauptdaten
-    std::unique_ptr< SpxChartView > bigChartView;
+    std::unique_ptr< SPXChartView > bigChartView;
     //! Zeiger auf das ChartView für PPO2
-    std::unique_ptr< SpxChartView > ppo2ChartView;
+    std::unique_ptr< SPXChartView > ppo2ChartView;
     //! Prozess zum abarbeiten
     std::unique_ptr< ChartDataWorker > chartWorker;
     //! Nebenläufiges future Objekt
