@@ -62,24 +62,14 @@ namespace spx
   void SPXChartView::axisAndSeries()
   {
     ppo2Series = nullptr;
-    depthAreaSeries = nullptr;
     dtAxis = nullptr;
-    tempSeries = nullptr;
     depthSeries = nullptr;
     currSeries = nullptr;
-    minTime = QDateTime();
-    maxTime = QDateTime();
     auto allAxes = currChart->axes( Qt::Horizontal );
     if ( allAxes.count() > 0 )
     {
       dtAxis = static_cast< QDateTimeAxis * >( allAxes.first() );
-      if ( dtAxis->type() == QAbstractAxis::AxisTypeDateTime )
-      {
-        // das ist die Zeitachse
-        minTime = dtAxis->min();
-        maxTime = dtAxis->max();
-      }
-      else
+      if ( dtAxis->type() != QAbstractAxis::AxisTypeDateTime )
       {
         // keine zeitachse, alles zurück
         dtAxis = nullptr;
@@ -96,17 +86,6 @@ namespace spx
           depthSeries = static_cast< QLineSeries * >( cSeries );
           currSeries = depthSeries;
           connect( depthSeries, &QLineSeries::hovered, this, &SPXChartView::tooltip );
-        }
-        else if ( cSeries->name().compare( ChartDataWorker::depthAreaSeriesName, Qt::CaseInsensitive ) == 0 )
-        {
-          // TODO: kann raus, wenn es funkt
-          depthAreaSeries = static_cast< QAreaSeries * >( cSeries );
-          connect( depthAreaSeries, &QAreaSeries::hovered, this, &SPXChartView::tooltip );
-        }
-        else if ( cSeries->name().compare( ChartDataWorker::tempSeriesName, Qt::CaseInsensitive ) == 0 )
-        {
-          tempSeries = static_cast< QLineSeries * >( cSeries );
-          connect( tempSeries, &QLineSeries::hovered, this, &SPXChartView::tooltip );
         }
         else if ( cSeries->name().compare( ChartDataWorker::ppo2SeriesName, Qt::CaseInsensitive ) == 0 )
         {
@@ -186,19 +165,19 @@ namespace spx
 
   void SPXChartView::setTimeAxis( QDateTimeAxis *axis, QLineSeries *dataSeries, QRect &rect )
   {
-    // QRectF tr =
-    // QPoint start = currChart->mapFromScene( rectF->x(), rectF->y() ).toPoint();
-    // QPoint end = currChart->mapFromScene( rectF->x() + rectF->width(), rectF->y() + rectF->height() ).toPoint();
-
-    // QRect rRect( rectF->toRect() );
-
+    //
+    // welcher Wert ist der startpunkt / endpunkt ?
+    //
     QPointF startPoint = currChart->mapToValue( QPoint( rect.x(), rect.y() ), dataSeries );
     QPointF endPoint = currChart->mapToValue( QPoint( rect.x() + rect.width(), rect.y() + rect.height() ), dataSeries );
-    // QPointF startPoint = currChart->mapToValue( start, dataSeries );
-    // QPointF endPoint = currChart->mapToValue( end, dataSeries );
-
+    //
+    // umrechnen in QDateTime
+    //
     qint64 start_ms = static_cast< qint64 >( startPoint.x() );
     qint64 end_ms = static_cast< qint64 >( endPoint.x() );
+    //
+    // Achse anpassen
+    //
     axis->setRange( QDateTime::fromMSecsSinceEpoch( start_ms ), QDateTime::fromMSecsSinceEpoch( end_ms ) );
   }
 
@@ -206,7 +185,7 @@ namespace spx
   {
     m_rubberBandFlags = rubberBand;
     //
-    // Ist kein Gummiband vorhanden, löschen!
+    // Ist kein Gummibandflag vorhanden, das Band löschen!
     //
     if ( !m_rubberBandFlags )
     {
@@ -215,7 +194,7 @@ namespace spx
       return;
     }
     //
-    // ist kein gummiband vorhanden? Dann mache eines
+    // ist kein gummiband obwohl flags da sind? Dann mache eines
     //
     if ( !m_rubberBand )
     {
@@ -228,12 +207,16 @@ namespace spx
   {
     //
     // das aktuelle Gummiband (oder nullptr)
+    //
     return m_rubberBandFlags;
   }
 
   void SPXChartView::mousePressEvent( QMouseEvent *event )
   {
     QRectF plotArea = currChart->plotArea();
+    //
+    // wurde die Maus im chart links gedrückt?
+    //
     if ( m_rubberBand && m_rubberBand->isEnabled() && event->button() == Qt::LeftButton && plotArea.contains( event->pos() ) )
     {
       m_rubberBandOrigin = event->pos();
@@ -251,6 +234,10 @@ namespace spx
   {
     if ( m_rubberBand && m_rubberBand->isVisible() )
     {
+      //
+      // ist das Gummiband sichtbar?
+      // dann folge der Maus
+      //
       QRect rect = currChart->plotArea().toRect();
       int width = event->pos().x() - m_rubberBandOrigin.x();
       int height = event->pos().y() - m_rubberBandOrigin.y();
@@ -271,10 +258,10 @@ namespace spx
       //
       // in langsam...
       //
-      QString unitLabel{"-"};
 #ifdef DEBUG
       if ( currSeries )
       {
+        QString unitLabel{"-"};
         qint64 normalTimeStamp = static_cast< qint64 >( currChart->mapToValue( event->pos(), currSeries ).x() );
         QString dateTimeStr = QDateTime::fromMSecsSinceEpoch( normalTimeStamp ).toString( "mm:ss" );
         lg->debug( QString( "TIME: %1, %2: %3" )
@@ -300,8 +287,6 @@ namespace spx
         // rubberband's dimensions for vertical and horizontal rubberbands, where one
         // dimension must match the corresponding plotArea dimension exactly.
         //
-        // notification:
-        //  void  plotAreaChanged(const QRectF &plotArea)
         if ( m_rubberBandFlags == VerticalRubberBand )
         {
           rRectF.setX( currChart->plotArea().x() );
@@ -315,7 +300,7 @@ namespace spx
         lg->debug( "SPXChartView::mouseReleaseEvent -> zoom in..." );
         currChart->zoomIn( rRectF );
         //
-        // Zeitachse versuchen
+        // Zeitachse anpassen
         //
         if ( dtAxis && currSeries )
         {
@@ -327,9 +312,11 @@ namespace spx
     }
     else if ( m_rubberBand && event->button() == Qt::RightButton )
     {
+      //
       // If vertical or horizontal rubberband mode, restrict zoom out to specified axis.
       // Since there is no suitable API for that, use zoomIn with rect bigger than the
       // plot area.
+      //
       if ( m_rubberBandFlags == VerticalRubberBand || m_rubberBandFlags == HorizontalRubberBand )
       {
         QRectF rRectF = currChart->plotArea();
@@ -345,7 +332,7 @@ namespace spx
         }
         currChart->zoomIn( rRectF );
         //
-        // Zeitachse versuchen
+        // Zeitachse anpassen
         //
         if ( dtAxis && currSeries )
         {
@@ -356,19 +343,34 @@ namespace spx
       }
       else
       {
-        lg->debug( "SPXChartView::mouseReleaseEvent -> zoom out..." );
         currChart->zoomOut();
+        //
+        // Zeitachse anpassen
+        //
+        if ( dtAxis && currSeries )
+        {
+          QRect rect( currChart->plotArea().toRect() );
+          setTimeAxis( dtAxis, currSeries, rect );
+        }
+        lg->debug( "SPXChartView::mouseReleaseEvent -> zoom out..." );
       }
       event->accept();
     }
     else if ( m_rubberBand && event->button() == Qt::MidButton )
     {
+      currChart->zoomReset();
       if ( dtAxis )
       {
         lg->debug( "SPXChartView::mouseReleaseEvent -> axis reset..." );
-        dtAxis->setRange( minTime, maxTime );
+        //
+        // auch hier die Achse anpassen
+        //
+        if ( dtAxis && currSeries )
+        {
+          QRect rect( currChart->plotArea().toRect() );
+          setTimeAxis( dtAxis, currSeries, rect );
+        }
       }
-      currChart->zoomReset();
     }
     else
     {

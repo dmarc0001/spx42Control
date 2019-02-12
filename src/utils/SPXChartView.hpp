@@ -48,12 +48,10 @@ namespace spx
     ChartGraphicalValueCallout *currCallout;
     QLineSeries *depthSeries;
     QLineSeries *ppo2Series;
-    QAreaSeries *depthAreaSeries;
+    // QAreaSeries *depthAreaSeries;
     QDateTimeAxis *dtAxis;
-    QLineSeries *tempSeries;
+    // QLineSeries *tempSeries;
     QLineSeries *currSeries;
-    QDateTime minTime;
-    QDateTime maxTime;
     static int counter;
     int currNumber;
 
