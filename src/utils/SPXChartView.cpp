@@ -2,8 +2,6 @@
 
 namespace spx
 {
-  int SPXChartView::counter{0};
-
   SPXChartView::SPXChartView( std::shared_ptr< Logger > logger, QWidget *parent )
       : QGraphicsView( parent )
       , currScene( new QGraphicsScene( this ) )
@@ -15,7 +13,6 @@ namespace spx
       , currCallout( nullptr )
       , isCursorRubberBand( true )
   {
-    currNumber = ++SPXChartView::counter;
     init();
   }
 
@@ -30,13 +27,11 @@ namespace spx
       , currCallout( nullptr )
       , isCursorRubberBand( true )
   {
-    currNumber = ++SPXChartView::counter;
     init();
   }
 
   SPXChartView::~SPXChartView()
   {
-    SPXChartView::counter--;
     delete currCallout;
     delete cursorRubberBand;
     delete currRubberBand;
@@ -68,9 +63,7 @@ namespace spx
 
   void SPXChartView::axisAndSeries()
   {
-    ppo2Series = nullptr;
     dtAxis = nullptr;
-    depthSeries = nullptr;
     currSeries = nullptr;
     auto allAxes = currChart->axes( Qt::Horizontal );
     if ( allAxes.count() > 0 )
@@ -91,19 +84,17 @@ namespace spx
         if ( cSeries->name().compare( ChartDataWorker::depthSeriesName, Qt::CaseInsensitive ) == 0 )
         {
           // das ist das grosse chart
-          depthSeries = static_cast< QLineSeries * >( cSeries );
-          // quelle für die zeitachse
-          currSeries = depthSeries;
+          currSeries = static_cast< QLineSeries * >( cSeries );
           currSeries->blockSignals( false );
+          // TODO: Funktioniert hier nicht
           connect( currSeries, &QLineSeries::hovered, this, &SPXChartView::tooltip );
         }
         else if ( cSeries->name().compare( ChartDataWorker::ppo2SeriesName, Qt::CaseInsensitive ) == 0 )
         {
           // das ist das kleine chart
-          ppo2Series = static_cast< QLineSeries * >( cSeries );
-          // quelle für die zeitachse
-          currSeries = ppo2Series;
+          currSeries = static_cast< QLineSeries * >( cSeries );
           currSeries->blockSignals( false );
+          // TODO: Funktioniert hier nicht
           connect( currSeries, &QLineSeries::hovered, this, &SPXChartView::tooltip );
         }
       }
@@ -223,10 +214,17 @@ namespace spx
     {
       if ( !cursorRubberBand )
       {
+        //
+        // wenn kein Band da ist, erzeug eines und setzte einen Anfangszustand
+        //
         cursorRubberBand = new QRubberBand( QRubberBand::Line, this );
-        cursorRubberBand->setEnabled( true );
-        cursorRubberBand->setVisible( true );
       }
+      cursorRubberBand->setEnabled( true );
+      QRect rect = currChart->plotArea().toRect();
+      rect.setX( 0 );
+      rect.setWidth( 2 );
+      cursorRubberBand->setGeometry( rect.normalized() );
+      cursorRubberBand->show();
     }
     else
     {
@@ -302,6 +300,7 @@ namespace spx
         rect.setWidth( 2 );
         cursorRubberBand->setGeometry( rect.normalized() );
         cursorRubberBand->show();
+        emit onCursorChangedSig( event->pos().x() );
       }
       QGraphicsView::mouseMoveEvent( event );
     }
@@ -351,6 +350,7 @@ namespace spx
           QRect rect( currChart->plotArea().toRect() );
           setTimeAxis( dtAxis, currSeries, rect );
         }
+        emit onZoomChangedSig( rRectF );
         event->accept();
       }
     }
@@ -383,6 +383,7 @@ namespace spx
           QRect rect( currChart->plotArea().toRect() );
           setTimeAxis( dtAxis, currSeries, rect );
         }
+        emit onZoomChangedSig( rRectF );
         lg->debug( "SPXChartView::mouseReleaseEvent -> zoom in..." );
       }
       else
@@ -391,11 +392,13 @@ namespace spx
         //
         // Zeitachse anpassen
         //
+        QRectF rRectF = currChart->plotArea();
         if ( dtAxis && currSeries )
         {
           QRect rect( currChart->plotArea().toRect() );
           setTimeAxis( dtAxis, currSeries, rect );
         }
+        emit onZoomChangedSig( rRectF );
         lg->debug( "SPXChartView::mouseReleaseEvent -> zoom out..." );
       }
       event->accept();
@@ -414,6 +417,7 @@ namespace spx
           QRect rect( currChart->plotArea().toRect() );
           setTimeAxis( dtAxis, currSeries, rect );
         }
+        emit onZoomChangedSig( QRectF() );
       }
     }
     else
@@ -430,7 +434,7 @@ namespace spx
 
   void SPXChartView::tooltip( QPointF point, bool state )
   {
-    lg->debug( QString( "SpxChartView::tooltip%1..." ).arg( currNumber ) );
+    lg->debug( "SpxChartView::tooltip..." );
     //
     if ( currCallout == nullptr )
       currCallout = new ChartGraphicalValueCallout( chart() );
@@ -449,4 +453,46 @@ namespace spx
     }
   }
 
+  void SPXChartView::onZoomChangedSlot( const QRectF &rectF )
+  {
+    if ( rectF.isNull() )
+    {
+      //
+      // der Befehl zum RESET
+      //
+      currChart->zoomReset();
+      if ( dtAxis )
+      {
+        lg->debug( "SPXChartView::onCursorMoveSlot -> axis slave reset..." );
+        //
+        // auch hier die Achse anpassen
+        //
+        if ( dtAxis && currSeries )
+        {
+          QRect rect( currChart->plotArea().toRect() );
+          setTimeAxis( dtAxis, currSeries, rect );
+        }
+      }
+      return;
+    }
+    QRectF localRectF( rectF );
+    QRectF localPlotArea = currChart->plotArea();
+    localRectF.setY( localPlotArea.y() );
+    localRectF.setHeight( localPlotArea.height() );
+    QRect crect( localRectF.toRect() );
+    setTimeAxis( dtAxis, currSeries, crect );
+    currChart->zoomIn( localRectF );
+  }
+
+  void SPXChartView::onCursorChangedSlot( int x_value )
+  {
+    if ( cursorRubberBand && cursorRubberBand->isEnabled() && cursorRubberBand->isVisible() )
+    {
+      QRect rect = currChart->plotArea().toRect();
+      rect.setX( x_value );
+      rect.setWidth( 2 );
+      cursorRubberBand->setGeometry( rect.normalized() );
+      cursorRubberBand->show();
+    }
+  }
 }  // namespace spx
