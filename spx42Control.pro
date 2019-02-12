@@ -7,7 +7,7 @@
 ###############################################################################
 MAJOR                                  = 0 # Major Verion Nummer
 MINOR                                  = 6 # Minor Version Number
-PATCH                                  = 5 # Patch Version Number
+PATCH                                  = 6 # Patch Version Number
 BUILD                                  = 0 # win build number
 
 win32:VERSION_PE_HEADER                = $${MAJOR}.$${MINOR}
@@ -122,7 +122,9 @@ SOURCES                 += \
     src/utils/DiveDataSeriesGenerator.cpp \
     src/utils/HelpDialog.cpp \
     src/utils/IDataSeriesGenerator.cpp \
-    src/utils/OptionsDialog.cpp
+    src/utils/OptionsDialog.cpp \
+    src/utils/ChartGraphicalValueCallout.cpp \
+    src/utils/SPXChartView.cpp
 
 HEADERS                 += \
     src/bluetooth/BtDiscoverRemoteDevice.hpp \
@@ -161,7 +163,9 @@ HEADERS                 += \
     src/utils/DiveDataSeriesGenerator.hpp \
     src/utils/HelpDialog.hpp \
     src/utils/IDataSeriesGenerator.hpp \
-    src/utils/OptionsDialog.hpp
+    src/utils/OptionsDialog.hpp \
+    src/utils/ChartGraphicalValueCallout.hpp \
+    src/utils/SPXChartView.hpp
 
 FORMS                   += \
     src/ui/SPX42ControlMainWin.ui \
@@ -239,4 +243,4 @@ INCLUDEPATH             += \
 
 
 
-message( app version $$VERSION kit $${KIT} )
+message( app version $$VERSION  )

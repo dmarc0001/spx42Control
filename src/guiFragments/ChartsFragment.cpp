@@ -18,8 +18,8 @@ namespace spx
       , ppo2DiveChart( nullptr )
       , bigDummyChart( new QtCharts::QChart() )
       , ppo2DummyChart( new QtCharts::QChart() )
-      , bigChartView( std::unique_ptr< QtCharts::QChartView >( new QtCharts::QChartView( bigDummyChart ) ) )
-      , ppo2ChartView( std::unique_ptr< QtCharts::QChartView >( new QtCharts::QChartView( ppo2DummyChart ) ) )
+      , bigChartView( std::unique_ptr< SPXChartView >( new SPXChartView( logger, bigDummyChart ) ) )
+      , ppo2ChartView( std::unique_ptr< SPXChartView >( new SPXChartView( logger, ppo2DummyChart ) ) )
       , chartWorker( std::unique_ptr< ChartDataWorker >( new ChartDataWorker( logger, database, this ) ) )
   {
     lg->debug( "ChartsFragment::ChartsFragment..." );
@@ -35,7 +35,6 @@ namespace spx
     delete ui->chartFrame->layout()->replaceWidget( ui->placeHolderWidget, bigChartView.get() );
     bigChartView->setChart( bigDummyChart );
     bigChartView->setRenderHint( QPainter::Antialiasing );
-    bigChartView->setRubberBand( QChartView::HorizontalRubberBand );
     //
     ppo2ChartView->setMinimumSize( ui->placeHolderWidget2->minimumSize() );
     ppo2ChartView->setSizePolicy( ui->placeHolderWidget2->sizePolicy() );
@@ -45,7 +44,6 @@ namespace spx
     //
     ppo2ChartView->setChart( ppo2DummyChart );
     ppo2ChartView->setRenderHint( QPainter::Antialiasing );
-    ppo2ChartView->setRubberBand( QChartView::HorizontalRubberBand );
     //
     ui->notesLineEdit->setClearButtonEnabled( true );
     initDeviceSelection();
@@ -204,8 +202,6 @@ namespace spx
       bigDiveChart = new QtCharts::QChart( nullptr );
       ppo2DiveChart = new QtCharts::QChart( nullptr );
       chartWorker->prepareDiveCharts( bigDiveChart, ppo2DiveChart );
-      bigChartView->setChart( bigDiveChart );
-      ppo2ChartView->setChart( ppo2DiveChart );
       ui->notesLineEdit->setText( database->getNotesForDive( deviceAddr, diveNum ) );
       dbgetDataFuture =
           QtConcurrent::run( chartWorker.get(), &ChartDataWorker::makeDiveChart, bigDiveChart, ppo2DiveChart, deviceAddr, diveNum );
@@ -221,7 +217,15 @@ namespace spx
   void ChartsFragment::onChartReadySlot()
   {
     // QTimer::singleShot( 20, this, [=]() { ChartsFragment::onDiveComboChangedSlot( int index ); } );
-    lg->debug( "ChartsFragment::onChartReadySlot" );
+    //
+    // Charts sind fertig präpariert
+    //
+    lg->debug( "ChartsFragment::onChartReadySlot..." );
+    bigChartView->setChart( bigDiveChart );
+    ppo2ChartView->setChart( ppo2DiveChart );
+    bigChartView->setRubberBand( SPXChartView::HorizontalRubberBand );
+    ppo2ChartView->setRubberBand( SPXChartView::HorizontalRubberBand );
+    lg->debug( "ChartsFragment::onChartReadySlot...OK" );
   }
 
   void ChartsFragment::onNotesLineEditFinishedSlot()
