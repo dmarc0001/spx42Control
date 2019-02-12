@@ -158,6 +158,8 @@ namespace spx
     qreal sinA = qAbs( transform().m21() );
     qreal cosA = qAbs( transform().m11() );
     QSize chartSize = size();
+    // Kleine Ränder
+    currChart->setMargins( QMargins( LEFT_MARGIN, RIGHT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN ) );
     // 90 grad
     if ( sinA == 1.0 )
     {
@@ -182,16 +184,16 @@ namespace spx
     setSceneRect( currChart->geometry() );
   }
 
-  void SPXChartView::setTimeAxis( QDateTimeAxis *axis, QLineSeries *dataSeries, QRectF *rectF )
+  void SPXChartView::setTimeAxis( QDateTimeAxis *axis, QLineSeries *dataSeries, QRect &rect )
   {
     // QRectF tr =
     // QPoint start = currChart->mapFromScene( rectF->x(), rectF->y() ).toPoint();
     // QPoint end = currChart->mapFromScene( rectF->x() + rectF->width(), rectF->y() + rectF->height() ).toPoint();
 
-    QRect rRect( rectF->toRect() );
+    // QRect rRect( rectF->toRect() );
 
-    QPointF startPoint = currChart->mapToValue( QPoint( rRect.x(), rRect.y() ), dataSeries );
-    QPointF endPoint = currChart->mapToValue( QPoint( rRect.x() + rRect.width(), rRect.y() + rRect.height() ), dataSeries );
+    QPointF startPoint = currChart->mapToValue( QPoint( rect.x(), rect.y() ), dataSeries );
+    QPointF endPoint = currChart->mapToValue( QPoint( rect.x() + rect.width(), rect.y() + rect.height() ), dataSeries );
     // QPointF startPoint = currChart->mapToValue( start, dataSeries );
     // QPointF endPoint = currChart->mapToValue( end, dataSeries );
 
@@ -317,7 +319,8 @@ namespace spx
         //
         if ( dtAxis && currSeries )
         {
-          setTimeAxis( dtAxis, currSeries, &rRectF );
+          QRect rect( currChart->plotArea().toRect() );
+          setTimeAxis( dtAxis, currSeries, rect );
         }
         event->accept();
       }
@@ -340,15 +343,16 @@ namespace spx
           qreal adjustment = rRectF.width() / 2;
           rRectF.adjust( -adjustment, 0, adjustment, 0 );
         }
+        currChart->zoomIn( rRectF );
         //
         // Zeitachse versuchen
         //
         if ( dtAxis && currSeries )
         {
-          setTimeAxis( dtAxis, currSeries, &rRectF );
+          QRect rect( currChart->plotArea().toRect() );
+          setTimeAxis( dtAxis, currSeries, rect );
         }
         lg->debug( "SPXChartView::mouseReleaseEvent -> zoom in..." );
-        currChart->zoomIn( rRectF );
       }
       else
       {

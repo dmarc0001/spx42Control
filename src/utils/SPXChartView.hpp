@@ -17,6 +17,11 @@ class QRubberBand;
 
 namespace spx
 {
+  constexpr int LEFT_MARGIN = 12;
+  constexpr int RIGHT_MARGIN = LEFT_MARGIN;
+  constexpr int TOP_MARGIN = 4;
+  constexpr int BOTTOM_MARGIN = TOP_MARGIN;
+
   class QChartViewPrivate;
 
   class SPXChartView : public QGraphicsView
@@ -75,7 +80,7 @@ namespace spx
     void init( void );
     void axisAndSeries( void );
     void c_resize( void );
-    void setTimeAxis( QDateTimeAxis *axis, QLineSeries *dataSeries, QRectF *rectF );
+    void setTimeAxis( QDateTimeAxis *axis, QLineSeries *dataSeries, QRect &rect );
     void tooltip( QPointF point, bool state );
 
     private:
