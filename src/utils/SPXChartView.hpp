@@ -36,21 +36,21 @@ namespace spx
       HorizontalRubberBand = 0x2,
       RectangleRubberBand = 0x3
     };
-    Q_DECLARE_FLAGS( RubberBands, RubberBand )
-    QGraphicsScene *m_scene;
-    QChart *currChart;
-    QPoint m_rubberBandOrigin;
-    QRubberBand *m_rubberBand;
-    SPXChartView::RubberBands m_rubberBandFlags;
 
     private:
+    Q_DECLARE_FLAGS( RubberBands, RubberBand )
+    QGraphicsScene *currScene;
+    QChart *currChart;
+    QPoint currRubberBandOriginPos;
+    QRubberBand *currRubberBand;
+    QRubberBand *cursorRubberBand;
+    SPXChartView::RubberBands currRubberBandFlags;
     std::shared_ptr< Logger > lg;
     ChartGraphicalValueCallout *currCallout;
+    bool isCursorRubberBand;
     QLineSeries *depthSeries;
     QLineSeries *ppo2Series;
-    // QAreaSeries *depthAreaSeries;
     QDateTimeAxis *dtAxis;
-    // QLineSeries *tempSeries;
     QLineSeries *currSeries;
     static int counter;
     int currNumber;
@@ -60,19 +60,17 @@ namespace spx
     explicit SPXChartView( std::shared_ptr< Logger > logger, QChart *chart, QWidget *parent = nullptr );
     ~SPXChartView() override;
     void setRubberBand( const RubberBands &rubberBands );
+    void setCursorRubberBand( bool isSet = true );
     RubberBands rubberBand() const;
 
     QChart *chart() const;
     void setChart( QChart *chart );
 
-    //! Maus release (genutzt für rechten Mausklick)
     protected:
     virtual void resizeEvent( QResizeEvent *event ) override;
     virtual void mousePressEvent( QMouseEvent *event ) override;
     virtual void mouseMoveEvent( QMouseEvent *event ) override;
     virtual void mouseReleaseEvent( QMouseEvent *event ) override;
-
-    // QScopedPointer< QChartViewPrivate > d_ptr;
 
     private:
     void init( void );

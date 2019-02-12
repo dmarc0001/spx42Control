@@ -6,12 +6,14 @@ namespace spx
 
   SPXChartView::SPXChartView( std::shared_ptr< Logger > logger, QWidget *parent )
       : QGraphicsView( parent )
-      , m_scene( new QGraphicsScene( this ) )
+      , currScene( new QGraphicsScene( this ) )
       , currChart( nullptr )
-      , m_rubberBand( nullptr )
-      , m_rubberBandFlags( SPXChartView::NoRubberBand )
+      , currRubberBand( nullptr )
+      , cursorRubberBand( nullptr )
+      , currRubberBandFlags( SPXChartView::NoRubberBand )
       , lg( logger )
       , currCallout( nullptr )
+      , isCursorRubberBand( true )
   {
     currNumber = ++SPXChartView::counter;
     init();
@@ -19,12 +21,14 @@ namespace spx
 
   SPXChartView::SPXChartView( std::shared_ptr< Logger > logger, QChart *chart, QWidget *parent )
       : QGraphicsView( parent )
-      , m_scene( new QGraphicsScene( this ) )
+      , currScene( new QGraphicsScene( this ) )
       , currChart( chart )
-      , m_rubberBand( nullptr )
-      , m_rubberBandFlags( SPXChartView::NoRubberBand )
+      , currRubberBand( nullptr )
+      , cursorRubberBand( nullptr )
+      , currRubberBandFlags( SPXChartView::NoRubberBand )
       , lg( logger )
       , currCallout( nullptr )
+      , isCursorRubberBand( true )
   {
     currNumber = ++SPXChartView::counter;
     init();
@@ -34,6 +38,8 @@ namespace spx
   {
     SPXChartView::counter--;
     delete currCallout;
+    delete cursorRubberBand;
+    delete currRubberBand;
   }
 
   void SPXChartView::init()
@@ -42,7 +48,7 @@ namespace spx
     setBackgroundRole( QPalette::Window );
     setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
     setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
-    setScene( m_scene );
+    setScene( currScene );
     setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
     //
     setDragMode( QGraphicsView::NoDrag );
@@ -56,7 +62,8 @@ namespace spx
     else
       // ein echter Chart ist da, also veruche mal was
       axisAndSeries();
-    m_scene->addItem( currChart );
+    currScene->addItem( currChart );
+    setCursorRubberBand( isCursorRubberBand );
   }
 
   void SPXChartView::axisAndSeries()
@@ -83,15 +90,21 @@ namespace spx
       {
         if ( cSeries->name().compare( ChartDataWorker::depthSeriesName, Qt::CaseInsensitive ) == 0 )
         {
+          // das ist das grosse chart
           depthSeries = static_cast< QLineSeries * >( cSeries );
+          // quelle für die zeitachse
           currSeries = depthSeries;
-          connect( depthSeries, &QLineSeries::hovered, this, &SPXChartView::tooltip );
+          currSeries->blockSignals( false );
+          connect( currSeries, &QLineSeries::hovered, this, &SPXChartView::tooltip );
         }
         else if ( cSeries->name().compare( ChartDataWorker::ppo2SeriesName, Qt::CaseInsensitive ) == 0 )
         {
+          // das ist das kleine chart
           ppo2Series = static_cast< QLineSeries * >( cSeries );
+          // quelle für die zeitachse
           currSeries = ppo2Series;
-          connect( ppo2Series, &QLineSeries::hovered, this, &SPXChartView::tooltip );
+          currSeries->blockSignals( false );
+          connect( currSeries, &QLineSeries::hovered, this, &SPXChartView::tooltip );
         }
       }
     }
@@ -115,13 +128,13 @@ namespace spx
     //
     if ( currChart )
       // entferne es aus der Umgebung
-      m_scene->removeItem( currChart );
+      currScene->removeItem( currChart );
     //
     // Merke als aktuell
     //
     currChart = chart;
     // zufügen
-    m_scene->addItem( currChart );
+    currScene->addItem( currChart );
     //
     // Bearbeiten
     //
@@ -183,23 +196,42 @@ namespace spx
 
   void SPXChartView::setRubberBand( const RubberBands &rubberBand )
   {
-    m_rubberBandFlags = rubberBand;
+    currRubberBandFlags = rubberBand;
     //
     // Ist kein Gummibandflag vorhanden, das Band löschen!
     //
-    if ( !m_rubberBandFlags )
+    if ( !currRubberBandFlags )
     {
-      delete m_rubberBand;
-      m_rubberBand = nullptr;
+      delete currRubberBand;
+      currRubberBand = nullptr;
       return;
     }
     //
     // ist kein gummiband obwohl flags da sind? Dann mache eines
     //
-    if ( !m_rubberBand )
+    if ( !currRubberBand )
     {
-      m_rubberBand = new QRubberBand( QRubberBand::Rectangle, this );
-      m_rubberBand->setEnabled( true );
+      currRubberBand = new QRubberBand( QRubberBand::Rectangle, this );
+      currRubberBand->setEnabled( true );
+    }
+  }
+
+  void SPXChartView::setCursorRubberBand( bool isSet )
+  {
+    isCursorRubberBand = isSet;
+    if ( isCursorRubberBand )
+    {
+      if ( !cursorRubberBand )
+      {
+        cursorRubberBand = new QRubberBand( QRubberBand::Line, this );
+        cursorRubberBand->setEnabled( true );
+        cursorRubberBand->setVisible( true );
+      }
+    }
+    else
+    {
+      delete cursorRubberBand;
+      cursorRubberBand = nullptr;
     }
   }
 
@@ -208,20 +240,28 @@ namespace spx
     //
     // das aktuelle Gummiband (oder nullptr)
     //
-    return m_rubberBandFlags;
+    return currRubberBandFlags;
   }
 
   void SPXChartView::mousePressEvent( QMouseEvent *event )
   {
     QRectF plotArea = currChart->plotArea();
     //
+    // den Cursor ausblenden, das Gummiband wird genutzt
+    //
+    if ( cursorRubberBand && event->button() == Qt::LeftButton )
+    {
+      cursorRubberBand->hide();
+      cursorRubberBand->setEnabled( false );
+    }
+    //
     // wurde die Maus im chart links gedrückt?
     //
-    if ( m_rubberBand && m_rubberBand->isEnabled() && event->button() == Qt::LeftButton && plotArea.contains( event->pos() ) )
+    if ( currRubberBand && currRubberBand->isEnabled() && event->button() == Qt::LeftButton && plotArea.contains( event->pos() ) )
     {
-      m_rubberBandOrigin = event->pos();
-      m_rubberBand->setGeometry( QRect( m_rubberBandOrigin, QSize() ) );
-      m_rubberBand->show();
+      currRubberBandOriginPos = event->pos();
+      currRubberBand->setGeometry( QRect( currRubberBandOriginPos, QSize() ) );
+      currRubberBand->show();
       event->accept();
     }
     else
@@ -232,67 +272,71 @@ namespace spx
 
   void SPXChartView::mouseMoveEvent( QMouseEvent *event )
   {
-    if ( m_rubberBand && m_rubberBand->isVisible() )
+    if ( currRubberBand && currRubberBand->isVisible() )
     {
       //
       // ist das Gummiband sichtbar?
       // dann folge der Maus
       //
       QRect rect = currChart->plotArea().toRect();
-      int width = event->pos().x() - m_rubberBandOrigin.x();
-      int height = event->pos().y() - m_rubberBandOrigin.y();
-      if ( !m_rubberBandFlags.testFlag( VerticalRubberBand ) )
+      int width = event->pos().x() - currRubberBandOriginPos.x();
+      int height = event->pos().y() - currRubberBandOriginPos.y();
+      if ( !currRubberBandFlags.testFlag( VerticalRubberBand ) )
       {
-        m_rubberBandOrigin.setY( rect.top() );
+        currRubberBandOriginPos.setY( rect.top() );
         height = rect.height();
       }
-      if ( !m_rubberBandFlags.testFlag( HorizontalRubberBand ) )
+      if ( !currRubberBandFlags.testFlag( HorizontalRubberBand ) )
       {
-        m_rubberBandOrigin.setX( rect.left() );
+        currRubberBandOriginPos.setX( rect.left() );
         width = rect.width();
       }
-      m_rubberBand->setGeometry( QRect( m_rubberBandOrigin.x(), m_rubberBandOrigin.y(), width, height ).normalized() );
+      currRubberBand->setGeometry( QRect( currRubberBandOriginPos.x(), currRubberBandOriginPos.y(), width, height ).normalized() );
     }
     else
     {
-      //
-      // in langsam...
-      //
-#ifdef DEBUG
-      if ( currSeries )
+      if ( cursorRubberBand && cursorRubberBand->isEnabled() && cursorRubberBand->isVisible() )
       {
-        QString unitLabel{"-"};
-        qint64 normalTimeStamp = static_cast< qint64 >( currChart->mapToValue( event->pos(), currSeries ).x() );
-        QString dateTimeStr = QDateTime::fromMSecsSinceEpoch( normalTimeStamp ).toString( "mm:ss" );
-        lg->debug( QString( "TIME: %1, %2: %3" )
-                       .arg( dateTimeStr )
-                       .arg( unitLabel )
-                       .arg( currChart->mapToValue( event->pos(), currSeries ).y(), 0, 'f', 2 ) );
+        QRect rect = currChart->plotArea().toRect();
+        rect.setX( event->pos().x() );
+        rect.setWidth( 2 );
+        cursorRubberBand->setGeometry( rect.normalized() );
+        cursorRubberBand->show();
       }
-#endif
       QGraphicsView::mouseMoveEvent( event );
     }
   }
 
   void SPXChartView::mouseReleaseEvent( QMouseEvent *event )
   {
-    if ( m_rubberBand && m_rubberBand->isVisible() )
+    //
+    // der Cursor ist sichtbar
+    //
+    if ( cursorRubberBand && event->button() == Qt::LeftButton )
+    {
+      cursorRubberBand->show();
+      cursorRubberBand->setEnabled( true );
+    }
+    //
+    // das Gummiband, wenn vorhanden beenden und zoom einleiten
+    //
+    if ( currRubberBand && currRubberBand->isVisible() )
     {
       if ( event->button() == Qt::LeftButton )
       {
-        m_rubberBand->hide();
-        QRectF rRectF = m_rubberBand->geometry();
+        currRubberBand->hide();
+        QRectF rRectF = currRubberBand->geometry();
         //
         // Since plotArea uses QRectF and rubberband uses QRect, we can't just blindly use
         // rubberband's dimensions for vertical and horizontal rubberbands, where one
         // dimension must match the corresponding plotArea dimension exactly.
         //
-        if ( m_rubberBandFlags == VerticalRubberBand )
+        if ( currRubberBandFlags == VerticalRubberBand )
         {
           rRectF.setX( currChart->plotArea().x() );
           rRectF.setWidth( currChart->plotArea().width() );
         }
-        else if ( m_rubberBandFlags == HorizontalRubberBand )
+        else if ( currRubberBandFlags == HorizontalRubberBand )
         {
           rRectF.setY( currChart->plotArea().y() );
           rRectF.setHeight( currChart->plotArea().height() );
@@ -310,22 +354,22 @@ namespace spx
         event->accept();
       }
     }
-    else if ( m_rubberBand && event->button() == Qt::RightButton )
+    else if ( currRubberBand && event->button() == Qt::RightButton )
     {
       //
       // If vertical or horizontal rubberband mode, restrict zoom out to specified axis.
       // Since there is no suitable API for that, use zoomIn with rect bigger than the
       // plot area.
       //
-      if ( m_rubberBandFlags == VerticalRubberBand || m_rubberBandFlags == HorizontalRubberBand )
+      if ( currRubberBandFlags == VerticalRubberBand || currRubberBandFlags == HorizontalRubberBand )
       {
         QRectF rRectF = currChart->plotArea();
-        if ( m_rubberBandFlags == VerticalRubberBand )
+        if ( currRubberBandFlags == VerticalRubberBand )
         {
           qreal adjustment = rRectF.height() / 2;
           rRectF.adjust( 0, -adjustment, 0, adjustment );
         }
-        else if ( m_rubberBandFlags == HorizontalRubberBand )
+        else if ( currRubberBandFlags == HorizontalRubberBand )
         {
           qreal adjustment = rRectF.width() / 2;
           rRectF.adjust( -adjustment, 0, adjustment, 0 );
@@ -356,7 +400,7 @@ namespace spx
       }
       event->accept();
     }
-    else if ( m_rubberBand && event->button() == Qt::MidButton )
+    else if ( currRubberBand && event->button() == Qt::MidButton )
     {
       currChart->zoomReset();
       if ( dtAxis )
