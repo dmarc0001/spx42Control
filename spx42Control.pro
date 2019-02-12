@@ -118,10 +118,7 @@ SOURCES                 += \
     src/SPX42ControlMainWin.cpp \
     src/uddf/spx42uddfexport.cpp \
     src/utils/AboutDialog.cpp \
-    src/utils/DebugDataSeriesGenerator.cpp \
-    src/utils/DiveDataSeriesGenerator.cpp \
     src/utils/HelpDialog.cpp \
-    src/utils/IDataSeriesGenerator.cpp \
     src/utils/OptionsDialog.cpp \
     src/utils/ChartGraphicalValueCallout.cpp \
     src/utils/SPXChartView.cpp
@@ -159,10 +156,7 @@ HEADERS                 += \
     src/SPX42ControlMainWin.hpp \
     src/uddf/spx42uddfexport.hpp \
     src/utils/AboutDialog.hpp \
-    src/utils/DebugDataSeriesGenerator.hpp \
-    src/utils/DiveDataSeriesGenerator.hpp \
     src/utils/HelpDialog.hpp \
-    src/utils/IDataSeriesGenerator.hpp \
     src/utils/OptionsDialog.hpp \
     src/utils/ChartGraphicalValueCallout.hpp \
     src/utils/SPXChartView.hpp

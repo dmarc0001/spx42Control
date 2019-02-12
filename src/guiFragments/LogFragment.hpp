@@ -29,9 +29,6 @@
 #include "spx42/SPX42LogDirectoryEntry.hpp"
 #include "uddf/spx42uddfexport.hpp"
 #include "ui_LogFragment.h"
-#include "utils/DebugDataSeriesGenerator.hpp"
-#include "utils/DiveDataSeriesGenerator.hpp"
-#include "utils/IDataSeriesGenerator.hpp"
 
 namespace Ui
 {

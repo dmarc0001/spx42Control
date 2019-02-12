@@ -86,6 +86,7 @@ namespace spx
           // das ist das grosse chart
           currSeries = static_cast< QLineSeries * >( cSeries );
           currSeries->blockSignals( false );
+          // TODO: Funktioniert hier nicht
           connect( currSeries, &QLineSeries::hovered, this, &SPXChartView::tooltip );
         }
         else if ( cSeries->name().compare( ChartDataWorker::ppo2SeriesName, Qt::CaseInsensitive ) == 0 )
@@ -93,6 +94,7 @@ namespace spx
           // das ist das kleine chart
           currSeries = static_cast< QLineSeries * >( cSeries );
           currSeries->blockSignals( false );
+          // TODO: Funktioniert hier nicht
           connect( currSeries, &QLineSeries::hovered, this, &SPXChartView::tooltip );
         }
       }
