@@ -24,6 +24,7 @@ namespace spx
 
   class QChartViewPrivate;
 
+  //! implementation als Ersatz für QChartView
   class SPXChartView : public QGraphicsView
   {
     Q_OBJECT
@@ -39,31 +40,45 @@ namespace spx
 
     private:
     Q_DECLARE_FLAGS( RubberBands, RubberBand )
+    //! Scene
     QGraphicsScene *currScene;
+    //! das aktive Chart
     QChart *currChart;
+    //! Startposition des Gummibandes
     QPoint currRubberBandOriginPos;
+    //! Das aktuelle gummiband
     QRubberBand *currRubberBand;
+    //! der Strich für den Cursor
     QRubberBand *cursorRubberBand;
+    //! Flag für das gummiband (hier eigentlich immer horizontal)
     SPXChartView::RubberBands currRubberBandFlags;
+    //! Mein Logger
     std::shared_ptr< Logger > lg;
+    //! Hint...
     ChartGraphicalValueCallout *currCallout;
+    //! Cursor erlaubt...
     bool isCursorRubberBand;
-    QLineSeries *depthSeries;
-    QLineSeries *ppo2Series;
+    //! Zeitachse
     QDateTimeAxis *dtAxis;
+    //! die aktuelle Serie (Tiefe oder PPO2, je nach Chart)
     QLineSeries *currSeries;
-    static int counter;
-    int currNumber;
 
     public:
+    //! Konstruktor allgemein
     explicit SPXChartView( std::shared_ptr< Logger > logger, QWidget *parent = nullptr );
+    //! Konstruktor mit Chart
     explicit SPXChartView( std::shared_ptr< Logger > logger, QChart *chart, QWidget *parent = nullptr );
+    //! Destruktor
     ~SPXChartView() override;
+    //! Das Gummiband setzen
     void setRubberBand( const RubberBands &rubberBands );
+    //! Cursoe einschalten
     void setCursorRubberBand( bool isSet = true );
+    //! welche Gummibänder
     RubberBands rubberBand() const;
-
+    //! gib das chart zurück
     QChart *chart() const;
+    //! setzte ein neues Chart hinein (und gib den Besitzt an dem alten frei)
     void setChart( QChart *chart );
 
     protected:
@@ -73,14 +88,25 @@ namespace spx
     virtual void mouseReleaseEvent( QMouseEvent *event ) override;
 
     private:
+    Q_DISABLE_COPY( SPXChartView )
+    //! initialisiere interne Sachen
     void init( void );
+    //! finde Serien und Achsen
     void axisAndSeries( void );
+    //! das Chart einpassen
     void c_resize( void );
+    //! Zeitachse bei zoom anpassen
     void setTimeAxis( QDateTimeAxis *axis, QLineSeries *dataSeries, QRect &rect );
+    //! zeige tooltip
     void tooltip( QPointF point, bool state );
 
-    private:
-    Q_DISABLE_COPY( SPXChartView )
+    public slots:
+    void onZoomChangedSlot( const QRectF &rect );
+    void onCursorChangedSlot( int x_value );
+
+    signals:
+    void onZoomChangedSig( const QRectF &rect );
+    void onCursorChangedSig( int x_value );
   };
 
 }  // namespace spx

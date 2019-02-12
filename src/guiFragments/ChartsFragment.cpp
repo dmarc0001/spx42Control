@@ -32,18 +32,21 @@ namespace spx
     // kopiere die policys und größe
     bigChartView->setMinimumSize( ui->placeHolderWidget->minimumSize() );
     bigChartView->setSizePolicy( ui->placeHolderWidget->sizePolicy() );
+    bigChartView->setMaximumSize( ui->placeHolderWidget->maximumSize() );
+    bigChartView->setMinimumSize( ui->placeHolderWidget->minimumSize() );
     delete ui->chartFrame->layout()->replaceWidget( ui->placeHolderWidget, bigChartView.get() );
     bigChartView->setChart( bigDummyChart );
     bigChartView->setRenderHint( QPainter::Antialiasing );
+    bigChartView->setStatusTip( tr( "zoom in: drag left mouse , zoom out: click right mouse, zoom reset: middle mouse switch..." ) );
     //
     ppo2ChartView->setMinimumSize( ui->placeHolderWidget2->minimumSize() );
     ppo2ChartView->setSizePolicy( ui->placeHolderWidget2->sizePolicy() );
     ppo2ChartView->setMaximumSize( ui->placeHolderWidget2->maximumSize() );
     ppo2ChartView->setMinimumSize( ui->placeHolderWidget2->minimumSize() );
     delete ui->chartFrame->layout()->replaceWidget( ui->placeHolderWidget2, ppo2ChartView.get() );
-    //
     ppo2ChartView->setChart( ppo2DummyChart );
     ppo2ChartView->setRenderHint( QPainter::Antialiasing );
+    bigChartView->setStatusTip( tr( "zoom in: drag left mouse , zoom out: click right mouse, zoom reset: middle mouse switch..." ) );
     //
     ui->notesLineEdit->setClearButtonEnabled( true );
     initDeviceSelection();
@@ -55,6 +58,13 @@ namespace spx
              &ChartsFragment::onDiveComboChangedSlot );
     connect( chartWorker.get(), &ChartDataWorker::onChartReadySig, this, &ChartsFragment::onChartReadySlot );
     connect( ui->notesLineEdit, &QLineEdit::editingFinished, this, &ChartsFragment::onNotesLineEditFinishedSlot );
+    //
+    // die charts "verbinden"
+    //
+    connect( bigChartView.get(), &SPXChartView::onZoomChangedSig, ppo2ChartView.get(), &SPXChartView::onZoomChangedSlot );
+    connect( bigChartView.get(), &SPXChartView::onCursorChangedSig, ppo2ChartView.get(), &SPXChartView::onCursorChangedSlot );
+    connect( ppo2ChartView.get(), &SPXChartView::onZoomChangedSig, bigChartView.get(), &SPXChartView::onZoomChangedSlot );
+    connect( ppo2ChartView.get(), &SPXChartView::onCursorChangedSig, bigChartView.get(), &SPXChartView::onCursorChangedSlot );
   }
 
   ChartsFragment::~ChartsFragment()
