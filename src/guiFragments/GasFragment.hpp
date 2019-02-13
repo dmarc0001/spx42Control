@@ -13,6 +13,7 @@
 #include <memory>
 #include "IFragmentInterface.hpp"
 #include "bluetooth/SPX42RemotBtDevice.hpp"
+#include "config/AppConfigClass.hpp"
 #include "config/ProjectConst.hpp"
 #include "database/SPX42Database.hpp"
 #include "logging/Logger.hpp"
@@ -33,53 +34,85 @@ namespace spx
     private:
     Q_OBJECT
     Q_INTERFACES( spx::IFragmentInterface )
-    std::unique_ptr< Ui::GasForm > ui;   //! Zeiger auf GUI-Objekte
-    bool areSlotsConnected;              //! Ich merke mir, ob die Slots verbunden sind
-    QString gasSummaryTemplate;          //! gasliste
-    QString gasCurrentBoxTitleTemplate;  //! Titel der aktuellen bearbeitung
-    int currentGasNum;                   //! aktuelles Gas (1 bis 8)
-    bool ignoreGasGuiEvents;             //! ignoriere, wenn ich das gas via programm setzte
-    DeviceWaterType waterCompute;        //! rechnen wir mit Süßwasser?
-    QList< QRadioButton * > gasRadios;   //! Gas Radiobuttons
+    //! Zeiger auf GUI-Objekte
+    std::unique_ptr< Ui::GasForm > ui;
+    //! Ich merke mir, ob die Slots verbunden sind
+    bool areSlotsConnected;
+    //! gasliste
+    QString gasSummaryTemplate;
+    //! Titel der aktuellen bearbeitung
+    QString gasCurrentBoxTitleTemplate;
+    //! aktuelles Gas (1 bis 8)
+    int currentGasNum;
+    //! ignoriere, wenn ich das gas via programm setzte
+    bool ignoreGasGuiEvents;
+    //! rechnen wir mit Süßwasser?
+    DeviceWaterType waterCompute;
+    //! Gas Radiobuttons
+    QList< QRadioButton * > gasRadios;
 
     public:
+    //! Konstruktor
     explicit GasFragment( QWidget *parent,
                           std::shared_ptr< Logger > logger,
                           std::shared_ptr< SPX42Database > spx42Database,
                           std::shared_ptr< SPX42Config > spxCfg,
-                          std::shared_ptr< SPX42RemotBtDevice > remSPX42 );  //! Konstruktor
-    ~GasFragment() override;                                                 //! der Zerstörer
+                          std::shared_ptr< SPX42RemotBtDevice > remSPX42,
+                          AppConfigClass *appCfg );
+    //! der Zerstörer
+    ~GasFragment() override;
 
     private:
-    void initGuiWithConfig( void );                                //! Initialisiere die GUI mit Werten aus der Config
-    void setGuiConnected( bool connected );                        //! verbunden oder nicht
-    void connectSlots( void );                                     //! verbinde Slots mit Signalen
-    void disconnectSlots( void );                                  //! trenne Slots von Signalen
-    void connectGasSlots( void );                                  //! GUI events machen
-    void updateCurrGasGUI( int gasNum, bool withCurrent = true );  //! gui nach aktuellem Gas aktualisieren
+    //! Initialisiere die GUI mit Werten aus der Config
+    void initGuiWithConfig( void );
+    //! verbunden oder nicht
+    void setGuiConnected( bool connected );
+    //! verbinde Slots mit Signalen
+    void connectSlots( void );
+    //! trenne Slots von Signalen
+    void disconnectSlots( void );
+    //! GUI events machen
+    void connectGasSlots( void );
+    //! gui nach aktuellem Gas aktualisieren
+    void updateCurrGasGUI( int gasNum, bool withCurrent = true );
     void gasSelect( int gasNum, bool isSelected );
 
     signals:
-    void onWarningMessageSig( const QString &msg, bool asPopup = false ) override;  //! eine Warnmeldung soll das Main darstellen
-    void onErrorgMessageSig( const QString &msg, bool asPopup = false ) override;   //! eine Warnmeldung soll das Main darstellen
-    void onAkkuValueChangedSig( double aValue ) override;                           //! signalisiert, dass der Akku eine Spanniung hat
-    void onConfigWasChangedSig( void );  //! signalisieret das ich was in die Config geschrieben habe
+    //! eine Warnmeldung soll das Main darstellen
+    void onWarningMessageSig( const QString &msg, bool asPopup = false ) override;
+    //! eine Warnmeldung soll das Main darstellen
+    void onErrorgMessageSig( const QString &msg, bool asPopup = false ) override;
+    //! signalisiert, dass der Akku eine Spanniung hat
+    void onAkkuValueChangedSig( double aValue ) override;
+    //! signalisieret das ich was in die Config geschrieben habe
+    void onConfigWasChangedSig( void );
 
     public slots:
     void onSendBufferStateChangedSlot( bool isBusy );
 
     private slots:
-    virtual void onOnlineStatusChangedSlot( bool isOnline ) override;                //! Wenn sich der Onlinestatus des SPX42 ändert
-    virtual void onSocketErrorSlot( QBluetoothSocket::SocketError error ) override;  //! wenn es Fehler in der BT Verbindung gibt
-    virtual void onConfLicChangedSlot( void ) override;                              //! Wenn sich die Lizenz ändert
-    virtual void onCloseDatabaseSlot( void ) override;                               //! wenn die Datenbank geschlosen wird
-    virtual void onCommandRecivedSlot( void ) override;                              //! wenn ein Datentelegramm empfangen wurde
-    void onGasConfigUpdateSlot( void );                                              //! Konfiguration abrufen
-    void onSpinO2ValueChangedSlot( int o2Val );                                      //! O2 Wert eines Gases hat sich verändert
-    void onSpinHeValueChangedSlot( int heVal );                                      //! HE Wert eines Gases hat sich verändert
-    void onDiluentUseChangeSlot( int state, DiluentType which );                     //! wenn sich das Diluent ändert
-    void onBailoutCheckChangeSlot( int state );                                      //! wenn sich das Bailout ändert
-    void onWaterTypeChanged( int state );                                            //! wenn sich der wassertyp zum berechnen ändert
+    //! Wenn sich der Onlinestatus des SPX42 ändert
+    virtual void onOnlineStatusChangedSlot( bool isOnline ) override;
+    //! wenn es Fehler in der BT Verbindung gibt
+    virtual void onSocketErrorSlot( QBluetoothSocket::SocketError error ) override;
+    //! Wenn sich die Lizenz ändert
+    virtual void onConfLicChangedSlot( void ) override;
+    //! wenn die Datenbank geschlosen wird
+    virtual void onCloseDatabaseSlot( void ) override;
+    //! wenn ein Datentelegramm empfangen wurde
+    virtual void onCommandRecivedSlot( void ) override;
+    //! Konfiguration abrufen
+    void onGasConfigUpdateSlot( void );
+    //! O2 Wert eines Gases hat sich verändert
+    void onSpinO2ValueChangedSlot( int o2Val );
+    //! HE Wert eines Gases hat sich verändert
+    void onSpinHeValueChangedSlot( int heVal );
+    //! wenn sich das Diluent ändert
+    void onDiluentUseChangeSlot( int state, DiluentType which );
+    //! wenn sich das Bailout ändert
+    void onBailoutCheckChangeSlot( int state );
+    //! wenn sich der wassertyp zum berechnen ändert
+    void onWaterTypeChanged( int state );
   };
 }  // namespace spx
 #endif  // GASFORM_HPP

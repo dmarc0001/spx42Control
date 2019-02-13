@@ -1056,6 +1056,8 @@
         <location filename="../ui/OptionsDialog.ui" line="244"/>
         <location filename="../ui/OptionsDialog.ui" line="254"/>
         <location filename="../ui/OptionsDialog.ui" line="264"/>
+        <location filename="../ui/OptionsDialog.ui" line="308"/>
+        <location filename="../ui/OptionsDialog.ui" line="321"/>
         <source>sets the logging threshold (level)...</source>
         <translation>setzte die Protokollschwelle (Loglevel)...</translation>
     </message>
@@ -1075,12 +1077,42 @@
         <translation>Protokollschwelle DEBUG (FEHLERSUCHE)</translation>
     </message>
     <message>
-        <location filename="../ui/OptionsDialog.ui" line="330"/>
+        <location filename="../ui/OptionsDialog.ui" line="289"/>
+        <source>gui theme...</source>
+        <translation>GUI Farbthema...</translation>
+    </message>
+    <message>
+        <location filename="../ui/OptionsDialog.ui" line="292"/>
+        <source>[ THEME ] </source>
+        <translation>[ Thema ] </translation>
+    </message>
+    <message>
+        <location filename="../ui/OptionsDialog.ui" line="298"/>
+        <source>sets the dark theme...</source>
+        <translation>setzt das dunkle Thema...</translation>
+    </message>
+    <message>
+        <location filename="../ui/OptionsDialog.ui" line="301"/>
+        <source>LIGHT THEME FOR GUI</source>
+        <translation>Helles Thema für die Oberfläche</translation>
+    </message>
+    <message>
+        <location filename="../ui/OptionsDialog.ui" line="311"/>
+        <source>DARK THEME FOR GUI</source>
+        <translation>Dunkles Thema für die Oberfläche</translation>
+    </message>
+    <message>
+        <location filename="../ui/OptionsDialog.ui" line="324"/>
+        <source>CUSTOM (EXTERNAL - not active yet)</source>
+        <translation>Benutzerdefiniertes Thema (Extern noch nicht aktiviert)</translation>
+    </message>
+    <message>
+        <location filename="../ui/OptionsDialog.ui" line="387"/>
         <source>[ CANCEL ]</source>
         <translation>[ ABBRUCH ]</translation>
     </message>
     <message>
-        <location filename="../ui/OptionsDialog.ui" line="359"/>
+        <location filename="../ui/OptionsDialog.ui" line="416"/>
         <source>[ SAVE ]</source>
         <translation>[ SICHERN ]</translation>
     </message>
@@ -1121,69 +1153,69 @@
         <translation>SPX42 Kontrollprogramm</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="74"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="77"/>
         <source>Tab 1</source>
         <translatorcomment>DUMMY</translatorcomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="79"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="82"/>
         <source>Tab 2</source>
         <translatorcomment>DUMMY</translatorcomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="97"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="100"/>
         <source>File</source>
         <translation>Datei</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="104"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="107"/>
         <source>Help</source>
         <translation>Hilfe</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="111"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="114"/>
         <source>Edit</source>
         <translation>Bearbeiten</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="117"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="120"/>
         <source>DEBUGGING</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="121"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="124"/>
         <source>Lizences</source>
         <translation>Lizenzen</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="139"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="142"/>
         <source>print current content...</source>
         <translation>drucke aktellen Inhalt...</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="161"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="167"/>
         <source>QUIT</source>
         <translation>ENDE</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="164"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="170"/>
         <source>QUIT application</source>
         <translation>Beende Programm</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="167"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="173"/>
         <source>quit this application...</source>
         <translation>beende das Programm...</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="175"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="181"/>
         <source>About...</source>
         <translation>Über...</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="178"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="184"/>
         <source>about this application...</source>
         <translation>über diese Programm...</translation>
     </message>
@@ -1208,63 +1240,63 @@
         <translation type="vanished">drucke aktuellen Inhalt</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="191"/>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="194"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="197"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="200"/>
         <source>Settings...</source>
         <translation>Einstellungen...</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="197"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="203"/>
         <source>Application settings</source>
         <translation>Programmeinstellungen</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="200"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="206"/>
         <source>set application settings...</source>
         <translation>setze Programmeinstellungen...</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="211"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="217"/>
         <source>Nitrox</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="219"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="225"/>
         <source>Normoxic TMX</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="227"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="233"/>
         <source>Full TMX</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="235"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="241"/>
         <source>Military</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="243"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="249"/>
         <source>INDIVIDUAL-LIC</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="261"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="267"/>
         <source>SPX STATE</source>
         <translation>SPX42 Status</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="264"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="270"/>
         <source>state of the connected spx42</source>
         <translation>Status des verbundenen SPX42</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="277"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="283"/>
         <source>Get Help...</source>
         <translation>Zeige Hilfe...</translation>
     </message>
     <message>
-        <location filename="../ui/SPX42ControlMainWin.ui" line="280"/>
+        <location filename="../ui/SPX42ControlMainWin.ui" line="286"/>
         <source>help für using this program...</source>
         <translation>Hilfe zur Nutzung des Programmes...</translation>
     </message>
@@ -1333,22 +1365,22 @@
 <context>
     <name>spx::ChartDataWorker</name>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="34"/>
+        <location filename="../database/ChartDataWorker.cpp" line="40"/>
         <source>PREVIEW</source>
         <translation>Vorschau</translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="271"/>
+        <location filename="../database/ChartDataWorker.cpp" line="284"/>
         <source>TEMP [&amp;ordm;C]</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="300"/>
+        <location filename="../database/ChartDataWorker.cpp" line="311"/>
         <source>PPO2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="315"/>
+        <location filename="../database/ChartDataWorker.cpp" line="326"/>
         <source>SETPOINT</source>
         <translation></translation>
     </message>
@@ -1357,13 +1389,13 @@
         <translation type="vanished">Tauchgang Ansicht</translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="257"/>
+        <location filename="../database/ChartDataWorker.cpp" line="270"/>
         <source>DEPTH [m]</source>
         <translation>Tiefe [m]</translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="290"/>
-        <location filename="../database/ChartDataWorker.cpp" line="331"/>
+        <location filename="../database/ChartDataWorker.cpp" line="302"/>
+        <location filename="../database/ChartDataWorker.cpp" line="342"/>
         <source>DIVE TIME [min]</source>
         <translation>Tauchzeit [min]</translation>
     </message>
@@ -1376,17 +1408,23 @@
         <translation>Logdaten SPX42 [%1] in Datenbank</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ChartsFragment.cpp" line="77"/>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="40"/>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="49"/>
+        <source>zoom in: drag left mouse , zoom out: click right mouse, zoom reset: middle mouse switch...</source>
+        <translation>vergrößern: ziehen mit linker Maustaste, verkleinern: rechte Maustaste, Vergrößerung RESET: mittlere Maustaste...</translation>
+    </message>
+    <message>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="86"/>
         <source>unknown</source>
         <translation>unbekannt</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ChartsFragment.cpp" line="87"/>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="96"/>
         <source>database empty</source>
         <translation>Datenbank leer</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ChartsFragment.cpp" line="254"/>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="269"/>
         <source>LOGCHARTS SPX42 Serial [%1] Lic: %2</source>
         <translation>Log Grafiken SPX32 Seriennummer [%1] Lizenz: %2</translation>
     </message>
@@ -1787,12 +1825,12 @@
         <translation>Programm Optionen</translation>
     </message>
     <message>
-        <location filename="../utils/OptionsDialog.cpp" line="96"/>
+        <location filename="../utils/OptionsDialog.cpp" line="123"/>
         <source>SELECT DATABASE DIR</source>
         <translation>Datenbank Verzeichnis wählen</translation>
     </message>
     <message>
-        <location filename="../utils/OptionsDialog.cpp" line="119"/>
+        <location filename="../utils/OptionsDialog.cpp" line="146"/>
         <source>SELECT LOGFILE DIR</source>
         <translation>Verzeichnis für Lpogdatei wählen</translation>
     </message>
@@ -1834,147 +1872,151 @@
     <name>spx::SPX42ControlMainWin</name>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="17"/>
-        <location filename="../SPX42ControlMainWin.cpp" line="546"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="551"/>
         <source>SPX42 OFFLINE</source>
         <translation>SPX42 Offline</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="19"/>
-        <location filename="../SPX42ControlMainWin.cpp" line="1039"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="1044"/>
         <source>CLEAR</source>
         <translation>FREI</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="63"/>
-        <location filename="../SPX42ControlMainWin.cpp" line="81"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="60"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="78"/>
         <source>CRITICAL</source>
         <translation>KRITISCH</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="63"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="60"/>
         <source>database can&apos;t open!</source>
         <translation>Konnte Datenbank ncht öffnen!</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="81"/>
         <source>internal font can&apos;t load!</source>
-        <translation>Interner Font kann nicht geladen werden!</translation>
+        <translation type="vanished">Interner Font kann nicht geladen werden!</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="166"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="78"/>
+        <source>internal font(s) can&apos;t load!</source>
+        <translation>kann interne Fonts nicht laden!</translation>
+    </message>
+    <message>
+        <location filename="../SPX42ControlMainWin.cpp" line="163"/>
         <source>Really EXIT?</source>
         <translation>Wirklich beenden?</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="167"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="164"/>
         <source>Will you really quit this programm and close all files, databases, connections?</source>
         <translation>Wollen Sie das Programm wirklich beenden und alle Verbindungen und Datenbanken schließen?</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="237"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="242"/>
         <source>Log dirctory create FAIL!</source>
         <translation>Logverzeichnis erstellen schlug fehl!</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="238"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="243"/>
         <source>Check write rights for log directory or reinstall software.
 (%1)</source>
         <translation>Prüfe Schreibrechte für das Logverzeichnis oder instlliere Software neu.
 (%1)</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="254"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="259"/>
         <source>Logging start FAIL!</source>
         <translation>Logging konnte nicht gestartet werden!</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="255"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="260"/>
         <source>Check write rights for program directory or reinstall software.</source>
         <translation>Prüfe Schreibrechte im Programmverzeichnis oder instsalliere die Software neu.</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="267"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="272"/>
         <source>CONNECTION</source>
         <translation>VERBINDUNG</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="268"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="273"/>
         <source>INFO</source>
         <translation>INFO</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="269"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="274"/>
         <source>CONFIG</source>
         <translation>KONFIG</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="270"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="275"/>
         <source>GAS</source>
         <translation>GAS</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="271"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="276"/>
         <source>LOG</source>
         <translation>LOG</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="272"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="277"/>
         <source>CHARTS</source>
         <translation>DIAGRAMME</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="550"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="555"/>
         <source>spx42 is offline...</source>
         <translation>SPX42 ist offline...</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="556"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="561"/>
         <source>SPX42 ONLINE</source>
         <translation>SPX42 ist online</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="561"/>
-        <location filename="../SPX42ControlMainWin.cpp" line="1041"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="566"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="1046"/>
         <source>spx42 is online, click for disconnect...</source>
         <translation>SPX42 ist inline, Klicke zum trennen...</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="567"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="572"/>
         <source>SPX42 CONNECTING</source>
         <translation>SPX42 verbindet</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="574"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="579"/>
         <source>SPX42 OFFLINE/ERROR</source>
         <translation>SPX42 getrennt/Fehler</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="577"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="582"/>
         <source>spx42 had connection error...</source>
         <translation>SPX42 hatte Verbindungsfehler...</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="840"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="845"/>
         <source>AKKU</source>
         <translation>AKKU</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="1063"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="1068"/>
         <source>BUSY</source>
         <translation>Besetzt</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="1065"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="1070"/>
         <source>spx42 is online and wait for write config data...</source>
         <translation>SPX42 ist online und wartet auf das schriben der Konfigurationsdaten...</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="1093"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="1098"/>
         <source>CAUTION</source>
         <translation>ACHTUNG</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="1093"/>
+        <location filename="../SPX42ControlMainWin.cpp" line="1098"/>
         <source>TO APPLY CHANGES RESTART APPLICATION</source>
         <translation>Um die Änderungen anzuwenden muss das Programm neu gestartet werden</translation>
     </message>

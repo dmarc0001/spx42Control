@@ -25,6 +25,8 @@ namespace spx
     QString databaseFileDirName;
     //! logdaten dateipfad
     QString logfileDirName;
+    //! Name des Theme (Dark, Light oder Custom)
+    QString themeName;
 
     public:
     //! der Konstruktor

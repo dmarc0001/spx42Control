@@ -10,16 +10,17 @@ namespace spx
                                   std::shared_ptr< Logger > logger,
                                   std::shared_ptr< SPX42Database > spx42Database,
                                   std::shared_ptr< SPX42Config > spxCfg,
-                                  std::shared_ptr< SPX42RemotBtDevice > remSPX42 )
+                                  std::shared_ptr< SPX42RemotBtDevice > remSPX42,
+                                  AppConfigClass *appCfg )
       : QWidget( parent )
-      , IFragmentInterface( logger, spx42Database, spxCfg, remSPX42 )
+      , IFragmentInterface( logger, spx42Database, spxCfg, remSPX42, appCfg )
       , ui( new Ui::ChartsFragment )
       , bigDiveChart( nullptr )
       , ppo2DiveChart( nullptr )
       , bigDummyChart( new QtCharts::QChart() )
       , ppo2DummyChart( new QtCharts::QChart() )
-      , bigChartView( std::unique_ptr< QtCharts::QChartView >( new QtCharts::QChartView( bigDummyChart ) ) )
-      , ppo2ChartView( std::unique_ptr< QtCharts::QChartView >( new QtCharts::QChartView( ppo2DummyChart ) ) )
+      , bigChartView( std::unique_ptr< SPXChartView >( new SPXChartView( logger, bigDummyChart ) ) )
+      , ppo2ChartView( std::unique_ptr< SPXChartView >( new SPXChartView( logger, ppo2DummyChart ) ) )
       , chartWorker( std::unique_ptr< ChartDataWorker >( new ChartDataWorker( logger, database, this ) ) )
   {
     lg->debug( "ChartsFragment::ChartsFragment..." );
@@ -28,23 +29,38 @@ namespace spx
     onConfLicChangedSlot();
     fragmentTitleOfflinePattern = tr( "LOGFILES SPX42 [%1] in database" );
     connect( spxConfig.get(), &SPX42Config::licenseChangedSig, this, &ChartsFragment::onConfLicChangedSlot );
+    //
+    // Dummy Chart Thema
+    //
+    if ( appConfig->getGuiThemeName().compare( AppConfigClass::lightStr ) == 0 )
+    {
+      bigDummyChart->setTheme( QChart::ChartTheme::ChartThemeLight );
+      ppo2DummyChart->setTheme( QChart::ChartTheme::ChartThemeLight );
+    }
+    else
+    {
+      bigDummyChart->setTheme( QChart::ChartTheme::ChartThemeDark );
+      ppo2DummyChart->setTheme( QChart::ChartTheme::ChartThemeDark );
+    }
     // tausche den Platzhalter aus und entsorge den gleich
     // kopiere die policys und größe
     bigChartView->setMinimumSize( ui->placeHolderWidget->minimumSize() );
     bigChartView->setSizePolicy( ui->placeHolderWidget->sizePolicy() );
+    bigChartView->setMaximumSize( ui->placeHolderWidget->maximumSize() );
+    bigChartView->setMinimumSize( ui->placeHolderWidget->minimumSize() );
     delete ui->chartFrame->layout()->replaceWidget( ui->placeHolderWidget, bigChartView.get() );
     bigChartView->setChart( bigDummyChart );
     bigChartView->setRenderHint( QPainter::Antialiasing );
+    bigChartView->setStatusTip( tr( "zoom in: drag left mouse , zoom out: click right mouse, zoom reset: middle mouse switch..." ) );
     //
     ppo2ChartView->setMinimumSize( ui->placeHolderWidget2->minimumSize() );
     ppo2ChartView->setSizePolicy( ui->placeHolderWidget2->sizePolicy() );
     ppo2ChartView->setMaximumSize( ui->placeHolderWidget2->maximumSize() );
     ppo2ChartView->setMinimumSize( ui->placeHolderWidget2->minimumSize() );
     delete ui->chartFrame->layout()->replaceWidget( ui->placeHolderWidget2, ppo2ChartView.get() );
-    //
     ppo2ChartView->setChart( ppo2DummyChart );
     ppo2ChartView->setRenderHint( QPainter::Antialiasing );
-    ppo2ChartView->setRubberBand( QChartView::HorizontalRubberBand );
+    bigChartView->setStatusTip( tr( "zoom in: drag left mouse , zoom out: click right mouse, zoom reset: middle mouse switch..." ) );
     //
     ui->notesLineEdit->setClearButtonEnabled( true );
     initDeviceSelection();
@@ -56,6 +72,13 @@ namespace spx
              &ChartsFragment::onDiveComboChangedSlot );
     connect( chartWorker.get(), &ChartDataWorker::onChartReadySig, this, &ChartsFragment::onChartReadySlot );
     connect( ui->notesLineEdit, &QLineEdit::editingFinished, this, &ChartsFragment::onNotesLineEditFinishedSlot );
+    //
+    // die charts "verbinden"
+    //
+    connect( bigChartView.get(), &SPXChartView::onZoomChangedSig, ppo2ChartView.get(), &SPXChartView::onZoomChangedSlot );
+    connect( bigChartView.get(), &SPXChartView::onCursorChangedSig, ppo2ChartView.get(), &SPXChartView::onCursorChangedSlot );
+    connect( ppo2ChartView.get(), &SPXChartView::onZoomChangedSig, bigChartView.get(), &SPXChartView::onZoomChangedSlot );
+    connect( ppo2ChartView.get(), &SPXChartView::onCursorChangedSig, bigChartView.get(), &SPXChartView::onCursorChangedSlot );
   }
 
   ChartsFragment::~ChartsFragment()
@@ -202,9 +225,9 @@ namespace spx
       // QThreadPool::globalInstance()
       bigDiveChart = new QtCharts::QChart( nullptr );
       ppo2DiveChart = new QtCharts::QChart( nullptr );
-      chartWorker->prepareDiveCharts( bigDiveChart, ppo2DiveChart );
-      bigChartView->setChart( bigDiveChart );
-      ppo2ChartView->setChart( ppo2DiveChart );
+
+      chartWorker->prepareDiveCharts( bigDiveChart, ppo2DiveChart,
+                                      appConfig->getGuiThemeName().compare( AppConfigClass::lightStr ) == 0 );
       ui->notesLineEdit->setText( database->getNotesForDive( deviceAddr, diveNum ) );
       dbgetDataFuture =
           QtConcurrent::run( chartWorker.get(), &ChartDataWorker::makeDiveChart, bigDiveChart, ppo2DiveChart, deviceAddr, diveNum );
@@ -220,7 +243,15 @@ namespace spx
   void ChartsFragment::onChartReadySlot()
   {
     // QTimer::singleShot( 20, this, [=]() { ChartsFragment::onDiveComboChangedSlot( int index ); } );
-    lg->debug( "ChartsFragment::onChartReadySlot" );
+    //
+    // Charts sind fertig präpariert
+    //
+    lg->debug( "ChartsFragment::onChartReadySlot..." );
+    bigChartView->setChart( bigDiveChart );
+    ppo2ChartView->setChart( ppo2DiveChart );
+    bigChartView->setRubberBand( SPXChartView::HorizontalRubberBand );
+    ppo2ChartView->setRubberBand( SPXChartView::HorizontalRubberBand );
+    lg->debug( "ChartsFragment::onChartReadySlot...OK" );
   }
 
   void ChartsFragment::onNotesLineEditFinishedSlot()
@@ -263,4 +294,58 @@ namespace spx
   {
     // IGNORIEREN
   }
+
+  //  void ChartsFragment::keyPressEvent( QKeyEvent *event )
+  //  {
+  //    if ( ppo2DiveChart && bigDiveChart )
+  //    {
+  //      switch ( event->key() )
+  //      {
+  //        case Qt::Key_Plus:
+  //          ppo2DiveChart->zoomIn();
+  //          bigDiveChart->zoomIn();
+  //          break;
+  //        case Qt::Key_Minus:
+  //          ppo2DiveChart->zoomOut();
+  //          bigDiveChart->zoomOut();
+  //          break;
+  //          //![1]
+  //        case Qt::Key_Left:
+  //          ppo2DiveChart->scroll( -10, 0 );
+  //          bigDiveChart->scroll( -10, 0 );
+  //          break;
+  //        case Qt::Key_Right:
+  //          ppo2DiveChart->scroll( 10, 0 );
+  //          bigDiveChart->scroll( 10, 0 );
+  //          break;
+  //        default:
+  //          ChartsFragment::keyPressEvent( event );
+  //          break;
+  //      }
+  //    }
+  //    else
+  //    {
+  //      ChartsFragment::keyPressEvent( event );
+  //    }
+  //  }
 }  // namespace spx
+
+/*
+void wheelEvent(QWheelEvent *event)
+{
+  if(chart() && mDirectionZoom != NotZoom){
+    const qreal factor = 1.001;
+    QRectF r = chart()->plotArea();
+    QPointF c = r.center();
+    qreal val = std::pow(factor, event->delta());
+    if(mDirectionZoom & VerticalZoom)
+      r.setHeight(r.height()*val);
+    if (mDirectionZoom & HorizontalZoom) {
+      r.setWidth(r.width()*val);
+    }
+    r.moveCenter(c);
+    chart()->zoomIn(r);
+  }
+  QChartView::wheelEvent(event);
+}
+*/

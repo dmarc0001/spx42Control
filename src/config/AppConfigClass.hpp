@@ -40,6 +40,10 @@ namespace spx
     static const QString constExportPathKey;
     //! Default für Watchdog
     static const int defaultWatchdogTimerVal;
+    //! Einstellung für Thema
+    static const QString constThemeKey;
+    //! Default Thema
+    static const QString constThemeDefaultName;
     //! Einstellung für Logebene
     static const QString constAppThresholdKey;
     //! defaultwert für Loggingebene
@@ -50,6 +54,14 @@ namespace spx
     static const QString defaultDatabasePath;
     //! defaultwert für export (download path, OS abhängig)
     static const QString defaultExportPath;
+
+    public:
+    //! mögliche Werte für Themen
+    static const QString lightStr;
+    static const QString darktStr;
+    static const QString customtStr;
+
+    private:
     //
     // ab hier die Konfiguration lagern
     //
@@ -69,6 +81,8 @@ namespace spx
     QString databasePath;
     //! auf welchem Pfad wird der Export gespeichert
     QString exportPath;
+    //! Wie ist der Name des Tjhemas der GUI
+    QString guiThemeName;
 
     public:
     //! Konstruktor
@@ -117,6 +131,10 @@ namespace spx
     QString getFullDatabaseLocation( void ) const;
     //! exportpfad zurück geben
     QString getExportPath( void ) const;
+    //! Name des Themas zurück geben
+    QString getGuiThemeName() const;
+    //! Name des Themas setzen
+    void setGuiThemeName( const QString &value );
 
     private:
     // Logeinstellungen

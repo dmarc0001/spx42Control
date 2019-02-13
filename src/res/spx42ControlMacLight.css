@@ -1,20 +1,22 @@
 /******************************************************************************
-**** Stylesheets für die App spx42Control                                  ****
+**** Stylesheet Größenangaben für MAC                                      ****
 ******************************************************************************/
-/* Schrift */
-/* button */
-/* Farben */
 /******************************************************************************
 **** Alle Anzeigeelemente                                                  ****
 ******************************************************************************/
 QWidget {
-  font-family: "Bahnschrift";
+  font-family: "Bahnschrift light";
   font-style: normal;
-  color: #161616;
+  color: #031855;
   font-size: 16pt;
 }
 QMainWindoww {
   background-color: #f3f3f3f1;
+}
+QToolBar {
+  background-color: #f3f3f3f1;
+  /*workarround by macos and linux*/
+  border: none;
 }
 QPushButton {
   font-family: "Hack";
@@ -35,6 +37,15 @@ QPushButton:hover:pressed {
   color: #222fa5;
   border: 1px solid #ff0000;
 }
+QProgressBar {
+  border: 1px solid #00E604;
+  border-radius: 4px;
+}
+QProgressBar::chunk {
+  background-color: #031855;
+  width: 40px;
+  margin: 3px;
+}
 /* kopf überschriften in den TABS */
 QLabel#tabHeaderLabel {
   font-style: bold;
@@ -47,7 +58,7 @@ QLabel#tabHeaderLabel {
 ##################################################################
 */
 QWidget#deviceInfoBodyWidget > QLabel {
-  font-family: "Bahnschrift";
+  font-family: "Bahnschrift light";
   font-style: bold;
   font-size: 20pt;
   color: #333232;

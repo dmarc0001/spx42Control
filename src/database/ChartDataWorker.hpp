@@ -19,8 +19,23 @@ namespace spx
   class ChartDataWorker : public QObject
   {
     Q_OBJECT
+    private:
     static const qint64 waitTimeout{( 1000 / 50 ) * 20};
     static const qint64 waitUnits{50};
+
+    public:
+    //! Name für die Tiefenserie
+    static const QString depthSeriesName;
+    //! Name für die Area TIEFE
+    static const QString depthAreaSeriesName;
+    //! Name für die Temperaturserie (zum wiederfinden mapToValue/mapToPosition)
+    static const QString tempSeriesName;
+    //! Name für die PPO2 Serie (zum wiederfinden mapToValue/mapToPosition)
+    static const QString ppo2SeriesName;
+    //! Name für die Setpointserie (zum wiederfinden mapToValue/mapToPosition)
+    static const QString setpointSeriesName;
+
+    private:
     std::shared_ptr< Logger > lg;               // der Logger
     std::shared_ptr< SPX42Database > database;  // Datenbankverbindung
     bool shouldWriterRunning;                   // thread soll laufen und auf daten warten
@@ -31,9 +46,9 @@ namespace spx
     explicit ChartDataWorker( std::shared_ptr< Logger > logger,
                               std::shared_ptr< SPX42Database > _database,
                               QObject *parent = nullptr );
-    void prepareMiniChart( QtCharts::QChart *chart );
+    void prepareMiniChart( QtCharts::QChart *chart, bool isLightTheme );
     bool makeChartDataMini( QtCharts::QChart *chart, const QString &deviceMac, int diveNum );
-    bool prepareDiveCharts( QtCharts::QChart *bigchart, QtCharts::QChart *ppo2chart );
+    bool prepareDiveCharts( QtCharts::QChart *bigchart, QtCharts::QChart *ppo2chart, bool isLightTheme );
     bool makeDiveChart( QtCharts::QChart *bigchart, QtCharts::QChart *ppo2chart, const QString &deviceMac, int diveNum );
     void reset( void );
     void nowait( bool _shouldNoWait = true );  //! nicht mehr warten wenn die queue leer ist

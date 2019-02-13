@@ -32,6 +32,18 @@ namespace spx
       if ( checked )
         logThreshold = LgThreshold::LG_DEBUG;
     } );
+    connect( ui->darkRadioButton, &QRadioButton::toggled, [=]( bool checked ) {
+      if ( checked )
+        themeName = AppConfigClass::darktStr;
+    } );
+    connect( ui->lightRadioButton, &QRadioButton::toggled, [=]( bool checked ) {
+      if ( checked )
+        themeName = AppConfigClass::lightStr;
+    } );
+    connect( ui->customRadioButton, &QRadioButton::toggled, [=]( bool checked ) {
+      if ( checked )
+        themeName = AppConfigClass::customtStr;
+    } );
     connect( ui->databaseSelectPushButton, &QPushButton::clicked, this, &OptionsDialog::onSelectDatabasePushBottonSlot );
     connect( ui->logfileSelectPushButton, &QPushButton::clicked, this, &OptionsDialog::onSelectLogfilePushBottonSlot );
 
@@ -71,6 +83,20 @@ namespace spx
         ui->debugRadioButton->setChecked( true );
         break;
     }
+    themeName = cf.getGuiThemeName();
+    if ( themeName == AppConfigClass::customtStr )
+    {
+      ui->customRadioButton->setChecked( true );
+    }
+    else if ( themeName == AppConfigClass::darktStr )
+    {
+      ui->darkRadioButton->setChecked( true );
+    }
+    else
+    {
+      themeName = AppConfigClass::lightStr;
+      ui->lightRadioButton->setChecked( true );
+    }
   }
 
   /**
@@ -85,6 +111,7 @@ namespace spx
     if ( !databaseFileDirName.isEmpty() )
       cf.setDatabasePath( databaseFileDirName );
     cf.setLogThreshold( logThreshold );
+    cf.setGuiThemeName( themeName );
     QDialog::accept();
   }
 

@@ -23,7 +23,8 @@ namespace spx
     private:
     Q_OBJECT
     Q_INTERFACES( spx::IFragmentInterface )
-    std::unique_ptr< Ui::DeviceInfoFragment > ui;  //! Zeiger auf die GUI Objekte
+    //! Zeiger auf die GUI Objekte
+    std::unique_ptr< Ui::DeviceInfoFragment > ui;
     QImage spxPic;
     QString titleTemplate;
     QString deviceModelTemplate;
@@ -42,27 +43,39 @@ namespace spx
     QString newerDisplayBrightnessTemplate;
 
     public:
+    //! Konstruktor
     explicit DeviceInfoFragment( QWidget *parent,
                                  std::shared_ptr< Logger > logger,
                                  std::shared_ptr< SPX42Database > spx42Database,
                                  std::shared_ptr< SPX42Config > spxCfg,
-                                 std::shared_ptr< SPX42RemotBtDevice > remSPX42 );  //! Konstruktor
-    ~DeviceInfoFragment() override;                                                 //! Destruktor, muss GUI säubern
+                                 std::shared_ptr< SPX42RemotBtDevice > remSPX42,
+                                 AppConfigClass *appCfg );
+    //! Destruktor, muss GUI säubern
+    ~DeviceInfoFragment() override;
 
     private:
-    void prepareGuiWithConfig( void );  //! GUI mit werten aus der Config machen
+    //! GUI mit werten aus der Config machen
+    void prepareGuiWithConfig( void );
 
     signals:
-    void onWarningMessageSig( const QString &msg, bool asPopup = false ) override;  //! eine Warnmeldung soll das Main darstellen
-    void onErrorgMessageSig( const QString &msg, bool asPopup = false ) override;   //! eine Warnmeldung soll das Main darstellen
-    void onAkkuValueChangedSig( double aValue ) override;                           //! signalisiert, dass der Akku eine Spanniung hat
+    //! eine Warnmeldung soll das Main darstellen
+    void onWarningMessageSig( const QString &msg, bool asPopup = false ) override;
+    //! eine Warnmeldung soll das Main darstellen
+    void onErrorgMessageSig( const QString &msg, bool asPopup = false ) override;
+    //! signalisiert, dass der Akku eine Spanniung hat
+    void onAkkuValueChangedSig( double aValue ) override;
 
     private slots:
-    virtual void onCommandRecivedSlot( void ) override;                              //! wenn ein Datentelegramm empfangen wurde
-    virtual void onOnlineStatusChangedSlot( bool isOnline ) override;                //! Wenn sich der Onlinestatus des SPX42 ändert
-    virtual void onSocketErrorSlot( QBluetoothSocket::SocketError error ) override;  //! wenn bei einer Verbindung ein Fehler auftritt
-    virtual void onConfLicChangedSlot( void ) override;                              //! Wenn sich die Lizenz ändert
-    virtual void onCloseDatabaseSlot( void ) override;                               //! wenn die Datenbank geschlosen wird
+    //! wenn ein Datentelegramm empfangen wurde
+    virtual void onCommandRecivedSlot( void ) override;
+    //! Wenn sich der Onlinestatus des SPX42 ändert
+    virtual void onOnlineStatusChangedSlot( bool isOnline ) override;
+    //! wenn bei einer Verbindung ein Fehler auftritt
+    virtual void onSocketErrorSlot( QBluetoothSocket::SocketError error ) override;
+    //! Wenn sich die Lizenz ändert
+    virtual void onConfLicChangedSlot( void ) override;
+    //! wenn die Datenbank geschlosen wird
+    virtual void onCloseDatabaseSlot( void ) override;
   };
 }  // namespace spx
 #endif  // DeviceInfoFragment_HPP
