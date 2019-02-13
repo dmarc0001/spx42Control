@@ -39,6 +39,7 @@ namespace spx
 
   void SPXChartView::init()
   {
+    dummyTitle = tr( "DUMMY CHART" );
     setFrameShape( QFrame::NoFrame );
     setBackgroundRole( QPalette::Window );
     setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
@@ -52,8 +53,11 @@ namespace spx
     setMouseTracking( true );
     //
     if ( !currChart )
+    {
       // ein Dummy machen
       currChart = new QChart();
+      currChart->setTitle( dummyTitle );
+    }
     else
       // ein echter Chart ist da, also veruche mal was
       axisAndSeries();
@@ -118,8 +122,15 @@ namespace spx
     // ist das alte chart tatsächlich vorhanden
     //
     if ( currChart )
+    {
       // entferne es aus der Umgebung
       currScene->removeItem( currChart );
+      if ( currChart->title().compare( dummyTitle ) == 0 )
+      {
+        // es ist das interne Notchart, entferne es
+        delete currChart;
+      }
+    }
     //
     // Merke als aktuell
     //

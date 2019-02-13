@@ -666,7 +666,7 @@ namespace spx
       // default:
       case static_cast< int >( ApplicationTab::CONNECT_TAB ):
         lg->debug( "SPX42ControlMainWin::setApplicationTab -> CONNECT TAB..." );
-        currObj = new ConnectFragment( this, lg, spx42Database, spx42Config, remoteSPX42 );
+        currObj = new ConnectFragment( this, lg, spx42Database, spx42Config, remoteSPX42, &cf );
         currObj->setObjectName( "spx42Connect" );
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::CONNECT_TAB ) ) );
         currentTab = ApplicationTab::CONNECT_TAB;
@@ -678,7 +678,7 @@ namespace spx
 
       case static_cast< int >( ApplicationTab::DEVICE_INFO_TAB ):
         lg->debug( "SPX42ControlMainWin::setApplicationTab -> Device INFO TAB..." );
-        currObj = new DeviceInfoFragment( this, lg, spx42Database, spx42Config, remoteSPX42 );
+        currObj = new DeviceInfoFragment( this, lg, spx42Database, spx42Config, remoteSPX42, &cf );
         currObj->setObjectName( "spx42DeviceInfo" );
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::DEVICE_INFO_TAB ) ) );
         currentTab = ApplicationTab::DEVICE_INFO_TAB;
@@ -688,7 +688,7 @@ namespace spx
 
       case static_cast< int >( ApplicationTab::CONFIG_TAB ):
         lg->debug( "SPX42ControlMainWin::setApplicationTab -> CONFIG TAB..." );
-        currObj = new DeviceConfigFragment( this, lg, spx42Database, spx42Config, remoteSPX42 );
+        currObj = new DeviceConfigFragment( this, lg, spx42Database, spx42Config, remoteSPX42, &cf );
         currObj->setObjectName( "spx42Config" );
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::CONFIG_TAB ) ) );
         currentTab = ApplicationTab::CONFIG_TAB;
@@ -702,7 +702,7 @@ namespace spx
 
       case static_cast< int >( ApplicationTab::GAS_TAB ):
         lg->debug( "SPX42ControlMainWin::setApplicationTab -> GAS TAB..." );
-        currObj = new GasFragment( this, lg, spx42Database, spx42Config, remoteSPX42 );
+        currObj = new GasFragment( this, lg, spx42Database, spx42Config, remoteSPX42, &cf );
         currObj->setObjectName( "spx42Gas" );
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::GAS_TAB ) ) );
         currentTab = ApplicationTab::GAS_TAB;
@@ -716,7 +716,7 @@ namespace spx
 
       case static_cast< int >( ApplicationTab::LOG_TAB ):
         lg->debug( "SPX42ControlMainWin::setApplicationTab -> LOG TAB..." );
-        currObj = new LogFragment( this, lg, spx42Database, spx42Config, remoteSPX42 );
+        currObj = new LogFragment( this, lg, spx42Database, spx42Config, remoteSPX42, &cf );
         currObj->setObjectName( "spx42log" );
         static_cast< LogFragment * >( currObj )->setExportPath( cf.getExportPath() );
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::LOG_TAB ) ) );
@@ -729,7 +729,7 @@ namespace spx
 
       case static_cast< int >( ApplicationTab::CHART_TAB ):
         lg->debug( "SPX42ControlMainWin::setApplicationTab -> CHART TAB..." );
-        currObj = new ChartsFragment( this, lg, spx42Database, spx42Config, remoteSPX42 );
+        currObj = new ChartsFragment( this, lg, spx42Database, spx42Config, remoteSPX42, &cf );
         currObj->setObjectName( "spx42charts" );
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::CHART_TAB ) ) );
         currentTab = ApplicationTab::CHART_TAB;

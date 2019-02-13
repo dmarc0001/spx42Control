@@ -14,6 +14,7 @@
 #include "bluetooth/BtDiscoverRemoteDevice.hpp"
 #include "bluetooth/BtTypes.hpp"
 #include "bluetooth/SPX42RemotBtDevice.hpp"
+#include "config/AppConfigClass.hpp"
 #include "database/SPX42Database.hpp"
 #include "logging/Logger.hpp"
 #include "spx42/SPX42CommandDef.hpp"
@@ -60,7 +61,8 @@ namespace spx
                               std::shared_ptr< Logger > logger,
                               std::shared_ptr< SPX42Database > spx42Database,
                               std::shared_ptr< SPX42Config > spxCfg,
-                              std::shared_ptr< SPX42RemotBtDevice > remSPX42 );
+                              std::shared_ptr< SPX42RemotBtDevice > remSPX42,
+                              AppConfigClass *appCfg );
     //! Destruktor, muss GUI säubern
     ~ConnectFragment() override;
 

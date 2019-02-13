@@ -11,6 +11,7 @@
 #include <memory>
 #include "IFragmentInterface.hpp"
 #include "bluetooth/SPX42RemotBtDevice.hpp"
+#include "config/AppConfigClass.hpp"
 #include "database/SPX42Database.hpp"
 #include "logging/Logger.hpp"
 #include "spx42/SPX42Config.hpp"
@@ -28,7 +29,8 @@ namespace spx
     private:
     Q_OBJECT
     Q_INTERFACES( spx::IFragmentInterface )
-    std::unique_ptr< Ui::ChartsFragment > ui;  //! Zeiger auf die GUI Objekte
+    //! Zeiger auf die GUI Objekte
+    std::unique_ptr< Ui::ChartsFragment > ui;
     //! Zeiger auf das eigene Chart
     QtCharts::QChart *bigDiveChart;
     //! Zeiger auf das eigene Chart PPO2
@@ -60,7 +62,8 @@ namespace spx
                              std::shared_ptr< Logger > logger,
                              std::shared_ptr< SPX42Database > spx42Database,
                              std::shared_ptr< SPX42Config > spxCfg,
-                             std::shared_ptr< SPX42RemotBtDevice > remSPX42 );
+                             std::shared_ptr< SPX42RemotBtDevice > remSPX42,
+                             AppConfigClass *appCfg );
     //! Destruktor, muss GUI säubern
     ~ChartsFragment() override;
 

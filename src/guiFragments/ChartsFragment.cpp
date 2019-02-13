@@ -10,9 +10,10 @@ namespace spx
                                   std::shared_ptr< Logger > logger,
                                   std::shared_ptr< SPX42Database > spx42Database,
                                   std::shared_ptr< SPX42Config > spxCfg,
-                                  std::shared_ptr< SPX42RemotBtDevice > remSPX42 )
+                                  std::shared_ptr< SPX42RemotBtDevice > remSPX42,
+                                  AppConfigClass *appCfg )
       : QWidget( parent )
-      , IFragmentInterface( logger, spx42Database, spxCfg, remSPX42 )
+      , IFragmentInterface( logger, spx42Database, spxCfg, remSPX42, appCfg )
       , ui( new Ui::ChartsFragment )
       , bigDiveChart( nullptr )
       , ppo2DiveChart( nullptr )
@@ -28,6 +29,19 @@ namespace spx
     onConfLicChangedSlot();
     fragmentTitleOfflinePattern = tr( "LOGFILES SPX42 [%1] in database" );
     connect( spxConfig.get(), &SPX42Config::licenseChangedSig, this, &ChartsFragment::onConfLicChangedSlot );
+    //
+    // Dummy Chart Thema
+    //
+    if ( appConfig->getGuiThemeName().compare( AppConfigClass::lightStr ) == 0 )
+    {
+      bigDummyChart->setTheme( QChart::ChartTheme::ChartThemeLight );
+      ppo2DummyChart->setTheme( QChart::ChartTheme::ChartThemeLight );
+    }
+    else
+    {
+      bigDummyChart->setTheme( QChart::ChartTheme::ChartThemeDark );
+      ppo2DummyChart->setTheme( QChart::ChartTheme::ChartThemeDark );
+    }
     // tausche den Platzhalter aus und entsorge den gleich
     // kopiere die policys und größe
     bigChartView->setMinimumSize( ui->placeHolderWidget->minimumSize() );
@@ -211,7 +225,9 @@ namespace spx
       // QThreadPool::globalInstance()
       bigDiveChart = new QtCharts::QChart( nullptr );
       ppo2DiveChart = new QtCharts::QChart( nullptr );
-      chartWorker->prepareDiveCharts( bigDiveChart, ppo2DiveChart );
+
+      chartWorker->prepareDiveCharts( bigDiveChart, ppo2DiveChart,
+                                      appConfig->getGuiThemeName().compare( AppConfigClass::lightStr ) == 0 );
       ui->notesLineEdit->setText( database->getNotesForDive( deviceAddr, diveNum ) );
       dbgetDataFuture =
           QtConcurrent::run( chartWorker.get(), &ChartDataWorker::makeDiveChart, bigDiveChart, ppo2DiveChart, deviceAddr, diveNum );
