@@ -62,6 +62,8 @@ namespace spx
     QDateTimeAxis *dtAxis;
     //! die aktuelle Serie (Tiefe oder PPO2, je nach Chart)
     QLineSeries *currSeries;
+    //! Dummy Beschriftung für das hilfsschart
+    QString dummyTitle;
 
     public:
     //! Konstruktor allgemein

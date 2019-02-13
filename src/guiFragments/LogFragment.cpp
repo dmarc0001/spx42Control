@@ -14,9 +14,10 @@ namespace spx
                             std::shared_ptr< Logger > logger,
                             std::shared_ptr< SPX42Database > spx42Database,
                             std::shared_ptr< SPX42Config > spxCfg,
-                            std::shared_ptr< SPX42RemotBtDevice > remSPX42 )
+                            std::shared_ptr< SPX42RemotBtDevice > remSPX42,
+                            AppConfigClass *appCfg )
       : QWidget( parent )
-      , IFragmentInterface( logger, spx42Database, spxCfg, remSPX42 )
+      , IFragmentInterface( logger, spx42Database, spxCfg, remSPX42, appCfg )
       , ui( new Ui::LogFragment() )
       , miniChart( new QtCharts::QChart() )
       , dummyChart( new QtCharts::QChart() )
@@ -62,6 +63,19 @@ namespace spx
     ui->dbWriteNumLabel->setText( dbWriteNumIDLE );
     ui->deleteContentPushButton->setEnabled( false );
     ui->exportContentPushButton->setEnabled( false );
+    //
+    // Dummy Chart Thema
+    //
+    if ( appConfig->getGuiThemeName().compare( AppConfigClass::lightStr ) == 0 )
+    {
+      miniChart->setTheme( QChart::ChartTheme::ChartThemeLight );
+      dummyChart->setTheme( QChart::ChartTheme::ChartThemeLight );
+    }
+    else
+    {
+      miniChart->setTheme( QChart::ChartTheme::ChartThemeDark );
+      dummyChart->setTheme( QChart::ChartTheme::ChartThemeDark );
+    }
     // tausche den Platzhalter aus und entsorge den gleich
     // kopiere die policys und größe
     chartView->setMinimumSize( ui->diveProfileGraphicsView->minimumSize() );
@@ -386,7 +400,7 @@ namespace spx
           if ( dbgetDataFuture.isFinished() )
           {
             miniChart = new QtCharts::QChart();
-            chartWorker->prepareMiniChart( miniChart );
+            chartWorker->prepareMiniChart( miniChart, appConfig->getGuiThemeName().compare( AppConfigClass::lightStr ) == 0 );
             chartView->setChart( miniChart );
             dbgetDataFuture =
                 QtConcurrent::run( chartWorker.get(), &ChartDataWorker::makeChartDataMini, miniChart, deviceAddr, diveNum );

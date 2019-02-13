@@ -28,16 +28,21 @@ namespace spx
       maxTimeoutVal = waitTimeout;
   }
 
-  void ChartDataWorker::prepareMiniChart( QChart *chart )
+  void ChartDataWorker::prepareMiniChart( QChart *chart, bool isLightTheme )
   {
     lg->debug( "DiveMiniChart::prepareChart..." );
     chart->legend()->hide();  // Keine Legende in der Minivorschau
     // Chart Titel aufhübschen
     QFont font;
-    font.setPixelSize( 8 );
+    font.setPixelSize( 9 );
     chart->setTitleFont( font );
     chart->setTitleBrush( QBrush( Qt::darkBlue ) );
     chart->setTitle( tr( "PREVIEW" ) );
+    if ( isLightTheme )
+      chart->setTheme( QChart::ChartTheme::ChartThemeLight );
+    else
+      chart->setTheme( QChart::ChartTheme::ChartThemeDark );
+    /*
     // Hintergrund aufhübschen
     QBrush backgroundBrush( Qt::NoBrush );
     chart->setBackgroundBrush( backgroundBrush );
@@ -50,6 +55,7 @@ namespace spx
     plotAreaGradient.setCoordinateMode( QGradient::ObjectBoundingMode );
     chart->setPlotAreaBackgroundBrush( plotAreaGradient );
     chart->setPlotAreaBackgroundVisible( true );
+*/
     lg->debug( "DiveMiniChart::prepareChart...OK" );
   }
 
@@ -112,7 +118,7 @@ namespace spx
     return ( true );
   }
 
-  bool ChartDataWorker::prepareDiveCharts( QChart *bigchart, QChart *ppo2chart )
+  bool ChartDataWorker::prepareDiveCharts( QChart *bigchart, QChart *ppo2chart, bool isLightTheme )
   {
     QFont font;
     QBrush backgroundBrush( Qt::NoBrush );
@@ -125,8 +131,11 @@ namespace spx
     {
       ch->setTitleBrush( QBrush( Qt::darkBlue ) );
       ch->setTitleFont( font );
-      ch->setTheme( QChart::ChartTheme::ChartThemeQt );
-      // ch->setTheme( QChart::ChartTheme::ChartThemeDark );
+      if ( isLightTheme )
+        ch->setTheme( QChart::ChartTheme::ChartThemeLight );
+      // ch->setTheme( QChart::ChartTheme::ChartThemeQt );
+      else
+        ch->setTheme( QChart::ChartTheme::ChartThemeDark );
       // ch->setTheme( QChart::ChartTheme::ChartThemeBrownSand );
       // ch->setTheme( QChart::ChartTheme::ChartThemeLight );
       ch->setAnimationOptions( QChart::SeriesAnimations );

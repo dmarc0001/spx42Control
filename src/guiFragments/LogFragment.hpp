@@ -19,6 +19,7 @@
 #include <memory>
 #include "IFragmentInterface.hpp"
 #include "bluetooth/SPX42RemotBtDevice.hpp"
+#include "config/AppConfigClass.hpp"
 #include "config/ProjectConst.hpp"
 #include "database/ChartDataWorker.hpp"
 #include "database/LogDetailWalker.hpp"
@@ -101,7 +102,8 @@ namespace spx
                           std::shared_ptr< Logger > logger,
                           std::shared_ptr< SPX42Database > spx42Database,
                           std::shared_ptr< SPX42Config > spxCfg,
-                          std::shared_ptr< SPX42RemotBtDevice > remSPX42 );
+                          std::shared_ptr< SPX42RemotBtDevice > remSPX42,
+                          AppConfigClass *appCfg );
     //! Destruktor
     ~LogFragment() override;
     //! setzte EXPORT Ptad
