@@ -24,7 +24,7 @@ namespace spx
       , cursorRubberBand( nullptr )
       , currRubberBandFlags( SPXChartView::NoRubberBand )
       , lg( logger )
-      , currCallout( nullptr )
+      , currCallout( new ChartGraphicalValueCallout( chart ) )
       , isCursorRubberBand( true )
   {
     init();
@@ -32,9 +32,16 @@ namespace spx
 
   SPXChartView::~SPXChartView()
   {
+    lg->debug( "SPXChartView::~SPXChartView..." );
+    if ( currChart )
+      tooltip( QPointF( 0.0, 0.0 ), false );
+    lg->debug( "SPXChartView::~SPXChartView -> delete currCallout..." );
     delete currCallout;
+    lg->debug( "SPXChartView::~SPXChartView -> delete cursor rubber band..." );
     delete cursorRubberBand;
+    lg->debug( "SPXChartView::~SPXChartView -> delete rubber band..." );
     delete currRubberBand;
+    lg->debug( "SPXChartView::~SPXChartView...OK" );
   }
 
   void SPXChartView::init()
@@ -119,6 +126,14 @@ namespace spx
     if ( currChart == chart )
       return;
     //
+    // ist ein Callout da (dann ist er ja auch gebunden)
+    //
+    if ( currCallout )
+    {
+      delete currCallout;
+      currCallout = nullptr;
+    }
+    //
     // ist das alte chart tatsächlich vorhanden
     //
     if ( currChart )
@@ -137,6 +152,7 @@ namespace spx
     currChart = chart;
     // zufügen
     currScene->addItem( currChart );
+    currCallout = new ChartGraphicalValueCallout( chart );
     //
     // Bearbeiten
     //
@@ -262,6 +278,7 @@ namespace spx
     {
       cursorRubberBand->hide();
       cursorRubberBand->setEnabled( false );
+      oldCursorPos = QPointF();  // ungültig...
     }
     //
     // wurde die Maus im chart links gedrückt?
@@ -312,6 +329,25 @@ namespace spx
         cursorRubberBand->setGeometry( rect.normalized() );
         cursorRubberBand->show();
         emit onCursorChangedSig( event->pos().x() );
+      }
+      if ( oldCursorPos.isNull() )
+      {
+        oldCursorPos = QPointF( event->pos() );
+      }
+      else
+      {
+        QPointF diff = QPointF( event->pos() ) - oldCursorPos;
+        if ( diff.manhattanLength() > 20 )
+        {
+          lg->debug( QString( "moved <%1> points -> hide" ).arg( diff.manhattanLength() ) );
+          tooltip( oldCursorPos, false );
+        }
+        if ( diff.manhattanLength() > 50 )
+        {
+          lg->debug( QString( "moved <%1> points -> show" ).arg( diff.manhattanLength() ) );
+          oldCursorPos = QPointF( event->pos() );
+          tooltip( oldCursorPos, true );
+        }
       }
       QGraphicsView::mouseMoveEvent( event );
     }
@@ -445,22 +481,30 @@ namespace spx
 
   void SPXChartView::tooltip( QPointF point, bool state )
   {
-    lg->debug( "SpxChartView::tooltip..." );
+    lg->debug( QString( "SpxChartView::tooltip: X: %1 Y: %2" ).arg( point.x(), 0, 'f', 0 ).arg( point.y(), 0, 'f', 2 ) );
     //
-    if ( currCallout == nullptr )
-      currCallout = new ChartGraphicalValueCallout( chart() );
+    // if ( currCallout == nullptr )
+    //  currCallout = new ChartGraphicalValueCallout( chart() );
 
-    if ( state )
+    try
     {
-      currCallout->setText( QString( "X: %1 \nY: %2 " ).arg( point.x() ).arg( point.y() ) );
-      currCallout->setAnchor( point );
-      currCallout->setZValue( 11 );
-      currCallout->updateGeometry();
-      currCallout->show();
+      if ( state )
+      {
+        currCallout->setText( QString( "X: %1 \nY: %2 " ).arg( point.x(), 0, 'f', 0 ).arg( point.y(), 0, 'f', 2 ) );
+        currCallout->setAnchor( point );
+        currCallout->setZValue( 11 );
+        currCallout->updateGeometry();
+        currCallout->show();
+        currCallout->update();
+      }
+      else
+      {
+        currCallout->hide();
+      }
     }
-    else
+    catch ( const std::exception &ex )
     {
-      currCallout->hide();
+      lg->crit( QString( "SPXChartView::tooltip -> exception: %1" ).arg( ex.what() ) );
     }
   }
 

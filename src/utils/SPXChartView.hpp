@@ -46,6 +46,8 @@ namespace spx
     QChart *currChart;
     //! Startposition des Gummibandes
     QPoint currRubberBandOriginPos;
+    //! Startpos für Callout
+    QPointF oldCursorPos;
     //! Das aktuelle gummiband
     QRubberBand *currRubberBand;
     //! der Strich für den Cursor

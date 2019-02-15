@@ -30,19 +30,19 @@ namespace spx
     //! Callout Tedt setzten
     void setText( const QString &text );
     //! Setzte Anker des textes
-    void setAnchor( QPointF point );
+    void setAnchor( const QPointF &point );
     //! Geometrie des Callout anpassen
     void updateGeometry();
     //! das umschliessende Rechteck
-    QRectF boundingRect() const;
+    QRectF boundingRect() const override;
     //! zeichne das Callout
-    void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget );
+    void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget ) override;
 
     protected:
     //! Mausclicks bemerken
-    void mousePressEvent( QGraphicsSceneMouseEvent *event );
+    void mousePressEvent( QGraphicsSceneMouseEvent *event ) override;
     //! Mausbewegungen bemerken
-    void mouseMoveEvent( QGraphicsSceneMouseEvent *event );
+    void mouseMoveEvent( QGraphicsSceneMouseEvent *event ) override;
   };
 }  // namespace spx
 #endif  // CHARTGRAPHICALVALUECALLOUT_HPP
