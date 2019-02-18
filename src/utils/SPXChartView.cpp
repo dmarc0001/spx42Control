@@ -24,7 +24,7 @@ namespace spx
       , cursorRubberBand( nullptr )
       , currRubberBandFlags( SPXChartView::NoRubberBand )
       , lg( logger )
-      , currCallout( new ChartGraphicalValueCallout( chart ) )
+      , currCallout( new ChartGraphicalValueCallout( logger, chart ) )
       , isCursorRubberBand( true )
   {
     init();
@@ -152,7 +152,7 @@ namespace spx
     currChart = chart;
     // zufügen
     currScene->addItem( currChart );
-    currCallout = new ChartGraphicalValueCallout( chart );
+    currCallout = new ChartGraphicalValueCallout( lg, chart );
     //
     // Bearbeiten
     //
@@ -337,14 +337,17 @@ namespace spx
       else
       {
         QPointF diff = QPointF( event->pos() ) - oldCursorPos;
-        if ( diff.manhattanLength() > 20 )
+        if ( diff.manhattanLength() > 5 )
         {
           lg->debug( QString( "moved <%1> points -> hide" ).arg( diff.manhattanLength() ) );
           tooltip( oldCursorPos, false );
         }
-        if ( diff.manhattanLength() > 50 )
+        if ( diff.manhattanLength() > 10 )
         {
-          lg->debug( QString( "moved <%1> points -> show" ).arg( diff.manhattanLength() ) );
+          lg->debug( QString( "moved <%1> (%2:%3)points -> show" )
+                         .arg( diff.manhattanLength() )
+                         .arg( event->pos().x() )
+                         .arg( event->pos().y() ) );
           oldCursorPos = QPointF( event->pos() );
           tooltip( oldCursorPos, true );
         }
@@ -481,16 +484,24 @@ namespace spx
 
   void SPXChartView::tooltip( QPointF point, bool state )
   {
-    lg->debug( QString( "SpxChartView::tooltip: X: %1 Y: %2" ).arg( point.x(), 0, 'f', 0 ).arg( point.y(), 0, 'f', 2 ) );
     //
     // if ( currCallout == nullptr )
     //  currCallout = new ChartGraphicalValueCallout( chart() );
-
+    QPointF pointOrig = currChart->mapFromParent( point );
+    currChart->size().height();
+    QPointF pointChart = currChart->mapFromParent( 0, currChart->plotArea().height() );
+    lg->debug( QString( "TOOLTIP: chart height: %3 height: %1, mapHeight: %2" )
+                   .arg( currChart->plotArea().height() )
+                   .arg( pointChart.y() )
+                   .arg( currChart->size().height() ) );
+    point.setY( pointChart.y() - pointOrig.y() );
+    // point.setY( currChart->plotArea().height() - point.y() );
+    // point.setY( 0 - point.y() );
     try
     {
       if ( state )
       {
-        currCallout->setText( QString( "X: %1 \nY: %2 " ).arg( point.x(), 0, 'f', 0 ).arg( point.y(), 0, 'f', 2 ) );
+        currCallout->setText( QString( "Y: %1" ).arg( point.y(), 0, 'f', 0 ) );
         currCallout->setAnchor( point );
         currCallout->setZValue( 11 );
         currCallout->updateGeometry();

@@ -5,12 +5,16 @@
 #include <QtCharts>
 #include <QtGui/QFont>
 #include <QtWidgets>
+#include <memory>
+#include "logging/Logger.hpp"
 
 namespace spx
 {
   class ChartGraphicalValueCallout : public QGraphicsItem
   {
     private:
+    //! Mein Logger
+    std::shared_ptr< Logger > lg;
     // Speicher für den Text des Callout
     QString calloutLabelText;
     //! Text Rechteck
@@ -26,7 +30,7 @@ namespace spx
 
     public:
     //! Konstruktor
-    ChartGraphicalValueCallout( QChart *parent );
+    explicit ChartGraphicalValueCallout( std::shared_ptr< Logger > logger, QChart *parent );
     //! Callout Tedt setzten
     void setText( const QString &text );
     //! Setzte Anker des textes
