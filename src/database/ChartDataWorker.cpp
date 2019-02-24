@@ -155,7 +155,7 @@ namespace spx
 
   bool ChartDataWorker::makeDiveChart( QtCharts::QChart *bigchart, QChart *ppo2chart, const QString &deviceMac, int diveNum )
   {
-    qint64 milisecounds = 0;
+    qreal milisecounds = 0.0;
     DiveDataSetsPtr dataSet;
     QAreaSeries *depthAreaSeries;
     QLineSeries *depthSeries;
@@ -221,7 +221,7 @@ namespace spx
     //
     // berülle Daten in die Serien
     //
-    milisecounds = 0;
+    milisecounds = 0.0;
     for ( auto singleSet : *dataSet.get() )
     {
       depthSeries->append( milisecounds, singleSet.depth );
@@ -229,7 +229,7 @@ namespace spx
       ppo2Series->append( milisecounds, singleSet.ppo2 );
       setpointSeries->append( milisecounds, singleSet.setpoint );
       nullDepthSeries->append( milisecounds, 0 );
-      milisecounds += singleSet.nextStep * 1000;
+      milisecounds = milisecounds + ( static_cast< qreal >( singleSet.nextStep ) * 1000.0 );
     }
     //
     // Tiefen-Flächenserie machen
@@ -306,9 +306,10 @@ namespace spx
     lg->debug( "ChartDataWorker::makeChartData -> create time axis..." );
     // Zeitachse
     bigChartTimeAxis = new QDateTimeAxis();
-    // axisX_time->setTickCount( 10 );
-    bigChartTimeAxis->setFormat( "mm:ss' min'" );
+    // bigChartTimeAxis->setFormat( "mm:ss' min'" );
+    bigChartTimeAxis->setFormat( "mm:ss" );
     bigChartTimeAxis->setTitleText( tr( "DIVE TIME [min]" ) );
+    bigChartTimeAxis->setTickCount( 10 );
     bigchart->addAxis( bigChartTimeAxis, Qt::AlignBottom );
     depthSeries->attachAxis( bigChartTimeAxis );
 
@@ -349,6 +350,7 @@ namespace spx
     littleChartTimeAxis->setFormat( "mm:ss' min'" );
     littleChartTimeAxis->setTitleText( "DIVETIME" );
     littleChartTimeAxis->setTitleText( tr( "DIVE TIME [min]" ) );
+    littleChartTimeAxis->setTickCount( 10 );
     ppo2chart->addAxis( littleChartTimeAxis, Qt::AlignBottom );
     ppo2Series->attachAxis( littleChartTimeAxis );
     // TODO: Kategorie für ppo2

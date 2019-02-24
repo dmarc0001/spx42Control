@@ -9,9 +9,9 @@ import os.path
 BUILD-Nummer hochzählen, Builddatum erzeugen
 """
 __author__ = 'Dirk Marciniak'
-__copyright__ = 'Copyright 2018'
+__copyright__ = 'Copyright 2019'
 __license__ = 'GPL'
-__version__ = '0.1'
+__version__ = '0.2'
 
 BUILDCONFIGNAME = "CurrBuildDef.hpp"
 BUILDCOUNTERFILE = "currBuildNum"

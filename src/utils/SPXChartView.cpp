@@ -70,12 +70,18 @@ namespace spx
       axisAndSeries();
     currScene->addItem( currChart );
     setCursorRubberBand( isCursorRubberBand );
+    showTimer.setSingleShot( true );
+    hideTimer.setSingleShot( true );
+    connect( &showTimer, &QTimer::timeout, this, &SPXChartView::onShowTimerTimeoutSlot );
+    connect( &hideTimer, &QTimer::timeout, this, &SPXChartView::onHideTimerTimeoutSlot );
   }
 
   void SPXChartView::axisAndSeries()
   {
     dtAxis = nullptr;
     currSeries = nullptr;
+    depthSeries = nullptr;
+    ppo2Series = nullptr;
     auto allAxes = currChart->axes( Qt::Horizontal );
     if ( allAxes.count() > 0 )
     {
@@ -96,20 +102,19 @@ namespace spx
         {
           // das ist das grosse chart
           currSeries = static_cast< QLineSeries * >( cSeries );
+          depthSeries = currSeries;
           currSeries->blockSignals( false );
-          // TODO: Funktioniert hier nicht
-          connect( currSeries, &QLineSeries::hovered, this, &SPXChartView::tooltip );
         }
         else if ( cSeries->name().compare( ChartDataWorker::ppo2SeriesName, Qt::CaseInsensitive ) == 0 )
         {
           // das ist das kleine chart
           currSeries = static_cast< QLineSeries * >( cSeries );
+          ppo2Series = currSeries;
           currSeries->blockSignals( false );
-          // TODO: Funktioniert hier nicht
-          connect( currSeries, &QLineSeries::hovered, this, &SPXChartView::tooltip );
         }
       }
     }
+    currCallout->setCurrentSeries( currSeries );
   }
 
   QChart *SPXChartView::chart() const
@@ -153,6 +158,7 @@ namespace spx
     // zufügen
     currScene->addItem( currChart );
     currCallout = new ChartGraphicalValueCallout( lg, chart );
+    currCallout->setCurrentSeries( currSeries );
     //
     // Bearbeiten
     //
@@ -336,20 +342,19 @@ namespace spx
       }
       else
       {
+        //
+        // timer neu starten, der slot wird ausgelöst,
+        // wenn die Maus bis zum timeout nicht bewegt wird
+        //
+        showTimer.start( 250 );
+        //
+        // wenn sich der Kursor zu weit bewegt, tooltip löschen
+        //
         QPointF diff = QPointF( event->pos() ) - oldCursorPos;
         if ( diff.manhattanLength() > 5 )
         {
-          lg->debug( QString( "moved <%1> points -> hide" ).arg( diff.manhattanLength() ) );
           tooltip( oldCursorPos, false );
-        }
-        if ( diff.manhattanLength() > 10 )
-        {
-          lg->debug( QString( "moved <%1> (%2:%3)points -> show" )
-                         .arg( diff.manhattanLength() )
-                         .arg( event->pos().x() )
-                         .arg( event->pos().y() ) );
-          oldCursorPos = QPointF( event->pos() );
-          tooltip( oldCursorPos, true );
+          oldCursorPos = event->pos();
         }
       }
       QGraphicsView::mouseMoveEvent( event );
@@ -476,6 +481,50 @@ namespace spx
     }
   }
 
+  void SPXChartView::leaveEvent( QEvent *event )
+  {
+    //
+    // die Maus verlässt uns...
+    //
+    lg->debug( "SPXChartView::leaveEvent..." );
+    // nicht nachträglich anzeigen!
+    showTimer.stop();
+    hideTimer.start( 350 );
+    event->ignore();
+  }
+
+  void SPXChartView::onShowTimerTimeoutSlot()
+  {
+    if ( cursorRubberBand && cursorRubberBand->isEnabled() && cursorRubberBand->isVisible() )
+    {
+      lg->debug( "SPXChartView::onShowTimerTimeoutSlot..." );
+      if ( !oldCursorPos.isNull() )
+      {
+        tooltip( oldCursorPos, true );
+      }
+      else
+      {
+        //
+        // Keine Position vorhanden, also nix zeigen
+        //
+        currCallout->hide();
+      }
+      //
+      // präpariere den Timer hzum ausschalten des tooltip
+      //
+      hideTimer.start( 8000 );
+    }
+  }
+
+  void SPXChartView::onHideTimerTimeoutSlot()
+  {
+    lg->debug( "SPXChartView::onHideTimerTimeoutSlot..." );
+    //
+    // nach ablauf der zeit den tooltip verbergen
+    //
+    currCallout->hide();
+  }
+
   void SPXChartView::resizeEvent( QResizeEvent *event )
   {
     QGraphicsView::resizeEvent( event );
@@ -485,23 +534,17 @@ namespace spx
   void SPXChartView::tooltip( QPointF point, bool state )
   {
     //
-    // if ( currCallout == nullptr )
-    //  currCallout = new ChartGraphicalValueCallout( chart() );
-    QPointF pointOrig = currChart->mapFromParent( point );
-    currChart->size().height();
-    QPointF pointChart = currChart->mapFromParent( 0, currChart->plotArea().height() );
-    lg->debug( QString( "TOOLTIP: chart height: %3 height: %1, mapHeight: %2" )
-                   .arg( currChart->plotArea().height() )
-                   .arg( pointChart.y() )
-                   .arg( currChart->size().height() ) );
-    point.setY( pointChart.y() - pointOrig.y() );
-    // point.setY( currChart->plotArea().height() - point.y() );
-    // point.setY( 0 - point.y() );
+    QString title = QString( "TOOLTIP: X:%1,Y:%2" ).arg( point.x(), 2, 'f', 0 ).arg( point.y(), 2, 'f', 0 );
+    lg->debug( title );
     try
     {
       if ( state )
       {
-        currCallout->setText( QString( "Y: %1" ).arg( point.y(), 0, 'f', 0 ) );
+        QString tipText;
+        QPointF dataPoint = currChart->mapToValue( point, currSeries );
+        QDateTime timeVal = QDateTime::fromMSecsSinceEpoch( static_cast< qint64 >( dataPoint.x() ) );
+        QString dataString = QString( tr( "DIVETIME:%1\nDEPTH:" ).arg( timeVal.toString( "mm:ss" ) ) );
+        currCallout->setText( dataString );
         currCallout->setAnchor( point );
         currCallout->setZValue( 11 );
         currCallout->updateGeometry();

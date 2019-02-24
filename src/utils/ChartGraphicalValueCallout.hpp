@@ -27,6 +27,8 @@ namespace spx
     QFont calloutLabelFont;
     //! Chart an dem das Callout klebt
     QChart *parentChart;
+    //! auf welche Serie beziehe ich mich? (sollte Tiefe/ppo2 sein)
+    QAbstractSeries *currSeries;
 
     public:
     //! Konstruktor
@@ -37,6 +39,8 @@ namespace spx
     void setAnchor( const QPointF &point );
     //! Geometrie des Callout anpassen
     void updateGeometry();
+    //! setzte die Serie für Mappings
+    void setCurrentSeries( QAbstractSeries *cs );
     //! das umschliessende Rechteck
     QRectF boundingRect() const override;
     //! zeichne das Callout
