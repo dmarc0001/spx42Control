@@ -543,7 +543,7 @@ namespace spx
         QString tipText;
         QPointF dataPoint = currChart->mapToValue( point, currSeries );
         QDateTime timeVal = QDateTime::fromMSecsSinceEpoch( static_cast< qint64 >( dataPoint.x() ) );
-        QString dataString = QString( tr( "DIVETIME:%1\nDEPTH:" ).arg( timeVal.toString( "mm:ss" ) ) );
+        QString dataString = QString( tr( "DIVETIME:%1\nDEPTH:" ).arg( timeVal.toString( "H:mm:ss" ) ) );
         currCallout->setText( dataString );
         currCallout->setAnchor( point );
         currCallout->setZValue( 11 );

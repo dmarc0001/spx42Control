@@ -307,8 +307,8 @@ namespace spx
     // Zeitachse
     bigChartTimeAxis = new QDateTimeAxis();
     // bigChartTimeAxis->setFormat( "mm:ss' min'" );
-    bigChartTimeAxis->setFormat( "mm:ss" );
-    bigChartTimeAxis->setTitleText( tr( "DIVE TIME [min]" ) );
+    bigChartTimeAxis->setFormat( "H:mm:ss" );
+    bigChartTimeAxis->setTitleText( tr( "DIVE TIME" ) );
     bigChartTimeAxis->setTickCount( 10 );
     bigchart->addAxis( bigChartTimeAxis, Qt::AlignBottom );
     depthSeries->attachAxis( bigChartTimeAxis );
@@ -347,9 +347,9 @@ namespace spx
     // Zeitachse
     littleChartTimeAxis = new QDateTimeAxis();
     littleChartTimeAxis->setTickCount( 10 );
-    littleChartTimeAxis->setFormat( "mm:ss' min'" );
+    littleChartTimeAxis->setFormat( "H:mm:ss" );
     littleChartTimeAxis->setTitleText( "DIVETIME" );
-    littleChartTimeAxis->setTitleText( tr( "DIVE TIME [min]" ) );
+    littleChartTimeAxis->setTitleText( tr( "DIVE TIME" ) );
     littleChartTimeAxis->setTickCount( 10 );
     ppo2chart->addAxis( littleChartTimeAxis, Qt::AlignBottom );
     ppo2Series->attachAxis( littleChartTimeAxis );
