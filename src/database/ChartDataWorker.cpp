@@ -219,9 +219,23 @@ namespace spx
     setpointSeries = new QLineSeries();
     setpointSeries->setName( ChartDataWorker::setpointSeriesName );
     //
+    // finde den momentanen offset zu UTC heraus
+    // das ist für die Anzeige der DateTimeAxis wichtig
+    // da die immer die Zeit als UTC aus der Serie nehmen
+    // und bei mir die Zeit immer bei 0 anfangen soll
+    //
+    QDateTime now = QDateTime::currentDateTime();
+    QTimeZone tz = now.timeZone();
+    //
+    // Die Zeit in Sekunden wieder abrechnen damit die dann für
+    // die Labels wieder zugerechnet wer4den können?
+    // und die Scala bei 0 beginnt
+    //
+    milisecounds = 0.0 - ( static_cast< qreal >( tz.offsetFromUtc( now ) ) * 1000.0 );
+    //
     // berülle Daten in die Serien
     //
-    milisecounds = 0.0;
+    // milisecounds = 0.0;
     for ( auto singleSet : *dataSet.get() )
     {
       depthSeries->append( milisecounds, singleSet.depth );
