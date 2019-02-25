@@ -110,6 +110,7 @@ namespace spx
     void setTimeAxis( QDateTimeAxis *axis, QLineSeries *dataSeries, QRect &rect );
     //! zeige tooltip
     void tooltip( QPointF point, bool state );
+    bool approximatelyEqual( qreal a, qreal b );
 
     public slots:
     void onZoomChangedSlot( const QRectF &rect );

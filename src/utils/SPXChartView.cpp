@@ -103,14 +103,14 @@ namespace spx
           // das ist das grosse chart
           currSeries = static_cast< QLineSeries * >( cSeries );
           depthSeries = currSeries;
-          currSeries->blockSignals( false );
+          // currSeries->blockSignals( false );
         }
         else if ( cSeries->name().compare( ChartDataWorker::ppo2SeriesName, Qt::CaseInsensitive ) == 0 )
         {
           // das ist das kleine chart
           currSeries = static_cast< QLineSeries * >( cSeries );
           ppo2Series = currSeries;
-          currSeries->blockSignals( false );
+          // currSeries->blockSignals( false );
         }
       }
     }
@@ -543,8 +543,26 @@ namespace spx
         QString tipText;
         QPointF dataPoint = currChart->mapToValue( point, currSeries );
         QDateTime timeVal = QDateTime::fromMSecsSinceEpoch( static_cast< qint64 >( dataPoint.x() ) );
-        QString dataString = QString( tr( "DIVETIME:%1\nDEPTH:" ).arg( timeVal.toString( "H:mm:ss" ) ) );
-        currCallout->setText( dataString );
+        qreal currDepth = 11000.0;
+        if ( depthSeries )
+        {
+          // TODO: nicht maus sondern graphtiefe :)
+          for ( int idx = 0; idx < depthSeries->count(); idx++ )
+          {
+            const QPointF &pRef = depthSeries->at( idx );
+            if ( approximatelyEqual( pRef.x(), dataPoint.x() ) )
+            {
+              currDepth = pRef.y();
+              break;
+            }
+          }
+          tipText = QString( tr( "DIVETIME:%1\nDEPTH:%2" ).arg( timeVal.toString( "H:mm:ss" ) ).arg( currDepth ) );
+        }
+        else if ( ppo2Series )
+        {
+          tipText = QString( tr( "DIVETIME:%1\nPPO2: ?" ).arg( timeVal.toString( "H:mm:ss" ) ) );
+        }
+        currCallout->setText( tipText );
         currCallout->setAnchor( point );
         currCallout->setZValue( 11 );
         currCallout->updateGeometry();
@@ -560,6 +578,11 @@ namespace spx
     {
       lg->crit( QString( "SPXChartView::tooltip -> exception: %1" ).arg( ex.what() ) );
     }
+  }
+
+  bool SPXChartView::approximatelyEqual( qreal a, qreal b )
+  {
+    return fabs( a - b ) <= ( ( fabs( a ) < fabs( b ) ? fabs( b ) : fabs( a ) ) * std::numeric_limits< qreal >::epsilon() );
   }
 
   void SPXChartView::onZoomChangedSlot( const QRectF &rectF )
