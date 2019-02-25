@@ -2,6 +2,11 @@
 
 namespace spx
 {
+  /**
+   * @brief SPXChartView::SPXChartView
+   * @param logger
+   * @param parent
+   */
   SPXChartView::SPXChartView( std::shared_ptr< Logger > logger, QWidget *parent )
       : QGraphicsView( parent )
       , currScene( new QGraphicsScene( this ) )
@@ -12,10 +17,21 @@ namespace spx
       , lg( logger )
       , currCallout( nullptr )
       , isCursorRubberBand( true )
+      , currSeries( nullptr )
+      , depthSeries( nullptr )
+      , ppo2Series( nullptr )
+      , setpointSeries( nullptr )
+      , temperaturSeries( nullptr )
   {
     init();
   }
 
+  /**
+   * @brief SPXChartView::SPXChartView
+   * @param logger
+   * @param chart
+   * @param parent
+   */
   SPXChartView::SPXChartView( std::shared_ptr< Logger > logger, QChart *chart, QWidget *parent )
       : QGraphicsView( parent )
       , currScene( new QGraphicsScene( this ) )
@@ -26,10 +42,18 @@ namespace spx
       , lg( logger )
       , currCallout( new ChartGraphicalValueCallout( logger, chart ) )
       , isCursorRubberBand( true )
+      , currSeries( nullptr )
+      , depthSeries( nullptr )
+      , ppo2Series( nullptr )
+      , setpointSeries( nullptr )
+      , temperaturSeries( nullptr )
   {
     init();
   }
 
+  /**
+   * @brief SPXChartView::~SPXChartView
+   */
   SPXChartView::~SPXChartView()
   {
     lg->debug( "SPXChartView::~SPXChartView..." );
@@ -44,6 +68,9 @@ namespace spx
     lg->debug( "SPXChartView::~SPXChartView...OK" );
   }
 
+  /**
+   * @brief SPXChartView::init
+   */
   void SPXChartView::init()
   {
     dummyTitle = tr( "DUMMY CHART" );
@@ -76,12 +103,17 @@ namespace spx
     connect( &hideTimer, &QTimer::timeout, this, &SPXChartView::onHideTimerTimeoutSlot );
   }
 
+  /**
+   * @brief SPXChartView::axisAndSeries
+   */
   void SPXChartView::axisAndSeries()
   {
     dtAxis = nullptr;
     currSeries = nullptr;
     depthSeries = nullptr;
     ppo2Series = nullptr;
+    setpointSeries = nullptr;
+    temperaturSeries = nullptr;
     auto allAxes = currChart->axes( Qt::Horizontal );
     if ( allAxes.count() > 0 )
     {
@@ -103,25 +135,39 @@ namespace spx
           // das ist das grosse chart
           currSeries = static_cast< QLineSeries * >( cSeries );
           depthSeries = currSeries;
-          // currSeries->blockSignals( false );
         }
         else if ( cSeries->name().compare( ChartDataWorker::ppo2SeriesName, Qt::CaseInsensitive ) == 0 )
         {
           // das ist das kleine chart
           currSeries = static_cast< QLineSeries * >( cSeries );
           ppo2Series = currSeries;
-          // currSeries->blockSignals( false );
+        }
+        else if ( cSeries->name().compare( ChartDataWorker::tempSeriesName, Qt::CaseInsensitive ) == 0 )
+        {
+          temperaturSeries = static_cast< QLineSeries * >( cSeries );
+        }
+        else if ( cSeries->name().compare( ChartDataWorker::setpointSeriesName, Qt::CaseInsensitive ) == 0 )
+        {
+          setpointSeries = static_cast< QLineSeries * >( cSeries );
         }
       }
     }
     currCallout->setCurrentSeries( currSeries );
   }
 
+  /**
+   * @brief SPXChartView::chart
+   * @return
+   */
   QChart *SPXChartView::chart() const
   {
     return currChart;
   }
 
+  /**
+   * @brief SPXChartView::setChart
+   * @param chart
+   */
   void SPXChartView::setChart( QChart *chart )
   {
     Q_ASSERT( chart );
@@ -166,6 +212,9 @@ namespace spx
     c_resize();
   }
 
+  /**
+   * @brief SPXChartView::c_resize
+   */
   void SPXChartView::c_resize()
   {
     //
@@ -200,6 +249,12 @@ namespace spx
     setSceneRect( currChart->geometry() );
   }
 
+  /**
+   * @brief SPXChartView::setTimeAxis
+   * @param axis
+   * @param dataSeries
+   * @param rect
+   */
   void SPXChartView::setTimeAxis( QDateTimeAxis *axis, QLineSeries *dataSeries, QRect &rect )
   {
     //
@@ -218,6 +273,10 @@ namespace spx
     axis->setRange( QDateTime::fromMSecsSinceEpoch( start_ms ), QDateTime::fromMSecsSinceEpoch( end_ms ) );
   }
 
+  /**
+   * @brief SPXChartView::setRubberBand
+   * @param rubberBand
+   */
   void SPXChartView::setRubberBand( const RubberBands &rubberBand )
   {
     currRubberBandFlags = rubberBand;
@@ -240,6 +299,10 @@ namespace spx
     }
   }
 
+  /**
+   * @brief SPXChartView::setCursorRubberBand
+   * @param isSet
+   */
   void SPXChartView::setCursorRubberBand( bool isSet )
   {
     isCursorRubberBand = isSet;
@@ -266,6 +329,10 @@ namespace spx
     }
   }
 
+  /**
+   * @brief SPXChartView::rubberBand
+   * @return
+   */
   SPXChartView::RubberBands SPXChartView::rubberBand() const
   {
     //
@@ -274,6 +341,10 @@ namespace spx
     return currRubberBandFlags;
   }
 
+  /**
+   * @brief SPXChartView::mousePressEvent
+   * @param event
+   */
   void SPXChartView::mousePressEvent( QMouseEvent *event )
   {
     QRectF plotArea = currChart->plotArea();
@@ -302,6 +373,10 @@ namespace spx
     }
   }
 
+  /**
+   * @brief SPXChartView::mouseMoveEvent
+   * @param event
+   */
   void SPXChartView::mouseMoveEvent( QMouseEvent *event )
   {
     if ( currRubberBand && currRubberBand->isVisible() )
@@ -361,6 +436,10 @@ namespace spx
     }
   }
 
+  /**
+   * @brief SPXChartView::mouseReleaseEvent
+   * @param event
+   */
   void SPXChartView::mouseReleaseEvent( QMouseEvent *event )
   {
     //
@@ -481,6 +560,10 @@ namespace spx
     }
   }
 
+  /**
+   * @brief SPXChartView::leaveEvent
+   * @param event
+   */
   void SPXChartView::leaveEvent( QEvent *event )
   {
     //
@@ -493,6 +576,9 @@ namespace spx
     event->ignore();
   }
 
+  /**
+   * @brief SPXChartView::onShowTimerTimeoutSlot
+   */
   void SPXChartView::onShowTimerTimeoutSlot()
   {
     if ( cursorRubberBand && cursorRubberBand->isEnabled() && cursorRubberBand->isVisible() )
@@ -516,6 +602,9 @@ namespace spx
     }
   }
 
+  /**
+   * @brief SPXChartView::onHideTimerTimeoutSlot
+   */
   void SPXChartView::onHideTimerTimeoutSlot()
   {
     lg->debug( "SPXChartView::onHideTimerTimeoutSlot..." );
@@ -525,42 +614,88 @@ namespace spx
     currCallout->hide();
   }
 
+  /**
+   * @brief SPXChartView::resizeEvent
+   * @param event
+   */
   void SPXChartView::resizeEvent( QResizeEvent *event )
   {
     QGraphicsView::resizeEvent( event );
     c_resize();
   }
 
+  /**
+   * @brief SPXChartView::tooltip
+   * @param point
+   * @param state
+   */
   void SPXChartView::tooltip( QPointF point, bool state )
   {
     //
-    QString title = QString( "TOOLTIP: X:%1,Y:%2" ).arg( point.x(), 2, 'f', 0 ).arg( point.y(), 2, 'f', 0 );
-    lg->debug( title );
     try
     {
       if ( state )
       {
         QString tipText;
         QPointF dataPoint = currChart->mapToValue( point, currSeries );
-        QDateTime timeVal = QDateTime::fromMSecsSinceEpoch( static_cast< qint64 >( dataPoint.x() ) );
-        qreal currDepth = 11000.0;
+        QDateTime qtimeVal = QDateTime::fromMSecsSinceEpoch( static_cast< qint64 >( dataPoint.x() ) );
         if ( depthSeries )
         {
-          // TODO: nicht maus sondern graphtiefe :)
-          for ( int idx = 0; idx < depthSeries->count(); idx++ )
+          //
+          // Zeit und Tiefe in den Text einbringen
+          //
+          qreal currDepth = getValueForTime( depthSeries, dataPoint.x() );
+          if ( currDepth > 10000.0 )
+            return;
+          //
+          // der Text ist in Monospace, daher mit Leerzeichen auszurichten
+          //
+          tipText = QString( tr( "DIVETIME:%1\nDEPTH   :%2 m" ).arg( qtimeVal.toString( "H:mm:ss" ) ).arg( abs( currDepth ) ) );
+          //
+          // gibt es Temperaturen?
+          //
+          if ( temperaturSeries )
           {
-            const QPointF &pRef = depthSeries->at( idx );
-            if ( approximatelyEqual( pRef.x(), dataPoint.x() ) )
+            qreal currTemp = getValueForTime( temperaturSeries, dataPoint.x() );
+            //
+            // gibt es sinnvolle Werte, dann zum text dazu
+            //
+            if ( currTemp < 100.0 )
             {
-              currDepth = pRef.y();
-              break;
+              tipText.append( QString( tr( "\nTEMP    :%1 °C" ) ).arg( currTemp, 1, 'f', 1 ) );
             }
           }
-          tipText = QString( tr( "DIVETIME:%1\nDEPTH:%2" ).arg( timeVal.toString( "H:mm:ss" ) ).arg( currDepth ) );
         }
         else if ( ppo2Series )
         {
-          tipText = QString( tr( "DIVETIME:%1\nPPO2: ?" ).arg( timeVal.toString( "H:mm:ss" ) ) );
+          //
+          // Zeit, ppo2 und setpoint einbringen
+          //
+          qreal currppo2 = getValueForTime( ppo2Series, dataPoint.x() );
+          if ( currppo2 > 10000.0 )
+            return;
+          //
+          // der Text ist in Monospace, daher mit Leerzeichen auszurichten
+          //
+          tipText = QString( tr( "DIVETIME:%1\nPPO2    :%2 bar" ).arg( qtimeVal.toString( "H:mm:ss" ) ).arg( currppo2, 1, 'f', 1 ) );
+          //
+          // sind setpoint werte vorhanden?
+          //
+          if ( setpointSeries )
+          {
+            qreal currSetpoint = getValueForTime( setpointSeries, dataPoint.x() );
+            //
+            // gibt es sinnvolle Werte?
+            //
+            if ( currSetpoint < 3.0 )
+            {
+              tipText.append( QString( tr( "\nSETPT   :%1 bar" ) ).arg( currSetpoint, 1, 'f', 1 ) );
+            }
+          }
+        }
+        else
+        {
+          tipText = QString( tr( "DIVETIME:%1" ).arg( qtimeVal.toString( "H:mm:ss" ) ) );
         }
         currCallout->setText( tipText );
         currCallout->setAnchor( point );
@@ -580,11 +715,45 @@ namespace spx
     }
   }
 
-  bool SPXChartView::approximatelyEqual( qreal a, qreal b )
+  /**
+   * @brief SPXChartView::getValueForTime
+   * @param series
+   * @param timeVal
+   * @return
+   */
+  qreal SPXChartView::getValueForTime( QLineSeries *series, qreal timeVal )
   {
-    return fabs( a - b ) <= ( ( fabs( a ) < fabs( b ) ? fabs( b ) : fabs( a ) ) * std::numeric_limits< qreal >::epsilon() );
+    qreal currVal = 11000.0;
+    // Distanz / Schrittweite der Skala, sollte gleichförmig sein, beim TG kan man logintervall nicht wechseln
+    qreal half_distance = ( series->at( 1 ).x() - series->at( 0 ).x() ) / 2.0;
+    // Bis mir was besseres einfällt stumpf suchen
+    for ( int idx = 0; idx < series->count(); idx++ )
+    {
+      const QPointF &pRef = series->at( idx );
+      if ( approximatelyEqual( pRef.x(), timeVal, half_distance ) )
+      {
+        currVal = pRef.y();
+        break;
+      }
+    }
+    return ( currVal );
   }
 
+  /**
+   * @brief SPXChartView::approximatelyEqual
+   * @param a
+   * @param b
+   * @return
+   */
+  bool SPXChartView::approximatelyEqual( qreal a, qreal b, qreal dist )
+  {
+    return fabs( a - b ) <= dist;
+  }
+
+  /**
+   * @brief SPXChartView::onZoomChangedSlot
+   * @param rectF
+   */
   void SPXChartView::onZoomChangedSlot( const QRectF &rectF )
   {
     if ( rectF.isNull() )
@@ -616,6 +785,10 @@ namespace spx
     currChart->zoomIn( localRectF );
   }
 
+  /**
+   * @brief SPXChartView::onCursorChangedSlot
+   * @param x_value
+   */
   void SPXChartView::onCursorChangedSlot( int x_value )
   {
     if ( cursorRubberBand && cursorRubberBand->isEnabled() && cursorRubberBand->isVisible() )

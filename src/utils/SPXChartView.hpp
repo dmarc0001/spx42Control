@@ -67,6 +67,8 @@ namespace spx
     QLineSeries *currSeries;
     QLineSeries *depthSeries;
     QLineSeries *ppo2Series;
+    QLineSeries *setpointSeries;
+    QLineSeries *temperaturSeries;
     //! Dummy Beschriftung für das hilfsschart
     QString dummyTitle;
     //! Timer für dei Anzeigeverzögerung der Callouts
@@ -110,7 +112,8 @@ namespace spx
     void setTimeAxis( QDateTimeAxis *axis, QLineSeries *dataSeries, QRect &rect );
     //! zeige tooltip
     void tooltip( QPointF point, bool state );
-    bool approximatelyEqual( qreal a, qreal b );
+    qreal getValueForTime( QLineSeries *series, qreal timeVal );
+    bool approximatelyEqual( qreal a, qreal b, qreal dist );
 
     public slots:
     void onZoomChangedSlot( const QRectF &rect );
