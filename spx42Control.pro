@@ -6,8 +6,8 @@
 ####                                                                       ####
 ###############################################################################
 MAJOR                                  = 0 # Major Verion Nummer
-MINOR                                  = 6 # Minor Version Number
-PATCH                                  = 6 # Patch Version Number
+MINOR                                  = 7 # Minor Version Number
+PATCH                                  = 0 # Patch Version Number
 BUILD                                  = 0 # win build number
 
 win32:VERSION_PE_HEADER                = $${MAJOR}.$${MINOR}
