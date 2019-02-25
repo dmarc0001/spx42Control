@@ -6,6 +6,7 @@
 #include <QMouseEvent>
 #include <QPointF>
 #include <QRubberBand>
+#include <QTimer>
 #include <QtCharts>
 #include <memory>
 #include "database/ChartDataWorker.hpp"
@@ -46,6 +47,8 @@ namespace spx
     QChart *currChart;
     //! Startposition des Gummibandes
     QPoint currRubberBandOriginPos;
+    //! Startpos für Callout
+    QPointF oldCursorPos;
     //! Das aktuelle gummiband
     QRubberBand *currRubberBand;
     //! der Strich für den Cursor
@@ -62,8 +65,13 @@ namespace spx
     QDateTimeAxis *dtAxis;
     //! die aktuelle Serie (Tiefe oder PPO2, je nach Chart)
     QLineSeries *currSeries;
+    QLineSeries *depthSeries;
+    QLineSeries *ppo2Series;
     //! Dummy Beschriftung für das hilfsschart
     QString dummyTitle;
+    //! Timer für dei Anzeigeverzögerung der Callouts
+    QTimer showTimer;
+    QTimer hideTimer;
 
     public:
     //! Konstruktor allgemein
@@ -88,6 +96,7 @@ namespace spx
     virtual void mousePressEvent( QMouseEvent *event ) override;
     virtual void mouseMoveEvent( QMouseEvent *event ) override;
     virtual void mouseReleaseEvent( QMouseEvent *event ) override;
+    virtual void leaveEvent( QEvent *event ) override;
 
     private:
     Q_DISABLE_COPY( SPXChartView )
@@ -105,6 +114,10 @@ namespace spx
     public slots:
     void onZoomChangedSlot( const QRectF &rect );
     void onCursorChangedSlot( int x_value );
+
+    private slots:
+    void onShowTimerTimeoutSlot( void );
+    void onHideTimerTimeoutSlot( void );
 
     signals:
     void onZoomChangedSig( const QRectF &rect );

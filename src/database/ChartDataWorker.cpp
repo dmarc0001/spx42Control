@@ -155,7 +155,7 @@ namespace spx
 
   bool ChartDataWorker::makeDiveChart( QtCharts::QChart *bigchart, QChart *ppo2chart, const QString &deviceMac, int diveNum )
   {
-    qint64 milisecounds = 0;
+    qreal milisecounds = 0.0;
     DiveDataSetsPtr dataSet;
     QAreaSeries *depthAreaSeries;
     QLineSeries *depthSeries;
@@ -219,9 +219,23 @@ namespace spx
     setpointSeries = new QLineSeries();
     setpointSeries->setName( ChartDataWorker::setpointSeriesName );
     //
+    // finde den momentanen offset zu UTC heraus
+    // das ist für die Anzeige der DateTimeAxis wichtig
+    // da die immer die Zeit als UTC aus der Serie nehmen
+    // und bei mir die Zeit immer bei 0 anfangen soll
+    //
+    QDateTime now = QDateTime::currentDateTime();
+    QTimeZone tz = now.timeZone();
+    //
+    // Die Zeit in Sekunden wieder abrechnen damit die dann für
+    // die Labels wieder zugerechnet wer4den können?
+    // und die Scala bei 0 beginnt
+    //
+    milisecounds = 0.0 - ( static_cast< qreal >( tz.offsetFromUtc( now ) ) * 1000.0 );
+    //
     // berülle Daten in die Serien
     //
-    milisecounds = 0;
+    // milisecounds = 0.0;
     for ( auto singleSet : *dataSet.get() )
     {
       depthSeries->append( milisecounds, singleSet.depth );
@@ -229,7 +243,7 @@ namespace spx
       ppo2Series->append( milisecounds, singleSet.ppo2 );
       setpointSeries->append( milisecounds, singleSet.setpoint );
       nullDepthSeries->append( milisecounds, 0 );
-      milisecounds += singleSet.nextStep * 1000;
+      milisecounds = milisecounds + ( static_cast< qreal >( singleSet.nextStep ) * 1000.0 );
     }
     //
     // Tiefen-Flächenserie machen
@@ -306,9 +320,10 @@ namespace spx
     lg->debug( "ChartDataWorker::makeChartData -> create time axis..." );
     // Zeitachse
     bigChartTimeAxis = new QDateTimeAxis();
-    // axisX_time->setTickCount( 10 );
-    bigChartTimeAxis->setFormat( "mm:ss' min'" );
-    bigChartTimeAxis->setTitleText( tr( "DIVE TIME [min]" ) );
+    // bigChartTimeAxis->setFormat( "mm:ss' min'" );
+    bigChartTimeAxis->setFormat( "H:mm:ss" );
+    bigChartTimeAxis->setTitleText( tr( "DIVE TIME" ) );
+    bigChartTimeAxis->setTickCount( 10 );
     bigchart->addAxis( bigChartTimeAxis, Qt::AlignBottom );
     depthSeries->attachAxis( bigChartTimeAxis );
 
@@ -346,9 +361,10 @@ namespace spx
     // Zeitachse
     littleChartTimeAxis = new QDateTimeAxis();
     littleChartTimeAxis->setTickCount( 10 );
-    littleChartTimeAxis->setFormat( "mm:ss' min'" );
+    littleChartTimeAxis->setFormat( "H:mm:ss" );
     littleChartTimeAxis->setTitleText( "DIVETIME" );
-    littleChartTimeAxis->setTitleText( tr( "DIVE TIME [min]" ) );
+    littleChartTimeAxis->setTitleText( tr( "DIVE TIME" ) );
+    littleChartTimeAxis->setTickCount( 10 );
     ppo2chart->addAxis( littleChartTimeAxis, Qt::AlignBottom );
     ppo2Series->attachAxis( littleChartTimeAxis );
     // TODO: Kategorie für ppo2

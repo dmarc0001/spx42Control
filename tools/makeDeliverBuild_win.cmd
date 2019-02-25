@@ -3,7 +3,7 @@
 ::
 :: Definitionen/Verzeichnisse
 SET PROJECTTYPE=release
-SET QT_PREFIX=5.12.0
+SET QT_PREFIX=5.12.1
 SET ONLINEINSTALLER=spx42ControlOnlineInstaller
 SET OFFLINEINSTALLER=spx42ControlOfflineInstaller
 ::

@@ -6,8 +6,13 @@ namespace spx
    * @brief ChartGraphicalValueCallout::ChartGraphicalValueCallout gefunden in den QT Beispielen
    * @param parent
    */
-  ChartGraphicalValueCallout::ChartGraphicalValueCallout( QChart *parent ) : QGraphicsItem( parent ), parentChart( parent )
+  ChartGraphicalValueCallout::ChartGraphicalValueCallout( std::shared_ptr< Logger > logger, QChart *parent )
+      : QGraphicsItem( parent ), lg( logger ), parentChart( parent ), currSeries( nullptr )
   {
+    if ( parent != nullptr )
+      calloutLabelFont = parent->font();
+    calloutLabelFont.setPointSize( 9 );
+    calloutLabelFont.setWeight( QFont::Light );
   }
 
   /**
@@ -17,7 +22,7 @@ namespace spx
   QRectF ChartGraphicalValueCallout::boundingRect() const
   {
     //! das umschliessende Rechteck um den Ankerpunkt feststellen
-    QPointF anchor = mapFromParent( parentChart->mapToPosition( calloutAnchor ) );
+    QPointF anchor = mapFromParent( parentChart->mapToPosition( calloutAnchor, currSeries ) );
     QRectF rect;
     rect.setLeft( qMin( calloutLabelTextRectBound.left(), anchor.x() ) );
     rect.setRight( qMax( calloutLabelTextRectBound.right(), anchor.x() ) );
@@ -38,75 +43,19 @@ namespace spx
     Q_UNUSED( widget )
     QPainterPath path;
     //
-    // ein abgerundetes Rechteck als visuellen Rahmen
+    // ein abgerundetes Rechteck als visuellen Rahmen für den Text
     //
     path.addRoundedRect( calloutLabelTextRectBound, 5, 5 );
     //
-    // wo ist der ankerpunkt
-    //
-    QPointF paintAnchor = mapFromParent( parentChart->mapToPosition( calloutAnchor ) );
-    //
-    // wenn der Textrahmen nicht den Anker umschliesst
-    //
-    if ( !calloutLabelTextRectBound.contains( paintAnchor ) )
-    {
-      //
-      // neue Koordinaten für den kleinen Hunweispfeil machen
-      //
-      QPointF point1, point2;
-      //
-      // Position des Ankerpunktes relativ zum umschliessenden Rechteck machen
-      //
-      bool above = paintAnchor.y() <= calloutLabelTextRectBound.top();
-      bool aboveCenter =
-          paintAnchor.y() > calloutLabelTextRectBound.top() && paintAnchor.y() <= calloutLabelTextRectBound.center().y();
-      bool belowCenter =
-          paintAnchor.y() > calloutLabelTextRectBound.center().y() && paintAnchor.y() <= calloutLabelTextRectBound.bottom();
-      bool below = paintAnchor.y() > calloutLabelTextRectBound.bottom();
-      //
-      bool onLeft = paintAnchor.x() <= calloutLabelTextRectBound.left();
-      bool leftOfCenter =
-          paintAnchor.x() > calloutLabelTextRectBound.left() && paintAnchor.x() <= calloutLabelTextRectBound.center().x();
-      bool rightOfCenter =
-          paintAnchor.x() > calloutLabelTextRectBound.center().x() && paintAnchor.x() <= calloutLabelTextRectBound.right();
-      bool onRight = paintAnchor.x() > calloutLabelTextRectBound.right();
-      //
-      // suche die naheste Ecke
-      //
-      qreal x = ( onRight + rightOfCenter ) * calloutLabelTextRectBound.width();
-      qreal y = ( below + belowCenter ) * calloutLabelTextRectBound.height();
-      bool cornerCase = ( above && onLeft ) || ( above && onRight ) || ( below && onLeft ) || ( below && onRight );
-      bool vertical = qAbs( paintAnchor.x() - x ) > qAbs( paintAnchor.y() - y );
-      //
-      // mache den abstand
-      //
-      qreal x1 = x + leftOfCenter * 10 - rightOfCenter * 20 + cornerCase * !vertical * ( onLeft * 10 - onRight * 20 );
-      qreal y1 = y + aboveCenter * 10 - belowCenter * 20 + cornerCase * vertical * ( above * 10 - below * 20 );
-      qreal x2 = x + leftOfCenter * 20 - rightOfCenter * 10 + cornerCase * !vertical * ( onLeft * 20 - onRight * 10 );
-      qreal y2 = y + aboveCenter * 20 - belowCenter * 10 + cornerCase * vertical * ( above * 20 - below * 10 );
-      //
-      // definiere den Anfang und das Ende des kleinen Pfeils
-      //
-      point1.setX( x1 );
-      point1.setY( y1 );
-      point2.setX( x2 );
-      point2.setY( y2 );
-      //
-      // Den Pfad zum zeichnen vorbereiten
-      //
-      path.moveTo( point1 );
-      path.lineTo( paintAnchor );
-      path.lineTo( point2 );
-      path = path.simplified();
-    }
-    //
     // Farbe setzen
-    //
+    // TODO: anpassen für Themes
+    painter->setPen( QColor( 0, 0, 128 ) );
     painter->setBrush( QColor( 255, 255, 255 ) );
     //
     // Zeichne das kleine Scheisserchen
     //
     painter->drawPath( path );
+    painter->setFont( calloutLabelFont );
     painter->drawText( calloutLabelTextRect, calloutLabelText );
   }
 
@@ -153,17 +102,19 @@ namespace spx
     // finde die Größe des umgebenden Rechrteckes heraus
     //
     QFontMetrics metrics( calloutLabelFont );
-    calloutLabelTextRect = metrics.boundingRect( QRect( 0, 0, 150, 150 ), Qt::AlignLeft, calloutLabelText );
-    calloutLabelTextRect.translate( 5, 5 );
+    calloutLabelTextRect = metrics.boundingRect( QRect( 0, 0, 250, 80 ), Qt::AlignLeft, calloutLabelText );
+    // Verschiebe es vom Nullpunkt weg
+    calloutLabelTextRect.translate( 6, 8 );
     prepareGeometryChange();
-    calloutLabelTextRectBound = calloutLabelTextRect.adjusted( -5, -5, 5, 5 );
+    // das umschliessende Rechteck etwas grösser
+    calloutLabelTextRectBound = calloutLabelTextRect.adjusted( -8.0, -8.0, 8.0, 8.0 );
   }
 
   /**
    * @brief ChartGraphicalValueCallout::setAnchor
    * @param point
    */
-  void ChartGraphicalValueCallout::setAnchor( QPointF point )
+  void ChartGraphicalValueCallout::setAnchor( const QPointF &point )
   {
     //
     // setze den Ankerpunkt
@@ -176,8 +127,18 @@ namespace spx
    */
   void ChartGraphicalValueCallout::updateGeometry()
   {
+    // zerst ausführen zur Vorbereitung
     prepareGeometryChange();
-    setPos( parentChart->mapToPosition( calloutAnchor ) + QPoint( 10, -50 ) );
+    // Position des Grafikelementes nach rechts oben schieben
+    setPos( calloutAnchor + QPointF( 16, -4 ) );
   }
 
+  /**
+   * @brief ChartGraphicalValueCallout::setCurrentSeries
+   * @param cs
+   */
+  void ChartGraphicalValueCallout::setCurrentSeries( QAbstractSeries *cs )
+  {
+    currSeries = cs;
+  }
 }  // namespace spx

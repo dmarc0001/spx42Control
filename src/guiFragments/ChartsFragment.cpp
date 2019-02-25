@@ -89,8 +89,9 @@ namespace spx
     //
     bigChartView->setChart( bigDummyChart );
     ppo2ChartView->setChart( ppo2DummyChart );
-    delete bigDiveChart;
-    delete ppo2DiveChart;
+    bigDiveChart->deleteLater();
+    ppo2DiveChart->deleteLater();
+    lg->debug( "ChartsFragment::~ChartsFragment...OK" );
   }
 
   void ChartsFragment::initDeviceSelection( void )

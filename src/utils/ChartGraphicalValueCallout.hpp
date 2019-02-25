@@ -5,12 +5,16 @@
 #include <QtCharts>
 #include <QtGui/QFont>
 #include <QtWidgets>
+#include <memory>
+#include "logging/Logger.hpp"
 
 namespace spx
 {
   class ChartGraphicalValueCallout : public QGraphicsItem
   {
     private:
+    //! Mein Logger
+    std::shared_ptr< Logger > lg;
     // Speicher für den Text des Callout
     QString calloutLabelText;
     //! Text Rechteck
@@ -23,26 +27,30 @@ namespace spx
     QFont calloutLabelFont;
     //! Chart an dem das Callout klebt
     QChart *parentChart;
+    //! auf welche Serie beziehe ich mich? (sollte Tiefe/ppo2 sein)
+    QAbstractSeries *currSeries;
 
     public:
     //! Konstruktor
-    ChartGraphicalValueCallout( QChart *parent );
+    explicit ChartGraphicalValueCallout( std::shared_ptr< Logger > logger, QChart *parent );
     //! Callout Tedt setzten
     void setText( const QString &text );
     //! Setzte Anker des textes
-    void setAnchor( QPointF point );
+    void setAnchor( const QPointF &point );
     //! Geometrie des Callout anpassen
     void updateGeometry();
+    //! setzte die Serie für Mappings
+    void setCurrentSeries( QAbstractSeries *cs );
     //! das umschliessende Rechteck
-    QRectF boundingRect() const;
+    QRectF boundingRect() const override;
     //! zeichne das Callout
-    void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget );
+    void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget ) override;
 
     protected:
     //! Mausclicks bemerken
-    void mousePressEvent( QGraphicsSceneMouseEvent *event );
+    void mousePressEvent( QGraphicsSceneMouseEvent *event ) override;
     //! Mausbewegungen bemerken
-    void mouseMoveEvent( QGraphicsSceneMouseEvent *event );
+    void mouseMoveEvent( QGraphicsSceneMouseEvent *event ) override;
   };
 }  // namespace spx
 #endif  // CHARTGRAPHICALVALUECALLOUT_HPP
