@@ -22,6 +22,7 @@ namespace spx
   constexpr int RIGHT_MARGIN = LEFT_MARGIN;
   constexpr int TOP_MARGIN = 4;
   constexpr int BOTTOM_MARGIN = TOP_MARGIN;
+  constexpr int cursorRubberWidth = 4;
 
   class QChartViewPrivate;
 

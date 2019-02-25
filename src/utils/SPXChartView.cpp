@@ -317,7 +317,7 @@ namespace spx
       cursorRubberBand->setEnabled( true );
       QRect rect = currChart->plotArea().toRect();
       rect.setX( 0 );
-      rect.setWidth( 2 );
+      rect.setWidth( cursorRubberWidth );
       cursorRubberBand->setGeometry( rect.normalized() );
       cursorRubberBand->show();
     }
@@ -405,7 +405,7 @@ namespace spx
       {
         QRect rect = currChart->plotArea().toRect();
         rect.setX( event->pos().x() );
-        rect.setWidth( 2 );
+        rect.setWidth( cursorRubberWidth );
         cursorRubberBand->setGeometry( rect.normalized() );
         cursorRubberBand->show();
         emit onCursorChangedSig( event->pos().x() );
@@ -794,7 +794,7 @@ namespace spx
     {
       QRect rect = currChart->plotArea().toRect();
       rect.setX( x_value );
-      rect.setWidth( 2 );
+      rect.setWidth( cursorRubberWidth );
       cursorRubberBand->setGeometry( rect.normalized() );
       cursorRubberBand->show();
     }
