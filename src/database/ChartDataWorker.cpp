@@ -368,19 +368,17 @@ namespace spx
     ppo2chart->addAxis( littleChartTimeAxis, Qt::AlignBottom );
     ppo2Series->attachAxis( littleChartTimeAxis );
     // TODO: Kategorie für ppo2
-    /*
-    lg->debug( "ChartDataWorker::makeChartData -> create category..." );
-    axisY_category_ppo2 = new QCategoryAxis();
-    axisY_category_ppo2->append( "Low", .21 );
-    axisY_category_ppo2->append( "Medium", 1.0 );
-    axisY_category_ppo2->append( "High", 3.0 );
-    axisY_category_ppo2->setRange( 0.0, 3.0 );
-    axisY_category_ppo2->setLinePenColor( ppo2Series->pen().color() );
-    axisY_category_ppo2->setGridLinePen( ( ppo2Series->pen() ) );
-    lg->debug( "ChartDataWorker::makeChartData -> attach category..." );
-    ppo2Series->attachAxis( axisY_category_ppo2 );
-    ppo2chart->addAxis( axisY_category_ppo2, Qt::AlignRight );
-   */
+    //
+    // evtl noch Achsenbeschriftung anpassen
+    //
+    if ( bigChartTimeAxis->min().secsTo( bigChartTimeAxis->max() ) < 3550 )
+    {
+      bigChartTimeAxis->setFormat( "mm:ss" );
+    }
+    if ( littleChartTimeAxis->min().secsTo( littleChartTimeAxis->max() ) < 3550 )
+    {
+      littleChartTimeAxis->setFormat( "mm:ss" );
+    }
     //
     lg->debug( "ChartDataWorker::makeChartData...OK" );
     emit onChartReadySig();

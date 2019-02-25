@@ -9,8 +9,14 @@ namespace spx
   ChartGraphicalValueCallout::ChartGraphicalValueCallout( std::shared_ptr< Logger > logger, QChart *parent )
       : QGraphicsItem( parent ), lg( logger ), parentChart( parent ), currSeries( nullptr )
   {
-    if ( parent != nullptr )
-      calloutLabelFont = parent->font();
+    // if ( parent != nullptr )
+    // calloutLabelFont = parent->font();
+    //
+    // bessere Darstellung Monofont...
+    //
+    calloutLabelFont = QFont( "Monospace" );
+    calloutLabelFont.setStyleHint( QFont::TypeWriter );
+    //
     calloutLabelFont.setPointSize( 9 );
     calloutLabelFont.setWeight( QFont::Light );
   }
@@ -129,8 +135,25 @@ namespace spx
   {
     // zerst ausführen zur Vorbereitung
     prepareGeometryChange();
-    // Position des Grafikelementes nach rechts oben schieben
-    setPos( calloutAnchor + QPointF( 16, -4 ) );
+    //
+    // finde heraus ob genügend Platz wäre
+    //
+    QRectF plotArea = parentChart->plotArea();
+    QPointF tempAnchor = calloutAnchor + QPointF( 16, -4 );
+
+    if ( ( tempAnchor.x() + calloutLabelTextRectBound.width() ) > ( plotArea.x() + plotArea.width() ) )
+    {
+      tempAnchor -= QPointF( 32 + calloutLabelTextRectBound.width(), 0 );
+    }
+    if ( ( tempAnchor.y() + calloutLabelTextRectBound.height() ) > ( plotArea.y() + plotArea.height() ) )
+    {
+      tempAnchor -= QPointF( 0, 8 + calloutLabelTextRectBound.height() );
+    }
+    calloutAnchor = tempAnchor;
+    //
+    // hinschieben wo es soll
+    //
+    setPos( calloutAnchor );
   }
 
   /**

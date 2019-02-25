@@ -1370,17 +1370,23 @@
         <translation>Vorschau</translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="284"/>
+        <location filename="../database/ChartDataWorker.cpp" line="307"/>
         <source>TEMP [&amp;ordm;C]</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="311"/>
+        <location filename="../database/ChartDataWorker.cpp" line="325"/>
+        <location filename="../database/ChartDataWorker.cpp" line="366"/>
+        <source>DIVE TIME</source>
+        <translation>Tauchzeit</translation>
+    </message>
+    <message>
+        <location filename="../database/ChartDataWorker.cpp" line="335"/>
         <source>PPO2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="326"/>
+        <location filename="../database/ChartDataWorker.cpp" line="350"/>
         <source>SETPOINT</source>
         <translation></translation>
     </message>
@@ -1389,42 +1395,40 @@
         <translation type="vanished">Tauchgang Ansicht</translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="270"/>
+        <location filename="../database/ChartDataWorker.cpp" line="293"/>
         <source>DEPTH [m]</source>
         <translation>Tiefe [m]</translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="302"/>
-        <location filename="../database/ChartDataWorker.cpp" line="342"/>
         <source>DIVE TIME [min]</source>
-        <translation>Tauchzeit [min]</translation>
+        <translation type="vanished">Tauchzeit [min]</translation>
     </message>
 </context>
 <context>
     <name>spx::ChartsFragment</name>
     <message>
-        <location filename="../guiFragments/ChartsFragment.cpp" line="29"/>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="30"/>
         <source>LOGFILES SPX42 [%1] in database</source>
         <translation>Logdaten SPX42 [%1] in Datenbank</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ChartsFragment.cpp" line="40"/>
-        <location filename="../guiFragments/ChartsFragment.cpp" line="49"/>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="54"/>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="63"/>
         <source>zoom in: drag left mouse , zoom out: click right mouse, zoom reset: middle mouse switch...</source>
         <translation>vergrößern: ziehen mit linker Maustaste, verkleinern: rechte Maustaste, Vergrößerung RESET: mittlere Maustaste...</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ChartsFragment.cpp" line="86"/>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="101"/>
         <source>unknown</source>
         <translation>unbekannt</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ChartsFragment.cpp" line="96"/>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="111"/>
         <source>database empty</source>
         <translation>Datenbank leer</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ChartsFragment.cpp" line="269"/>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="286"/>
         <source>LOGCHARTS SPX42 Serial [%1] Lic: %2</source>
         <translation>Log Grafiken SPX32 Seriennummer [%1] Lizenz: %2</translation>
     </message>
@@ -1432,62 +1436,62 @@
 <context>
     <name>spx::ConnectFragment</name>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="24"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="25"/>
         <source>CONNECTION BLUETHOOTH ERROR: %1</source>
         <translation>Bluetooth Verbindungsfehler: %1</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="38"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="39"/>
         <source>CONNECTSTATE SPX42 Serial [%1] LIC: %2</source>
         <translation>Verbindungsstatus SPX42 Seriennummer [%1] Lizenz: %2</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="48"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="49"/>
         <source>DEVICE</source>
         <translation>Gerät</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="49"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="50"/>
         <source>DEVICE ALIAS</source>
         <translation>Gerätealias</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="159"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="160"/>
         <source>UNKNOWN ERROR</source>
         <translation>Unbekannter Fehler</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="162"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="163"/>
         <source>NO BT SOCKET FOUND</source>
         <translation>Keine Bluethooth Verbindung gefunden</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="165"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="166"/>
         <source>REMOTE HOST NOT FOUND</source>
         <translation>Entferntes Gerät nicht gefunden</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="168"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="169"/>
         <source>REMOTE HOST CLOSED CONNECTION</source>
         <translation>Entferntes Gerät hat Verbindung beendet</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="171"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="172"/>
         <source>COMMUNICATION ERROR</source>
         <translation>Kommunikationsfehler</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="217"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="218"/>
         <source>NOT SELECTED A DEVICE TO CONNECT</source>
         <translation>Kein Gerät für die Verbindung gewählt</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="458"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="459"/>
         <source>DISCONNECT DEVICE</source>
         <translation>Gerät trennen</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ConnectFragment.cpp" line="458"/>
+        <location filename="../guiFragments/ConnectFragment.cpp" line="459"/>
         <source>CONNECT DEVICE</source>
         <translation>Gerät verbinden</translation>
     </message>
@@ -1495,77 +1499,77 @@
 <context>
     <name>spx::DeviceConfigFragment</name>
     <message>
-        <location filename="../guiFragments/DeviceConfigFragment.cpp" line="24"/>
+        <location filename="../guiFragments/DeviceConfigFragment.cpp" line="25"/>
         <source>CONFIG SPX42 SERIAL [%1] LIC: %2</source>
         <translation>Konfiguration SPX42 Seriennummer [%1] Lizenz: %2</translation>
     </message>
     <message>
-        <location filename="../guiFragments/DeviceConfigFragment.cpp" line="30"/>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="31"/>
+        <location filename="../guiFragments/DeviceConfigFragment.cpp" line="32"/>
         <source>OFF</source>
         <translation>AUS</translation>
     </message>
     <message>
-        <location filename="../guiFragments/DeviceConfigFragment.cpp" line="30"/>
+        <location filename="../guiFragments/DeviceConfigFragment.cpp" line="31"/>
         <source>5 METERS</source>
         <translation>5 Meter</translation>
     </message>
     <message>
-        <location filename="../guiFragments/DeviceConfigFragment.cpp" line="30"/>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="31"/>
+        <location filename="../guiFragments/DeviceConfigFragment.cpp" line="32"/>
         <source>10 METERS</source>
         <translation>10 Meter</translation>
     </message>
     <message>
-        <location filename="../guiFragments/DeviceConfigFragment.cpp" line="30"/>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="31"/>
+        <location filename="../guiFragments/DeviceConfigFragment.cpp" line="32"/>
         <source>15 METERS</source>
         <translation>15 Meter</translation>
     </message>
     <message>
-        <location filename="../guiFragments/DeviceConfigFragment.cpp" line="30"/>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="31"/>
+        <location filename="../guiFragments/DeviceConfigFragment.cpp" line="32"/>
         <source>20 METERS</source>
         <translation>20 Meter</translation>
     </message>
     <message>
-        <location filename="../guiFragments/DeviceConfigFragment.cpp" line="31"/>
+        <location filename="../guiFragments/DeviceConfigFragment.cpp" line="32"/>
         <source>6 METERS</source>
         <translation>6 Meter</translation>
     </message>
     <message>
-        <location filename="../guiFragments/DeviceConfigFragment.cpp" line="32"/>
+        <location filename="../guiFragments/DeviceConfigFragment.cpp" line="33"/>
         <source>10%</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../guiFragments/DeviceConfigFragment.cpp" line="32"/>
+        <location filename="../guiFragments/DeviceConfigFragment.cpp" line="33"/>
         <source>50%</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../guiFragments/DeviceConfigFragment.cpp" line="32"/>
         <location filename="../guiFragments/DeviceConfigFragment.cpp" line="33"/>
+        <location filename="../guiFragments/DeviceConfigFragment.cpp" line="34"/>
         <source>100%</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../guiFragments/DeviceConfigFragment.cpp" line="33"/>
+        <location filename="../guiFragments/DeviceConfigFragment.cpp" line="34"/>
         <source>20%</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../guiFragments/DeviceConfigFragment.cpp" line="33"/>
+        <location filename="../guiFragments/DeviceConfigFragment.cpp" line="34"/>
         <source>40%</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../guiFragments/DeviceConfigFragment.cpp" line="33"/>
+        <location filename="../guiFragments/DeviceConfigFragment.cpp" line="34"/>
         <source>60%</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../guiFragments/DeviceConfigFragment.cpp" line="33"/>
+        <location filename="../guiFragments/DeviceConfigFragment.cpp" line="34"/>
         <source>80%</source>
         <translation></translation>
     </message>
@@ -1573,77 +1577,77 @@
 <context>
     <name>spx::DeviceInfoFragment</name>
     <message>
-        <location filename="../guiFragments/DeviceInfoFragment.cpp" line="19"/>
+        <location filename="../guiFragments/DeviceInfoFragment.cpp" line="20"/>
         <source>DEVICE INFO Serial [%1] Lic: %2</source>
         <translation>Geräte Info Seriennummer [%1] Lizenz: %2</translation>
     </message>
     <message>
-        <location filename="../guiFragments/DeviceInfoFragment.cpp" line="20"/>
+        <location filename="../guiFragments/DeviceInfoFragment.cpp" line="21"/>
         <source>DEVICE MODEL: %1</source>
         <translation>Gerätemodell: %1</translation>
     </message>
     <message>
-        <location filename="../guiFragments/DeviceInfoFragment.cpp" line="21"/>
+        <location filename="../guiFragments/DeviceInfoFragment.cpp" line="22"/>
         <source>DEVICE SERIAL NUMBER: %1</source>
         <translation>Geräte Seriennummer: %1</translation>
     </message>
     <message>
-        <location filename="../guiFragments/DeviceInfoFragment.cpp" line="22"/>
+        <location filename="../guiFragments/DeviceInfoFragment.cpp" line="23"/>
         <source>DEVICE FIRMWARE VERSION: %1</source>
         <translation>Geräte Firmwareversion: %1</translation>
     </message>
     <message>
-        <location filename="../guiFragments/DeviceInfoFragment.cpp" line="23"/>
+        <location filename="../guiFragments/DeviceInfoFragment.cpp" line="24"/>
         <source>- UNKNOWN -</source>
         <translation>- UNBEKANNT -</translation>
     </message>
     <message>
-        <location filename="../guiFragments/DeviceInfoFragment.cpp" line="24"/>
+        <location filename="../guiFragments/DeviceInfoFragment.cpp" line="25"/>
         <source>NOT </source>
         <translation>NICHT </translation>
     </message>
     <message>
-        <location filename="../guiFragments/DeviceInfoFragment.cpp" line="25"/>
+        <location filename="../guiFragments/DeviceInfoFragment.cpp" line="26"/>
         <source>HAS %1FAHRENHEID BUG</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../guiFragments/DeviceInfoFragment.cpp" line="26"/>
+        <location filename="../guiFragments/DeviceInfoFragment.cpp" line="27"/>
         <source>CAN %1SET DATE</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../guiFragments/DeviceInfoFragment.cpp" line="27"/>
+        <location filename="../guiFragments/DeviceInfoFragment.cpp" line="28"/>
         <source>HAS %1SIX PARAMS INDIVIDUAL</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../guiFragments/DeviceInfoFragment.cpp" line="28"/>
+        <location filename="../guiFragments/DeviceInfoFragment.cpp" line="29"/>
         <source>AUTOSETPOINT IS %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../guiFragments/DeviceInfoFragment.cpp" line="29"/>
+        <location filename="../guiFragments/DeviceInfoFragment.cpp" line="30"/>
         <source>FIRMWARE IS %1SUPPORTED</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../guiFragments/DeviceInfoFragment.cpp" line="30"/>
+        <location filename="../guiFragments/DeviceInfoFragment.cpp" line="31"/>
         <source>HAS OLDER PARAMS SORT</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../guiFragments/DeviceInfoFragment.cpp" line="31"/>
+        <location filename="../guiFragments/DeviceInfoFragment.cpp" line="32"/>
         <source>HAS NEWER PARAMS SORT</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../guiFragments/DeviceInfoFragment.cpp" line="32"/>
+        <location filename="../guiFragments/DeviceInfoFragment.cpp" line="33"/>
         <source>HAS OLDER DISPLAY BRIGHTNESS</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../guiFragments/DeviceInfoFragment.cpp" line="33"/>
+        <location filename="../guiFragments/DeviceInfoFragment.cpp" line="34"/>
         <source>HAS NEWER DISPLAY BRIGHTNESS</source>
         <translation></translation>
     </message>
@@ -1651,44 +1655,44 @@
 <context>
     <name>spx::GasFragment</name>
     <message>
-        <location filename="../guiFragments/GasFragment.cpp" line="20"/>
+        <location filename="../guiFragments/GasFragment.cpp" line="21"/>
         <source>GAS #%1 HE:%2 O2:%3 N2:%4 DIL1 [%5] DIL2 [%6] BO [%7]</source>
         <translatorcomment>nicht in deutsch übersetzten</translatorcomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../guiFragments/GasFragment.cpp" line="21"/>
+        <location filename="../guiFragments/GasFragment.cpp" line="22"/>
         <source>GAS #%1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../guiFragments/GasFragment.cpp" line="69"/>
-        <location filename="../guiFragments/GasFragment.cpp" line="531"/>
+        <location filename="../guiFragments/GasFragment.cpp" line="70"/>
+        <location filename="../guiFragments/GasFragment.cpp" line="532"/>
         <source>COMPUTE FRESHWATER</source>
         <translation>Rechne mit Süßwasser</translation>
     </message>
     <message>
-        <location filename="../guiFragments/GasFragment.cpp" line="85"/>
+        <location filename="../guiFragments/GasFragment.cpp" line="86"/>
         <source>GASLIST SPX42 SERIAL [%1] LIC: %2</source>
         <translation>Gasliste SPX42 Seriennummer [%1] Lizenz: %2</translation>
     </message>
     <message>
-        <location filename="../guiFragments/GasFragment.cpp" line="247"/>
+        <location filename="../guiFragments/GasFragment.cpp" line="248"/>
         <source>MOD: %1m</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../guiFragments/GasFragment.cpp" line="248"/>
+        <location filename="../guiFragments/GasFragment.cpp" line="249"/>
         <source>EAD: %1m</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../guiFragments/GasFragment.cpp" line="378"/>
+        <location filename="../guiFragments/GasFragment.cpp" line="379"/>
         <source>GASLIST SPX42 Serial [%1] Lic: %2</source>
         <translation>Gasliste SPX42 Seriennummer [%1] Lizenz %2</translation>
     </message>
     <message>
-        <location filename="../guiFragments/GasFragment.cpp" line="536"/>
+        <location filename="../guiFragments/GasFragment.cpp" line="537"/>
         <source>COMPUTE SALTWATER</source>
         <translation>Rechne mit Salzwasser</translation>
     </message>
@@ -1705,114 +1709,114 @@
 <context>
     <name>spx::LogFragment</name>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="48"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="49"/>
         <source>LOGFILES SPX42 Serial [%1] LIC: %2</source>
         <translation>Logdaten SPX42 Seriennummer [%1] Lizenz %2</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="49"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="50"/>
         <source>LOGFILES SPX42 [%1] in database</source>
         <translation>Logdaten SPX42 [%1] in Datenbank</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="50"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="51"/>
         <source>DIVE NUMBER: %1</source>
         <translation>Tauchgang Nr: %1</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="51"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="52"/>
         <source>DIVE DATE: %1</source>
         <translation>Datum: %1</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="52"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="53"/>
         <source>DIVE DEPTH: %1m</source>
         <translation>Tiefe: %1m</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="53"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="54"/>
         <source>WRITE DIVE #%1 TO DB...</source>
         <translation>Sichere TG #%1 in DB...</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="54"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="55"/>
         <source>WAIT FOR START...</source>
         <translation>Warte auf Datenbank...</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="55"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="56"/>
         <source>DELETE DIVE %1 DONE.</source>
         <translation>Lösche Tg %1 Fertig.</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="56"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="57"/>
         <source>EXPORT DIVE #%1...</source>
         <translation>Exportiere TG #%1...</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="57"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="58"/>
         <source>EXPORT DIVE #%1 DONE.</source>
         <translation>Export TG #%1 OK.</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="58"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="59"/>
         <source>EXPORT FAILED!</source>
         <translation>Export Fehlgeschlagen!</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="520"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="534"/>
         <source>SELECT EXPORT DIR</source>
         <translation>EXPORT VERZEICHNIS</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="537"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="551"/>
         <source>EXPORT DIRECTORY ERROR</source>
         <translation>EXPORT VERZEICHNIS FEHLER</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="537"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="551"/>
         <source>The selected Directory don&apos;t exist!</source>
         <translation>Das gewählte Verzeichnis existiert nicht!</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="580"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="594"/>
         <source>EXPORT WARNING</source>
         <translation>EXPORT WARNUNG</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="580"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="594"/>
         <source>An other export is current running...</source>
         <translation>Ein anderer Export arbeitet momentan...</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1193"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1207"/>
         <source>EXPORT SUCCESS</source>
         <translation>Export Erfolgreich</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1193"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1207"/>
         <source>Export was successful to file: 
 &lt;%1&gt;</source>
         <translation>Der Export war erfolgreich, Datei: 
 &lt;%1&gt;</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1200"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1214"/>
         <source>EXPORT ERROR</source>
         <translation>EXPORT FEHLER</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1200"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1214"/>
         <source>Can&apos;t export dives to UDDF file</source>
         <translation>Kann Tauchgänge nicht in UDDF Datei exportieren</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="884"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="898"/>
         <source>unknown</source>
         <translation>unbekannt</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="895"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="909"/>
         <source>database empty</source>
         <translation>Datenbank leer</translation>
     </message>
@@ -2019,6 +2023,53 @@
         <location filename="../SPX42ControlMainWin.cpp" line="1098"/>
         <source>TO APPLY CHANGES RESTART APPLICATION</source>
         <translation>Um die Änderungen anzuwenden muss das Programm neu gestartet werden</translation>
+    </message>
+</context>
+<context>
+    <name>spx::SPXChartView</name>
+    <message>
+        <location filename="../utils/SPXChartView.cpp" line="76"/>
+        <source>DUMMY CHART</source>
+        <translation>DUMMY</translation>
+    </message>
+    <message>
+        <location filename="../utils/SPXChartView.cpp" line="653"/>
+        <source>DIVETIME:%1
+DEPTH   :%2 m</source>
+        <translation>Tauchzeit:%1
+Tiefe    :%2 m</translation>
+    </message>
+    <message>
+        <location filename="../utils/SPXChartView.cpp" line="665"/>
+        <source>
+TEMP    :%1 °C</source>
+        <translation>
+Temp.    :%1°C</translation>
+    </message>
+    <message>
+        <location filename="../utils/SPXChartView.cpp" line="678"/>
+        <source>DIVETIME:%1
+PPO2    :%2 bar</source>
+        <translation>Tauchzeit:%1
+PPO2     :%2 bar</translation>
+    </message>
+    <message>
+        <location filename="../utils/SPXChartView.cpp" line="688"/>
+        <source>
+SETPT   :%1 bar</source>
+        <translation>
+Setp.    :%1 bar</translation>
+    </message>
+    <message>
+        <source>DIVETIME:%1
+DEPTH   :%2</source>
+        <translation type="obsolete">Tauchzeit:%1
+Tiefe    :%2</translation>
+    </message>
+    <message>
+        <location filename="../utils/SPXChartView.cpp" line="693"/>
+        <source>DIVETIME:%1</source>
+        <translation>Tauchzeit:%1</translation>
     </message>
 </context>
 </TS>
