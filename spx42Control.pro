@@ -7,17 +7,21 @@
 ###############################################################################
 MAJOR                                  = 0 # Major Verion Nummer
 MINOR                                  = 7 # Minor Version Number
-PATCH                                  = 0 # Patch Version Number
+PATCH                                  = 1 # Patch Version Number
 BUILD                                  = 0 # win build number
 
 win32:VERSION_PE_HEADER                = $${MAJOR}.$${MINOR}
 win32:QMAKE_TARGET_COMPANY             = submatix.com
 win32:QMAKE_TARGET_COPYRIGHT           = D. Marciniak
 win32:QMAKE_TARGET_PRODUCT             = SPX42 BT-Controller
-win32:RC_ICONS                         = src/res/programIcon.ico
 win32:VERSION                          = $${MAJOR}.$${MINOR}.$${PATCH}.$${BUILD} # major.minor.patch.build
 else:VERSION                           = $${MAJOR}.$${MINOR}.$${PATCH}    # major.minor.patch
-macx:ICON                              = src/res/programIcon.ico
+win32:RC_ICONS                         = src/res/programIcon.ico
+macx:ICON                              = src/res/programIcon.icns
+
+# TODO: icns für mac machen
+
+
 #
 TARGET                                 = spx42Control
 TEMPLATE                               = app
