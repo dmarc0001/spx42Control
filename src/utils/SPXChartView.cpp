@@ -124,7 +124,6 @@ namespace spx
         dtAxis = nullptr;
       }
     }
-
     auto seriesList = currChart->series();
     for ( auto *cSeries : seriesList )
     {
