@@ -22,6 +22,7 @@ TMP_PRJ_FILE="temp_prj_file.pro"
 INSTALLDIR = "installer"
 PACKAGESDIR = "packages"
 CONFIGDIR = "config"
+CONFIGLIST = ['config_windows.xml', 'config_darwin.xml']
 PACKAGELIST = ['spx42Control', 'spx42ControlMac']
 
 
@@ -166,29 +167,30 @@ def main():
     project_file = path.join(project_dir, PRJFILE)
     version_list = get_project_version_list(project_file, force_set_version, version_list)
     #
-    # erst mal die config datei
-    #
-    config_file = path.join(project_dir, INSTALLDIR, CONFIGDIR, "config_{}.xml".format(os_version))
-    if not path.isfile(config_file):
-        print("error: config file not found: {}".format(config_file))
-        exit(-1)
-    #
-    # CONFIG Datei bearbeiten
-    #
-    print("compute config file: {}".format(config_file))
-    # parse xml datei
-    config_dom = minidom.parse(config_file)
-    # den oder die element(e) holen
-    version_node = config_dom.getElementsByTagName("Version")[0]
-    #
-    version_string = get_node_text(version_node.childNodes)
-    print("config version: {}".format(version_string))
-    print("new version: {}.{}.{}".format(version_list[0], version_list[1], version_list[2]))
-    set_node_text(version_node.childNodes, "{}.{}.{}".format(version_list[0], version_list[1], version_list[2]))
-    xml_file_handle = open(config_file, "wt")
-    config_dom.writexml(xml_file_handle)
-    xml_file_handle.close()
-    print("compute config file: {} OK".format(config_file))
+    # erst mal die config dateien
+    for c_file in CONFIGLIST:
+        #
+        config_file = path.join(project_dir, INSTALLDIR, CONFIGDIR, c_file)
+        if not path.isfile(config_file):
+            print("error: config file not found: {}".format(config_file))
+            exit(-1)
+        #
+        # CONFIG Datei bearbeiten
+        #
+        print("compute config file: {}".format(config_file))
+        # parse xml datei
+        config_dom = minidom.parse(config_file)
+        # den oder die element(e) holen
+        version_node = config_dom.getElementsByTagName("Version")[0]
+        #
+        version_string = get_node_text(version_node.childNodes)
+        print("config version: {}".format(version_string))
+        print("new version: {}.{}.{}".format(version_list[0], version_list[1], version_list[2]))
+        set_node_text(version_node.childNodes, "{}.{}.{}".format(version_list[0], version_list[1], version_list[2]))
+        xml_file_handle = open(config_file, "wt")
+        config_dom.writexml(xml_file_handle)
+        xml_file_handle.close()
+        print("compute config file: {} OK".format(config_file))
     #
     # Packages bearbeiten
     #
