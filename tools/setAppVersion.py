@@ -3,9 +3,10 @@
 
 from argparse import ArgumentParser
 import datetime
-from os import path
+from os import path, remove, rename
 import platform
 import re
+import array as arr
 from xml.dom import minidom
 
 """
@@ -16,6 +17,8 @@ __copyright__ = 'Copyright 2019'
 __license__ = 'GPL'
 __version__ = '0.1'
 
+PRJFILE = "spx42Control.pro"
+TMP_PRJ_FILE="temp_prj_file.pro"
 INSTALLDIR = "installer"
 PACKAGESDIR = "packages"
 CONFIGDIR = "config"
@@ -51,6 +54,73 @@ def set_node_text(nodes, text):
             return
 
 
+def get_project_version_list(project_file: str, force: bool, version_list):
+    """hole Projekt Version aus der Projektdatei"""
+    prj_file = open(project_file, 'r')
+    dest_file = open(TMP_PRJ_FILE, 'w')
+    temp_list = arr.array('i', [0, 0, 0])
+    # Zeilenweise lesen
+    if force and version_list is not None:
+        print("setze version")
+    else:
+        force = False
+    for line in prj_file:
+        # Kommentare weg
+        cline = re.sub(r'#.*$', "", line)
+        # führende Leerzeichen weg
+        cline = re.sub(r'^(\s+)?', "", cline)
+        # leere zeilen weg
+        if len(cline) > 2:
+            if re.match('^(MAJOR|MINOR|PATCH).*', cline) is not None:
+                cline = re.sub(r"\s+", "", cline, )
+                if re.match('^MAJOR.*', cline) is not None:
+                    temp_list[0] = int(str.split(cline, "=")[1])
+                    print("MAJOR: {}".format(temp_list[0]))
+                    if force:
+                        dest_file.write((str.split(line, "=")[0]) + "= " + str(version_list[0]) + "\n")
+                    else:
+                        dest_file.write((str.split(line, "=")[0]) + "= " + str(temp_list[0]) + "\n")
+                if re.match('^MINOR.*', cline) is not None:
+                    temp_list[1] = int(str.split(cline, "=")[1])
+                    print("MINOR: {}".format(temp_list[1]))
+                    if force:
+                        dest_file.write((str.split(line, "=")[0]) + "= " + str(version_list[1]) + "\n")
+                    else:
+                        dest_file.write((str.split(line, "=")[0]) + "= " + str(temp_list[1]) + "\n")
+                if re.match('^PATCH.*', cline) is not None:
+                    # hochzählen
+                    temp_list[2] = int(str.split(cline, "=")[1]) + 1
+                    print("PATCH: {}".format(temp_list[2]))
+                    if force:
+                        dest_file.write((str.split(line, "=")[0]) + "= " + str(version_list[2]) + "\n")
+                    else:
+                        dest_file.write((str.split(line, "=")[0]) + "= " + str(temp_list[2]) + "\n")
+            else:
+                dest_file.write(line)
+        else:
+            dest_file.write(line)
+    prj_file.close()
+    dest_file.close()
+    #
+    # neue Daten umkopieren
+    #
+    prj_file = open(project_file, 'w')
+    dest_file = open(TMP_PRJ_FILE, 'r')
+    for line in dest_file:
+        prj_file.write(line)
+    prj_file.close()
+    dest_file.close()
+    # temporäre Datei entfernen
+    remove(TMP_PRJ_FILE)
+    #
+    # richtige Liste zurück geben
+    #
+    if force:
+        return version_list
+    else:
+        return temp_list
+
+
 def main():
     """
     Die Funktion
@@ -58,8 +128,9 @@ def main():
     #
     # Voreinstellungen
     #
+    project_dir = None
     force_set_version = False
-    version_list = [0, 0, 0]
+    version_list = arr.array('i', [0, 0, 0])
     os_version = platform.system().lower()
     #
     # parse argumente
@@ -77,15 +148,23 @@ def main():
         else:
             print("error: not given project path!")
             exit(-1)
+    else:
+        print("error: not given project path!")
+        exit(-1)
     if args.setversion:
         version_list = get_version_list(args.setversion)
-        if get_version_list(args.setversion) is not None:
+        if version_list is not None:
             # das funktioniert dann warscheinlich
             # version erzwingen
             force_set_version = True
             print("force version {}.{}.{} ".format(version_list[0], version_list[1], version_list[2]))
     if not force_set_version:
         print("increment version numbers...")
+    #
+    # hol mal die Nummer der Projektdate
+    #
+    project_file = path.join(project_dir, PRJFILE)
+    version_list = get_project_version_list(project_file, force_set_version, version_list)
     #
     # erst mal die config datei
     #
@@ -104,9 +183,6 @@ def main():
     #
     version_string = get_node_text(version_node.childNodes)
     print("config version: {}".format(version_string))
-    if not force_set_version:
-        version_list = get_version_list(version_string)
-        version_list[2] = version_list[2] + 1
     print("new version: {}.{}.{}".format(version_list[0], version_list[1], version_list[2]))
     set_node_text(version_node.childNodes, "{}.{}.{}".format(version_list[0], version_list[1], version_list[2]))
     xml_file_handle = open(config_file, "wt")
@@ -132,9 +208,6 @@ def main():
         version_node = config_dom.getElementsByTagName("Version")[0]
         version_string = get_node_text(version_node.childNodes)
         print("version: {}".format(version_string))
-        if not force_set_version:
-            version_list = get_version_list(version_string)
-            version_list[2] = version_list[2] + 1
         print("new version: {}.{}.{}".format(version_list[0], version_list[1], version_list[2]))
         set_node_text(version_node.childNodes, "{}.{}.{}".format(version_list[0], version_list[1], version_list[2]))
         #
@@ -150,7 +223,7 @@ def main():
         # in Datei zurück schreiben
         #
         xml_file_handle = open(current_file, "wt")  # oder "wt"
-        config_dom.writexml( xml_file_handle )
+        config_dom.writexml(xml_file_handle)
         xml_file_handle.close()
         print("compute package {} file {} - OK".format(package_file, current_file))
 
