@@ -23,8 +23,8 @@ namespace spx
     ui->setupUi( this );
     ui->transferProgressBar->setVisible( false );
     ui->transferProgressBar->setRange( 0, 0 );
-    initGuiWithConfig();
     onConfLicChangedSlot();
+    initGuiWithConfig();
     connectSlots();
     connect( spxConfig.get(), &SPX42Config::licenseChangedSig, this, &GasFragment::onConfLicChangedSlot );
     setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
@@ -95,7 +95,7 @@ namespace spx
     {
       gasRadios.at( i )->setVisible( connected );
     }
-    gasRadios.at( currentGasNum )->setChecked( true );
+    // gasRadios.at( currentGasNum )->setChecked( true );
     if ( connected )
     {
       //
@@ -108,10 +108,10 @@ namespace spx
         updateCurrGasGUI( i, false );
       }
     }
-    updateCurrGasGUI( currentGasNum );
     ui->currdil01CheckBox->setEnabled( connected );
     ui->currdil02CheckBox->setEnabled( connected );
     ui->currbailoutCheckBox->setEnabled( connected );
+    updateCurrGasGUI( currentGasNum );
     connectSlots();
   }
 
@@ -361,7 +361,7 @@ namespace spx
     }
     else
     {
-      chGas.setBailout( true );
+      chGas.setBailout( false );
     }
     spxConfig->setGasAt( currentGasNum, chGas );
     if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
@@ -474,8 +474,8 @@ namespace spx
           // CONFIG speichern
           disconnectSlots();
           recGas.reset();
-          recGas.setO2( static_cast< quint8 >( o2 ) );
-          recGas.setHe( static_cast< quint8 >( he ) );
+          recGas.setO2( static_cast< quint8 >( o2 ), spxConfig->getLicense().getLicType() );
+          recGas.setHe( static_cast< quint8 >( he ), spxConfig->getLicense().getLicType() );
           recGas.setBailout( recCommand->getValueFromHexAt( SPXCmdParam::GASLIST_BAILOUT ) == 0 ? false : true );
           recGas.setDiluentType( static_cast< DiluentType >( recCommand->getValueFromHexAt( SPXCmdParam::GASLIST_DILUENT ) ) );
           spxConfig->setGasAt( recGasNumber, recGas );
@@ -484,8 +484,8 @@ namespace spx
             // current parameter ist hier immer 0
           }
           spxConfig->freezeConfigs( SPX42ConfigClass::CF_CLASS_GASES );
-          // GUI update
-          updateCurrGasGUI( recGasNumber );
+          // GUI update, details nur wenn es das aktuelle gas betrifft
+          updateCurrGasGUI( recGasNumber, currentGasNum == recGasNumber );
           connectSlots();
           break;
       }
