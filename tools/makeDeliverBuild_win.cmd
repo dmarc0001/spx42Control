@@ -146,8 +146,8 @@ if "%MAKE_DONE%" == "false" goto false_end
 cd %INSTALLERBASE%
 echo erzeuge das installerprogramm online...
 
-echo %BINARYCREATOR% -n -c config\%APP_INSTALLER_CONFIG% -p packages -i qtRuntime,spx42Control %ONLINEINSTALLER%
-%BINARYCREATOR% -n -c config\%APP_INSTALLER_CONFIG% -p packages -i qtRuntime,spx42Control %ONLINEINSTALLER%
+echo %BINARYCREATOR% --online-only -c config\%APP_INSTALLER_CONFIG% -p packages -i qtRuntime,spx42Control %ONLINEINSTALLER%
+%BINARYCREATOR% --online-only -c config\%APP_INSTALLER_CONFIG% -p packages -i qtRuntime,spx42Control %ONLINEINSTALLER%
 :: repository generate
 echo %REPOGEN% -p packages -i qtRuntime,spx42Control ../repository/
 %REPOGEN% -p packages -i qtRuntime,spx42Control ../repository/
