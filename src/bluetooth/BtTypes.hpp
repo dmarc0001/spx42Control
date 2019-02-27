@@ -12,8 +12,11 @@ namespace spx
   //
   // ein paar Typendefinitionen, um die Sache lesbar zu machen
   //
-  using SPXDeviceDescr = QPair< QString, QString >;           //! device MAC, device Name
-  using SPXDeviceList = QHash< QString, SPXDeviceDescr >;     //! device Addr, device Info, Service Info
-  using ToScannedDevicesQueue = QQueue< QBluetoothAddress >;  //! Queue zum scannen der Devices nach Services
-}
+  //! device MAC, device Name
+  using SPXDeviceDescr = QPair< QString, QString >;
+  //! device Addr, device Info, Service Info
+  using SPXDeviceList = QHash< QString, SPXDeviceDescr >;
+  //! Queue zum scannen der Devices nach Services
+  using ToScannedDevicesQueue = QQueue< QBluetoothAddress >;
+}  // namespace spx
 #endif  // BTTYPES_HPP

@@ -14,27 +14,28 @@ namespace spx
   {
     Q_OBJECT
     private:
-    std::shared_ptr< Logger > lg;                        //! Zeiger auf Logger
-    std::unique_ptr< SPX42BtDevicesManager > btDevices;  //! Zeiger auf BT Geräteverwaltung
+    //! Zeiger auf Logger
+    std::shared_ptr< Logger > lg;
+    //! Zeiger auf BT Geräteverwaltung
+    std::unique_ptr< SPX42BtDevicesManager > btDevices;
 
     public:
     explicit BtDiscoverRemoteDevice( std::shared_ptr< Logger > logger, QObject *parent = nullptr );
-    ~BtDiscoverRemoteDevice();  //! Destruktor
+    //! Destruktor
+    ~BtDiscoverRemoteDevice();
     void startDiscover( void );
     void stopDiscover( void );
-    SPXDeviceList getSPX42Devices( void ) const;  //! Liste aller gefundenen Geräte
+    //! Liste aller gefundenen Geräte
+    SPXDeviceList getSPX42Devices( void ) const;
 
     signals:
     void onDiscoveredDeviceSig( const SPXDeviceDescr &deviceInfo );
     void onDiscoverScanFinishedSig( void );
-
-    public slots:
-    // void onDevicePairingDoneSlot( const QBluetoothAddress &, QBluetoothLocalDevice::Pairing );
 
     private slots:
     void onDeviceHostModeStateChangedSlot( QBluetoothLocalDevice::HostMode );
     void onDiscoverScanFinishedSlot( void );
     void onDiscoveredDeviceSlot( const SPXDeviceDescr & );
   };
-}
+}  // namespace spx
 #endif  // BTDISCOVERREMOTEDEVICE_HPP

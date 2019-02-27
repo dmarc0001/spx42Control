@@ -256,8 +256,7 @@ namespace spx
   void GasFragment::onDiluentUseChangeSlot( int state, DiluentType which )
   {
     //
-    // Alle anderen Gase dürfen dann NICHT which sein!
-    // Nur ein DIL1, beliegig DIL2 aber nicht DIL1 == DIL2
+    // genau ein DIL1 im System, beliegig vile DIL2 aber es kann nur ( DIL1 xor DIL2)
     //
     lg->debug( QString( "GasFragment::onDiluentUseChangeSlot -> gas nr <%1> , DIL <%2> was changed to <%3>..." )
                    .arg( currentGasNum + 1, 2, 10, QChar( '0' ) )
@@ -274,16 +273,26 @@ namespace spx
       //
       if ( which == DiluentType::DIL_01 )
       {
+        //
         // alle DIL_01 löschen, nur meins bleibt aktiv
+        //
         for ( auto i = 0; i < 8; i++ )
         {
           if ( spxConfig->getGasAt( i ).getDiluentType() == DiluentType::DIL_01 )
           {
+            //
+            // Gas lesen
+            //
             SPX42Gas chGas( spxConfig->getGasAt( i ) );
+            // Kein Diluent!
             chGas.setDiluentType( DiluentType::DIL_NONE );
+            // setzten, damit hash berechnen
             spxConfig->setGasAt( i, chGas );
           }
         }
+        //
+        // dann das gewünschte Gas auf DIL1 setzten
+        //
         SPX42Gas chGas( spxConfig->getGasAt( currentGasNum ) );
         chGas.setDiluentType( DiluentType::DIL_01 );
         spxConfig->setGasAt( currentGasNum, chGas );
@@ -291,13 +300,14 @@ namespace spx
       else if ( which == DiluentType::DIL_02 )
       {
         SPX42Gas chGas( spxConfig->getGasAt( currentGasNum ) );
+        // auf DIL2 setzten
         chGas.setDiluentType( DiluentType::DIL_02 );
         spxConfig->setGasAt( currentGasNum, chGas );
       }
       else
       {
         //
-        // eigentlich obsolte...
+        // andere Gassorte, eigentlich obsolte...
         //
         SPX42Gas chGas( spxConfig->getGasAt( currentGasNum ) );
         chGas.setDiluentType( DiluentType::DIL_NONE );
@@ -321,18 +331,23 @@ namespace spx
     {
       if ( spxConfig->getGasAt( i ).getDiluentType() == DiluentType::DIL_01 )
       {
+        // markiere dass kein DIL1 gesetzt werden muss
         setGas01ToDIL1 = false;
         break;
       }
     }
     //
-    // wenn nun kein DIL1 mehr vorhanden war, setzte GAS01 als DIL1
+    // wenn nun kein DIL1 mehr vorhanden war, setzte ein GAS als DIL1
     //
     if ( setGas01ToDIL1 )
     {
-      SPX42Gas chGas( spxConfig->getGasAt( 0 ) );
-      chGas.setDiluentType( DiluentType::DIL_NONE );
-      spxConfig->setGasAt( 0, chGas );
+      int setGas = 0;
+      // wenn das aktuelle Gas 0 ist, muss ein anderes Gas auf DIL1
+      if ( currentGasNum == 0 )
+        setGas = 1;
+      SPX42Gas chGas( spxConfig->getGasAt( setGas ) );
+      chGas.setDiluentType( DiluentType::DIL_01 );
+      spxConfig->setGasAt( setGas, chGas );
     }
     //
     // GUI update
@@ -340,13 +355,11 @@ namespace spx
     disconnectSlots();
     for ( auto i = 0; i < 8; i++ )
     {
-      if ( currentGasNum == i )
-        continue;
-      updateCurrGasGUI( i, false );
+      // GUI updaten, details nur bei aktuellem gas
+      updateCurrGasGUI( i, currentGasNum == i );
     }
     if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
       emit onConfigWasChangedSig();
-    updateCurrGasGUI( currentGasNum );
     connectSlots();
   }
 
@@ -367,7 +380,7 @@ namespace spx
     if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
       emit onConfigWasChangedSig();
     disconnectSlots();
-    updateCurrGasGUI( currentGasNum );
+    updateCurrGasGUI( currentGasNum, true );
     connectSlots();
   }
 

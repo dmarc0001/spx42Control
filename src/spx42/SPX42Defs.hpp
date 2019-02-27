@@ -7,6 +7,7 @@
 
 namespace spx
 {
+  //! definiert Klassen in der Konfiguration
   namespace SPX42ConfigClass
   {
     constexpr quint8 CF_CLASS_SPX{0x01};
@@ -29,11 +30,12 @@ namespace spx
     constexpr quint8 CF_GAS08{0x80};
     //
     constexpr double MAX_PPO2{1.60};
-  }
+  }  // namespace SPX42ConfigClass
 
   //
   // Aufzählungen, einige sind eigentlich nur für die bessere Lesbarkeitdes Codes
   //
+  //! unterstützte Firmware versionen
   enum class SPX42FirmwareVersions : qint8
   {
     FIRMWARE_UNKNOWN,
@@ -44,6 +46,7 @@ namespace spx
     FIRMWARE_2_7x
   };
 
+  //! Tabs er Anwendung
   enum class ApplicationTab : int
   {
     CONNECT_TAB,
@@ -54,12 +57,16 @@ namespace spx
     CHART_TAB,
     COUNT_OF_TABS
   };
+
+  //! Stati der Applikation bezogen auf connectivität
   enum class ApplicationStat : int
   {
     STAT_OFFLINE,
     STAT_ONLINE,
     STAT_ERROR
   };
+
+  //! Lizenzierung des SPX42
   enum class LicenseType : qint8
   {
     LIC_NITROX,
@@ -67,17 +74,23 @@ namespace spx
     LIC_FULLTMX,
     LIC_MIL
   };
+
+  //! Die Lizenz individual
   enum class IndividualLicense : qint8
   {
     LIC_NONE,
     LIC_INDIVIDUAL
   };
+
+  //! Diluent Type
   enum class DiluentType : qint8
   {
     DIL_NONE,
     DIL_01,
     DIL_02
   };
+
+  //! Tyen des Presets für Dekompression
   enum class DecompressionPreset : qint8
   {
     DECO_KEY_V_CONSERVATIVE,
@@ -87,21 +100,29 @@ namespace spx
     DECO_KEY_V_AGRESSIVE,
     DECO_KEY_CUSTOM
   };
+
+  //! Ein oder Aus der Dynamischen Gradienten
   enum class DecompressionDynamicGradient : qint8
   {
     DYNAMIC_GRADIENT_ON,
     DYNAMIC_GRADIENT_OFF
   };
+
+  //! tiefe Deko stopps ein/aus
   enum class DecompressionDeepstops : qint8
   {
     DEEPSTOPS_ENABLED,
     DEEPSTOPS_DISABLED
   };
+
+  //! Tiefe des letzten Dekostopps
   enum class DecoLastStop : qint8
   {
     LAST_STOP_ON_3,
     LAST_STOP_ON_6
   };
+
+  //! Hellogkeit des Displays
   enum class DisplayBrightness : qint8
   {
     BRIGHT_20,
@@ -110,26 +131,36 @@ namespace spx
     BRIGHT_80,
     BRIGHT_100
   };
+
+  //! Ausrichtung des Displays
   enum class DisplayOrientation : qint8
   {
     LANDSCAPE,
     LANDSCAPE_180
   };
+
+  //! Einheit der Temperaturen
   enum class DeviceTemperaturUnit : qint8
   {
     CELSIUS,
     FAHRENHEID
   };
+
+  //! Einheitensystem der Länge/Tiefe/Temperatur
   enum class DeviceLenghtUnit : qint8
   {
     METRIC,
     IMPERIAL
   };
+
+  //! Wassertyp
   enum class DeviceWaterType : qint8
   {
     SALTWATER,
     FRESHWATER
   };
+
+  //! Autosetpont des SPX aus /tiefe
   enum class DeviceSetpointAuto : qint8
   {
     AUTO_OFF,
@@ -138,6 +169,8 @@ namespace spx
     AUTO_15,
     AUTO_20
   };
+
+  //! O2 Setpoint des SPX42
   enum class DeviceSetpointValue : qint8
   {
     SETPOINT_10,
@@ -146,33 +179,45 @@ namespace spx
     SETPOINT_13,
     SETPOINT_14
   };
+
+  //! O2 Sensoren des SPX42 ein/aus
   enum class DeviceIndividualSensors : qint8
   {
     SENSORS_ON,
     SENSORS_OFF
   };
+
+  //! Passiver SCR Mode
   enum class DeviceIndividualPSCR : qint8
   {
     PSCR_ON,
     PSCR_OFF
   };
+
+  //! Anzahl der berücksichtigten Sensoren
   enum class DeviceIndividualSensorCount : qint8
   {
     SENSOR_COUNT_01,
     SENSOR_COUNT_02,
     SENSOR_COUNT_03
   };
+
+  //! Akustische Warnungen an/aus
   enum class DeviceIndividualAcoustic : qint8
   {
     ACOUSTIC_OFF,
     ACOUSTIC_ON
   };
+
+  //! Loginterval des SPX42
   enum class DeviceIndividualLogInterval : qint8
   {
     INTERVAL_20,
     INTERVAL_30,
     INTERVAL_60
   };
+
+  //! Tempstick für den Kalk, drei Versionen
   enum class DeviceIndividualTempstick : qint8
   {
     TEMPSTICK01,
@@ -180,7 +225,7 @@ namespace spx
     TEMPSTICK03
   };
 
-  // Declariere Typen für Gradienten LOW,HIGH
+  //! Deklariere Typen für Gradienten LOW,HIGH
   using DecoGradient = std::pair< qint8, qint8 >;
   using DecoGradientHash = QHash< int, DecoGradient >;
 
@@ -188,21 +233,34 @@ namespace spx
   {
     private:
     Q_OBJECT
-    LicenseType licType;       //! Lizenztyp merken
-    IndividualLicense licInd;  //! Lizenzerweiterung Individualeinstsellungen
+    //! Lizenztyp merken
+    LicenseType licType;
+    //! Lizenzerweiterung Individualeinstsellungen
+    IndividualLicense licInd;
 
     public:
-    SPX42License( void );                              //! Konstruktor
-    SPX42License( SPX42License &lic );                 //! Kopierkonstruktor
-    bool operator==( const SPX42License &lic );        //! Vergleichsoperator
-    bool operator!=( const SPX42License &lic );        //! Vergleichsoperator
-    bool operator<( const SPX42License &lic );         //! Vergleichsoperator
-    bool operator>( const SPX42License &lic );         //! Vergleichsoperator
-    LicenseType getLicType() const;                    //! Lizenztyp erfragen
-    void setLicType( const LicenseType &value );       //! Lizenztyp setzten
-    IndividualLicense getLicInd() const;               //! erfrage Individual Lizenz
-    void setLicInd( const IndividualLicense &value );  //! setzte Individual Lizenz
-    QByteArray serialize( void );                      //! serialisiere die Lizenz
+    //! Konstruktor
+    SPX42License( void );
+    //! Kopierkonstruktor
+    SPX42License( SPX42License &lic );
+    //! Vergleichsoperator
+    bool operator==( const SPX42License &lic );
+    //! Vergleichsoperator
+    bool operator!=( const SPX42License &lic );
+    //! Vergleichsoperator
+    bool operator<( const SPX42License &lic );
+    //! Vergleichsoperator
+    bool operator>( const SPX42License &lic );
+    //! Lizenztyp erfragen
+    LicenseType getLicType() const;
+    //! Lizenztyp setzten
+    void setLicType( const LicenseType &value );
+    //! erfrage Individual Lizenz
+    IndividualLicense getLicInd() const;
+    //! setzte Individual Lizenz
+    void setLicInd( const IndividualLicense &value );
+    //! serialisiere die Lizenz
+    QByteArray serialize( void );
 
     signals:
     // void licenseChangedPrivateSig( const SPX42License lic );  //! Signal das sich das geändert hat

@@ -16,20 +16,28 @@ namespace spx
   class LogDetailWalker : public QObject
   {
     Q_OBJECT
+    //! Maximale Wartezeit beim schreiben
     static const qint64 waitTimeout{( 1000 / 50 ) * 20};
     static const qint64 waitUnits{50};
-    QQueue< spSingleCommand > detailQueue;       // Liste mit pointern auf die empfangenen Logdetails
-    std::shared_ptr< Logger > lg;                // der Logger
-    std::shared_ptr< SPX42Database > database;   // Datenbankverbindung
-    std::shared_ptr< SPX42Config > spx42Config;  // die Konfioguration
-    QMutex queueMutex;                           // Mutex zum locken der Queue
-    bool shouldWriterRunning;                    // thread soll laufen und auf daten warten
+    //! Queue mit pointern auf die empfangenen Logdetails
+    QQueue< spSingleCommand > detailQueue;
+    //! der Logger
+    std::shared_ptr< Logger > lg;
+    //! Datenbankverbindung
+    std::shared_ptr< SPX42Database > database;
+    //! die Konfioguration
+    std::shared_ptr< SPX42Config > spx42Config;
+    //! Mutex zum locken der Queue
+    QMutex queueMutex;
+    //! thread soll laufen und auf daten warten
+    bool shouldWriterRunning;
     int processed;
     int forThisDiveProcessed;
     int overAll;
-    qint64 maxTimeoutVal;  // zeit bis zum timeout
-
-    std::shared_ptr< QQueue< SPX42SingleCommand > > logDetailQueue;  // Queue für Logdaten ankommend
+    // zeit bis zum timeout
+    qint64 maxTimeoutVal;
+    //! Queue für Logdaten ankommend
+    std::shared_ptr< QQueue< SPX42SingleCommand > > logDetailQueue;
     QString logDetailTableName;
 
     public:
@@ -38,7 +46,8 @@ namespace spx
                               std::shared_ptr< SPX42Database > _database,
                               std::shared_ptr< SPX42Config > spxCfg );
     void reset( void );
-    void nowait( bool _shouldNoWait = true );  //! nicht mehr warten wenn die queue leer ist
+    //! nicht mehr warten wenn die queue leer ist
+    void nowait( bool _shouldNoWait = true );
     void addDetail( spSingleCommand );
     int getProcessed( void );
     int getGlobal( void );

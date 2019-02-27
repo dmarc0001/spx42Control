@@ -26,6 +26,7 @@ namespace spx
   {
     Q_OBJECT
     public:
+    //! Auflistung der SPX Verbindungsstati
     enum SPX42ConnectStatus : qint8
     {
       SPX42_DISCONNECTED,
@@ -36,37 +37,62 @@ namespace spx
     };
 
     private:
-    std::shared_ptr< Logger > lg;         //! Zeiger auf Loggerobjekt
-    QTimer sendTimer;                     //! Timer zum versenden von Kommandos
-    QList< SendListEntry > sendList;      //! Liste mit zu sendenden Telegrammen
-    QQueue< QByteArray > recQueue;        //! Liste mit empfangenen Telegrammen
-    QQueue< spSingleCommand > rCmdQueue;  //! Decodierte Liste mit empfangenen Kommandos
-    QBluetoothSocket *socket;             //! Zeiger auf einen Socket
-    const QBluetoothUuid btUuiid;         //! die Bluethooth UUID für RFCOMM
-    QBluetoothAddress remoteAddr;         //! die MAC des gegenübers
-    QByteArray recBuffer;                 //! empfangspuffer für Telegramme
-    bool wasSocketError;                  //! gab es einen Socketfehler?
-    bool ignoreSendTimer;                 //! während des Sendens ignorieren
-    bool isNormalCommandMode;             //! sind wir im normalen Betriebsmode
-    int currentDiveNumberForLogDetail;    //! aktuell übertragen
-    int currentDetailSequenceNumber;      //! Sequenznummer der Detailübertragung
-    QByteArray lineEnd;                   //! Suchmuster für Line-End
+    //! Zeiger auf Loggerobjekt
+    std::shared_ptr< Logger > lg;
+    //! Timer zum versenden von Kommandos
+    QTimer sendTimer;
+    //! Liste mit zu sendenden Telegrammen
+    QList< SendListEntry > sendList;
+    //! Liste mit empfangenen Telegrammen
+    QQueue< QByteArray > recQueue;
+    //! Decodierte Liste mit empfangenen Kommandos
+    QQueue< spSingleCommand > rCmdQueue;
+    //! Zeiger auf einen Socket
+    QBluetoothSocket *socket;
+    //! die Bluethooth UUID für RFCOMM
+    const QBluetoothUuid btUuiid;
+    //! die MAC des gegenübers
+    QBluetoothAddress remoteAddr;
+    //! empfangspuffer für Telegramme
+    QByteArray recBuffer;
+    //! gab es einen Socketfehler?
+    bool wasSocketError;
+    //! während des Sendens ignorieren
+    bool ignoreSendTimer;
+    //! sind wir im normalen Betriebsmode
+    bool isNormalCommandMode;
+    //! aktuell übertragen
+    int currentDiveNumberForLogDetail;
+    //! Sequenznummer der Detailübertragung
+    int currentDetailSequenceNumber;
+    //! Suchmuster für Line-End
+    QByteArray lineEnd;
 
     public:
     explicit SPX42RemotBtDevice( std::shared_ptr< Logger > logger, QObject *parent = nullptr );
     ~SPX42RemotBtDevice();
-    void startConnection( const QString &mac );      //! starte eine BT Verbindung
-    void endConnection( void );                      //! trenne die BT Verbindung
-    void sendCommand( const SendListEntry &entry );  //! sende ein Datagramm zum SPX42
-    SPX42ConnectStatus getConnectionStatus( void );  //! verbindungsstatus erfragen
-    spSingleCommand getNextRecCommand( void );       //! nächtes Kommand holen, shared ptr zurück
-    QString getRemoteConnected( void );              //! mit wem bin ich verbunden
-    bool getIsNormalCommandMode() const;             //! ist normale Mode (NICHT log)
+    //! starte eine BT Verbindung
+    void startConnection( const QString &mac );
+    //! trenne die BT Verbindung
+    void endConnection( void );
+    //! sende ein Datagramm zum SPX42
+    void sendCommand( const SendListEntry &entry );
+    //! verbindungsstatus erfragen
+    SPX42ConnectStatus getConnectionStatus( void );
+    //! nächtes Kommand holen, shared ptr zurück
+    spSingleCommand getNextRecCommand( void );
+    //! mit wem bin ich verbunden
+    QString getRemoteConnected( void );
+    //! ist normale Mode (NICHT log)
+    bool getIsNormalCommandMode() const;
 
     signals:
-    void onStateChangedSig( QBluetoothSocket::SocketState state );  //! Signal, wenn Onlinestatus sich ändert
-    void onSocketErrorSig( QBluetoothSocket::SocketError error );   //! Signal bei Fhlern im BT Socket
-    void onCommandRecivedSig( void );                               //! Signal wenn ein Kommando empfangen wurde
+    //! Signal, wenn Onlinestatus sich ändert
+    void onStateChangedSig( QBluetoothSocket::SocketState state );
+    //! Signal bei Fhlern im BT Socket
+    void onSocketErrorSig( QBluetoothSocket::SocketError error );
+    //! Signal wenn ein Kommando empfangen wurde
+    void onCommandRecivedSig( void );
 
     public slots:
 

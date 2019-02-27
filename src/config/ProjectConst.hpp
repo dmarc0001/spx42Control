@@ -22,7 +22,8 @@ namespace spx
     //###########################################################################
     //#### Stringkonstanten ohne Lokalisierung
     //###########################################################################
-    static const QString MAIN_TITLE;  //! der Fenstertitel
+    //! der Fenstertitel
+    static const QString MAIN_TITLE;
     static const QString APP_VERSION;
     static const QString MANUFACTURER_APP;
     static const QString MANUFACTURER_APP_NAME;
@@ -41,15 +42,18 @@ namespace spx
     //###########################################################################
     //! Differenz Celsius zu Kelvin
     static constexpr double KELVINDIFF{273.15};
-    static constexpr int BUFFER_LEN{1200};          //! Empfangspufferlänge
-    static constexpr int CXN_SUCCESS{0};            //! Winsock OK Value
-    static constexpr int CXN_ERROR{1};              //! Winsock ERROR Value
-    static constexpr int SOCK_BUFFLEN{128};         //! WINSOCK Pufferlänge (fuer BT)
-    static constexpr int CONFIG_WRITE_DELAY{3500};  //! waretn bis Konfiguration zum SPX geschrieben wird
-    static constexpr int SPX_MINIMUM_O2{2};         //! Minimaler Sauerstoffanteil
-    static const QString RFCommUUID;                //! RFComm UUID bei den SPX-Services
-    static const QBluetoothUuid SPX42ServiceUuid;   //! die SPX42 Service UUID
-    static const QString searchedServiceRegex;      //! Suchausdruck für SPX42 Service
+    //! Empfangspufferlänge
+    static constexpr int BUFFER_LEN{1200};
+    //! waretn bis Konfiguration zum SPX geschrieben wird
+    static constexpr int CONFIG_WRITE_DELAY{3500};
+    //! Minimaler Sauerstoffanteil
+    static constexpr int SPX_MINIMUM_O2{2};
+    //! RFComm UUID bei den SPX-Services
+    static const QString RFCommUUID;
+    //! die SPX42 Service UUID
+    static const QBluetoothUuid SPX42ServiceUuid;
+    //! Suchausdruck für SPX42 Service
+    static const QString searchedServiceRegex;
 
     //###########################################################################
     // Defaults für DEKOMPRESSIONS Einstellungen                             ####

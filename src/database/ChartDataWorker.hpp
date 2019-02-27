@@ -36,10 +36,14 @@ namespace spx
     static const QString setpointSeriesName;
 
     private:
-    std::shared_ptr< Logger > lg;               // der Logger
-    std::shared_ptr< SPX42Database > database;  // Datenbankverbindung
-    bool shouldWriterRunning;                   // thread soll laufen und auf daten warten
-    qint64 maxTimeoutVal;                       // zeit bis zum timeout
+    //! der Logger
+    std::shared_ptr< Logger > lg;
+    //! Datenbankverbindung
+    std::shared_ptr< SPX42Database > database;
+    //! thread soll laufen und auf daten warten
+    bool shouldWriterRunning;
+    //! zeit bis zum timeout
+    qint64 maxTimeoutVal;
     QString logDetailTableName;
 
     public:
