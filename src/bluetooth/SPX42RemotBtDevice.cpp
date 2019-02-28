@@ -305,7 +305,7 @@ namespace spx
       if ( !isNormalCommandMode && idxDetailEnd > -1 )
       {
         //
-        // DA ist ein Detail, und ist es ist VOR dem Kommando
+        // Da ist ein Tauchgang Detail, und ist es ist VOR dem Kommando
         //
         if ( idxOfETX > -1 && idxOfETX < idxDetailEnd )
         {
@@ -315,8 +315,10 @@ namespace spx
         }
         else
         {
+          //
           // hier kommt ein log detail eintrag geflogen
-          // alles vor dem ist ein Datensatz
+          // alles vor dem ist ein Detail-Datensatz
+          //
           QByteArray _datagram = recBuffer.left( idxDetailEnd - 1 );
           recBuffer.remove( 0, idxDetailEnd + 2 );
           if ( _datagram.size() > 64 )
@@ -439,4 +441,4 @@ namespace spx
   {
     return isNormalCommandMode;
   }
-}
+}  // namespace spx

@@ -788,6 +788,7 @@ namespace spx
               //
               // da ist noch was anzufordern
               // nutze die next-transfer-Timerroutine
+              //
               int logDetailNum = logDetailRead.dequeue();
               //
               // senden lohnt nur, wenn ich das auch verarbeiten kann

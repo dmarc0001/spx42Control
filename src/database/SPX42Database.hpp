@@ -208,6 +208,8 @@ namespace spx
     bool checkOrCreateTables( void );
     //! Update Tabelle detaildir, füge feld "notes" hinzu
     bool updateDetailDirTableFromFour( void );
+    //! teste ob next step plausibel ist (es gab fehlerhafte Einträge)
+    int validateNextStep( int val, int oldval );
 
     // GETTER und SETTER
     bool isDbOpen() const;

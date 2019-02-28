@@ -213,7 +213,7 @@ namespace spx
   void SPX42Commands::decodeLogDetailLine( const QByteArray &pdu )
   {
     params.clear();
-    // OK, das ist ein Datagramm vom SPX
+    // OK, das ist ein Detail Datagramm vom SPX
     params = pdu.split( '\t' );
   }
 
@@ -455,4 +455,4 @@ namespace spx
     // erwarte Quittung! (true)
     return ( SendListEntry( CmdMarker( SPX42CommandDef::SPX_SET_SETUP_GASLIST, true ), cmd ) );
   }
-}
+}  // namespace spx

@@ -1042,14 +1042,39 @@ namespace spx
   }
 
   /**
+   * @brief SPX42Database::validateNextStep es kann nur 20, 30 oder 60 geben
+   * @param val
+   * @param oldval
+   * @return
+   */
+  int SPX42Database::validateNextStep( int val, int oldval )
+  {
+    if ( ( val == 20 ) || ( val == 30 ) || ( val == 60 ) )
+      return ( val );
+    //
+    // da kam unsinn...
+    //
+    lg->warn( QString( "SPX42Database::validateNextStep -> next step value not plausible <%1>. corrected" ).arg( val ) );
+    if ( ( oldval == 20 ) || ( oldval == 30 ) || ( oldval == 60 ) )
+      return ( oldval );
+    return ( 60 );
+  }
+
+  /**
    * @brief SPX42Database::insertLogentry
    * @param entr
    * @return
    */
   bool SPX42Database::insertLogentry( const DiveLogEntry &entr )
   {
+    static int next_step = 0;
     // serialize schreibzugriff
     QMutexLocker locker( &dbMutex );
+    //
+    // Plausibilität testen
+    //
+    next_step = validateNextStep( entr.nextStep, next_step );
+
     //
     if ( db.isValid() && db.isOpen() )
     {
@@ -1067,14 +1092,13 @@ namespace spx
                         .arg( entr.n2 )
                         .arg( entr.he )
                         .arg( entr.zeroTime )
-                        .arg( entr.nextStep );
+                        .arg( next_step /*entr.nextStep*/ );
       QSqlQuery query( sql, db );
       if ( query.exec() )
       {
         //
         // Abfrage korrekt bearbeitet
         //
-        // lg->debug( "SPX42Database::insertLogentry...OK" );
         return ( true );
       }
       else
@@ -1095,8 +1119,13 @@ namespace spx
    */
   bool SPX42Database::insertLogentry( int detail_id, spSingleCommand cmd )
   {
+    static int next_step = 0;
     // serialize schreibzugriff
     QMutexLocker locker( &dbMutex );
+    //
+    // Plausibilität testen
+    //
+    next_step = validateNextStep( static_cast< int >( cmd->getValueAt( SPXCmdParam::LOGDETAIL_NEXT_STEP ) ), next_step );
     //
     if ( db.isValid() && db.isOpen() )
     {
@@ -1115,13 +1144,12 @@ namespace spx
                         .arg( static_cast< int >( cmd->getValueAt( SPXCmdParam::LOGDETAIL_N2 ) ) )
                         .arg( static_cast< int >( cmd->getValueAt( SPXCmdParam::LOGDETAIL_HE ) ) )
                         .arg( static_cast< int >( cmd->getValueAt( SPXCmdParam::LOGDETAIL_ZEROTIME ) ) )
-                        .arg( static_cast< int >( cmd->getValueAt( SPXCmdParam::LOGDETAIL_NEXT_STEP ) ) );
+                        .arg( static_cast< int >( next_step /*cmd->getValueAt( SPXCmdParam::LOGDETAIL_NEXT_STEP )*/ ) );
       if ( query.exec( sql ) )
       {
         //
         // Abfrage korrekt bearbeitet
         //
-        // lg->debug( "SPX42Database::insertLogentry...OK" );
         return ( true );
       }
       else
