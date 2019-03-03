@@ -9,6 +9,7 @@ QWidget {
   font-style: normal;
   color: #031855;
   font-size: 16pt;
+  background-color: #f3f3f3f1;
 }
 QMainWindoww {
   background-color: #f3f3f3f1;
@@ -51,6 +52,14 @@ QLabel#tabHeaderLabel {
   font-style: bold;
   font-size: 19pt;
   color: #04049e;
+}
+/*
+##################################################################
+#### info Dialog                                              ####
+##################################################################
+*/
+QDialog#AboutDialog > QPushButton {
+  background-color: none;
 }
 /*
 ##################################################################
@@ -119,10 +128,16 @@ QGroupBox#gasesGroupBox > QRadioButton:hover {
 LOG TAB
 ###############################################################################
 */
+QGroupBox#logDetailsGroupBox {
+  color: #031855;
+}
+QGroupBox#logDetailsGroupBox > QLabel {
+  color: #031855;
+}
 QGroupBox#logDetailsGroupBox > QLabel#dbWriteNumLabel {
   font-style: bold;
   color: #b61585;
-  background-color: #D6D6D6;
+  background-color: #f3f3f3f1;
 }
 QTableWidget#logentryTableWidget {
   font-family: "Hack";
@@ -186,4 +201,15 @@ QTabBar::tab:last:selected {
 /* wenn nur ein tab da sein sollte */
 QTabBar::tab:only-one {
   margin: 0;
+}
+/*
+###############################################################################
+#### charts stylen                                                           ####
+###############################################################################
+*/
+QChart,
+SPXChartView,
+QChartView {
+  color: #031855;
+  background-color: #f3f3f3f1;
 }

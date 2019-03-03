@@ -286,7 +286,8 @@ namespace spx
       //
       // alles lesen und an den Puffer anhängen
       //
-      recBuffer.append( socket->readAll() );
+      // recBuffer.append( socket->readAll() );
+      recBuffer.append( socket->read( ProjectConst::BUFFER_LEN ) );
       //
       // suche nach dem Ende eines Datagrammee / eines Logeintrages
       //
@@ -320,12 +321,31 @@ namespace spx
           // alles vor dem ist ein Detail-Datensatz
           //
           QByteArray _datagram = recBuffer.left( idxDetailEnd - 1 );
+          // QString line = QString( _datagram );
+          // lg->info( QString( "DETAIL:<%1>" ).arg( line ) );
           recBuffer.remove( 0, idxDetailEnd + 2 );
-          if ( _datagram.size() > 64 )
+          if ( _datagram.size() > 0 )
           {
-            decodeLogDetailLine( _datagram );
-            rCmdQueue.enqueue( spSingleCommand( new SPX42SingleCommand(
-                SPX42CommandDef::SPX_GET_LOG_DETAIL, params, currentDiveNumberForLogDetail, ++currentDetailSequenceNumber ) ) );
+            if ( decodeLogDetailLine( _datagram ) == ProjectConst::LOG_FIELD_COUNT )
+            {
+              // es müssen 36 Elemente sein
+              rCmdQueue.enqueue( spSingleCommand( new SPX42SingleCommand(
+                  SPX42CommandDef::SPX_GET_LOG_DETAIL, params, currentDiveNumberForLogDetail, ++currentDetailSequenceNumber ) ) );
+              // ein timerereignis async zum versenden
+              QTimer::singleShot( 5, [this] { emit onCommandRecivedSig(); } );
+            }
+            else
+            {
+              currentDetailSequenceNumber++;
+              //
+              // da ist ein fetter Fehler, entweder in der Übertragung oder in der Datei auf dem SPX
+              // TODO: Dummy Eintrag einfügen, damit Zeitachse stimmt
+              //
+              lg->warn(
+                  QString(
+                      "SPX42RemotBtDevice::onReadSocketSlot -> log datagram has not exact %1 elements. this ist incorrect. ignored." )
+                      .arg( ProjectConst::LOG_FIELD_COUNT ) );
+            }
           }
         }
       }
@@ -399,17 +419,21 @@ namespace spx
           recBuffer.remove( 0, idxOfETX + 1 );
           // nächste Runde
         }
-        // das Datagrammende Ende neu finden
+        // das Datagrammende Ende neu finden, falls vorhanden
         idxOfETX = recBuffer.indexOf( SPX42CommandDef::ETX );
       }
       //
       // Puffer auf überlauf prüfen und ggt reagieren
       //
-      if ( recBuffer.size() > 2048 )
+      if ( recBuffer.size() > ProjectConst::BUFFER_LEN )
       {
         lg->crit( "buffer (recive buffer) overflow... data will lost..." );
         recBuffer.clear();
       }
+    }
+    else
+    {
+      QThread::msleep( 100 );
     }
     //
     // ENDE

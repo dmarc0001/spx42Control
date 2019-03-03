@@ -40,10 +40,12 @@ namespace spx
     //###########################################################################
     //#### Einfache Konstanten                                               ####
     //###########################################################################
+    //! Anzahl der Felder der Logdaten (Konstant)
+    static constexpr int LOG_FIELD_COUNT{36};
     //! Differenz Celsius zu Kelvin
     static constexpr double KELVINDIFF{273.15};
     //! Empfangspufferlänge
-    static constexpr int BUFFER_LEN{1200};
+    static constexpr int BUFFER_LEN{2400};
     //! waretn bis Konfiguration zum SPX geschrieben wird
     static constexpr int CONFIG_WRITE_DELAY{3500};
     //! Minimaler Sauerstoffanteil

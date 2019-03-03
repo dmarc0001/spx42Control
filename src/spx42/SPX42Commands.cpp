@@ -210,11 +210,12 @@ namespace spx
     return ( retVal );
   }
 
-  void SPX42Commands::decodeLogDetailLine( const QByteArray &pdu )
+  int SPX42Commands::decodeLogDetailLine( const QByteArray &pdu )
   {
     params.clear();
     // OK, das ist ein Detail Datagramm vom SPX
     params = pdu.split( '\t' );
+    return ( params.count() );
   }
 
   QByteArray SPX42Commands::getParameter( int index )

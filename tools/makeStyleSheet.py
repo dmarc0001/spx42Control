@@ -19,6 +19,8 @@ styleMacSizes.less => Größen für Mac
 spxControlWinLight.less => Helles Thema
 spxControlMacDark.less => dunkles Thema
 
+spxControl.less => Zuweisungen
+
 """
 __author__ = 'Dirk Marciniak'
 __copyright__ = 'Copyright 2019'
@@ -29,7 +31,8 @@ RES_DIR = 'src/res'
 TOOL_DIR = 'tools'
 TEMPLATE_DIR = 'template'
 SIZE_TEMPLATEFILE = "style{}Sizes.less"
-TEME_TEMPLATEFILE = "spx42Control{}.less"
+THEME_TEMPLATEFILE = "spx42Control{}.less"
+COMMON_TEMPLATE = "spx42Control.less"
 DEST_STYLE_TEMPLATEFILE = "spx42Control{}{}.css"
 LESSCOMPILER = 'lessc'
 PLATFORMLIST = ['Mac', 'Win']
@@ -64,7 +67,8 @@ def main():
         for theme in THEMELIST:
             print("platform: {}, theme: {}".format(platform, theme))
             sizefile = path.join(TEMPLATE_DIR, SIZE_TEMPLATEFILE.format(platform))
-            source_template_file = path.join(TEMPLATE_DIR, TEME_TEMPLATEFILE.format(theme))
+            source_template_file = path.join(TEMPLATE_DIR, THEME_TEMPLATEFILE.format(theme))
+            common_template_file = path.join(TEMPLATE_DIR, COMMON_TEMPLATE)
             final_template_file = path.join(TEMPLATE_DIR, "styletemplate.less")
             stylesheet = path.join(RES_DIR, DEST_STYLE_TEMPLATEFILE.format(platform, theme))
             # print("quelle aus {} und {}".format(sizefile, source_template_file))
@@ -76,6 +80,8 @@ def main():
             size_file = open(sizefile, 'r')
             print("oeffne styledatei {}...".format(source_template_file))
             style_file = open(source_template_file, 'r')
+            print("oeffne common datei {}".format(common_template_file))
+            common_file = open(common_template_file, 'r')
             print("oeffne/erzeuge finale temporaere less datei...")
             s_file = open(final_template_file, 'w')
             print("schreibe datei...")
@@ -85,6 +91,8 @@ def main():
             for line in style_file:
                 s_file.write(line)
             style_file.close()
+            for line in common_file:
+                s_file.write(line)
             s_file.close()
             print("schreibe datei...OK")
             print("compiliere less datei  - {}".format(final_template_file))
