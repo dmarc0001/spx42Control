@@ -711,7 +711,7 @@
     <message>
         <location filename="../ui/GasFragment.ui" line="534"/>
         <source>oxigen percent value...</source>
-        <translation></translation>
+        <translation>Sauerstoff, prozentualer Anteil...</translation>
     </message>
     <message>
         <location filename="../ui/GasFragment.ui" line="537"/>
@@ -1667,7 +1667,7 @@
     </message>
     <message>
         <location filename="../guiFragments/GasFragment.cpp" line="70"/>
-        <location filename="../guiFragments/GasFragment.cpp" line="532"/>
+        <location filename="../guiFragments/GasFragment.cpp" line="545"/>
         <source>COMPUTE FRESHWATER</source>
         <translation>Rechne mit Süßwasser</translation>
     </message>
@@ -1687,12 +1687,12 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../guiFragments/GasFragment.cpp" line="379"/>
+        <location filename="../guiFragments/GasFragment.cpp" line="392"/>
         <source>GASLIST SPX42 Serial [%1] Lic: %2</source>
         <translation>Gasliste SPX42 Seriennummer [%1] Lizenz %2</translation>
     </message>
     <message>
-        <location filename="../guiFragments/GasFragment.cpp" line="537"/>
+        <location filename="../guiFragments/GasFragment.cpp" line="550"/>
         <source>COMPUTE SALTWATER</source>
         <translation>Rechne mit Salzwasser</translation>
     </message>
@@ -1789,34 +1789,34 @@
         <translation>Ein anderer Export arbeitet momentan...</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1207"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1208"/>
         <source>EXPORT SUCCESS</source>
         <translation>Export Erfolgreich</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1207"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1208"/>
         <source>Export was successful to file: 
 &lt;%1&gt;</source>
         <translation>Der Export war erfolgreich, Datei: 
 &lt;%1&gt;</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1214"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1215"/>
         <source>EXPORT ERROR</source>
         <translation>EXPORT FEHLER</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1214"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1215"/>
         <source>Can&apos;t export dives to UDDF file</source>
         <translation>Kann Tauchgänge nicht in UDDF Datei exportieren</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="898"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="899"/>
         <source>unknown</source>
         <translation>unbekannt</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="909"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="910"/>
         <source>database empty</source>
         <translation>Datenbank leer</translation>
     </message>
@@ -2033,28 +2033,28 @@
         <translation>DUMMY</translation>
     </message>
     <message>
-        <location filename="../utils/SPXChartView.cpp" line="653"/>
+        <location filename="../utils/SPXChartView.cpp" line="652"/>
         <source>DIVETIME:%1
 DEPTH   :%2 m</source>
         <translation>Tauchzeit:%1
 Tiefe    :%2 m</translation>
     </message>
     <message>
-        <location filename="../utils/SPXChartView.cpp" line="665"/>
+        <location filename="../utils/SPXChartView.cpp" line="664"/>
         <source>
 TEMP    :%1 °C</source>
         <translation>
 Temp.    :%1°C</translation>
     </message>
     <message>
-        <location filename="../utils/SPXChartView.cpp" line="678"/>
+        <location filename="../utils/SPXChartView.cpp" line="679"/>
         <source>DIVETIME:%1
 PPO2    :%2 bar</source>
         <translation>Tauchzeit:%1
 PPO2     :%2 bar</translation>
     </message>
     <message>
-        <location filename="../utils/SPXChartView.cpp" line="688"/>
+        <location filename="../utils/SPXChartView.cpp" line="691"/>
         <source>
 SETPT   :%1 bar</source>
         <translation>
@@ -2067,7 +2067,7 @@ DEPTH   :%2</source>
 Tiefe    :%2</translation>
     </message>
     <message>
-        <location filename="../utils/SPXChartView.cpp" line="693"/>
+        <location filename="../utils/SPXChartView.cpp" line="697"/>
         <source>DIVETIME:%1</source>
         <translation>Tauchzeit:%1</translation>
     </message>
