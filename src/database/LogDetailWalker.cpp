@@ -62,7 +62,6 @@ namespace spx
   {
     int diveNum = -1;
     int detail_id = -1;
-    uint next_step = 0;  // log interval...
     int processed_per_dive = 0;
     shouldWriterRunning = true;
     forThisDiveProcessed = 0;

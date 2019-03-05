@@ -192,7 +192,7 @@
             <locale language="English" country="UnitedStates"/>
            </property>
            <property name="title">
-            <string> DECOMPRESSION </string>
+            <string>[ DECOMPRESSION ]</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -617,7 +617,7 @@
             <locale language="English" country="UnitedStates"/>
            </property>
            <property name="title">
-            <string> SETPOINT </string>
+            <string>[ SETPOINT ]</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -834,7 +834,7 @@
             <locale language="English" country="UnitedStates"/>
            </property>
            <property name="title">
-            <string> DISPLAY </string>
+            <string>[ DISPLAY ]</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -1041,7 +1041,7 @@
             <locale language="English" country="UnitedStates"/>
            </property>
            <property name="title">
-            <string> UNITS </string>
+            <string>[ UNITS ]</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -1275,7 +1275,7 @@
             <locale language="English" country="UnitedStates"/>
            </property>
            <property name="title">
-            <string> INDIVIDUAL </string>
+            <string>[ INDIVIDUAL ]</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>

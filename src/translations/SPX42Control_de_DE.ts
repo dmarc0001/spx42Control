@@ -96,9 +96,8 @@
         <translation>Einstellungen zur Dekompression...</translation>
     </message>
     <message>
-        <location filename="../ui/DeviceConfigFragment.ui" line="195"/>
         <source> DECOMPRESSION </source>
-        <translation> DEKOMPRESSION </translation>
+        <translation type="vanished"> DEKOMPRESSION </translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="267"/>
@@ -201,9 +200,8 @@
         <translation>Einstelllungen für Sauerstoff Partiialdruck...</translation>
     </message>
     <message>
-        <location filename="../ui/DeviceConfigFragment.ui" line="620"/>
         <source> SETPOINT </source>
-        <translation> Setpoint </translation>
+        <translation type="vanished"> Setpoint </translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="674"/>
@@ -276,9 +274,8 @@
         <translation>Einstellungen für das SPX42 Display...</translation>
     </message>
     <message>
-        <location filename="../ui/DeviceConfigFragment.ui" line="837"/>
         <source> DISPLAY </source>
-        <translation> Anzeige </translation>
+        <translation type="vanished"> Anzeige </translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="888"/>
@@ -341,9 +338,8 @@
         <translation>Einstellungen für Einheiten...</translation>
     </message>
     <message>
-        <location filename="../ui/DeviceConfigFragment.ui" line="1044"/>
         <source> UNITS </source>
-        <translation> Einheiten </translation>
+        <translation type="vanished"> Einheiten </translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1092"/>
@@ -411,9 +407,33 @@
         <translation>Einstellungen individual (wenn lizensiert)...</translation>
     </message>
     <message>
-        <location filename="../ui/DeviceConfigFragment.ui" line="1278"/>
         <source> INDIVIDUAL </source>
-        <translation> Individuell </translation>
+        <translation type="vanished"> Individuell </translation>
+    </message>
+    <message>
+        <location filename="../ui/DeviceConfigFragment.ui" line="195"/>
+        <source>[ DECOMPRESSION ]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/DeviceConfigFragment.ui" line="620"/>
+        <source>[ SETPOINT ]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/DeviceConfigFragment.ui" line="837"/>
+        <source>[ DISPLAY ]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/DeviceConfigFragment.ui" line="1044"/>
+        <source>[ UNITS ]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/DeviceConfigFragment.ui" line="1278"/>
+        <source>[ INDIVIDUAL ]</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1305"/>
@@ -873,118 +893,118 @@
         <translation>Verzeichnis der Logs auf dem SPX42 (Klicke &quot;Lese Log Verzeichnis&quot;)...</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="234"/>
+        <location filename="../ui/LogFragment.ui" line="243"/>
         <source>SELECT DEVICE</source>
         <translation>Wähle Gerät</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="264"/>
+        <location filename="../ui/LogFragment.ui" line="273"/>
         <source>select device for list dives...</source>
         <translation>wähle ein Gerät für die Anzeige aus der Liste...</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="289"/>
+        <location filename="../ui/LogFragment.ui" line="301"/>
         <source>read log directory...</source>
         <translation>Lese Verzeichnis der Logs vom Gerät...</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="295"/>
+        <location filename="../ui/LogFragment.ui" line="307"/>
         <source>READ LOG DIRECTORY</source>
         <translation>Lese Logverzeichnis</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="316"/>
+        <location filename="../ui/LogFragment.ui" line="328"/>
         <source>read logfile content if left selected...</source>
         <translation>lese markierte logdaten vom Gerät...</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="319"/>
+        <location filename="../ui/LogFragment.ui" line="331"/>
         <source>READ LOG CONTENT</source>
         <translation>Lese Logdaten</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="344"/>
+        <location filename="../ui/LogFragment.ui" line="374"/>
         <source>delete selected data from database...</source>
         <translation>lösche selektierte Logdaten aus der Datenbank...</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="350"/>
+        <location filename="../ui/LogFragment.ui" line="380"/>
         <source>DELETE</source>
         <translation>LÖSCHEN</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="372"/>
+        <location filename="../ui/LogFragment.ui" line="402"/>
         <source>export selected data from database...</source>
         <translation>exportiere selektierte Daten von der Datenbank...</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="378"/>
+        <location filename="../ui/LogFragment.ui" line="408"/>
         <source>EXPORT</source>
         <translation>EXPORT</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="396"/>
+        <location filename="../ui/LogFragment.ui" line="436"/>
         <source>details from log if on of entrys selected...</source>
         <translation>Details des selektierten Logs...</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="399"/>
+        <location filename="../ui/LogFragment.ui" line="439"/>
         <source> [ DETAILS ]</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="419"/>
+        <location filename="../ui/LogFragment.ui" line="462"/>
         <source>NUMBER: %03d</source>
         <translation>Nummer: %03d</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="437"/>
+        <location filename="../ui/LogFragment.ui" line="480"/>
         <source>DATE: %03d</source>
         <translation>Datum: %03d</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="455"/>
+        <location filename="../ui/LogFragment.ui" line="498"/>
         <source>DEPTH: %03d</source>
         <translation>Tiefe: %03d</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="483"/>
+        <location filename="../ui/LogFragment.ui" line="526"/>
         <source>WRITE-TO-DATABASE</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="540"/>
+        <location filename="../ui/LogFragment.ui" line="586"/>
         <source>transfer status...</source>
         <translation>Transfer Indikator...</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="556"/>
+        <location filename="../ui/LogFragment.ui" line="602"/>
         <source>READ FROM DEVICE</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="559"/>
+        <location filename="../ui/LogFragment.ui" line="605"/>
         <source>read selected details from device...</source>
         <translation>lese selektierte Daten vom Gerät...</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="564"/>
-        <location filename="../ui/LogFragment.ui" line="567"/>
+        <location filename="../ui/LogFragment.ui" line="610"/>
+        <location filename="../ui/LogFragment.ui" line="613"/>
         <source>DETAIL DROP FROM DATABASE</source>
         <translation>lösche selektierte Daten aus der Datenbank</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="570"/>
+        <location filename="../ui/LogFragment.ui" line="616"/>
         <source>drop selected detail from database...</source>
         <translation>lösche selektierte Daten aus der Datenbank...</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="575"/>
+        <location filename="../ui/LogFragment.ui" line="621"/>
         <source>EXPORT DETAIL...</source>
         <translation>Export Details...</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="578"/>
+        <location filename="../ui/LogFragment.ui" line="624"/>
         <source>export selected details...</source>
         <translation>exportiere selektierte Daten...</translation>
     </message>

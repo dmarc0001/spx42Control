@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1341</width>
+    <width>1453</width>
     <height>721</height>
    </rect>
   </property>
@@ -160,10 +160,22 @@
           <number>0</number>
          </property>
          <item>
+          <widget class="QLabel" name="deviceNameLabel">
+           <property name="font">
+            <font>
+             <pointsize>14</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>DEVICE: </string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QComboBox" name="deviceSelectComboBox">
            <property name="minimumSize">
             <size>
-             <width>320</width>
+             <width>300</width>
              <height>24</height>
             </size>
            </property>
@@ -208,7 +220,7 @@
           <widget class="QComboBox" name="diveSelectComboBox">
            <property name="minimumSize">
             <size>
-             <width>380</width>
+             <width>350</width>
              <height>24</height>
             </size>
            </property>
@@ -243,7 +255,7 @@
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>567</width>
+             <width>120</width>
              <height>20</height>
             </size>
            </property>
