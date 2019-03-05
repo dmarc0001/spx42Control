@@ -53,27 +53,37 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/ChartsFragment.ui" line="184"/>
+        <location filename="../ui/ChartsFragment.ui" line="170"/>
+        <source>DEVICE: </source>
+        <translation>Gerät: </translation>
+    </message>
+    <message>
+        <location filename="../ui/ChartsFragment.ui" line="196"/>
         <source>select device for display data...</source>
         <translation>Gerät für Anzeige auswählen...</translation>
     </message>
     <message>
-        <location filename="../ui/ChartsFragment.ui" line="229"/>
+        <location filename="../ui/ChartsFragment.ui" line="227"/>
+        <source>DIVE: </source>
+        <translation>Tg: </translation>
+    </message>
+    <message>
+        <location filename="../ui/ChartsFragment.ui" line="253"/>
         <source>select dive for display data...</source>
         <translation>Tauchgang für Anzeige auswählen...</translation>
     </message>
     <message>
-        <location filename="../ui/ChartsFragment.ui" line="359"/>
+        <location filename="../ui/ChartsFragment.ui" line="383"/>
         <source>NOTES:</source>
         <translation>Bemerkungen:</translation>
     </message>
     <message>
-        <location filename="../ui/ChartsFragment.ui" line="391"/>
+        <location filename="../ui/ChartsFragment.ui" line="415"/>
         <source>describes the dive as an note...</source>
         <translation>Beschreibt den Tauchgang als Bemerkung...</translation>
     </message>
     <message>
-        <location filename="../ui/ChartsFragment.ui" line="394"/>
+        <location filename="../ui/ChartsFragment.ui" line="418"/>
         <source>...INPUT YOUR NOTES HERE...</source>
         <translation>... Bemerkungen zum Tauchgang hier...</translation>
     </message>
@@ -413,27 +423,27 @@
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="195"/>
         <source>[ DECOMPRESSION ]</source>
-        <translation type="unfinished"></translation>
+        <translation>[ Dekompression ]</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="620"/>
         <source>[ SETPOINT ]</source>
-        <translation type="unfinished"></translation>
+        <translation>[ Setpoint ]</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="837"/>
         <source>[ DISPLAY ]</source>
-        <translation type="unfinished"></translation>
+        <translation>[ Display ]</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1044"/>
         <source>[ UNITS ]</source>
-        <translation type="unfinished"></translation>
+        <translation>[ Einheiten ]</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1278"/>
         <source>[ INDIVIDUAL ]</source>
-        <translation type="unfinished"></translation>
+        <translation>[ Individual ]</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1305"/>
@@ -1784,59 +1794,59 @@
         <translation>Export Fehlgeschlagen!</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="534"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="536"/>
         <source>SELECT EXPORT DIR</source>
         <translation>EXPORT VERZEICHNIS</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="551"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="553"/>
         <source>EXPORT DIRECTORY ERROR</source>
         <translation>EXPORT VERZEICHNIS FEHLER</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="551"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="553"/>
         <source>The selected Directory don&apos;t exist!</source>
         <translation>Das gewählte Verzeichnis existiert nicht!</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="594"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="596"/>
         <source>EXPORT WARNING</source>
         <translation>EXPORT WARNUNG</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="594"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="596"/>
         <source>An other export is current running...</source>
         <translation>Ein anderer Export arbeitet momentan...</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1208"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1210"/>
         <source>EXPORT SUCCESS</source>
         <translation>Export Erfolgreich</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1208"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1210"/>
         <source>Export was successful to file: 
 &lt;%1&gt;</source>
         <translation>Der Export war erfolgreich, Datei: 
 &lt;%1&gt;</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1215"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1217"/>
         <source>EXPORT ERROR</source>
         <translation>EXPORT FEHLER</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1215"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1217"/>
         <source>Can&apos;t export dives to UDDF file</source>
         <translation>Kann Tauchgänge nicht in UDDF Datei exportieren</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="899"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="901"/>
         <source>unknown</source>
         <translation>unbekannt</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="910"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="912"/>
         <source>database empty</source>
         <translation>Datenbank leer</translation>
     </message>

@@ -80,7 +80,14 @@ namespace spx
     // kopiere die policys und größe
     chartView->setMinimumSize( ui->diveProfileGraphicsView->minimumSize() );
     chartView->setSizePolicy( ui->diveProfileGraphicsView->sizePolicy() );
-    delete ui->logDetailsGroupBox->layout()->replaceWidget( ui->diveProfileGraphicsView, chartView.get() );
+
+    QLayout *lt = ui->logDetailsGroupBox->layout();
+
+    lt->addWidget( chartView.get() );
+    // QLayoutItem *tmpWidget = lt->replaceWidget( ui->diveProfileGraphicsView, chartView.get() );
+    ui->logDetailsGroupBox->setLayout( lt );
+    // delete tmpWidget;
+
     // GUI dem Onlinestatus entsprechend vorbereiten
     setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
     // ist der online gleich noch die Lizenz setzten

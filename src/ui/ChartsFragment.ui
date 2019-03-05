@@ -175,7 +175,7 @@
           <widget class="QComboBox" name="deviceSelectComboBox">
            <property name="minimumSize">
             <size>
-             <width>300</width>
+             <width>280</width>
              <height>24</height>
             </size>
            </property>
@@ -217,10 +217,22 @@
           </spacer>
          </item>
          <item>
+          <widget class="QLabel" name="diveLabel">
+           <property name="font">
+            <font>
+             <pointsize>14</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>DIVE: </string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QComboBox" name="diveSelectComboBox">
            <property name="minimumSize">
             <size>
-             <width>350</width>
+             <width>300</width>
              <height>24</height>
             </size>
            </property>
@@ -255,7 +267,7 @@
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>120</width>
+             <width>80</width>
              <height>20</height>
             </size>
            </property>
