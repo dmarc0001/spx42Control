@@ -53,27 +53,37 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/ChartsFragment.ui" line="184"/>
+        <location filename="../ui/ChartsFragment.ui" line="170"/>
+        <source>DEVICE: </source>
+        <translation>Gerät: </translation>
+    </message>
+    <message>
+        <location filename="../ui/ChartsFragment.ui" line="196"/>
         <source>select device for display data...</source>
         <translation>Gerät für Anzeige auswählen...</translation>
     </message>
     <message>
-        <location filename="../ui/ChartsFragment.ui" line="229"/>
+        <location filename="../ui/ChartsFragment.ui" line="227"/>
+        <source>DIVE: </source>
+        <translation>TG: </translation>
+    </message>
+    <message>
+        <location filename="../ui/ChartsFragment.ui" line="253"/>
         <source>select dive for display data...</source>
         <translation>Tauchgang für Anzeige auswählen...</translation>
     </message>
     <message>
-        <location filename="../ui/ChartsFragment.ui" line="359"/>
+        <location filename="../ui/ChartsFragment.ui" line="383"/>
         <source>NOTES:</source>
         <translation>Bemerkungen:</translation>
     </message>
     <message>
-        <location filename="../ui/ChartsFragment.ui" line="391"/>
+        <location filename="../ui/ChartsFragment.ui" line="415"/>
         <source>describes the dive as an note...</source>
         <translation>Beschreibt den Tauchgang als Bemerkung...</translation>
     </message>
     <message>
-        <location filename="../ui/ChartsFragment.ui" line="394"/>
+        <location filename="../ui/ChartsFragment.ui" line="418"/>
         <source>...INPUT YOUR NOTES HERE...</source>
         <translation>... Bemerkungen zum Tauchgang hier...</translation>
     </message>
