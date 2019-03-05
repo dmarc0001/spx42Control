@@ -76,11 +76,7 @@ namespace spx
       miniChart->setTheme( QChart::ChartTheme::ChartThemeDark );
       dummyChart->setTheme( QChart::ChartTheme::ChartThemeDark );
     }
-    // tausche den Platzhalter aus und entsorge den gleich
-    // kopiere die policys und größe
-    chartView->setMinimumSize( ui->diveProfileGraphicsView->minimumSize() );
-    chartView->setSizePolicy( ui->diveProfileGraphicsView->sizePolicy() );
-    delete ui->logDetailsGroupBox->layout()->replaceWidget( ui->diveProfileGraphicsView, chartView.get() );
+    ui->logDetailsGroupBox->layout()->addWidget( chartView.get() );
     // GUI dem Onlinestatus entsprechend vorbereiten
     setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
     // ist der online gleich noch die Lizenz setzten

@@ -42,20 +42,6 @@ namespace spx
       chart->setTheme( QChart::ChartTheme::ChartThemeLight );
     else
       chart->setTheme( QChart::ChartTheme::ChartThemeDark );
-    /*
-    // Hintergrund aufhübschen
-    QBrush backgroundBrush( Qt::NoBrush );
-    chart->setBackgroundBrush( backgroundBrush );
-    // Malhintergrund auch noch
-    QLinearGradient plotAreaGradient;
-    plotAreaGradient.setStart( QPointF( 0, 1 ) );
-    plotAreaGradient.setFinalStop( QPointF( 1, 0 ) );
-    plotAreaGradient.setColorAt( 0.0, QRgb( 0x202040 ) );
-    plotAreaGradient.setColorAt( 1.0, QRgb( 0x2020f0 ) );
-    plotAreaGradient.setCoordinateMode( QGradient::ObjectBoundingMode );
-    chart->setPlotAreaBackgroundBrush( plotAreaGradient );
-    chart->setPlotAreaBackgroundVisible( true );
-*/
     lg->debug( "DiveMiniChart::prepareChart...OK" );
   }
 
@@ -68,6 +54,7 @@ namespace spx
     QValueAxis *axisYDepth;
     QValueAxis *axisYPPO2;
     QValueAxis *axisX;
+    QPen myPen;
 
     lg->debug( QString( "ChartDataWorker::makeChartDataMini for <%1>, num <%2>..." ).arg( deviceMac ).arg( diveNum ) );
     //
@@ -83,8 +70,17 @@ namespace spx
     lg->debug( "ChartDataWorker::makeChartDataMini -> create series..." );
     // tiefe Datenserie
     depthSeries = new QLineSeries();
+    myPen = depthSeries->pen();
+    myPen.setColor( QColor( "#0000FF" ) );
+    myPen.setWidth( 3 );
+    depthSeries->setPen( myPen );
+
     // ppo2 Serie
     ppo2Series = new QLineSeries();
+    myPen = ppo2Series->pen();
+    myPen.setColor( QColor( "#FF0000" ) );
+    myPen.setWidth( 3 );
+    ppo2Series->setPen( myPen );
 
     // berülle Daten
     for ( auto singleSet : *dataSet.get() )
@@ -97,14 +93,16 @@ namespace spx
     axisYDepth = new QValueAxis();
     axisYDepth->setLinePenColor( depthSeries->pen().color() );
     axisYDepth->setLabelFormat( "%.1f m" );
+    axisYDepth->setLabelsColor( depthSeries->pen().color() );
     chart->addAxis( axisYDepth, Qt::AlignLeft );
     depthSeries->attachAxis( axisYDepth );
     axisYDepth->setMax( 0.0 );
     // ppo2 Serie
     chart->addSeries( ppo2Series );
     axisYPPO2 = new QValueAxis();
-    axisYPPO2->setLinePenColor( depthSeries->pen().color() );
+    axisYPPO2->setLinePenColor( ppo2Series->pen().color() );
     axisYPPO2->setLabelFormat( "%.2f bar" );
+    axisYPPO2->setLabelsColor( ppo2Series->pen().color() );
     axisYPPO2->setTickCount( 4 );
     axisYPPO2->setRange( 0.0, 3.0 );
     chart->addAxis( axisYPPO2, Qt::AlignRight );
