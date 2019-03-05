@@ -37,6 +37,15 @@ int main( int argc, char *argv[] )
   qDebug() << "Tanslator isEmpty: " << qtTranslator.isEmpty();
   QApplication::installTranslator( &qtTranslator );
   //
+  // Systemmeldungen auch lokalisieren
+  //
+  QTranslator qtBaseTranslator;
+  if ( qtBaseTranslator.load( "qtbase_" + QLocale::system().name(), QLibraryInfo::location( QLibraryInfo::TranslationsPath ) ) )
+  {
+    qDebug() << "qtBase Translator ok";
+    app.installTranslator( &qtBaseTranslator );
+  }
+  //
   // Hauptfenster erzeugen
   //
   spx::SPX42ControlMainWin w;
