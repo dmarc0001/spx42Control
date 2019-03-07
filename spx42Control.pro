@@ -183,26 +183,7 @@ RESOURCES               = \
 TRANSLATIONS            = \
     src/translations/SPX42Control_de_DE.ts
 
-DISTFILES               += \
-    src/res/spx42Control.css \
-    src/res/no_working.gif \
-    src/res/working.gif \
-    src/res/ic_bluetooth_black_24dp_1x.png \
-    src/res/ic_bluetooth_black_24dp_2x.png \
-    src/res/DejaVuSansMono.ttf \
-    src/res/Hack-Bold.ttf \
-    src/res/Hack-BoldItalic.ttf \
-    src/res/Hack-Italic.ttf \
-    src/res/Hack-Regular.ttf \
-    src/res/spx42Control.css \
-    src/res/spx42ControlMac.css \
-    src/res/TlwgTypewriter.ttf \
-    src/res/bahnschrift.ttf \
-    tools/makeDeliverBuild_osx.sh \
-    tools/makeDeliverBuild_win.cmd \
-    tools/makeBuildTemplate.py \
-    tools/setAppVersion.py
-
+#DISTFILES               += \
 
 ###############################################################################
 #### Betriebssystemspezifische Sachen                                      ####
