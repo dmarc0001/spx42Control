@@ -17,7 +17,7 @@ namespace spx
     // und das Sprachenabhängig
     //
     // QString url = tr( "qrc:/help/help_en.html" );
-    QString url = tr( "qrc:/help/help_en.html#mark_%1" ).arg( static_cast< int >( currentTab ), 2, 10, QChar( '0' ) );
+    QString url = tr( "helpsystem/en/help.html#mark_%1" ).arg( static_cast< int >( currentTab ), 2, 10, QChar( '0' ) );
     lg->debug( QString( "HelpDialog::HelpDialog -> open url: <%1>" ).arg( url ) );
     ui->helpTextBrowser->setSource( QUrl( url ) );
   }
@@ -38,4 +38,4 @@ namespace spx
         break;
     }
   }
-}
+}  // namespace spx

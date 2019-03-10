@@ -1393,6 +1393,14 @@
     </message>
 </context>
 <context>
+    <name>spx::AboutDialog</name>
+    <message>
+        <location filename="../utils/AboutDialog.cpp" line="32"/>
+        <source>Version: %1 - %2</source>
+        <translation>Version: %1 - %2</translation>
+    </message>
+</context>
+<context>
     <name>spx::ChartDataWorker</name>
     <message>
         <location filename="../database/ChartDataWorker.cpp" line="40"/>
@@ -1400,23 +1408,23 @@
         <translation>Vorschau</translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="307"/>
+        <location filename="../database/ChartDataWorker.cpp" line="310"/>
         <source>TEMP [&amp;ordm;C]</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="325"/>
-        <location filename="../database/ChartDataWorker.cpp" line="366"/>
+        <location filename="../database/ChartDataWorker.cpp" line="328"/>
+        <location filename="../database/ChartDataWorker.cpp" line="369"/>
         <source>DIVE TIME</source>
         <translation>Tauchzeit</translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="335"/>
+        <location filename="../database/ChartDataWorker.cpp" line="338"/>
         <source>PPO2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="350"/>
+        <location filename="../database/ChartDataWorker.cpp" line="353"/>
         <source>SETPOINT</source>
         <translation></translation>
     </message>
@@ -1425,7 +1433,7 @@
         <translation type="vanished">Tauchgang Ansicht</translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="293"/>
+        <location filename="../database/ChartDataWorker.cpp" line="296"/>
         <source>DEPTH [m]</source>
         <translation>Tiefe [m]</translation>
     </message>
@@ -1730,10 +1738,14 @@
 <context>
     <name>spx::HelpDialog</name>
     <message>
-        <location filename="../utils/HelpDialog.cpp" line="20"/>
         <source>qrc:/help/help_en.html#mark_%1</source>
         <translatorcomment>Sprache der Hilfe</translatorcomment>
-        <translation>qrc:/help/help_de.html#mark_%1</translation>
+        <translation type="vanished">qrc:/help/help_de.html#mark_%1</translation>
+    </message>
+    <message>
+        <location filename="../utils/HelpDialog.cpp" line="20"/>
+        <source>helpsystem/en/help.html#mark_%1</source>
+        <translation>helpsystem/de/help.html#mark_%1</translation>
     </message>
 </context>
 <context>
