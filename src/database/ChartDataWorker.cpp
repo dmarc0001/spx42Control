@@ -273,6 +273,11 @@ namespace spx
     myPen.setWidth( 3 );
     tempSeries->setPen( myPen );
     //
+    myPen = depthSeries->pen();
+    myPen.setColor( QColor( "#FF0385F6" ) );
+    myPen.setWidth( 3 );
+    depthSeries->setPen( myPen );
+    //
     // Serien zum Chart zufügen
     //
     lg->debug( "ChartDataWorker::makeChartData -> add serieas to charts..." );
@@ -290,7 +295,7 @@ namespace spx
     depthAxis->setMax( 0.0 );
     depthAxis->setTitleText( tr( "DEPTH [m]" ) );
     depthAxis->setLabelFormat( "%.1f m" );
-    depthAxis->setLabelsColor( QColor( "#FF202020" ) );
+    depthAxis->setLabelsColor( depthSeries->color() );
     bigchart->addAxis( depthAxis, Qt::AlignLeft );
     //
     // Area für die Tiefe machen
