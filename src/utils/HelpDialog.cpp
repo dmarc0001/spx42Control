@@ -17,9 +17,27 @@ namespace spx
     // und das Sprachenabhängig
     //
     // QString url = tr( "qrc:/help/help_en.html" );
-    QString url = tr( "helpsystem/en/help.html#mark_%1" ).arg( static_cast< int >( currentTab ), 2, 10, QChar( '0' ) );
-    lg->debug( QString( "HelpDialog::HelpDialog -> open url: <%1>" ).arg( url ) );
-    ui->helpTextBrowser->setSource( QUrl( url ) );
+    QWebEngineView *view = new QWebEngineView( parent );
+    // QString localFileName = tr( "%1/helpsystem/en/help.html#mark_%2" )
+    //                            .arg( QDir::currentPath() )
+    //                            .arg( static_cast< int >( currentTab ), 2, 10, QChar( '0' ) );
+
+    QString localFileName = tr( "%1/helpsystem/en/help.html" ).arg( QDir::currentPath() );
+    QUrl url = QUrl::fromLocalFile( localFileName );
+    view->load( url );
+    //
+    // TODO: zur Marke springen
+    //
+    view->page()->runJavaScript(
+        QString( "location.hash = \"#mark_%1\";" ).arg( static_cast< int >( currentTab ), 2, 10, QChar( '0' ) ) );
+    lg->debug( QString( "HelpDialog::HelpDialog -> open url: <%1>" ).arg( url.toString() ) );
+    //
+    // Widget tauschen
+    //
+    QLayoutItem *old = this->layout()->replaceWidget( ui->helpPlainTextEdit, view, Qt::FindChildrenRecursively );
+    delete old;
+    // aktualisieren
+    this->update();
   }
 
   HelpDialog::~HelpDialog()

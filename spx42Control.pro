@@ -34,6 +34,7 @@ QT                                     += sql
 QT                                     += charts
 QT                                     += concurrent
 QT                                     += xml
+QT                                     += webenginewidgets
 CONFIG                                 += stl
 CONFIG                                 += c++14
 CONFIG                                 += lrelease

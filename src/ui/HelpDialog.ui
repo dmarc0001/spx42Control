@@ -30,7 +30,7 @@
     <number>4</number>
    </property>
    <item>
-    <widget class="QTextBrowser" name="helpTextBrowser">
+    <widget class="QPlainTextEdit" name="helpPlainTextEdit">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>

@@ -1743,9 +1743,13 @@
         <translation type="vanished">qrc:/help/help_de.html#mark_%1</translation>
     </message>
     <message>
-        <location filename="../utils/HelpDialog.cpp" line="20"/>
         <source>helpsystem/en/help.html#mark_%1</source>
-        <translation>helpsystem/de/help.html#mark_%1</translation>
+        <translation type="vanished">helpsystem/de/help.html#mark_%1</translation>
+    </message>
+    <message>
+        <location filename="../utils/HelpDialog.cpp" line="25"/>
+        <source>%1/helpsystem/en/help.html</source>
+        <translation>%1/helpsystem/de/help.htm</translation>
     </message>
 </context>
 <context>
