@@ -3,172 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <title>HELP for SUBMATIX SPX42Control</title>
-    <style>
-    body
-    {
-      background-color:#efefef;
-      color:#606060;
-      margin-left:12px;
-      margin-right:24px;
-    }
-
-    h1
-    {
-      color:darkblue;
-      margin-top:35px;
-      margin-bottom:8px;
-      margin-left:12px;
-    }
-
-    div.ende
-    {
-      min-height:50px;
-      margin-top:60px;
-    }
-
-    p
-    {
-      padding-left:12px;
-      padding-right:24px;
-    }
-
-    img.preview
-    {
-      width: 45%;
-      height: auto;
-    }
-  </style>
+    <link rel="stylesheet" href="helpstyle-de.css">
 </head>
 <body>
-    <div id="overview">
-        <h1>Übersicht</h1>
-        <p>
-        Diese Programm (oder kurz auch App für Applikation) steuert den SPX42 Tauchcomputer 
-        via Bluetooth Verbindung. Es setzt DAtum und Zeit (wenn die Firmware dies unterstützt), 
-        es setzt Einstellungen wie DEkompressionseinstellungen, Masseinheiten und so weiter.<br />
-        Die App ist weiter zum auslesen der Tauchprotokolle und deren grafische Darstellung, 
-        sie kann die Daten in einem Speziellen UDDF Dateiformat exportieren und so die Daten
-        für andere Programme zugänglich machen. Solceh Programme sind z.B. "subsurface" 
-        oder "Diving Log" auf verschiedenen Betriebssystemen.
-        </p>
+  <div class="paragraph" id="overview">
+    <h1>Übersicht</h1>
+    <div class="text">
+      Diese Programm (oder kurz auch App für Applikation) steuert den SPX42 Tauchcomputer 
+      via Bluetooth Verbindung. Es setzt DAtum und Zeit (wenn die Firmware dies unterstützt), 
+      es setzt Einstellungen wie Dekompressionseinstellungen, Masseinheiten und so weiter.<br />
+      Die App ist weiter zum auslesen der Tauchprotokolle und deren grafische Darstellung, 
+      sie kann die Daten in einem Speziellen UDDF Dateiformat exportieren und so die Daten
+      für andere Programme zugänglich machen. Solceh Programme sind z.B. "subsurface" 
+      oder "Diving Log" auf verschiedenen Betriebssystemen.
     </div>
+  </div>
 
-    <div id="mark_00">
-        <h1>Verbindungs TAB</h1>
-        <p>
-            Die App startet mit dem "Connect" Tab.
-            <div style="width:30%; float: right;">
-              <img class="preview" src="dark_start.png" alt="start view" title="DARK THEME" >
-              <img class="preview" src="light_start.png" alt="start view" title="LIGHT THEME">
-            </div>
-            Die App kommt mit zwei vorbereiteten Themen, einem hellen und einem dunklen Thema. 
-            Du kannst sie an den Vorschaubildern rechts erkennen. Du kannst eigene Themen mittels einer
-            css Datei erstellen und sie für die App anwenden. Dies wird später beschrieben.<br />
-            Um den SPX42 Tauchcomputer zu verbinden muss zunächst ein paaren (pairing) mit dem Betriebssystem
-            erfolgen. Dies ist ein Sicherheitsaspekt moderner Betriebssysteme und nicht mit der App
-            zu machen. Bitte lies die Dokumentation deines Betriebssystems um den SPX42 Tauchcomputer mit
-            deinem Betriebssystem zu paaren. <br />
-    
+  <div class="paragraph" id="mark_00">
+    <h1>Verbindung</h1>
+    <div class="text">
+      Die App startet mit der Verbindungsseite. <br />
 
+      <div class="image_preview">
+        <img class="preview" src="dark_start.png" alt="Startansicht view" title="DUNKLES THEMA THEMA" >
+        <img class="preview" src="light_start.png" alt="Startansicht" title="HELLES THEMA">
+      </div>
 
-
-
-        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-        invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
-        accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
-        sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
-        elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
-        diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
-        gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
-        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-        invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
-        accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata <br/>
-        sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
-        elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
-        diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
-        gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
-        </p>
+      Die App kommt mit zwei vorbereiteten Themen, einem hellen und einem dunklen Thema. 
+      Du kannst sie an den Vorschaubildern rechts erkennen. Du kannst eigene Themen mittels einer
+      css Datei erstellen und sie für die App anwenden. Dies wird später beschrieben.<br />
+      Um den SPX42 Tauchcomputer zu verbinden muss zunächst ein paaren (pairing) mit dem Betriebssystem
+      erfolgen. Dies ist ein Sicherheitsaspekt moderner Betriebssysteme und nicht mit der App
+      zu machen. Bitte lies die Dokumentation deines Betriebssystems um den SPX42 Tauchcomputer mit
+      deinem Betriebssystem zu paaren. <br />
     </div>
+  </div>
 
-    <div id="mark_01">
-        <h1>SPX42 CONFIG</h1>
-        <p>
-        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-        invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
-        accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
-        sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
-        elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
-        diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
-        gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
-        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-        invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
-        accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata <br/>
-        sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
-        elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
-        diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
-        gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
-        </p>
+  <div class="paragraph" id="mark_01">
+    <h1>SPX42 Informationen</h1>
+    <div class="text">
+      <div class="image_preview">
+        <img class="preview" src="light_device_info.png" alt="Geräte Information" title="HELLES THEMA">
+        <img class="preview" src="dark_device_info.png" alt="Geräte information" title="DUNKLES THEMA" >
+      </div>
+      Diese Ansicht zeigt einige grundsätzliche Informationen des verbundenen SPX42 Computers
+      wie Modell, Seriennummer und Firmwareversion.
     </div>
+  </div>
 
-    <div id="mark_02">
-        <h1>SPX42 GASES</h1>
-        <p>
-        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-        invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
-        accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
-        sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
-        elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
-        diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
-        gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
-        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-        invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
-        accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata <br/>
-        sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
-        elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
-        diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
-        gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
-        </p>
+  <div class="paragraph" id="mark_02">
+    <h1>SPX42 Konfiguration</h1>
+    <div class="text">
+      <div class="image_preview">
+        <img class="preview" src="dark_config.png" alt="Geräte Knofiguration" title="DUNKLES THEMA" >
+        <img class="preview" src="light_config.png" alt="Geräte Konfiguration" title="HELLES THEMA">
+      </div>
+    This view shows a few fundamental informations of the connected SPX42 computer,
+    like model, serial number and firmware version.
     </div>
+  </div>
 
-     <div id="mark_03">
-        <h1>SPX42 LOGS</h1>
-        <p>
-        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-        invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
-        accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
-        sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
-        elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
-        diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
-        gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
-        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-        invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
-        accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata <br/>
-        sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
-        elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
-        diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
-        gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
-        </p>
-    </div>
+  <div class="paragraph" id="mark_03">
+    <h1>SPX42 GASES</h1>
+    <p>
+    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+    accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
+    sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+    elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
+    diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+    gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+    accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata <br/>
+    sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+    elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
+    diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+    gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+    </p>
+  </div>
 
-    <div id="mark_04">
-        <h1>GRAPICAL OVERVIEW</h1>
-        <p>
-        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-        invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
-        accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
-        sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
-        elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
-        diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
-        gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
-        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-        invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
-        accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata <br/>
-        sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
-        elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
-        diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
-        gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
-        </p>
-    </div>
+  <div class="paragraph" id="mark_04">
+    <h1>SPX42 LOGS</h1>
+    <p>
+    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+    accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
+    sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+    elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
+    diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+    gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+    accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata <br/>
+    sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+    elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
+    diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+    gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+    </p>
+  </div>
+
+  <div class="paragraph" id="mark_05">
+    <h1>GRAPICAL OVERVIEW</h1>
+    <p>
+    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+    accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
+    sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+    elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
+    diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+    gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+    accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata <br/>
+    sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+    elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
+    diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+    gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+    </p>
+  </div>
 
     <div class="ende">
       &nbsp; <br />

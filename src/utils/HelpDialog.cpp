@@ -20,12 +20,19 @@ namespace spx
     QString localFileName = tr( "%1/helpsystem/en/help.html" ).arg( QDir::currentPath() );
     QUrl url = QUrl::fromLocalFile( localFileName );
     view->load( url );
-    //
-    // TODO: zur Marke springen
-    //
-    view->page()->runJavaScript(
-        QString( "location.hash = \"#mark_%1\";" ).arg( static_cast< int >( currentTab ), 2, 10, QChar( '0' ) ) );
     lg->debug( QString( "HelpDialog::HelpDialog -> open url: <%1>" ).arg( url.toString() ) );
+    //
+    // zur Marke springen, wenn das Dokument geladen ist
+    //
+    connect( view, &QWebEngineView::loadFinished, [=]( bool fin ) {
+      if ( fin )
+      {
+        QString jumpMark = QString( "document.getElementById(\"mark_%1\").scrollIntoView();" )
+                               .arg( static_cast< int >( currentTab ), 2, 10, QChar( '0' ) );
+        view->page()->runJavaScript( jumpMark );
+        lg->debug( QString( "HelpDialog::HelpDialog -> try jump to <%1>" ).arg( jumpMark ) );
+      }
+    } );
     //
     // Widget tauschen
     //
