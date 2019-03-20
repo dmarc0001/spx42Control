@@ -16,12 +16,7 @@ namespace spx
     // den Browser auf den richtrigen Abschnitt
     // und das Sprachenabhängig
     //
-    // QString url = tr( "qrc:/help/help_en.html" );
     QWebEngineView *view = new QWebEngineView( parent );
-    // QString localFileName = tr( "%1/helpsystem/en/help.html#mark_%2" )
-    //                            .arg( QDir::currentPath() )
-    //                            .arg( static_cast< int >( currentTab ), 2, 10, QChar( '0' ) );
-
     QString localFileName = tr( "%1/helpsystem/en/help.html" ).arg( QDir::currentPath() );
     QUrl url = QUrl::fromLocalFile( localFileName );
     view->load( url );

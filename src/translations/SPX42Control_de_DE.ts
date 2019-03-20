@@ -106,10 +106,6 @@
         <translation>Einstellungen zur Dekompression...</translation>
     </message>
     <message>
-        <source> DECOMPRESSION </source>
-        <translation type="vanished"> DEKOMPRESSION </translation>
-    </message>
-    <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="267"/>
         <source>GF-LOW</source>
         <translation></translation>
@@ -210,10 +206,6 @@
         <translation>Einstelllungen für Sauerstoff Partiialdruck...</translation>
     </message>
     <message>
-        <source> SETPOINT </source>
-        <translation type="vanished"> Setpoint </translation>
-    </message>
-    <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="674"/>
         <source>AUTOSETPOINT</source>
         <translation>Automatischer Setpoint</translation>
@@ -284,10 +276,6 @@
         <translation>Einstellungen für das SPX42 Display...</translation>
     </message>
     <message>
-        <source> DISPLAY </source>
-        <translation type="vanished"> Anzeige </translation>
-    </message>
-    <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="888"/>
         <source>BRIGHTNESS</source>
         <translation>Helligkeit</translation>
@@ -346,10 +334,6 @@
         <location filename="../ui/DeviceConfigFragment.ui" line="1038"/>
         <source>settings for measure units...</source>
         <translation>Einstellungen für Einheiten...</translation>
-    </message>
-    <message>
-        <source> UNITS </source>
-        <translation type="vanished"> Einheiten </translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1092"/>
@@ -415,10 +399,6 @@
         <location filename="../ui/DeviceConfigFragment.ui" line="1272"/>
         <source>settings for individual settings (if licensed)...</source>
         <translation>Einstellungen individual (wenn lizensiert)...</translation>
-    </message>
-    <message>
-        <source> INDIVIDUAL </source>
-        <translation type="vanished"> Individuell </translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="195"/>
@@ -1250,26 +1230,6 @@
         <translation>über diese Programm...</translation>
     </message>
     <message>
-        <source>Open Database...</source>
-        <translation type="vanished">öffne Datenbank...</translation>
-    </message>
-    <message>
-        <source>Open SPX42 database...</source>
-        <translation type="vanished">öffne SPX42 Datenbank...</translation>
-    </message>
-    <message>
-        <source>open an database with SPX42 logs...</source>
-        <translation type="vanished">öffne eine Datenbank mit SPX42 Logdaten...</translation>
-    </message>
-    <message>
-        <source>Print...</source>
-        <translation type="vanished">Drucke...</translation>
-    </message>
-    <message>
-        <source>print current content</source>
-        <translation type="vanished">drucke aktuellen Inhalt</translation>
-    </message>
-    <message>
         <location filename="../ui/SPX42ControlMainWin.ui" line="197"/>
         <location filename="../ui/SPX42ControlMainWin.ui" line="200"/>
         <source>Settings...</source>
@@ -1364,10 +1324,6 @@
         <translation>Gerät verbinden</translation>
     </message>
     <message>
-        <source>connect device</source>
-        <translation type="vanished">Verbinde Gerät</translation>
-    </message>
-    <message>
         <location filename="../ui/ConnectFragment.ui" line="265"/>
         <source>Edit device Alias...</source>
         <translation>Bearbeite Geräte Aliase...</translation>
@@ -1386,10 +1342,6 @@
         <location filename="../ui/ConnectFragment.ui" line="306"/>
         <source>Discover bluetooth SPX42 devices...</source>
         <translation>finde via bluetooht SPX42 Geräte...</translation>
-    </message>
-    <message>
-        <source>discover devices</source>
-        <translation type="vanished">Finde Geräte</translation>
     </message>
 </context>
 <context>
@@ -1429,17 +1381,9 @@
         <translation></translation>
     </message>
     <message>
-        <source>DIVE VIEW</source>
-        <translation type="vanished">Tauchgang Ansicht</translation>
-    </message>
-    <message>
         <location filename="../database/ChartDataWorker.cpp" line="296"/>
         <source>DEPTH [m]</source>
         <translation>Tiefe [m]</translation>
-    </message>
-    <message>
-        <source>DIVE TIME [min]</source>
-        <translation type="vanished">Tauchzeit [min]</translation>
     </message>
 </context>
 <context>
@@ -1738,18 +1682,9 @@
 <context>
     <name>spx::HelpDialog</name>
     <message>
-        <source>qrc:/help/help_en.html#mark_%1</source>
-        <translatorcomment>Sprache der Hilfe</translatorcomment>
-        <translation type="vanished">qrc:/help/help_de.html#mark_%1</translation>
-    </message>
-    <message>
-        <source>helpsystem/en/help.html#mark_%1</source>
-        <translation type="vanished">helpsystem/de/help.html#mark_%1</translation>
-    </message>
-    <message>
-        <location filename="../utils/HelpDialog.cpp" line="25"/>
+        <location filename="../utils/HelpDialog.cpp" line="20"/>
         <source>%1/helpsystem/en/help.html</source>
-        <translation>%1/helpsystem/de/help.htm</translation>
+        <translation>%1/helpsystem/de/help.html</translation>
     </message>
 </context>
 <context>
@@ -1942,10 +1877,6 @@
         <location filename="../SPX42ControlMainWin.cpp" line="60"/>
         <source>database can&apos;t open!</source>
         <translation>Konnte Datenbank ncht öffnen!</translation>
-    </message>
-    <message>
-        <source>internal font can&apos;t load!</source>
-        <translation type="vanished">Interner Font kann nicht geladen werden!</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="78"/>
