@@ -68,3 +68,31 @@ img.preview
   width: 46%;
   height: auto;
 }
+
+ol > li
+{
+  margin-block-start: 1em;
+}
+
+ol > li > b
+{
+  font-variant:small-caps;
+}
+
+dl
+{
+  margin-block-start: 0;
+  padding-left: 2em;
+}
+
+dt
+{
+  font-weight: bold;
+  font-family: 'Courier New', Courier, monospace;
+  color: darkgreen;
+}
+
+dd
+{
+  margin-inline-start: 1em;
+}
