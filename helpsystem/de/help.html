@@ -61,6 +61,129 @@
       Auf dieser Seite kannst du alle Parameter des SPX42 Tauchcomputers einstellen, ausser die für Gase.<br />
 
       <img src="dark_config_scheme.png" alt="device config" title="DUNKLES THEMA">
+
+      <!-- List -->
+      <ol>
+        <li>
+          <b>Werkzeugleister</b><br />
+          Hier sind die fundamentalen Funktionen an einem Platz. Von links nach rechts:
+          <ul>
+            <li>Beende/Verlasse die Applikation</li>
+            <li>Öffne den Einstellungsdialog</li>
+            <li>Rufe diese Hilfe auf</li>
+            <li>Zeige den Online Status / trenne Verbindung zum SPX42</li>
+          </ul>  
+        </li>
+
+        <li>
+          <b>Wähle die verschiedenen Tabs / Seiten des Programmes</b>
+        </li>
+
+        <li>
+          <!-- DECO-->
+          <b>Konfiguriere die Einstellungen für die Dekompression:</b><br />
+          <i>Siehe auch „Understanding M-Values“ von Eric C. Baker</i>
+          <dl>
+            <dt>GF-LOW:</dt>
+            <dd>Unterer Gradientenwert</dd>
+
+            <dt>GF-HIGH:</dt>
+            <dd>oberer Gradientenwert</dd>
+
+            <dt>Konservativ:</dt>
+            <dd>Wenn nicht "Benutzerdefiniert" dann setzt diese Voreinstellung GF-LOW und GF-HIGH</dd>
+
+            <dt>Dynamische Gradienten:</dt>
+            <dd>Wenn diese Option ausgeewählt ist, werden im Fall des Bailouts die Konservatismus Werte 
+              auf weniger Konservativ gesetzt</dd>
+
+            <dt>Letzter Dekostop:</dt>
+            <dd>In welcher Tiefe erfolgt der letzte Deokompressionsstop</dd>
+
+            <dt>Tiefe Stopps AN:</dt>
+            <dd>Wenn "AN" erfolgen die esten Dekompressionsstopps in größerer Tiefe</dd>
+          </dl>
+        </li>
+
+        <li>
+          <!-- SETPOINT-->
+          <b>Einstellungen für den Sauerstoff Partialdruck:</b>
+          <dl>
+            <dt>Automatischer Setpoint:</dt>
+            <dd>Ist der automatische Setpoint AUS, dann wechselt der Setpoint von 0,7 bat PPO2 an der 
+              Oberfläche zum programierten Wert (PPO2/Setpoint) unterhalb der hier angegebenen Tiefe.</dd>
+
+            <dt>PPO2/Setpoint:</dt>
+            <dd>der beabsichtigte Sauerstoff Partialdruck</dd>
+          </dl>
+        </li>
+
+        <li>
+          <!-- DISPLAY -->
+          <b>Einstellungen für die SPX42 Anzeige:</b>
+          <dl>
+            <dt>Helligkeit</dt>
+            <dd>Die Helligkeit der Anzeige während des Tauchganges in Prozent der maximalen Helligkeit.</dd>
+
+            <dt>Ausrichtung</dt>
+            <dd>Die Anzeige kann im Breitformat und um 180 Grad gedreht betrieben werden.</dd>
+          </dl>
+        </li>
+
+        <li>
+          <!-- UNITS -->
+          <b>Physikalische Einheiten für die Arbeit des SPX42</b>
+          <dl>
+            <dt>Temperatur Einheit</dt>
+            <dd>Die Möglichkeiten sind 'Celsius' und 'Fahrenheid'</dd>
+
+            <dt>Tiefe</dt>
+            <dd>Metrisch oder imperial - Meter oder Fuß</dd>
+
+            <dt>Wassertyp</dt>
+            <dd>Generell Süßwasser oder Salzwasser</dd>
+          </dl>
+        </li>
+
+        <li>
+          <!-- Individual-->
+          <b>Wenn die Funktion lizensiert ist: Individuelle Optionen / Einstelungen</b>
+          <dl>
+            <dt>Sensoren AN</dt>
+            <dd>Hier werden die Sensoren generell ein oder aus geschaltet</dd>
+
+            <dt>PSCR EIN</dt>
+            <dd>Schaltet das Gerät in den passiven (semi-geschlossenen) Rebreather Modus</dd>
+
+            <dt>Anzahl der Sensoren</dt>
+            <dd>Bestimmt die zur Messung des PPO2 herangezogenen Sensoren, z.B. wenn während eines 
+              Tauchausfluges ein Sensor defekt ist/wird</dd>
+
+            <dt>Akustische Warnungen</dt>
+            <dd>Akustische Warnungen ein/aus (Piep)</dd>
+
+            <dt>Log Intervall</dt>
+            <dd>Setzt das Intervall für die Einträge in der Protokolldatei im SPX42.</dd>
+          </dl>
+        </li>
+
+        <li>
+          <!-- statusbar -->
+          <b>Status Nachrichten und Kurzhilfen zu  Elementen unter der Maus.</b>
+        </li>
+
+        <li>
+            <!-- comm indicator -->
+            <b>Indikator für die Warteschlange der zu schreibenden Kommandos an den SPX42</b>
+        </li>
+
+        <li>
+            <!-- akku -->
+            <b>Spannungswert des SPX42 (wenn verbunden)</b>
+        </li>
+  
+      </ol>
+
     </div>
   </div>
 
