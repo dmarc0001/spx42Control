@@ -423,27 +423,27 @@
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="195"/>
         <source>[ DECOMPRESSION ]</source>
-        <translation type="unfinished"></translation>
+        <translation>[ Dekompression ]</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="620"/>
         <source>[ SETPOINT ]</source>
-        <translation type="unfinished"></translation>
+        <translation>[ Setpoint ]</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="837"/>
         <source>[ DISPLAY ]</source>
-        <translation type="unfinished"></translation>
+        <translation>[ Display ]</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1044"/>
         <source>[ UNITS ]</source>
-        <translation type="unfinished"></translation>
+        <translation>[ Einheiten ]</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1278"/>
         <source>[ INDIVIDUAL ]</source>
-        <translation type="unfinished"></translation>
+        <translation>[ Individuell ]</translation>
     </message>
     <message>
         <location filename="../ui/DeviceConfigFragment.ui" line="1305"/>
@@ -978,43 +978,43 @@
         <translation>Tiefe: %03d</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="526"/>
+        <location filename="../ui/LogFragment.ui" line="516"/>
         <source>WRITE-TO-DATABASE</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="586"/>
+        <location filename="../ui/LogFragment.ui" line="576"/>
         <source>transfer status...</source>
         <translation>Transfer Indikator...</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="602"/>
+        <location filename="../ui/LogFragment.ui" line="592"/>
         <source>READ FROM DEVICE</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="605"/>
+        <location filename="../ui/LogFragment.ui" line="595"/>
         <source>read selected details from device...</source>
         <translation>lese selektierte Daten vom Gerät...</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="610"/>
-        <location filename="../ui/LogFragment.ui" line="613"/>
+        <location filename="../ui/LogFragment.ui" line="600"/>
+        <location filename="../ui/LogFragment.ui" line="603"/>
         <source>DETAIL DROP FROM DATABASE</source>
         <translation>lösche selektierte Daten aus der Datenbank</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="616"/>
+        <location filename="../ui/LogFragment.ui" line="606"/>
         <source>drop selected detail from database...</source>
         <translation>lösche selektierte Daten aus der Datenbank...</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="621"/>
+        <location filename="../ui/LogFragment.ui" line="611"/>
         <source>EXPORT DETAIL...</source>
         <translation>Export Details...</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="624"/>
+        <location filename="../ui/LogFragment.ui" line="614"/>
         <source>export selected details...</source>
         <translation>exportiere selektierte Daten...</translation>
     </message>
@@ -1393,6 +1393,14 @@
     </message>
 </context>
 <context>
+    <name>spx::AboutDialog</name>
+    <message>
+        <location filename="../utils/AboutDialog.cpp" line="32"/>
+        <source>Version: %1 - %2</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
     <name>spx::ChartDataWorker</name>
     <message>
         <location filename="../database/ChartDataWorker.cpp" line="40"/>
@@ -1400,23 +1408,23 @@
         <translation>Vorschau</translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="307"/>
+        <location filename="../database/ChartDataWorker.cpp" line="310"/>
         <source>TEMP [&amp;ordm;C]</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="325"/>
-        <location filename="../database/ChartDataWorker.cpp" line="366"/>
+        <location filename="../database/ChartDataWorker.cpp" line="328"/>
+        <location filename="../database/ChartDataWorker.cpp" line="369"/>
         <source>DIVE TIME</source>
         <translation>Tauchzeit</translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="335"/>
+        <location filename="../database/ChartDataWorker.cpp" line="338"/>
         <source>PPO2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="350"/>
+        <location filename="../database/ChartDataWorker.cpp" line="353"/>
         <source>SETPOINT</source>
         <translation></translation>
     </message>
@@ -1425,7 +1433,7 @@
         <translation type="vanished">Tauchgang Ansicht</translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="293"/>
+        <location filename="../database/ChartDataWorker.cpp" line="296"/>
         <source>DEPTH [m]</source>
         <translation>Tiefe [m]</translation>
     </message>
@@ -1730,10 +1738,14 @@
 <context>
     <name>spx::HelpDialog</name>
     <message>
-        <location filename="../utils/HelpDialog.cpp" line="20"/>
         <source>qrc:/help/help_en.html#mark_%1</source>
         <translatorcomment>Sprache der Hilfe</translatorcomment>
-        <translation>qrc:/help/help_de.html#mark_%1</translation>
+        <translation type="vanished">qrc:/help/help_de.html#mark_%1</translation>
+    </message>
+    <message>
+        <location filename="../utils/HelpDialog.cpp" line="20"/>
+        <source>%1/helpsystem/en/help.html</source>
+        <translation>%1/helpsystem/de/help.html</translation>
     </message>
 </context>
 <context>
@@ -1794,59 +1806,59 @@
         <translation>Export Fehlgeschlagen!</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="534"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="532"/>
         <source>SELECT EXPORT DIR</source>
         <translation>EXPORT VERZEICHNIS</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="551"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="549"/>
         <source>EXPORT DIRECTORY ERROR</source>
         <translation>EXPORT VERZEICHNIS FEHLER</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="551"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="549"/>
         <source>The selected Directory don&apos;t exist!</source>
         <translation>Das gewählte Verzeichnis existiert nicht!</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="594"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="592"/>
         <source>EXPORT WARNING</source>
         <translation>EXPORT WARNUNG</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="594"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="592"/>
         <source>An other export is current running...</source>
         <translation>Ein anderer Export arbeitet momentan...</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1208"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1206"/>
         <source>EXPORT SUCCESS</source>
         <translation>Export Erfolgreich</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1208"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1206"/>
         <source>Export was successful to file: 
 &lt;%1&gt;</source>
         <translation>Der Export war erfolgreich, Datei: 
 &lt;%1&gt;</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1215"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1213"/>
         <source>EXPORT ERROR</source>
         <translation>EXPORT FEHLER</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1215"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1213"/>
         <source>Can&apos;t export dives to UDDF file</source>
         <translation>Kann Tauchgänge nicht in UDDF Datei exportieren</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="899"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="897"/>
         <source>unknown</source>
         <translation>unbekannt</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="910"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="908"/>
         <source>database empty</source>
         <translation>Datenbank leer</translation>
     </message>
