@@ -76,6 +76,8 @@ namespace spx
       miniChart->setTheme( QChart::ChartTheme::ChartThemeDark );
       dummyChart->setTheme( QChart::ChartTheme::ChartThemeDark );
     }
+    chartView->setMinimumHeight( 180 );
+    chartView->setMaximumHeight( 250 );
     ui->logDetailsGroupBox->layout()->addWidget( chartView.get() );
     // GUI dem Onlinestatus entsprechend vorbereiten
     setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
