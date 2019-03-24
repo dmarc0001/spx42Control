@@ -22,7 +22,7 @@ int main( int argc, char *argv[] )
   // Übersetzter...
   //
   QTranslator qtTranslator;
-  QDir currDir = QDir::currentPath();
+  QDir currDir = QCoreApplication::applicationDirPath();  // QDir::currentPath();
   QString fileName( baseName );
   QString prefix = "_";
   QString suffix = ".qm";
