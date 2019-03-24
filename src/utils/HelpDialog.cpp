@@ -17,7 +17,12 @@ namespace spx
     // und das Sprachenabhängig
     //
     QWebEngineView *view = new QWebEngineView( parent );
-    QString localFileName = tr( "%1/helpsystem/en/help.html" ).arg( QDir::currentPath() );
+    // QStandardPaths::standardLocations( QStandardPaths::RuntimeLocation ).value( 0 )
+    // QString localFileName = tr( "%1/helpsystem/en/help.html" ).arg( QDir::currentPath() );
+    //  QString QCoreApplication::applicationDirPath()
+    // QString localFileName = tr( "%1/helpsystem/en/help.html" ).arg( QStandardPaths::standardLocations(
+    // QStandardPaths::RuntimeLocation ).value( 0 ) );
+    QString localFileName = tr( "%1/helpsystem/en/help.html" ).arg( QCoreApplication::applicationDirPath() );
     QUrl url = QUrl::fromLocalFile( localFileName );
     view->load( url );
     lg->debug( QString( "HelpDialog::HelpDialog -> open url: <%1>" ).arg( url.toString() ) );
