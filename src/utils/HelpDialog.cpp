@@ -16,10 +16,30 @@ namespace spx
     // den Browser auf den richtrigen Abschnitt
     // und das Sprachenabhängig
     //
-    // QString url = tr( "qrc:/help/help_en.html" );
-    QString url = tr( "qrc:/help/help_en.html#mark_%1" ).arg( static_cast< int >( currentTab ), 2, 10, QChar( '0' ) );
-    lg->debug( QString( "HelpDialog::HelpDialog -> open url: <%1>" ).arg( url ) );
-    ui->helpTextBrowser->setSource( QUrl( url ) );
+    QWebEngineView *view = new QWebEngineView( parent );
+    QString localFileName = tr( "%1/helpsystem/en/help.html" ).arg( QCoreApplication::applicationDirPath() );
+    QUrl url = QUrl::fromLocalFile( localFileName );
+    view->load( url );
+    lg->debug( QString( "HelpDialog::HelpDialog -> open url: <%1>" ).arg( url.toString() ) );
+    //
+    // zur Marke springen, wenn das Dokument geladen ist (callback)
+    //
+    connect( view, &QWebEngineView::loadFinished, [=]( bool fin ) {
+      if ( fin )
+      {
+        QString jumpMark = QString( "document.getElementById(\"mark_%1\").scrollIntoView();" )
+                               .arg( static_cast< int >( currentTab ), 2, 10, QChar( '0' ) );
+        view->page()->runJavaScript( jumpMark );
+        lg->debug( QString( "HelpDialog::HelpDialog -> try jump to <%1>" ).arg( jumpMark ) );
+      }
+    } );
+    //
+    // Widget tauschen
+    //
+    QLayoutItem *old = this->layout()->replaceWidget( ui->helpPlainTextEdit, view, Qt::FindChildrenRecursively );
+    delete old;
+    // aktualisieren
+    this->update();
   }
 
   HelpDialog::~HelpDialog()
@@ -38,4 +58,4 @@ namespace spx
         break;
     }
   }
-}
+}  // namespace spx

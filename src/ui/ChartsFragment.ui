@@ -175,7 +175,7 @@
           <widget class="QComboBox" name="deviceSelectComboBox">
            <property name="minimumSize">
             <size>
-             <width>280</width>
+             <width>300</width>
              <height>24</height>
             </size>
            </property>
@@ -232,7 +232,7 @@
           <widget class="QComboBox" name="diveSelectComboBox">
            <property name="minimumSize">
             <size>
-             <width>300</width>
+             <width>350</width>
              <height>24</height>
             </size>
            </property>
@@ -267,7 +267,7 @@
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>80</width>
+             <width>120</width>
              <height>20</height>
             </size>
            </property>

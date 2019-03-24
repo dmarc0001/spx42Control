@@ -1,0 +1,251 @@
+﻿<!doctype html>
+<html itemscope="" itemtype="http://schema.org/WebPage" lang="en"></html>
+<head>
+    <meta charset="UTF-8">
+    <title>HELP for SUBMATIX SPX42Control</title> 
+    <link rel="stylesheet" href="helpstyle-en.css">
+</head>
+<body>
+  <div id="overview">
+    <h1>OVERVIEV</h1>
+    <div class="text">
+      This programm (or app for application) controls the SPX42 Divecomputer over an 
+      Bluetooth connection. Is sets
+      date and time (if the firmware support this), it sets propertys like decompression
+      settings, units and so fort. <br />
+
+      The app is also for reading log data from the dive computer, it can visualize this
+      and can export the data via the special UDDF file format for import and using 
+      the data in external programs like "subsurface" or "Diving Log" on many systems.
+    </div>
+  </div>
+
+  <div id="mark_00">
+    <h1>CONNECT TAB</h1>
+    <div class="text">
+    The app starts in the "Connect" Tab.<br />
+    <div class="image_preview">
+      <img class="preview" src="dark_start.png" alt="start view" title="DARK THEME" >
+      <img class="preview" src="light_start.png" alt="start view" title="LIGHT THEME">
+    </div>
+
+    The app comes with two prepared themes, a dark and a light one. You can see it on the preview
+    picture. You can make an own theme with css style elements an apply them to the app. This
+    will describe later.<br />
+
+    To connect an SPX42 dive computer you have to pair them with the operating system before. 
+    Sorry, this is a secure feature of the system software. Please read the documentation
+    of your system to make an pairing.<br />
+    </div>
+  </div>
+
+  <div id="mark_01">
+    <h1>SPX42 INFO</h1>
+    <div class="text">
+      <div class="image_preview">
+        <img class="preview" src="light_device_info.png" alt="device info" title="LIGHT THEME">
+        <img class="preview" src="dark_device_info.png" alt="device info" title="DARK THEME" >
+      </div>
+      This view shows a few fundamental informations of the connected SPX42 computer,
+      like model, serial number and firmware version.
+    </div>
+  </div>
+
+  <div id="mark_02">
+    <h1>SPX42 CONFIG</h1>
+    <div class="text">
+      <div class="image_preview">
+        <img class="preview" src="dark_config.png" alt="device config" title="DARK THEME" >
+        <img class="preview" src="light_config.png" alt="device config" title="LIGHT THEME">
+      </div>
+      On this page you can configure qll parameters of the SPX42 diving comnputer, except gases.<br />
+
+      <img src="light_config_scheme.png" alt="device config" title="LIGHT THEME">
+
+      <!-- List -->
+      <ol>
+        <li>
+          <b>Tool bar</b><br />
+          Here are the fundamental functions on one piece. from left to right:
+          <ul>
+            <li>Exit the Application</li>
+            <li>Call appp properties dialog</li>
+            <li>Call this help</li>
+            <li>Indicate online status / disconnect SPX32</li>
+          </ul>  
+        </li>
+
+        <li>
+          <b>Select the different tabs/pages</b>
+        </li>
+
+        <li>
+          <!-- DECO-->
+          <b>Configure the properties for decompression:</b><br />
+          <i>see also „Understanding M-Values“ von Eric C. Baker</i>
+          <dl>
+            <dt>GF-LOW:</dt>
+            <dd>lower gradient value</dd>
+
+            <dt>GF-HIGH:</dt>
+            <dd>higher gradient value</dd>
+
+            <dt>CONSERVATISM:</dt>
+            <dd>if not "user" then set this GF-LOW and GF-HIGH with presets</dd>
+
+            <dt>DYN GRADIENTS ON:</dt>
+            <dd>if "on" compute the SPX42 lesser conservatism gradients in case of bailout situation</dd>
+
+            <dt>LAST DECOSTOP:</dt>
+            <dd>where ist the last deco stop</dd>
+
+            <dt>DEEP STOPS ON:</dt>
+            <dd>if "on" makes the SPX42 depp decostops</dd>
+          </dl>
+        </li>
+
+        <li>
+          <!-- SETPOINT-->
+          <b>Properties for oxygen partial pressure:</b>
+          <dl>
+            <dt>AUTOSETPOINT:</dt>
+            <dd>if not off, switch the setpoint between 0.7 bar PPO2 and the destination setpoint if the 
+              selectet deep arrived</dd>
+
+            <dt>SETPOINT:</dt>
+            <dd>the desired setpoint</dd>
+          </dl>
+        </li>
+
+        <li>
+          <!-- DISPLAY -->
+          <b>Properties for the display of the SPX42:</b>
+          <dl>
+            <dt>BRIGHTNESS</dt>
+            <dd>While the dive iluminates the display whith percentual brightness of this value</dd>
+
+            <dt>ORIENTATION</dt>
+            <dd>The display can show in landscape and 180 degrees rotated landscape</dd>
+          </dl>
+        </li>
+
+        <li>
+          <!-- UNITS -->
+          <b>Physical units which operates the SPX42</b>
+          <dl>
+            <dt>TEMPERATURE UNIT</dt>
+            <dd>The possibillitys are 'CELSIUS' and 'FAHRENHEID'</dd>
+
+            <dt>DEPTH UNIT</dt>
+            <dd>Metric or imperia - meters or foot</dd>
+
+            <dt>WATER TYPE</dt>
+            <dd>Generally freshwater or saltwater</dd>
+          </dl>
+        </li>
+
+        <li>
+          <!-- Individual-->
+          <b>If licensed: individual options / properties</b>
+          <dl>
+            <dt>SENSORS ON</dt>
+            <dd>Here you can generally switch sensors on or off</dd>
+
+            <dt>PSCR MODE ON</dt>
+            <dd>Switch Passive Semiclosed Rebreather Mode on or off</dd>
+
+            <dt>SENSORS COUNT</dt>
+            <dd>Select the count of sensors for compute PO2, b.e. you haven an defect sensor while a diving trip</dd>
+
+            <dt>ACOUSTIC WARNINGS ON</dt>
+            <dd>Switch on or off acoustic warnings (beep)</dd>
+
+            <dt>LOG INTERVAL</dt>
+            <dd>Set the interval for log diving values into the logfile in the SPX42</dd>
+          </dl>
+        </li>
+
+        <li>
+          <!-- statusbar -->
+          <b>Status messages and short help vor items under the mouse</b>
+        </li>
+
+        <li>
+            <!-- comm indicator -->
+            <b>Indicator for the queue for write commands in direction to SPX42</b>
+        </li>
+
+        <li>
+            <!-- akku -->
+            <b>Power value for SPX42 acku (if connected)</b>
+        </li>
+  
+      </ol>
+    </div>
+  </div>
+
+<div id="mark_03">
+<h1>SPX42 GASES</h1>
+<p>
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
+sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
+diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata <br/>
+sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
+diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+</p>
+</div>
+
+<div id="mark_04">
+<h1>SPX42 LOGS</h1>
+<p>
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
+sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
+diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata <br/>
+sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
+diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+</p>
+</div>
+
+<div id="mark_05">
+<h1>GRAPICAL OVERVIEW</h1>
+<p>
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
+sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
+diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata <br/>
+sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
+diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+</p>
+</div>
+
+<div class="ende">
+&nbsp; <br />
+</div>
+</body>
+</html>

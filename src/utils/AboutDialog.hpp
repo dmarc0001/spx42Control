@@ -15,6 +15,7 @@ namespace spx
   {
     private:
     Q_OBJECT
+    static QString version;
     std::unique_ptr< Ui::AboutDialog > ui;
     std::shared_ptr< Logger > lg;
     AppConfigClass &cf;

@@ -1,0 +1,98 @@
+body
+{
+  background-color:#efefef;
+  color:#606060;
+  margin-left:12px;
+  margin-right:24px;
+}
+
+h1
+{
+  color:darkblue;
+  margin-top:35px;
+  margin-bottom:8px;
+  margin-left:12px;
+}
+
+div.ende
+{
+  min-height:50px;
+  margin-top:60px;
+}
+
+div.paragraph::after
+{
+  content: "\A";
+  white-space: pre;
+}
+
+div.text
+{
+  lang: de;
+  padding-left:12px;
+  padding-right:24px;
+  -ms-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+  text-align: justify;
+}
+
+div.image_preview
+{
+  padding:4px;
+  width:30%; 
+  /*float: left;    */
+}
+
+div.image_preview:hover,
+div.image_preview:focus
+{
+  width: 95%;
+  position:absolute;
+  text-align: center;
+  z-index: 5;
+  transition: all .5s;
+}
+
+div.image_preview:hover img.preview
+{
+  border: 2px solid #000129af;
+  padding: 0px;
+  border-radius: 2px;
+  box-shadow: 3px 6px 8px #000000b4;
+}
+
+img.preview
+{
+  padding: 2px;
+  width: 46%;
+  height: auto;
+}
+
+ol > li
+{
+  margin-block-start: 1em;
+}
+
+ol > li > b
+{
+  font-variant:small-caps;
+}
+
+dl
+{
+  margin-block-start: 0;
+  padding-left: 2em;
+}
+
+dt
+{
+  font-weight: bold;
+  font-family: 'Courier New', Courier, monospace;
+  color: darkgreen;
+}
+
+dd
+{
+  margin-inline-start: 1em;
+}

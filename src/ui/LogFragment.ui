@@ -500,6 +500,16 @@
              </widget>
             </item>
             <item>
+             <widget class="QWidget" name="diveProfileGraphicsView" native="true">
+              <property name="minimumSize">
+               <size>
+                <width>250</width>
+                <height>180</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QLabel" name="dbWriteNumLabel">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">

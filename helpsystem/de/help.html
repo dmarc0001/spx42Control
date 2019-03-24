@@ -1,0 +1,254 @@
+﻿<!doctype html>
+<html itemscope="" itemtype="http://schema.org/WebPage" lang="en"></html>
+<head>
+    <meta charset="UTF-8">
+    <title>HELP for SUBMATIX SPX42Control</title>
+    <link rel="stylesheet" href="helpstyle-de.css">
+</head>
+<body>
+  <div class="paragraph" id="overview">
+    <h1>Übersicht</h1>
+    <div class="text">
+      Diese Programm (oder kurz auch App für Applikation) steuert den SPX42 Tauchcomputer 
+      via Bluetooth Verbindung. Es setzt DAtum und Zeit (wenn die Firmware dies unterstützt), 
+      es setzt Einstellungen wie Dekompressionseinstellungen, Masseinheiten und so weiter.<br />
+      Die App ist weiter zum auslesen der Tauchprotokolle und deren grafische Darstellung, 
+      sie kann die Daten in einem Speziellen UDDF Dateiformat exportieren und so die Daten
+      für andere Programme zugänglich machen. Solceh Programme sind z.B. "subsurface" 
+      oder "Diving Log" auf verschiedenen Betriebssystemen.
+    </div>
+  </div>
+
+  <div class="paragraph" id="mark_00">
+    <h1>Verbindung</h1>
+    <div class="text">
+      Die App startet mit der Verbindungsseite. <br />
+
+      <div class="image_preview">
+        <img class="preview" src="dark_start.png" alt="Startansicht view" title="DUNKLES THEMA THEMA" >
+        <img class="preview" src="light_start.png" alt="Startansicht" title="HELLES THEMA">
+      </div>
+
+      Die App kommt mit zwei vorbereiteten Themen, einem hellen und einem dunklen Thema. 
+      Du kannst sie an den Vorschaubildern rechts erkennen. Du kannst eigene Themen mittels einer
+      css Datei erstellen und sie für die App anwenden. Dies wird später beschrieben.<br />
+      Um den SPX42 Tauchcomputer zu verbinden muss zunächst ein paaren (pairing) mit dem Betriebssystem
+      erfolgen. Dies ist ein Sicherheitsaspekt moderner Betriebssysteme und nicht mit der App
+      zu machen. Bitte lies die Dokumentation deines Betriebssystems um den SPX42 Tauchcomputer mit
+      deinem Betriebssystem zu paaren. <br />
+    </div>
+  </div>
+
+  <div class="paragraph" id="mark_01">
+    <h1>SPX42 Informationen</h1>
+    <div class="text">
+      <div class="image_preview">
+        <img class="preview" src="light_device_info.png" alt="Geräte Information" title="HELLES THEMA">
+        <img class="preview" src="dark_device_info.png" alt="Geräte information" title="DUNKLES THEMA" >
+      </div>
+      Diese Ansicht zeigt einige grundsätzliche Informationen des verbundenen SPX42 Computers
+      wie Modell, Seriennummer und Firmwareversion.
+    </div>
+  </div>
+
+  <div class="paragraph" id="mark_02">
+    <h1>SPX42 Konfiguration</h1>
+    <div class="text">
+      <div class="image_preview">
+        <img class="preview" src="dark_config.png" alt="Geräte Knofiguration" title="DUNKLES THEMA" >
+        <img class="preview" src="light_config.png" alt="Geräte Konfiguration" title="HELLES THEMA">
+      </div>
+      Auf dieser Seite kannst du alle Parameter des SPX42 Tauchcomputers einstellen, ausser die für Gase.<br />
+
+      <img src="dark_config_scheme.png" alt="device config" title="DUNKLES THEMA">
+
+      <!-- List -->
+      <ol>
+        <li>
+          <b>Werkzeugleister</b><br />
+          Hier sind die fundamentalen Funktionen an einem Platz. Von links nach rechts:
+          <ul>
+            <li>Beende/Verlasse die Applikation</li>
+            <li>Öffne den Einstellungsdialog</li>
+            <li>Rufe diese Hilfe auf</li>
+            <li>Zeige den Online Status / trenne Verbindung zum SPX42</li>
+          </ul>  
+        </li>
+
+        <li>
+          <b>Wähle die verschiedenen Tabs / Seiten des Programmes</b>
+        </li>
+
+        <li>
+          <!-- DECO-->
+          <b>Konfiguriere die Einstellungen für die Dekompression:</b><br />
+          <i>Siehe auch „Understanding M-Values“ von Eric C. Baker</i>
+          <dl>
+            <dt>GF-LOW:</dt>
+            <dd>Unterer Gradientenwert</dd>
+
+            <dt>GF-HIGH:</dt>
+            <dd>oberer Gradientenwert</dd>
+
+            <dt>Konservativ:</dt>
+            <dd>Wenn nicht "Benutzerdefiniert" dann setzt diese Voreinstellung GF-LOW und GF-HIGH</dd>
+
+            <dt>Dynamische Gradienten:</dt>
+            <dd>Wenn diese Option ausgeewählt ist, werden im Fall des Bailouts die Konservatismus Werte 
+              auf weniger Konservativ gesetzt</dd>
+
+            <dt>Letzter Dekostop:</dt>
+            <dd>In welcher Tiefe erfolgt der letzte Deokompressionsstop</dd>
+
+            <dt>Tiefe Stopps AN:</dt>
+            <dd>Wenn "AN" erfolgen die esten Dekompressionsstopps in größerer Tiefe</dd>
+          </dl>
+        </li>
+
+        <li>
+          <!-- SETPOINT-->
+          <b>Einstellungen für den Sauerstoff Partialdruck:</b>
+          <dl>
+            <dt>Automatischer Setpoint:</dt>
+            <dd>Ist der automatische Setpoint AUS, dann wechselt der Setpoint von 0,7 bat PPO2 an der 
+              Oberfläche zum programierten Wert (PPO2/Setpoint) unterhalb der hier angegebenen Tiefe.</dd>
+
+            <dt>PPO2/Setpoint:</dt>
+            <dd>der beabsichtigte Sauerstoff Partialdruck</dd>
+          </dl>
+        </li>
+
+        <li>
+          <!-- DISPLAY -->
+          <b>Einstellungen für die SPX42 Anzeige:</b>
+          <dl>
+            <dt>Helligkeit</dt>
+            <dd>Die Helligkeit der Anzeige während des Tauchganges in Prozent der maximalen Helligkeit.</dd>
+
+            <dt>Ausrichtung</dt>
+            <dd>Die Anzeige kann im Breitformat und um 180 Grad gedreht betrieben werden.</dd>
+          </dl>
+        </li>
+
+        <li>
+          <!-- UNITS -->
+          <b>Physikalische Einheiten für die Arbeit des SPX42</b>
+          <dl>
+            <dt>Temperatur Einheit</dt>
+            <dd>Die Möglichkeiten sind 'Celsius' und 'Fahrenheid'</dd>
+
+            <dt>Tiefe</dt>
+            <dd>Metrisch oder imperial - Meter oder Fuß</dd>
+
+            <dt>Wassertyp</dt>
+            <dd>Generell Süßwasser oder Salzwasser</dd>
+          </dl>
+        </li>
+
+        <li>
+          <!-- Individual-->
+          <b>Wenn die Funktion lizensiert ist: Individuelle Optionen / Einstelungen</b>
+          <dl>
+            <dt>Sensoren AN</dt>
+            <dd>Hier werden die Sensoren generell ein oder aus geschaltet</dd>
+
+            <dt>PSCR EIN</dt>
+            <dd>Schaltet das Gerät in den passiven (semi-geschlossenen) Rebreather Modus</dd>
+
+            <dt>Anzahl der Sensoren</dt>
+            <dd>Bestimmt die zur Messung des PPO2 herangezogenen Sensoren, z.B. wenn während eines 
+              Tauchausfluges ein Sensor defekt ist/wird</dd>
+
+            <dt>Akustische Warnungen</dt>
+            <dd>Akustische Warnungen ein/aus (Piep)</dd>
+
+            <dt>Log Intervall</dt>
+            <dd>Setzt das Intervall für die Einträge in der Protokolldatei im SPX42.</dd>
+          </dl>
+        </li>
+
+        <li>
+          <!-- statusbar -->
+          <b>Status Nachrichten und Kurzhilfen zu  Elementen unter der Maus.</b>
+        </li>
+
+        <li>
+            <!-- comm indicator -->
+            <b>Indikator für die Warteschlange der zu schreibenden Kommandos an den SPX42</b>
+        </li>
+
+        <li>
+            <!-- akku -->
+            <b>Spannungswert des SPX42 (wenn verbunden)</b>
+        </li>
+  
+      </ol>
+
+    </div>
+  </div>
+
+  <div class="paragraph" id="mark_03">
+    <h1>SPX42 GASES</h1>
+    <p>
+    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+    accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
+    sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+    elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
+    diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+    gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+    accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata <br/>
+    sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+    elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
+    diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+    gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+    </p>
+  </div>
+
+  <div class="paragraph" id="mark_04">
+    <h1>SPX42 LOGS</h1>
+    <p>
+    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+    accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
+    sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+    elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
+    diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+    gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+    accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata <br/>
+    sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+    elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
+    diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+    gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+    </p>
+  </div>
+
+  <div class="paragraph" id="mark_05">
+    <h1>GRAPICAL OVERVIEW</h1>
+    <p>
+    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+    accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
+    sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+    elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
+    diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+    gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+    accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata <br/>
+    sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+    elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
+    diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+    gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+    </p>
+  </div>
+
+    <div class="ende">
+      &nbsp; <br />
+    </div>
+</body>
+</html>
