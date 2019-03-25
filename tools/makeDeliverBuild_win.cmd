@@ -15,6 +15,7 @@ SET QT_BASEDIR=%QT_DIR%\%QT_PREFIX%\msvc2017_64\bin
 SET QT_TOOLS=%QT_DIR%\Tools
 SET QT_INSTALLER_DIR=%QT_TOOLS%\QtInstallerFramework\3.0\bin
 SET PROJECTBUILDDIR=DEPLOYDIR
+SET HELPSOURCE=%PROJECTBASE%\helpsystem
 SET TRANSLATION=%PROJECTBASE%\src\translations
 SET INSTALLERBASE=%PROJECTBASE%\installer
 SET EXTRAS=%INSTALLERBASE%\extra
@@ -79,6 +80,14 @@ if "%MAKE_DONE%" == "false" goto false_end
 echo kopiere translations (%TRANSLATION%\*.qm)  ...
 if exist "%TRANSLATION%\*.qm" (
   copy /Y  "%TRANSLATION%\*.qm"  ".\out\"
+)
+
+:: Hilfadateien kopieren, gimp vorlagen wieder entfernen
+echo kopiere hilfedateien (%HELPSOURCE%) ...
+if exist %HELPSOURCE% (
+  xcopy /S  %HELPSOURCE% ".\out\helpsystem\"
+  del /F /Q ".\out\helpsystem\de\*.xcf"
+  del /F /Q ".\out\helpsystem\en\*.xcf"
 )
 
 cd out
