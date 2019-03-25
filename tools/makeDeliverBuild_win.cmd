@@ -82,10 +82,12 @@ if exist "%TRANSLATION%\*.qm" (
   copy /Y  "%TRANSLATION%\*.qm"  ".\out\"
 )
 
-:: Hilfadateien kopieren
+:: Hilfadateien kopieren, gimp vorlagen wieder entfernen
 echo kopiere hilfedateien (%HELPSOURCE%) ...
 if exist %HELPSOURCE% (
   xcopy /S  %HELPSOURCE% ".\out\helpsystem\"
+  del /F /Q ".\out\helpsystem\de\*.xcf"
+  del /F /Q ".\out\helpsystem\en\*.xcf"
 )
 
 cd out

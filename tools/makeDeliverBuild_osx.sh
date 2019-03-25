@@ -99,6 +99,7 @@ echo "kopiere helpsystem ($HELPSYSTEM nach $HELPDESTINATION )..."
 if [ -d $HELPSYSTEM ] 
 then
   cp -rf $HELPSYSTEM $HELPDESTINATION/
+  find $HELPDESTINATION -type f -name "*.xcf" -exec rm -f "{}" \;
 fi
 
 #
