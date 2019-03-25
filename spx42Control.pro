@@ -64,7 +64,7 @@ UI_DIR                                 = ui
 #
 # momentan noch als TESTVERSION markieren
 #
-DEFINES                                += TESTVERSION
+#DEFINES                                += TESTVERSION
 DEFINES                                += VMAJOR=$$MAJOR
 DEFINES                                += VMINOR=$$MINOR
 DEFINES                                += VPATCH=$$PATCH
