@@ -73,7 +73,7 @@ namespace spx
     int he;
     //! Nullzeit zu diesem Zeitpunkt
     int zeroTime;
-    //! nächster Logeintrag in zeitlichem Abstand
+    //! nächster Logeintrag in zeitlichem Abstand in sek
     int nextStep;
     // Konstruktoren
     DiveLogEntry( void );

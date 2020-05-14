@@ -7,14 +7,14 @@ namespace spx
    * @param parent
    */
   ChartGraphicalValueCallout::ChartGraphicalValueCallout( std::shared_ptr< Logger > logger, QChart *parent )
-      : QGraphicsItem( parent ), lg( logger ), parentChart( parent ), currSeries( nullptr )
+      : QGraphicsItem( parent ), lg( logger ), calloutLabelFont( QFont( "Monospace" ) ), parentChart( parent ), currSeries( nullptr )
   {
     // if ( parent != nullptr )
     // calloutLabelFont = parent->font();
     //
     // bessere Darstellung Monofont...
     //
-    calloutLabelFont = QFont( "Monospace" );
+    // calloutLabelFont = QFont( "Monospace" );
     calloutLabelFont.setStyleHint( QFont::TypeWriter );
     //
     calloutLabelFont.setPointSize( 9 );

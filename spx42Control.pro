@@ -7,7 +7,11 @@
 ###############################################################################
 MAJOR                                  = 1
 MINOR                                  = 0
+<<<<<<< HEAD
 PATCH                                  = 0
+=======
+PATCH                                  = 1
+>>>>>>> dev/stabilizing
 BUILD                                  = 0 # win build number
 
 win32:VERSION_PE_HEADER                = $${MAJOR}.$${MINOR}
@@ -38,6 +42,7 @@ QT                                     += webenginewidgets
 CONFIG                                 += stl
 CONFIG                                 += c++14
 CONFIG                                 += lrelease
+CONFIG                                 += sdk_no_version_check
 INCLUDEPATH                            += src
 DESTDIR                                = out
 MOC_DIR                                = moc
