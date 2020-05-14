@@ -5,9 +5,9 @@
 #### Autor: Dirk Marciniak                                                 ####
 ####                                                                       ####
 ###############################################################################
-MAJOR                                  = 0
-MINOR                                  = 1
-PATCH                                  = 1beta
+MAJOR                                  = 1
+MINOR                                  = 0
+PATCH                                  = 1
 BUILD                                  = 0 # win build number
 
 win32:VERSION_PE_HEADER                = $${MAJOR}.$${MINOR}
@@ -38,6 +38,7 @@ QT                                     += webenginewidgets
 CONFIG                                 += stl
 CONFIG                                 += c++14
 CONFIG                                 += lrelease
+CONFIG                                 += sdk_no_version_check
 INCLUDEPATH                            += src
 DESTDIR                                = out
 MOC_DIR                                = moc
