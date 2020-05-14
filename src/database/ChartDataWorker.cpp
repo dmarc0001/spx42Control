@@ -226,7 +226,7 @@ namespace spx
     QTimeZone tz = now.timeZone();
     //
     // Die Zeit in Sekunden wieder abrechnen damit die dann für
-    // die Labels wieder zugerechnet wer4den können?
+    // die Labels wieder zugerechnet werden können?
     // und die Scala bei 0 beginnt
     //
     milisecounds = 0.0 - ( static_cast< qreal >( tz.offsetFromUtc( now ) ) * 1000.0 );
