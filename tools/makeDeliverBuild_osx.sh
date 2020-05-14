@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# erstelle ein instll build
+# erstelle ein install build
 
 #
 # Definitionen
