@@ -245,7 +245,6 @@ namespace spx
     // chartView->setChart( diveChart.get() );
     if ( dbgetDataFuture.isFinished() )
     {
-      // QThreadPool::globalInstance()
       bigDiveChart = new QtCharts::QChart( nullptr );
       ppo2DiveChart = new QtCharts::QChart( nullptr );
 
