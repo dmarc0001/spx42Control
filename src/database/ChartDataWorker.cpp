@@ -332,7 +332,6 @@ namespace spx
     lg->debug( "ChartDataWorker::makeChartData -> create time axis..." );
     // Zeitachse
     bigChartTimeAxis = new QDateTimeAxis();
-    // bigChartTimeAxis->setFormat( "mm:ss' min'" );
     bigChartTimeAxis->setFormat( "H:mm:ss" );
     bigChartTimeAxis->setTitleText( tr( "DIVE TIME" ) );
     bigChartTimeAxis->setTickCount( 10 );
