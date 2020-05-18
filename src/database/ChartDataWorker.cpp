@@ -153,7 +153,7 @@ namespace spx
 
   bool ChartDataWorker::makeDiveChart( QtCharts::QChart *bigchart, QChart *ppo2chart, const QString &deviceMac, int diveNum )
   {
-    qreal milisecounds = 0.0;
+    qint64 milisecounds = 0;
     DiveDataSetsPtr dataSet;
     QAreaSeries *depthAreaSeries;
     QLineSeries *depthSeries;
@@ -217,30 +217,40 @@ namespace spx
     setpointSeries = new QLineSeries();
     setpointSeries->setName( ChartDataWorker::setpointSeriesName );
     //
-    // finde den momentanen offset zu UTC heraus
-    // das ist für die Anzeige der DateTimeAxis wichtig
-    // da die immer die Zeit als UTC aus der Serie nehmen
-    // und bei mir die Zeit immer bei 0 anfangen soll
+    // Zeit heute (in local time)
     //
     QDateTime now = QDateTime::currentDateTime();
-    QTimeZone tz = now.timeZone();
     //
-    // Die Zeit in Sekunden wieder abrechnen damit die dann für
-    // die Labels wieder zugerechnet werden können?
-    // und die Scala bei 0 beginnt
+    // Mitternacht, oder Anfang des Tages
     //
-    milisecounds = 0.0 - ( static_cast< qreal >( tz.offsetFromUtc( now ) ) * 1000.0 );
+    now.setTime( QTime( 0, 0 ) );
+    //
+    // jetzt Mitternacht als Basis nehmen, damit die Tauchzeit als Stunden/minuten/Sekunden
+    // angegeben werden. DAs funktioniert bis 24 Stunden Tauchgängen.
+    // unsauber aber funktioniert
+    //
+    milisecounds = now.toMSecsSinceEpoch();
     //
     // befülle Daten in die Serien
     //
     for ( auto singleSet : *dataSet.get() )
     {
-      depthSeries->append( milisecounds, singleSet.depth );
-      tempSeries->append( milisecounds, singleSet.temperature );
-      ppo2Series->append( milisecounds, singleSet.ppo2 );
-      setpointSeries->append( milisecounds, singleSet.setpoint );
-      nullDepthSeries->append( milisecounds, 0 );
-      milisecounds = milisecounds + ( static_cast< qreal >( singleSet.nextStep * 1000.0 ) );
+      //
+      // umrechnen in qreal, axis in double befüllen
+      //
+      qreal ms = static_cast< qreal >( milisecounds );
+      //
+      // befüllen
+      //
+      depthSeries->append( ms, singleSet.depth );
+      tempSeries->append( ms, singleSet.temperature );
+      ppo2Series->append( ms, singleSet.ppo2 );
+      setpointSeries->append( ms, singleSet.setpoint );
+      nullDepthSeries->append( ms, 0 );
+      //
+      // und den nächsten Schritt dazu rechnen
+      //
+      milisecounds += static_cast< qint32 >( singleSet.nextStep * 1000 );
     }
     //
     // Tiefen-Flächenserie machen
@@ -322,7 +332,6 @@ namespace spx
     lg->debug( "ChartDataWorker::makeChartData -> create time axis..." );
     // Zeitachse
     bigChartTimeAxis = new QDateTimeAxis();
-    // bigChartTimeAxis->setFormat( "mm:ss' min'" );
     bigChartTimeAxis->setFormat( "H:mm:ss" );
     bigChartTimeAxis->setTitleText( tr( "DIVE TIME" ) );
     bigChartTimeAxis->setTickCount( 10 );
