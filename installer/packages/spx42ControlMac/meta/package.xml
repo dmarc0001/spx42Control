@@ -2,6 +2,6 @@
     <DisplayName>SPX42 app execute (MAC)</DisplayName>
     <Description>Executable files for the spx42Control application.</Description> 
     <Version>1.0.2</Version>
-    <ReleaseDate>2020-05-17</ReleaseDate>
+    <ReleaseDate>2020-05-18</ReleaseDate>
     <Default>true</Default>
 </Package>
