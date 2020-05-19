@@ -261,11 +261,11 @@ namespace spx
    */
   void LogFragment::onReadLogContentClickSlot()
   {
-    lg->debug( "LogFragment::onReadLogContentSlot: ..." );
+    lg->debug( "LogFragment::onReadLogContentClickSlot: ..." );
     QModelIndexList indexList = ui->logentryTableWidget->selectionModel()->selectedIndexes();
     if ( ui->logentryTableWidget->rowCount() == 0 )
     {
-      lg->warn( "LogFragment::onReadLogContentSlot -> no log entrys!" );
+      lg->warn( "LogFragment::onReadLogContentClickSlot -> no log entrys!" );
       return;
     }
     //
@@ -273,11 +273,11 @@ namespace spx
     //
     if ( indexList.isEmpty() )
     {
-      lg->warn( "LogFragment::onReadLogContentSlot -> nothing selected, read all?" );
+      lg->warn( "LogFragment::onReadLogContentClickSlot -> nothing selected, read all?" );
       // TODO: Messagebox aufpoppen und Nutzer fragen
       return;
     }
-    lg->debug( QString( "LogFragment::onReadLogContentSlot -> read %1 logs from spx42..." ).arg( indexList.count() ) );
+    lg->debug( QString( "LogFragment::onReadLogContentClickSlot -> read %1 logs from spx42..." ).arg( indexList.count() ) );
     //
     // so, fülle mal die Queue mit den zu lesenden Nummern
     //
@@ -289,6 +289,7 @@ namespace spx
       //
       int row = idxEntry.row();
       QString entry = ui->logentryTableWidget->item( row, 0 )->text();
+      lg->debug( QString( "LogFragment::onReadLogContentClickSlot -> entry: %1..." ).arg( entry ) );
       QStringList el = entry.split( ':' );
       // in die Liste kommt die Nummer!
       if ( !el.isEmpty() && el.count() > 1 )
@@ -314,7 +315,7 @@ namespace spx
       //
       transferTimeout.start( TIMEOUTVAL * 8 );
       logWriter.reset();
-      lg->debug( QString( "LogFragment::onReadLogContentSlot -> request  %1 logs from spx42..." ).arg( logDetailNum ) );
+      lg->debug( QString( "LogFragment::onReadLogContentClickSlot -> request  %1 logs from spx42..." ).arg( logDetailNum ) );
       tryStartLogWriterThread();
     }
   }
@@ -328,7 +329,6 @@ namespace spx
     QString deviceAddr;
     QString depthStr = " ? ";
     int diveNum = 0;
-    double depth = 0;
     int row = index.row();
     // items finden
     // TODO: absichern wenn kene Daten vorhanden sind (kann vorkommen)
@@ -336,7 +336,7 @@ namespace spx
     QTableWidgetItem *clicked2ndItem = ui->logentryTableWidget->item( row, 1 );
     // Aus dem Text die Nummer extraieren
     QString entry = clicked1stItem->text();
-    lg->debug( QString( "LogFragment::onLogListViewClickedSlot: data: %1..." ).arg( entry ) );
+    lg->debug( QString( "LogFragment::onLogListClickeSlot: data: %1..." ).arg( entry ) );
     // die Nummer des dives extraieren
     // und den Datumsstring für die Anzeige extraieren
     //
@@ -384,7 +384,7 @@ namespace spx
       chartView->setChart( dummyChart );
       if ( !deviceAddr.isEmpty() )
       {
-        depth = ( database->getMaxDepthFor( deviceAddr, diveNum ) / 10.0 );
+        double depth = ( database->getMaxDepthFor( deviceAddr, diveNum ) / 10.0 );
         if ( depth > 0 )
         {
           //
@@ -663,7 +663,7 @@ namespace spx
     char kdo;
     int logNumber;
     //
-    lg->debug( "ConnectFragment::onDatagramRecivedSlot..." );
+    lg->debug( "ConnectFragment::onCommandRecivedSlot..." );
     //
     // alle abholen...
     //
@@ -677,14 +677,14 @@ namespace spx
           // Kommando ALIVE liefert zurück:
           // ~03:PW
           // PX => Angabe HEX in Milivolt vom Akku
-          lg->debug( "LogFragment::onDatagramRecivedSlot -> alive/acku..." );
+          lg->debug( "LogFragment::onCommandRecivedSlot -> alive/acku..." );
           ackuVal = ( recCommand->getValueFromHexAt( SPXCmdParam::ALIVE_POWER ) / 100.0 );
           emit onAkkuValueChangedSig( ackuVal );
           break;
         case SPX42CommandDef::SPX_APPLICATION_ID:
           // Kommando APPLICATION_ID (VERSION)
           // ~04:NR -> VERSION als String
-          lg->debug( "LogFragment::onDatagramRecivedSlot -> firmwareversion..." );
+          lg->debug( "LogFragment::onCommandRecivedSlot -> firmwareversion..." );
           // Setzte die Version in die Config
           spxConfig->setSpxFirmwareVersion( recCommand->getParamAt( SPXCmdParam::FIRMWARE_VERSION ) );
           spxConfig->freezeConfigs( SPX42ConfigClass::CF_CLASS_SPX );
@@ -700,7 +700,7 @@ namespace spx
         case SPX42CommandDef::SPX_SERIAL_NUMBER:
           // Kommando SERIAL NUMBER
           // ~07:XXX -> Seriennummer als String
-          lg->debug( "LogFragment::onDatagramRecivedSlot -> serialnumber..." );
+          lg->debug( "LogFragment::onCommandRecivedSlot -> serialnumber..." );
           spxConfig->setSerialNumber( recCommand->getParamAt( SPXCmdParam::SERIAL_NUMBER ) );
           spxConfig->freezeConfigs( SPX42ConfigClass::CF_CLASS_SPX );
           setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
@@ -711,7 +711,7 @@ namespace spx
           // übergeben LS,CE
           // LS : License State 0=Nitrox,1=Normoxic Trimix,2=Full Trimix
           // CE : Custom Enabled 0= disabled, 1=enabled
-          lg->debug( "LogFragment::onDatagramRecivedSlot -> license state..." );
+          lg->debug( "LogFragment::onCommandRecivedSlot -> license state..." );
           spxConfig->setLicense( recCommand->getParamAt( SPXCmdParam::LICENSE_STATE ),
                                  recCommand->getParamAt( SPXCmdParam::LICENSE_INDIVIDUAL ) );
           spxConfig->freezeConfigs( SPX42ConfigClass::CF_CLASS_SPX );
@@ -728,7 +728,7 @@ namespace spx
           // mm Minute
           // Sekunde
           // MAX höchste Nummer der Einträge ( NR == MAX ==> letzter Eintrag )
-          lg->debug( "LogFragment::onDatagramRecivedSlot -> log direntry..." );
+          lg->debug( "LogFragment::onCommandRecivedSlot -> log direntry..." );
           newEntry = SPX42LogDirectoryEntry( static_cast< int >( recCommand->getValueFromHexAt( SPXCmdParam::LOGDIR_CURR_NUMBER ) ),
                                              static_cast< int >( recCommand->getValueFromHexAt( SPXCmdParam::LOGDIR_MAXNUMBER ) ),
                                              recCommand->getParamAt( SPXCmdParam::LOGDIR_FILENAME ) );
@@ -758,7 +758,7 @@ namespace spx
           // Start oder Ende Logdetails...
           // welches startet?
           logNumber = static_cast< int >( recCommand->getValueFromHexAt( SPXCmdParam::LOGDETAIL_NUMBER ) );
-          lg->debug( QString( "LogFragment::onDatagramRecivedSlot -> log detail %1 for dive number %2..." )
+          lg->debug( QString( "LogFragment::onCommandRecivedSlot -> log detail %1 for dive number %2..." )
                          .arg( recCommand->getValueFromHexAt( SPXCmdParam::LOGDETAIL_NUMBER ) )
                          .arg( recCommand->getValueFromHexAt( SPXCmdParam::LOGDETAIL_START_END ) == 0 ? "STOP" : "START" ) );
           //
@@ -771,7 +771,7 @@ namespace spx
             //
             if ( dbWriterFuture.isFinished() )
             {
-              lg->debug( "LogFragment::onDatagramRecivedSlot -> start writer thread again..." );
+              lg->debug( "LogFragment::onCommandRecivedSlot -> start writer thread again..." );
               tryStartLogWriterThread();
               ui->dbWriteNumLabel->setVisible( true );
             }
@@ -800,7 +800,7 @@ namespace spx
               if ( dbWriterFuture.isFinished() )
               {
                 // Thread neu starten
-                lg->debug( QString( "LogFragment::onReadLogContentSlot -> request  %1 logs from spx42..." ).arg( logDetailNum ) );
+                lg->debug( QString( "LogFragment::onCommandRecivedSlot -> request  %1 logs from spx42..." ).arg( logDetailNum ) );
                 tryStartLogWriterThread();
                 ui->dbWriteNumLabel->setVisible( true );
               }
@@ -816,7 +816,7 @@ namespace spx
         case SPX42CommandDef::SPX_GET_LOG_DETAIL:
           // Datensatz empfangen, ab in die Wartschlange
           logWriter.addDetail( recCommand );
-          lg->debug( QString( "LogFragment::onDatagramRecivedSlot -> log detail %1 for dive number %2..." )
+          lg->debug( QString( "LogFragment::onCommandRecivedSlot -> log detail %1 for dive number %2..." )
                          .arg( logWriter.getGlobal() )
                          .arg( recCommand->getDiveNum() ) );
           // Timer verlängern

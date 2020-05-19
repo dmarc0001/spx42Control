@@ -1253,11 +1253,11 @@ namespace spx
   bool SPX42Database::existDiveLogInBase( const QString &mac, int diveNum )
   {
     bool exist = false;
-    int datasets = 0;
     QString sql;
     //
     if ( db.isValid() && db.isOpen() )
     {
+      lg->debug( "SPX42Database::existDiveLogInBase -> database open and valid..." );
       //
       // Suche im Inhaltsverzeichnis
       //
@@ -1269,7 +1269,7 @@ namespace spx
       QSqlQuery query( sql, db );
       if ( query.next() )
       {
-        datasets = query.value( 0 ).toInt();
+        int datasets = query.value( 0 ).toInt();
         if ( datasets > 0 )
         {
           exist = true;
@@ -1279,9 +1279,9 @@ namespace spx
       }
       else
       {
-        QSqlError err = db.lastError();
-        lg->warn( QString( "SPX42Database::existDiveLogInBase -> <%1>..." ).arg( err.text() ) );
+        lg->warn( "SPX42Database::existDiveLogInBase -> no dataset..." );
       }
+      return ( exist );
     }
     lg->warn( "SPX42Database::existDiveLogInBase -> db not open or not exist!" );
     return ( exist );
