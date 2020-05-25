@@ -1,4 +1,5 @@
 ﻿#include "SPX42Database.hpp"
+#include "config/ProjectConst.hpp"
 
 namespace spx
 {
@@ -528,8 +529,6 @@ namespace spx
    */
   int SPX42Database::getDevicveId( const QString &mac )
   {
-    QString sql;
-    QSqlQuery query( db );
     lg->debug( QString( "SPX42Database::getDevicveId for <%1>..." ).arg( mac ) );
     if ( db.isValid() && db.isOpen() )
     {
@@ -1042,22 +1041,32 @@ namespace spx
   }
 
   /**
-   * @brief SPX42Database::validateNextStep es kann nur 20, 30 oder 60 geben
+   * @brief SPX42Database::validateNextStep es kann nur 10, 30 oder 60 geben
    * @param val
    * @param oldval
    * @return
    */
   int SPX42Database::validateNextStep( int val, int oldval )
   {
-    if ( ( val == 20 ) || ( val == 30 ) || ( val == 60 ) )
+    if ( ( val == ProjectConst::LOG_INTERVAL_01 ) || ( val == ProjectConst::LOG_INTERVAL_02 ) ||
+         ( val == ProjectConst::LOG_INTERVAL_03 ) )
       return ( val );
     //
     // da kam unsinn...
     //
-    lg->warn( QString( "SPX42Database::validateNextStep -> next step value not plausible <%1>. corrected" ).arg( val ) );
-    if ( ( oldval == 20 ) || ( oldval == 30 ) || ( oldval == 60 ) )
-      return ( oldval );
-    return ( 30 );
+    // Voreinstellung machen
+    //
+    int retval = ProjectConst::LOG_INTERVAL_02;
+    //
+    // vorhergehenden Wert versuchen
+    //
+    if ( ( oldval == ProjectConst::LOG_INTERVAL_01 ) || ( oldval == ProjectConst::LOG_INTERVAL_02 ) ||
+         ( oldval == ProjectConst::LOG_INTERVAL_03 ) )
+      retval = oldval;
+    lg->warn( QString( "SPX42Database::validateNextStep -> next step value <%1> not plausible, corrected to <%2>" )
+                  .arg( val )
+                  .arg( retval ) );
+    return ( retval );
   }
 
   /**
@@ -1253,11 +1262,11 @@ namespace spx
   bool SPX42Database::existDiveLogInBase( const QString &mac, int diveNum )
   {
     bool exist = false;
-    int datasets = 0;
     QString sql;
     //
     if ( db.isValid() && db.isOpen() )
     {
+      lg->debug( "SPX42Database::existDiveLogInBase -> database open and valid..." );
       //
       // Suche im Inhaltsverzeichnis
       //
@@ -1269,7 +1278,7 @@ namespace spx
       QSqlQuery query( sql, db );
       if ( query.next() )
       {
-        datasets = query.value( 0 ).toInt();
+        int datasets = query.value( 0 ).toInt();
         if ( datasets > 0 )
         {
           exist = true;
@@ -1279,9 +1288,9 @@ namespace spx
       }
       else
       {
-        QSqlError err = db.lastError();
-        lg->warn( QString( "SPX42Database::existDiveLogInBase -> <%1>..." ).arg( err.text() ) );
+        lg->warn( "SPX42Database::existDiveLogInBase -> no dataset..." );
       }
+      return ( exist );
     }
     lg->warn( "SPX42Database::existDiveLogInBase -> db not open or not exist!" );
     return ( exist );

@@ -14,13 +14,14 @@ namespace spx
       , processed( 0 )
       , forThisDiveProcessed( 0 )
       , overAll( 0 )
+      , maxTimeoutVal( waitTimeout )
   {
   }
 
   void LogDetailWalker::addDetail( spSingleCommand _detail )
   {
     QMutexLocker writeLock( &queueMutex );
-    overAll++;
+    ++overAll;
     detailQueue.enqueue( _detail );
   }
 
@@ -71,6 +72,7 @@ namespace spx
     //
     // solange es was zu schreiben gibt
     //
+    lg->info( "LogDetailWriter::writeLogDataToDatabase -> thread started" );
     while ( shouldWriterRunning )
     {
       if ( detailQueue.count() > 0 )
@@ -214,6 +216,7 @@ namespace spx
     // Ok, Signal geben für "neuen Tauchgang sichern ENDE!"
     //
     emit onWriteDoneSig( diveNum );
+    lg->info( "LogDetailWriter::writeLogDataToDatabase -> thread ended" );
     return ( processed );
   }
 

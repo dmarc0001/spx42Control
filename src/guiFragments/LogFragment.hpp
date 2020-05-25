@@ -104,6 +104,11 @@ namespace spx
                           std::shared_ptr< SPX42Config > spxCfg,
                           std::shared_ptr< SPX42RemotBtDevice > remSPX42,
                           AppConfigClass *appCfg );
+
+    private:
+    LogFragment( const LogFragment & );
+
+    public:
     //! Destruktor
     ~LogFragment() override;
     //! setzte EXPORT Ptad
