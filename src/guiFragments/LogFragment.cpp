@@ -109,6 +109,18 @@ namespace spx
     connect( &xmlExport, &SPX42UDDFExport::onEndSavedUddfFiileSig, this, &LogFragment::onEndSaveUddfFileSlot );
   }
 
+  // UNFRTIG IMPLEMENTIERT, PRIVATE
+  LogFragment::LogFragment( const LogFragment &lf )
+      : IFragmentInterface( lf.lg, lf.database, lf.spxConfig, lf.remoteSPX42, lf.appConfig )
+      , miniChart( new QtCharts::QChart() )
+      , dummyChart( new QtCharts::QChart() )
+      , chartView( std::unique_ptr< QtCharts::QChartView >( new QtCharts::QChartView( dummyChart ) ) )
+      , chartWorker( std::unique_ptr< ChartDataWorker >( new ChartDataWorker( lg, database, this ) ) )
+      , logWriter( this, lg, database, lf.spxConfig )
+      , xmlExport( lg, database, this )
+  {
+  }
+
   /**
    * @brief Der Destruktor, Aufräumarbeiten
    */
@@ -194,7 +206,9 @@ namespace spx
       if ( result < 0 )
       {
         // TODO: was machen
+        lg->crit( "LogFragment::onWriterDoneSlot -> dbWriter result is not okay!" );
       }
+      return;
     }
     //
     // wenn in der Queue was drin ist UND der Writer bereits fertig ist.
@@ -208,12 +222,14 @@ namespace spx
    */
   void LogFragment::tryStartLogWriterThread()
   {
-    if ( !logDetailRead.isEmpty() && dbWriterFuture.isFinished() )
+    if ( /*!logDetailRead.isEmpty() &&*/ dbWriterFuture.isFinished() )
     {
-      lg->debug( "LogFragment::onWriterDoneSlot -> start writer thread again..." );
+      lg->debug( "LogFragment::onWriterDoneSlot -> start writer thread (again)..." );
+      logWriter.nowait( false );
       ui->dbWriteNumLabel->setVisible( true );
       dbWriterFuture =
           QtConcurrent::run( &this->logWriter, &LogDetailWalker::writeLogDataToDatabase, remoteSPX42->getRemoteConnected() );
+      lg->debug( "LogFragment::onWriterDoneSlot -> start writer thread (again)...OK" );
     }
   }
 
@@ -277,24 +293,34 @@ namespace spx
       // TODO: Messagebox aufpoppen und Nutzer fragen
       return;
     }
-    lg->debug( QString( "LogFragment::onReadLogContentClickSlot -> read %1 logs from spx42..." ).arg( indexList.count() ) );
     //
     // so, fülle mal die Queue mit den zu lesenden Nummern
     //
     logDetailRead.clear();
+    int countDetails = 0;
     for ( auto idxEntry : indexList )
     {
       //
       // die spalte 0 finden, da steht die Lognummer
       //
       int row = idxEntry.row();
-      QString entry = ui->logentryTableWidget->item( row, 0 )->text();
-      lg->debug( QString( "LogFragment::onReadLogContentClickSlot -> entry: %1..." ).arg( entry ) );
-      QStringList el = entry.split( ':' );
-      // in die Liste kommt die Nummer!
-      if ( !el.isEmpty() && el.count() > 1 )
-        logDetailRead.enqueue( el.at( 0 ).toInt() );
+      int col = idxEntry.column();
+      if ( col == 0 )
+      {
+        ++countDetails;
+        QString entry = ui->logentryTableWidget->item( row, 0 )->text();
+        lg->debug( QString( "LogFragment::onReadLogContentClickSlot -> entry: %1..." ).arg( entry ) );
+        QStringList el = entry.split( ':' );
+        // in die Liste kommt die Nummer!
+        if ( !el.isEmpty() && el.count() > 1 )
+        {
+          lg->debug( QString( "LogFragment::onReadLogContentClickSlot -> entry: %1...OK" ).arg( entry ) );
+          logDetailRead.enqueue( el.at( 0 ).toInt() );
+        }
+      }
     }
+    lg->debug( QString( "LogFragment::onReadLogContentClickSlot -> to read %1 logs from spx42..." ).arg( countDetails ) );
+
     //
     // und nun starte ich die Ereigniskette
     //
@@ -660,17 +686,17 @@ namespace spx
     QDateTime nowDateTime;
     QString newListEntry;
     SPX42LogDirectoryEntry newEntry;
-    char kdo;
-    int logNumber;
     //
-    lg->debug( "ConnectFragment::onCommandRecivedSlot..." );
+    lg->debug( "LogFragment::onCommandRecivedSlot..." );
     //
     // alle abholen...
     //
     while ( ( recCommand = remoteSPX42->getNextRecCommand() ) )
     {
+      int logNumber;
+      uint startStop = 0;
       // ja, es gab ein Datagram zum abholen
-      kdo = recCommand->getCommand();
+      char kdo = recCommand->getCommand();
       switch ( kdo )
       {
         case SPX42CommandDef::SPX_ALIVE:
@@ -758,9 +784,7 @@ namespace spx
           // Start oder Ende Logdetails...
           // welches startet?
           logNumber = static_cast< int >( recCommand->getValueFromHexAt( SPXCmdParam::LOGDETAIL_NUMBER ) );
-          lg->debug( QString( "LogFragment::onCommandRecivedSlot -> log detail %1 for dive number %2..." )
-                         .arg( recCommand->getValueFromHexAt( SPXCmdParam::LOGDETAIL_NUMBER ) )
-                         .arg( recCommand->getValueFromHexAt( SPXCmdParam::LOGDETAIL_START_END ) == 0 ? "STOP" : "START" ) );
+          startStop = recCommand->getValueFromHexAt( SPXCmdParam::LOGDETAIL_START_END );
           //
           // Start oder Ende Signal?
           //
@@ -769,9 +793,9 @@ namespace spx
             //
             // START der Details...
             //
+            lg->debug( QString( "LogFragment::onCommandRecivedSlot -> log detail %1 START..." ).arg( logNumber ) );
             if ( dbWriterFuture.isFinished() )
             {
-              lg->debug( "LogFragment::onCommandRecivedSlot -> start writer thread again..." );
               tryStartLogWriterThread();
               ui->dbWriteNumLabel->setVisible( true );
             }
@@ -780,7 +804,10 @@ namespace spx
           }
           else
           {
+            //
             // ENDE der Details
+            //
+            lg->debug( QString( "LogFragment::onCommandRecivedSlot -> log detail %1 STOP..." ).arg( logNumber ) );
             if ( !logDetailRead.isEmpty() )
             {
               //
@@ -807,7 +834,10 @@ namespace spx
             }
             else
             {
+              //
+              // da ist nix weiter zubearbeiten
               // Timer ist zu stoppen!
+              //
               logWriter.nowait( true );
               transferTimeout.stop();
             }
