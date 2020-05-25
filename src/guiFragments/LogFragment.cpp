@@ -307,13 +307,13 @@ namespace spx
       int col = idxEntry.column();
       if ( col == 0 )
       {
-        ++countDetails;
         QString entry = ui->logentryTableWidget->item( row, 0 )->text();
         lg->debug( QString( "LogFragment::onReadLogContentClickSlot -> entry: %1..." ).arg( entry ) );
         QStringList el = entry.split( ':' );
         // in die Liste kommt die Nummer!
         if ( !el.isEmpty() && el.count() > 1 )
         {
+          ++countDetails;
           lg->debug( QString( "LogFragment::onReadLogContentClickSlot -> entry: %1...OK" ).arg( entry ) );
           logDetailRead.enqueue( el.at( 0 ).toInt() );
         }
@@ -341,7 +341,7 @@ namespace spx
       //
       transferTimeout.start( TIMEOUTVAL * 8 );
       logWriter.reset();
-      lg->debug( QString( "LogFragment::onReadLogContentClickSlot -> request  %1 logs from spx42..." ).arg( logDetailNum ) );
+      lg->debug( QString( "LogFragment::onReadLogContentClickSlot -> request log nr %1 from spx42..." ).arg( logDetailNum ) );
       tryStartLogWriterThread();
     }
   }
