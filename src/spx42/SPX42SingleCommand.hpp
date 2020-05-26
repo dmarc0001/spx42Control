@@ -4,6 +4,7 @@
 #include <QByteArray>
 #include <QList>
 #include <limits>
+#include <memory>
 #include "SPX42CommandDef.hpp"
 
 namespace spx
