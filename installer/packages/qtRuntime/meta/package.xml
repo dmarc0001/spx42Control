@@ -3,7 +3,7 @@
     <DisplayName>QT SPX42 app runtime</DisplayName>
     <Description>Binary runtime files for the spx42 control application.</Description> 
     <Description xml:lang="de_de">Binäre laufzeitdateien für das SPX42 Kontrollprogramm</Description>
-    <Version>5.12.1.1</Version>
-    <ReleaseDate>2019-03-24</ReleaseDate> 
+    <Version>5.15.0</Version>
+    <ReleaseDate>2020-05-26</ReleaseDate> 
     <Default>true</Default>
 </Package>

@@ -3,15 +3,15 @@
 ::
 :: Definitionen/Verzeichnisse
 SET PROJECTTYPE=release
-SET QT_PREFIX=5.12.1
+SET QT_PREFIX=5.15.0
 SET ONLINEINSTALLER=spx42ControlOnlineInstaller
 SET OFFLINEINSTALLER=spx42ControlOfflineInstaller
 ::
-SET WINKIT=C:\Program Files (x86)\Windows Kits\10\bin\10.0.17763.0\x64
+SET WINKIT=C:\Program Files (x86)\Windows Kits\10\bin\10.0.18362.0\x64
 SET PACKAGES=packages
 SET PROJECTBASE=C:\DATEN\Entwicklung\QT-Projekte\submatix\spx42Control
 SET QT_DIR=C:\localProg\Qt
-SET QT_BASEDIR=%QT_DIR%\%QT_PREFIX%\msvc2017_64\bin
+SET QT_BASEDIR=%QT_DIR%\%QT_PREFIX%\msvc2019_64\bin
 SET QT_TOOLS=%QT_DIR%\Tools
 SET QT_INSTALLER_DIR=%QT_TOOLS%\QtInstallerFramework\3.2\bin
 SET PROJECTBUILDDIR=DEPLOYDIR
@@ -56,7 +56,7 @@ echo directory %cd%
 
 echo Umgebung einrichten...
 SET PATH=%PATH%;%WINKIT%
-call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
+call "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
 
 echo.
 echo qmake ausfuehren
