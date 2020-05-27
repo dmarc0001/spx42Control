@@ -9,7 +9,7 @@ namespace spx
   {
     if ( lg != Q_NULLPTR )
     {
-      lg->debug( "AboutDialog::AboutDialog..." );
+      *lg << LDEBUG << "AboutDialog::AboutDialog..." << Qt::endl;
     }
     //
     // Hilfebutton ausblenden
@@ -23,7 +23,7 @@ namespace spx
     setFixedSize( this->width(), this->height() );
     if ( lg != Q_NULLPTR )
     {
-      lg->debug( "AboutDialog::AboutDialog -> create and set LOGO..." );
+      *lg << LDEBUG << "AboutDialog::AboutDialog -> create and set LOGO..." << Qt::endl;
     }
     QImage image( ":/images/logo_header450.png" );
     ui->logoLabel->setPixmap( QPixmap::fromImage( image ) );

@@ -7,7 +7,7 @@ namespace spx
   {
     if ( lg != Q_NULLPTR )
     {
-      lg->debug( "AboutDialog::AboutDialog..." );
+      *lg << LDEBUG << "AboutDialog::AboutDialog..." << Qt::endl;
     }
     //
     // Hilfebutton ausblenden
@@ -54,11 +54,11 @@ namespace spx
    */
   void OptionsDialog::init()
   {
-    lg->debug( "OptionsDialog::init..." );
+    *lg << LDEBUG << "OptionsDialog::init..." << Qt::endl;
     //
     // initialisiere die Einstellungen
     //
-    lg->debug( "OptionsDialog::init -> read and init database and log path..." );
+    *lg << LDEBUG << "OptionsDialog::init -> read and init database and log path..." << Qt::endl;
     ui->databasePathLineEdit->setText( cf.getDatabasePath() );
     ui->logfilePathLineEdit->setText( cf.getLogfilePath() );
     //
@@ -71,15 +71,15 @@ namespace spx
       case LgThreshold::LG_NONE:
       case LgThreshold::LG_CRIT:
       case LgThreshold::LG_WARN:
-        lg->debug( "OptionsDialog::init -> log threshold is warning..." );
+        *lg << LDEBUG << "OptionsDialog::init -> log threshold is warning..." << Qt::endl;
         ui->warningRadioButton->setChecked( true );
         break;
       case LgThreshold::LG_INFO:
-        lg->debug( "OptionsDialog::init -> log threshold is info..." );
+        *lg << LDEBUG << "OptionsDialog::init -> log threshold is info..." << Qt::endl;
         ui->infoRadioButton->setChecked( true );
         break;
       case LgThreshold::LG_DEBUG:
-        lg->debug( "OptionsDialog::init -> log threshold is debug..." );
+        *lg << LDEBUG << "OptionsDialog::init -> log threshold is debug..." << Qt::endl;
         ui->debugRadioButton->setChecked( true );
         break;
     }
@@ -104,7 +104,7 @@ namespace spx
    */
   void OptionsDialog::accept()
   {
-    lg->info( "OptionsDialog::accept -> set options accepting..." );
+    *lg << LINFO << "OptionsDialog::accept -> set options accepting..." << Qt::endl;
     //
     if ( !logfileDirName.isEmpty() )
       cf.setLogFilePath( logfileDirName );
@@ -129,7 +129,7 @@ namespace spx
       QDir fileDir( databaseFileDirName );
       if ( fileDir.exists() )
       {
-        lg->info( QString( "OptionsDialog::onSelectDatabasePushBottonSlot -> %1..." ).arg( databaseFileDirName ) );
+        *lg << LINFO << "OptionsDialog::onSelectDatabasePushBottonSlot -> " << databaseFileDirName << "..." << Qt::endl;
       }
       else
       {
@@ -152,7 +152,7 @@ namespace spx
       QDir fileDir( logfileDirName );
       if ( fileDir.exists() )
       {
-        lg->info( QString( "OptionsDialog::onSelectLogfilePushBottonSlot -> %1..." ).arg( logfileDirName ) );
+        *lg << LINFO << "OptionsDialog::onSelectLogfilePushBottonSlot -> " << logfileDirName << "..." << Qt::endl;
       }
       else
       {

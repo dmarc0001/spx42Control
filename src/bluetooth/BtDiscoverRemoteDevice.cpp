@@ -7,7 +7,7 @@ namespace spx
     //
     // Geräte Discovering Objekt erschaffen
     //
-    lg->debug( " BtDiscoverRemoteDevice::BtDiscoverRemoteDevice -> create device discovering object..." );
+    *lg << LDEBUG << " BtDiscoverRemoteDevice::BtDiscoverRemoteDevice -> create device discovering object..." << Qt::endl;
     btDevices = std::unique_ptr< SPX42BtDevicesManager >( new SPX42BtDevicesManager( lg, this ) );
     //
     // discovering agent object
@@ -22,24 +22,24 @@ namespace spx
 
   BtDiscoverRemoteDevice::~BtDiscoverRemoteDevice()
   {
-    lg->debug( "BtDiscoverRemoteDevice::~BtDiscoverRemoteDevice..." );
+    *lg << LDEBUG << "BtDiscoverRemoteDevice::~BtDiscoverRemoteDevice..." << Qt::endl;
   }
 
   void BtDiscoverRemoteDevice::startDiscover()
   {
-    lg->debug( "BtDiscoverRemoteDevice::onGuiStartScanSlot..." );
+    *lg << LDEBUG << "BtDiscoverRemoteDevice::onGuiStartScanSlot..." << Qt::endl;
     btDevices->setHostDiscoverable( true );
     btDevices->setHostPower( true );
     btDevices->setInquiryGeneralUnlimited( true );
     btDevices->startDiscoverDevices();
-    lg->debug( "BtDiscoverRemoteDevice::onGuiStartScanSlot...OK" );
+    *lg << LDEBUG << "BtDiscoverRemoteDevice::onGuiStartScanSlot...OK" << Qt::endl;
   }
 
   void BtDiscoverRemoteDevice::stopDiscover()
   {
-    lg->debug( "BtDiscoverRemoteDevice::stopDiscover..." );
+    *lg << LDEBUG << "BtDiscoverRemoteDevice::stopDiscover..." << Qt::endl;
     btDevices->cancelDiscoverDevices();
-    lg->debug( "BtDiscoverRemoteDevice::stopDiscover...OK" );
+    *lg << LDEBUG << "BtDiscoverRemoteDevice::stopDiscover...OK" << Qt::endl;
   }
 
   SPXDeviceList BtDiscoverRemoteDevice::getSPX42Devices() const
@@ -51,26 +51,26 @@ namespace spx
   {
     if ( mode != QBluetoothLocalDevice::HostPoweredOff )
     {
-      lg->info( QString( "BtDiscoverRemoteDevice::onDeviceHostModeStateChangedSlot -> host power off: true" ) );
+      *lg << LINFO << "BtDiscoverRemoteDevice::onDeviceHostModeStateChangedSlot -> host power off: true" << Qt::endl;
     }
     else
     {
-      lg->info( QString( "BtDiscoverRemoteDevice::onDeviceHostModeStateChangedSlot -> host power off: false" ) );
+      *lg << LINFO << "BtDiscoverRemoteDevice::onDeviceHostModeStateChangedSlot -> host power off: false" << Qt::endl;
     }
 
     if ( mode == QBluetoothLocalDevice::HostDiscoverable )
     {
-      lg->info( QString( "BtDiscoverRemoteDevice::onDeviceHostModeStateChangedSlot -> host discoverable: true" ) );
+      *lg << LINFO << "BtDiscoverRemoteDevice::onDeviceHostModeStateChangedSlot -> host discoverable: true" << Qt::endl;
     }
     else
     {
-      lg->info( QString( "BtDiscoverRemoteDevice::onDeviceHostModeStateChangedSlot -> host discoverable: false" ) );
+      *lg << LINFO << "BtDiscoverRemoteDevice::onDeviceHostModeStateChangedSlot -> host discoverable: false" << Qt::endl;
     }
   }
 
   void BtDiscoverRemoteDevice::onDiscoverScanFinishedSlot()
   {
-    lg->debug( "BtDiscoverOject::onDiscoverScanFinishedSlot..." );
+    *lg << LINFO << "BtDiscoverOject::onDiscoverScanFinishedSlot..." << Qt::endl;
     emit onDiscoverScanFinishedSig();
   }
 
@@ -79,4 +79,4 @@ namespace spx
     // TODO: durch lambda ersetzten
     emit onDiscoveredDeviceSig( deviceInfo );
   }
-}
+}  // namespace spx

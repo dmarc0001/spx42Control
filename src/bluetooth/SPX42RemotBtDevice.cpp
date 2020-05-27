@@ -37,7 +37,7 @@ namespace spx
    */
   SPX42RemotBtDevice::~SPX42RemotBtDevice()
   {
-    lg->debug( "SPX42RemotBtDevice::~SPX42RemotBtDevice() -> check if close bluethooth connection nessesary..." );
+    *lg << LDEBUG << "SPX42RemotBtDevice::~SPX42RemotBtDevice() -> check if close bluethooth connection nessesary..." << Qt::endl;
     sendTimer.stop();
     disconnect( &sendTimer, nullptr, nullptr, nullptr );
     if ( socket != nullptr )
@@ -45,10 +45,10 @@ namespace spx
       disconnect( socket, nullptr, nullptr, nullptr );
       if ( socket->state() != QBluetoothSocket::UnconnectedState )
       {
-        lg->info( "abort bluethooth connection" );
+        *lg << LINFO << "abort bluethooth connection" << Qt::endl;
         socket->abort();
       }
-      lg->debug( "SPX42RemotBtDevice::~SPX42RemotBtDevice() -> disconnect all bt socket signals..." );
+      *lg << LDEBUG << "SPX42RemotBtDevice::~SPX42RemotBtDevice() -> disconnect all bt socket signals..." << Qt::endl;
       delete socket;
     }
   }
@@ -62,11 +62,11 @@ namespace spx
     // TODO: wenn verbunden, trennen oder was?
     if ( socket != nullptr )
     {
-      lg->debug( "SPX42RemotBtDevice::startConnection -> disconnect/remove old connection..." );
+      *lg << LDEBUG << "SPX42RemotBtDevice::startConnection -> disconnect/remove old connection..." << Qt::endl;
       endConnection();
       socket->deleteLater();
       socket = nullptr;
-      lg->debug( "SPX42RemotBtDevice::startConnection -> disconnect/remove old connection...OK" );
+      *lg << LDEBUG << "SPX42RemotBtDevice::startConnection -> disconnect/remove old connection...OK" << Qt::endl;
     }
     // merken der Daten
     remoteAddr = QBluetoothAddress( mac );
@@ -76,27 +76,27 @@ namespace spx
     //
     if ( remoteAddr.isNull() )
     {
-      lg->warn( "SPX42RemotBtDevice::startConnection -> remote addr is not set!" );
+      *lg << LWARN << "SPX42RemotBtDevice::startConnection -> remote addr is not set!" << Qt::endl;
       return;
     }
     //
     // Signale des BT Sockets mit slots verbinden
     //
-    lg->debug( "SPX42RemotBtDevice::startConnection -> connecting bt socket sigs..." );
+    *lg << LDEBUG << "SPX42RemotBtDevice::startConnection -> connecting bt socket sigs..." << Qt::endl;
     socket = new QBluetoothSocket( QBluetoothServiceInfo::RfcommProtocol );
     connect( socket, QOverload< QBluetoothSocket::SocketError >::of( &QBluetoothSocket::error ), this,
              &SPX42RemotBtDevice::onSocketErrorSlot );
     connect( socket, &QBluetoothSocket::stateChanged, this, &SPX42RemotBtDevice::onStateChangedSlot );
     connect( socket, &QBluetoothSocket::readyRead, this, &SPX42RemotBtDevice::onReadSocketSlot );
-    lg->debug( "SPX42RemotBtDevice::startConnection -> connecting bt socket sigs...OK" );
+    *lg << LDEBUG << "SPX42RemotBtDevice::startConnection -> connecting bt socket sigs...OK" << Qt::endl;
     //
     // versuche zu verbinden
     //
-    lg->debug( "SPX42RemotBtDevice::startConnection -> connect remote SPX42..." );
-    lg->info( "SPX42RemotBtDevice::startConnection -> connecting to remote SPX42..." );
+    *lg << LDEBUG << "SPX42RemotBtDevice::startConnection -> connect remote SPX42..." << Qt::endl;
+    *lg << LINFO << "SPX42RemotBtDevice::startConnection -> connecting to remote SPX42..." << Qt::endl;
     // Verbinden!
     socket->connectToService( remoteAddr, btUuiid );
-    lg->debug( "SPX42RemotBtDevice::startConnection -> connect remote SPX42...OK" );
+    *lg << LDEBUG << "SPX42RemotBtDevice::startConnection -> connect remote SPX42...OK" << Qt::endl;
   }
 
   /**
@@ -104,12 +104,12 @@ namespace spx
    */
   void SPX42RemotBtDevice::endConnection()
   {
-    lg->debug( "SPX42RemotBtDevice::endConnection -> try to disconnect bluethoot connection..." );
+    *lg << LDEBUG << "SPX42RemotBtDevice::endConnection -> try to disconnect bluethoot connection..." << Qt::endl;
     if ( socket != nullptr )
     {
       if ( socket->state() != QBluetoothSocket::UnconnectedState )
       {
-        lg->info( "close bluethooth connection" );
+        *lg << LINFO << "close bluethooth connection" << Qt::endl;
         socket->close();
       }
       QThread::msleep( 120 );
@@ -199,7 +199,7 @@ namespace spx
     //
     // ein Fehler beim SOCKET trat auf
     //
-    lg->warn( "SPX42RemotBtDevice::onSocketErrorSlot -> error while processing bt socket..." );
+    *lg << LWARN << "SPX42RemotBtDevice::onSocketErrorSlot -> error while processing bt socket..." << Qt::endl;
     wasSocketError = true;
     emit onSocketErrorSig( error );
     //
@@ -216,7 +216,7 @@ namespace spx
       case QBluetoothSocket::OperationError:
       case QBluetoothSocket::RemoteHostClosedError:
         // TODO: Fehler behandeln, evtl intelligent neu verbinden?
-        lg->crit( "SPX42RemotBtDevice::onSocketErrorSlot -> no error handdling implemented yet..." );
+        *lg << LCRIT << "SPX42RemotBtDevice::onSocketErrorSlot -> no error handdling implemented yet..." << Qt::endl;
         break;
     }
   }
@@ -231,14 +231,14 @@ namespace spx
     {
       case QBluetoothSocket::UnconnectedState:
         emit onStateChangedSig( state );
-        lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <UnconnectedState>" );
+        *lg << LDEBUG << "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <UnconnectedState>" << Qt::endl;
         break;
       case QBluetoothSocket::ServiceLookupState:
-        lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <ServiceLookupState>" );
+        *lg << LDEBUG << "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <ServiceLookupState>" << Qt::endl;
         break;
       case QBluetoothSocket::ConnectingState:
         emit onStateChangedSig( state );
-        lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <ConnectingState>" );
+        *lg << LDEBUG << "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <ConnectingState>" << Qt::endl;
         break;
       case QBluetoothSocket::ConnectedState:
         //
@@ -252,17 +252,17 @@ namespace spx
         if ( !sendTimer.isActive() )
           sendTimer.start();
         emit onStateChangedSig( state );
-        lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <ConnectedState>" );
+        *lg << LDEBUG << "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <ConnectedState>" << Qt::endl;
         break;
       case QBluetoothSocket::BoundState:
-        lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <BoundState>" );
+        *lg << LDEBUG << "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <BoundState>" << Qt::endl;
         break;
       case QBluetoothSocket::ClosingState:
         emit onStateChangedSig( state );
-        lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <ClosingState>" );
+        *lg << LDEBUG << "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <ClosingState>" << Qt::endl;
         break;
       case QBluetoothSocket::ListeningState:
-        lg->debug( "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <ListeningState>" );
+        *lg << LDEBUG << "SPX42RemotBtDevice::onStateChangedSlot -> bluethooth state is now <ListeningState>" << Qt::endl;
         break;
     }
     if ( state != QBluetoothSocket::ConnectedState )
@@ -311,8 +311,9 @@ namespace spx
         if ( idxOfETX > -1 && idxOfETX < idxDetailEnd )
         {
           // ein Kommando ist noch davor...
-          lg->debug(
-              "SPX42RemotBtDevice::onReadSocketSlot -> not normal mode: there is a command response brefore logdetail dataset...." );
+          *lg << LDEBUG
+              << "SPX42RemotBtDevice::onReadSocketSlot -> not normal mode: there is a command response brefore logdetail dataset...."
+              << Qt::endl;
         }
         else
         {
@@ -341,10 +342,9 @@ namespace spx
               // da ist ein fetter Fehler, entweder in der Übertragung oder in der Datei auf dem SPX
               // TODO: Dummy Eintrag einfügen, damit Zeitachse stimmt
               //
-              lg->warn(
-                  QString(
-                      "SPX42RemotBtDevice::onReadSocketSlot -> log datagram has not exact %1 elements. this ist incorrect. ignored." )
-                      .arg( ProjectConst::LOG_FIELD_COUNT ) );
+              *lg << LWARN
+                  << "SPX42RemotBtDevice::onReadSocketSlot -> log datagram has not exact %1 elements. this ist incorrect. ignored."
+                  << Qt::endl;
             }
           }
         }
@@ -370,7 +370,7 @@ namespace spx
           // dei Länge ergibt sich aus dem Ende minus das 0x03 und minus Anfang
           QByteArray _datagramm = recBuffer.mid( idxOfSTX + 1, ( idxOfETX - idxOfSTX ) - 1 );
 #ifdef DEBUG
-          lg->debug( QString( "SPX42RemotBtDevice::onReadSocketSlot -> datagram:: <%1>" ).arg( QString( _datagramm ) ) );
+          *lg << LDEBUG << "SPX42RemotBtDevice::onReadSocketSlot -> datagram: <" << _datagramm << ">" << Qt::endl;
 #endif
           // und noch das Datagramm aus dem Puffer tilgen
           recBuffer.remove( 0, idxOfETX + 1 );
@@ -390,7 +390,7 @@ namespace spx
             //
             if ( params.at( SPXCmdParam::LOGDETAIL_START_END ).toInt() == 1 )
             {
-              lg->info( "SPX42RemotBtDevice::onReadSocketSlot ->  COMMAND GET_LOG_NUMBER_SE ON" );
+              *lg << LINFO << "SPX42RemotBtDevice::onReadSocketSlot ->  COMMAND GET_LOG_NUMBER_SE ON" << Qt::endl;
               isNormalCommandMode = false;
               currentDiveNumberForLogDetail = params.at( SPXCmdParam::LOGDETAIL_NUMBER ).toInt( nullptr, 16 );
               currentDetailSequenceNumber = -1;
@@ -401,7 +401,7 @@ namespace spx
             }
             else
             {
-              lg->info( "SPX42RemotBtDevice::onReadSocketSlot -> COMMAND GET_LOG_NUMBER_SE OFF" );
+              *lg << LINFO << "SPX42RemotBtDevice::onReadSocketSlot -> COMMAND GET_LOG_NUMBER_SE OFF" << Qt::endl;
               isNormalCommandMode = true;
               currentDiveNumberForLogDetail = -1;
               ignoreSendTimer = false;
@@ -427,7 +427,7 @@ namespace spx
       //
       if ( recBuffer.size() > ProjectConst::BUFFER_LEN )
       {
-        lg->crit( "buffer (recive buffer) overflow... data will lost..." );
+        *lg << LCRIT << "buffer (recive buffer) overflow... data will lost..." << Qt::endl;
         recBuffer.clear();
       }
     }
@@ -452,7 +452,7 @@ namespace spx
       ignoreSendTimer = true;
       SendListEntry entry( sendList.takeFirst() );
 #ifdef DEBUG
-      lg->debug( QString( "SPX42RemotBtDevice::onSendSocketTimerSlot -> send telegram <%1>..." ).arg( QString( entry.second ) ) );
+      *lg << LDEBUG << "SPX42RemotBtDevice::onSendSocketTimerSlot -> send telegram <" << entry.second << ">..." << Qt::endl;
 #endif
       socket->write( entry.second );
       // Wartezeit startet neu
