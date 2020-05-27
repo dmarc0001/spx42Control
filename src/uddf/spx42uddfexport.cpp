@@ -71,23 +71,23 @@ namespace spx
   SPX42UDDFExport::SPX42UDDFExport( std::shared_ptr< Logger > logger, std::shared_ptr< SPX42Database > _database, QObject *parent )
       : QObject( parent ), lg( logger ), database( _database )
   {
-    lg->debug( "SPX42UDDFExport::SPX42UDDFExport(...)" );
+    *lg << LDEBUG << "SPX42UDDFExport::SPX42UDDFExport(...)" << Qt::endl;
   }
 
   SPX42UDDFExport::~SPX42UDDFExport()
   {
-    lg->debug( "SPX42UDDFExport::~SPX42UDDFExport" );
+    *lg << LDEBUG << "SPX42UDDFExport::~SPX42UDDFExport" << Qt::endl;
   }
 
   void SPX42UDDFExport::setXmlFileBaseName( const QString &_fileName )
   {
     XMLFileNameTemplate = _fileName + "%1-from-%2-to-%3-count-%4.uddf";
-    lg->debug( QString( "SPX42UDDFExport::setXmlFileBaseName -> file base name template: %1" ).arg( XMLFileNameTemplate ) );
+    *lg << LDEBUG << "SPX42UDDFExport::setXmlFileBaseName -> file base name template: " << XMLFileNameTemplate << Qt::endl;
   }
 
   void SPX42UDDFExport::setExportDives( const QString &mac, const QVector< int > &numbers )
   {
-    lg->debug( QString( "SPX42UDDFExport::setExportDives -> device: %1" ).arg( mac ) );
+    *lg << LDEBUG << "SPX42UDDFExport::setExportDives -> device: %1" << mac << Qt::endl;
     device_mac = mac;
     diveNums.clear();
     diveNums.append( numbers );
@@ -100,7 +100,7 @@ namespace spx
     int fromNum = diveNums.first();
     int toNum = diveNums.last();
     int diveCount = diveNums.count();
-    lg->debug( "SPX42UDDFExport::createExportXml" );
+    *lg << LDEBUG << "SPX42UDDFExport::createExportXml" << Qt::endl;
     //
     // Gasliste löschen (für alle Fälle)
     //
@@ -115,7 +115,7 @@ namespace spx
     QFile file( exportFile );
     if ( !file.open( QIODevice::WriteOnly | QIODevice::Text ) )
     {
-      lg->crit( "SPX42UDDFExport::createExportXml -> can't open export file! ABORT" );
+      *lg << LCRIT << "SPX42UDDFExport::createExportXml -> can't open export file! ABORT" << Qt::endl;
       emit onEndSavedUddfFiileSig( false, exportFile );
       return ( false );
     }
@@ -186,7 +186,7 @@ namespace spx
     stream.writeEndElement();
     stream.writeEndDocument();
     file.close();
-    lg->info( QString( "SPX42UDDFExport::createExportXml -> successful exportet to file <%1>" ).arg( exportFile ) );
+    *lg << LINFO << "SPX42UDDFExport::createExportXml -> successful exportet to file <" << exportFile << ">" << Qt::endl;
     emit onEndSavedUddfFiileSig( true, exportFile );
     return ( true );
   }
@@ -197,7 +197,7 @@ namespace spx
 
   bool SPX42UDDFExport::writeGenerator( QXmlStreamWriter &st )
   {
-    lg->debug( "SPX42UDDFExport::writeGenerator..." );
+    *lg << LDEBUG << "SPX42UDDFExport::writeGenerator..." << Qt::endl;
     //
     // wurzeltag für diese Ebene
     //
@@ -240,13 +240,13 @@ namespace spx
     // Wurzel schliessen
     //
     st.writeEndElement();
-    lg->debug( "SPX42UDDFExport::writeGenerator...OK" );
+    *lg << LDEBUG << "SPX42UDDFExport::writeGenerator...OK" << Qt::endl;
     return ( true );
   }
 
   bool SPX42UDDFExport::writeDiverDefinitions( QXmlStreamWriter &st )
   {
-    lg->debug( "SPX42UDDFExport::writeOwnerDefinitions..." );
+    *lg << LDEBUG << "SPX42UDDFExport::writeOwnerDefinitions..." << Qt::endl;
     // Block owner eröffnen
     st.writeStartElement( "diver" );
 
@@ -263,13 +263,13 @@ namespace spx
     // diver Block schliessen
     st.writeEndElement();
     //
-    lg->debug( "SPX42UDDFExport::writeOwnerDefinitions...OK" );
+    *lg << LDEBUG << "SPX42UDDFExport::writeOwnerDefinitions...OK" << Qt::endl;
     return ( true );
   }
 
   bool SPX42UDDFExport::writeOwnerDefinitions( QXmlStreamWriter &st )
   {
-    lg->debug( "SPX42UDDFExport::writeOwnerDefinitions..." );
+    *lg << LDEBUG << "SPX42UDDFExport::writeOwnerDefinitions..." << Qt::endl;
     // Block owner öffnen
     st.writeStartElement( "owner" );
     // TODO: Eigentümername berücksichtigen
@@ -288,13 +288,13 @@ namespace spx
     // Block owner wieder schliessen
     st.writeEndElement();
     //
-    lg->debug( "SPX42UDDFExport::writeOwnerDefinitions...OK" );
+    *lg << LDEBUG << "SPX42UDDFExport::writeOwnerDefinitions...OK" << Qt::endl;
     return ( true );
   }
 
   bool SPX42UDDFExport::writeOwnerEquipment( QXmlStreamWriter &st )
   {
-    lg->debug( "SPX42UDDFExport::writeOwnerEquipment..." );
+    *lg << LDEBUG << "SPX42UDDFExport::writeOwnerEquipment..." << Qt::endl;
     // equipment block öffnen
     st.writeStartElement( "equipment" );
 
@@ -307,13 +307,13 @@ namespace spx
     // equipment block schliessen
     st.writeEndElement();
     //
-    lg->debug( "SPX42UDDFExport::writeOwnerEquipment...OK" );
+    *lg << LDEBUG << "SPX42UDDFExport::writeOwnerEquipment...OK" << Qt::endl;
     return ( true );
   }
 
   bool SPX42UDDFExport::writeRebreatherDefinitions( QXmlStreamWriter &st )
   {
-    lg->debug( "SPX42UDDFExport::writeRebreatherDefinitions..." );
+    *lg << LDEBUG << "SPX42UDDFExport::writeRebreatherDefinitions..." << Qt::endl;
     // rebreather Block öffnen
     st.writeStartElement( "rebreather" );
     st.writeAttribute( "id", "submatix_rebreather" );
@@ -349,13 +349,13 @@ namespace spx
 
     // rebreather Block schliessen
     st.writeEndElement();
-    lg->debug( "SPX42UDDFExport::writeRebreatherDefinitions...OK" );
+    *lg << LDEBUG << "SPX42UDDFExport::writeRebreatherDefinitions...OK" << Qt::endl;
     return ( true );
   }
 
   bool SPX42UDDFExport::writeO2Sensor( int number, QXmlStreamWriter &st )
   {
-    lg->debug( QString( "SPX42UDDFExport::writeO2Sensor -> write def for sensor #%1..." ).arg( number ) );
+    *lg << LDEBUG << "SPX42UDDFExport::writeO2Sensor -> write def for sensor #" << number << "..." << Qt::endl;
     // Sensorblockeröffnen
     st.writeStartElement( "o2sensor" );
     st.writeAttribute( "id", QString( "o2_sensor_%1" ).arg( number, 2, 10, QChar( '0' ) ) );
@@ -366,13 +366,13 @@ namespace spx
 
     // swensorblock schliessen
     st.writeEndElement();
-    lg->debug( "SPX42UDDFExport::writeO2Sensor...OK" );
+    *lg << LDEBUG << "SPX42UDDFExport::writeO2Sensor...OK" << Qt::endl;
     return ( true );
   }
 
   bool SPX42UDDFExport::writeGasDefinitions( QXmlStreamWriter &st )
   {
-    lg->debug( "SPX42UDDFExport::writeGasDefinitions..." );
+    *lg << LDEBUG << "SPX42UDDFExport::writeGasDefinitions..." << Qt::endl;
     //
     // Gasdefinitionen zusammenstellen
     //
@@ -405,13 +405,13 @@ namespace spx
     // Block schliessen
     st.writeEndElement();
     //
-    lg->debug( "SPX42UDDFExport::writeGasDefinitions...OK" );
+    *lg << LDEBUG << "SPX42UDDFExport::writeGasDefinitions...OK" << Qt::endl;
     return ( true );
   }
 
   bool SPX42UDDFExport::writeProfileData( QXmlStreamWriter &st )
   {
-    lg->debug( "SPX42UDDFExport::writeProfileData..." );
+    *lg << LDEBUG << "SPX42UDDFExport::writeProfileData..." << Qt::endl;
     // Block "profiledata"
     st.writeStartElement( "profiledata" );
     //
@@ -432,33 +432,33 @@ namespace spx
     // Block schliessen
     st.writeEndElement();
     //
-    lg->debug( "SPX42UDDFExport::writeProfileData...OK" );
+    *lg << LDEBUG << "SPX42UDDFExport::writeProfileData...OK" << Qt::endl;
     return ( true );
   }
 
   bool SPX42UDDFExport::writeAllDives( QXmlStreamWriter &st )
   {
     bool resultOk = true;
-    lg->debug( "SPX42UDDFExport::writeAllDives..." );
+    *lg << LDEBUG << "SPX42UDDFExport::writeAllDives..." << Qt::endl;
     //
     // jetzt alle Tauchgänge durch
     //
     for ( auto diveId : diveNums )
     {
-      lg->debug( QString( "SPX42UDDFExport::writeAllDives -> compute dive num #%1 from device..." ).arg( diveId ) );
+      *lg << LDEBUG << "SPX42UDDFExport::writeAllDives -> compute dive num #" << diveId << " from device..." << Qt::endl;
       resultOk = writeOneDive( diveId, st );
       if ( !resultOk )
         break;
     }
     // alle Tauchgänge durch...
-    lg->debug( "SPX42UDDFExport::writeAllDives...OK" );
+    *lg << LDEBUG << "SPX42UDDFExport::writeAllDives...OK" << Qt::endl;
     return ( resultOk );
   }
 
   bool SPX42UDDFExport::writeOneDive( int diveNum, QXmlStreamWriter &st )
   {
     bool resultOk = true;
-    lg->debug( QString( "SPX42UDDFExport::writeOneDive -> dive #%1..." ).arg( diveNum ) );
+    *lg << LDEBUG << "SPX42UDDFExport::writeOneDive -> dive #" << diveNum << "..." << Qt::endl;
     emit onStartSaveDiveSig( diveNum );
     //
     // Zeitpunkt des Tauchganges feststellen
@@ -515,7 +515,7 @@ namespace spx
     // Tauchgang Block schliessen
     st.writeEndElement();
     //
-    lg->debug( "SPX42UDDFExport::writeOneDive... OK" );
+    *lg << LDEBUG << "SPX42UDDFExport::writeOneDive... OK" << Qt::endl;
     emit onEndSaveDiveSig( diveNum );
     return ( resultOk );
   }
@@ -531,13 +531,12 @@ namespace spx
     // <remainingo2time>, <setmarker>, <setpo2>, <switchmix/>,
     // <tankpressure>, <temperature>
     //
-    QString currentGas = "";
     int he = 0;
     int n2 = 0;
     int setpoint = 0;
     double secounds = 0;
     bool isFirstWaypoint = true;
-    lg->debug( "SPX42UDDFExport::writeDiveSamples..." );
+    *lg << LDEBUG << "SPX42UDDFExport::writeDiveSamples..." << Qt::endl;
     // Block samples oeffnen
     st.writeStartElement( "samples" );
 
@@ -546,6 +545,7 @@ namespace spx
     //
     for ( auto entry : *data.get() )
     {
+      QString currentGas = "";
       // vergangene Zeit
       secounds += static_cast< double >( entry.nextStep );
       // waypoint block öffnen
@@ -631,7 +631,7 @@ namespace spx
 
     // Block samples schliessen
     st.writeEndElement();
-    lg->debug( "SPX42UDDFExport::writeDiveSamples...OK" );
+    *lg << LDEBUG << "SPX42UDDFExport::writeDiveSamples...OK" << Qt::endl;
     return ( true );
   }
 
@@ -642,7 +642,7 @@ namespace spx
     //
     for ( auto gasref : gasDefs )
     {
-      lg->debug( QString( "SPX42UDDFExport::getGasRef -> current test with %1 / %2" ).arg( gasref.getN2() ).arg( gasref.getHe() ) );
+      *lg << LDEBUG << "SPX42UDDFExport::getGasRef -> current test with " << gasref.getN2() << " / " << gasref.getHe() << Qt::endl;
       //
       if ( n2_str == gasref.getN2() && he_str == gasref.getHe() )
         return ( gasref.gName );

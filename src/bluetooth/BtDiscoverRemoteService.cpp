@@ -17,8 +17,9 @@ namespace spx
     //
     QBluetoothLocalDevice localDevice;
     QBluetoothAddress adapterAddress = localDevice.address();
-    lg->debug( QString( "BtServiceDiscover::BtServiceDiscover: local adapter addr: " ).append( adapterAddress.toString() ) );
-    lg->debug( QString( "BtServiceDiscover::BtServiceDiscover: remote adapter addr: " ).append( raddr.toString() ) );
+    *lg << LDEBUG << "BtDiscoverRemoteService::BtDiscoverRemoteService -> local adapter addr: " << adapterAddress.toString()
+        << Qt::endl;
+    *lg << LDEBUG << "BtDiscoverRemoteService::BtDiscoverRemoteService -> remote adapter addr: " << raddr.toString() << Qt::endl;
     /*
      * In case of multiple Bluetooth adapters it is possible to
      * set which adapter will be used by providing MAC Address.
@@ -40,7 +41,7 @@ namespace spx
 
   BtDiscoverRemoteService::~BtDiscoverRemoteService()
   {
-    lg->debug( "BtServiceDiscover::~BtServiceDiscover..." );
+    *lg << LDEBUG << "BtDiscoverRemoteService::~BtDiscoverRemoteService..." << Qt::endl;
     // sämtliche Verbindungen kappen...
     disconnect( discoveryAgent.get(), nullptr, nullptr, nullptr );
   }
@@ -82,7 +83,7 @@ namespace spx
     if ( info.serviceName().isEmpty() )
       return;
     QString line = info.serviceName();
-    lg->info( QString( "BtServiceDiscover::onDiscoveredServiceSlot: %1 on %2" ).arg( line ).arg( raddr.toString() ) );
+    *lg << LINFO << "BtDiscoverRemoteService::onDiscoveredServiceSlot -> " << line << " on " << raddr.toString() << Qt::endl;
     //
     // ist das ein gesuchter service
     //
@@ -90,7 +91,8 @@ namespace spx
     {
       if ( expression.indexIn( line ) < 0 )
       {
-        lg->debug( QString( "BtServiceDiscover::onDiscoveredServiceSlot: service %1 is not matching. ignore" ).arg( line ) );
+        *lg << LDEBUG << "BtDiscoverRemoteService::onDiscoveredServiceSlot -> service " << line << " is not matching. ignore."
+            << Qt::endl;
         return;
       }
     }
@@ -99,12 +101,12 @@ namespace spx
       line.append( " " + info.serviceDescription() );
     if ( !info.serviceProvider().isEmpty() )
       line.append( " " + info.serviceProvider() );
-    lg->info(
-        QString( "BtServiceDiscover::onDiscoveredServiceSlot: %1 on %2 signal to list..." ).arg( line ).arg( raddr.toString() ) );
+    *lg << LINFO << "BtDiscoverRemoteService::onDiscoveredServiceSlot -> " << line << " on " << raddr.toString()
+        << " signal to list..." << Qt::endl;
     //
     // signalisiere dem interessierten dass ein Service gefunden wurde
     //
     emit onDiscoveredServiceSig( raddr, info );
     servicesCount++;
   }
-}
+}  // namespace spx

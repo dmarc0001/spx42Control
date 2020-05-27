@@ -1,32 +1,89 @@
 ﻿#include "Logger.hpp"
+
 #include <QDateTime>
 #include <QFileInfo>
 
 namespace spx
 {
   const QString Logger::dateTimeFormat{"[yyyy-MM-dd hh:mm:ss.z] "};
+  const QString Logger::NONE_STR{"NONE "};
   const QString Logger::DEBUG_STR{"DEBUG "};
   const QString Logger::INFO_STR{"INFO  "};
   const QString Logger::WARN_STR{"WARN  "};
   const QString Logger::CRIT_STR{"CRIT  "};
 
+  //#######################################################################################
+  //#### Spezialfälle des << Operators, die nicht per template gehen                   ####
+  //#######################################################################################
+
+  /**
+   * @brief operator <<
+   * @param lg
+   * @param th
+   * @return
+   */
+  Logger &operator<<( Logger &lg, const LgThreshold th )
+  {
+    lg.setCurrentThreshold( th );
+    return lg;
+  }
+
+  /**
+   * @brief operator <<
+   * @param lg
+   * @param endl
+   * @return
+   */
+  Logger &operator<<( Logger &lg, QTextStream &( QTextStream &s ) )
+  {
+    lg.lineEnd();
+    return lg;
+  }
+  // Logger &operator<<( Logger &lg, QTextStream &endl( QTextStream &s ) )
+
+  //#######################################################################################
+  //#### der Logger                                                                    ####
+  //#######################################################################################
+
   /**
    * @brief Logger::Logger Konstruktor mit Konfigurationsdatei Übergabe
    * @param lFile
    */
-  Logger::Logger() : threshold( LG_DEBUG ), logFile( nullptr ), textStream( nullptr )
+  Logger::Logger() : threshold( LG_DEBUG ), currentThreshold( LG_DEBUG ), logToConsole( false ), logFile( nullptr )
   {
   }
 
+  /**
+   * @brief Logger::~Logger
+   */
   Logger::~Logger()
   {
     qDebug().noquote().nospace() << "SHUTDOWN LOGGING...";
     // shutdown();
   }
 
-  int Logger::startLogging( LgThreshold th, const QString &fileName )
+  /**
+   * @brief Logger::startLogging
+   * @param th
+   * @param fileName
+   * @return
+   */
+  int Logger::startLogging( LgThreshold th, const QString &fileName, bool consoleLog )
   {
     threshold = th;
+    bool consoleOk = true;
+    logToConsole = consoleLog;
+    consoleStream = std::unique_ptr< QTextStream >( new QTextStream( stdout ) );
+    if ( !consoleStream || consoleStream->status() != QTextStream::Ok )
+    {
+      //
+      // das geht nicht auf der Knsole!
+      // Loggen in Datei wäre noch machbar
+      //
+      qCritical() << "can't open log stream to console!";
+      logToConsole = false;
+      consoleOk = false;
+    }
     //
     // gibt es einen Lognamen
     //
@@ -34,17 +91,35 @@ namespace spx
     {
       if ( fileName.length() > 4 )
       {
-        // Super, das Logfile ist benannt!
-        qDebug().noquote().nospace() << "START LOGGING...(" << fileName << ")";
         logFile = std::unique_ptr< QFile >( new QFile( fileName ) );
         logFile->open( QIODevice::WriteOnly | QIODevice::Append );
         textStream = std::unique_ptr< QTextStream >( new QTextStream( logFile.get() ) );
-        *textStream << getDateString() << "START LOGGING" << endl;
-        if ( logFile && logFile->isOpen() && textStream )
+        if ( logFile && logFile->isOpen() && textStream && consoleStream )
         {
-          qDebug().noquote().nospace() << "START LOGGING...OK";
+          if ( consoleOk )
+            *consoleStream << "START CONSOLE LOGGING (" << fileName << "), console logging: " << consoleLog << Qt::endl;
+          *textStream << "START FILE LOGGING (" << fileName << ")" << Qt::endl;
           return ( 1 );
         }
+      }
+    }
+    else
+    {
+      //
+      // es gib keinen Namen fürs Logging,also keine Logdatei
+      //
+      qCritical() << "there is no log file name, no file logging!";
+      //
+      // Konsole auch nicht?
+      //
+      if ( !consoleOk )
+      {
+        qCritical() << "FAIL! No log to console an no file logging possible!";
+        return 0;
+      }
+      else
+      {
+        logToConsole = true;
       }
     }
     //
@@ -52,6 +127,32 @@ namespace spx
     //
     qDebug().noquote().nospace() << "START LOGGING...FAILED";
     return ( 0 );
+  }
+
+  /**
+   * @brief Logger::lineEnd
+   */
+  void Logger::lineEnd()
+  {
+    //
+    // nur innerhalb der logstufen loggen
+    //
+    if ( threshold >= currentThreshold )
+    {
+      //
+      // Zeilenende ausgeben und Ausgabe flushen
+      //
+      *textStream << Qt::endl;
+      textStream->flush();
+      //
+      // ist log zur Konsole aktiv, auch da neue Zeile
+      //
+      if ( logToConsole )
+      {
+        *consoleStream << Qt::endl;
+      }
+      wasNewline = true;
+    }
   }
 
   /**
@@ -73,172 +174,82 @@ namespace spx
   }
 
   /**
-   * @brief Logger::warn Ausgabe(n) für WARNUNG
-   * @param msg
+   * @brief Logger::shutdown
    */
-  void Logger::warn( const QString &msg )
-  {
-    //! Serialisieren...
-    QMutexLocker locker( &logMutex );
-    qWarning().noquote().nospace() << msg;
-    if ( textStream && threshold >= LG_WARN )
-    {
-      *textStream << getDateString() << WARN_STR << msg << endl;
-    }
-  }
-
-  void Logger::warn( const char *msg )
-  {
-    //! Serialisieren...
-    QMutexLocker locker( &logMutex );
-    qWarning().noquote().nospace() << msg;
-    if ( textStream && threshold >= LG_WARN )
-    {
-      *textStream << getDateString() << WARN_STR << msg << endl;
-    }
-  }
-
-  void Logger::warn( const std::string &msg )
-  {
-    //! Serialisieren...
-    QMutexLocker locker( &logMutex );
-    qWarning().noquote().nospace() << msg.c_str();
-    if ( textStream && threshold >= LG_WARN )
-    {
-      *textStream << getDateString() << WARN_STR << msg.c_str() << endl;
-    }
-  }
-
-  /**
-   * @brief Logger::info Ausgabe(n) für Info
-   * @param msg
-   */
-  void Logger::info( const QString &msg )
-  {
-    //! Serialisieren...
-    QMutexLocker locker( &logMutex );
-    qInfo().noquote().nospace() << msg;
-    if ( textStream && threshold >= LG_INFO )
-    {
-      *textStream << getDateString() << INFO_STR << msg << endl;
-    }
-  }
-
-  void Logger::info( const char *msg )
-  {
-    //! Serialisieren...
-    QMutexLocker locker( &logMutex );
-    qInfo().noquote().nospace() << msg;
-    if ( textStream && threshold >= LG_INFO )
-    {
-      *textStream << getDateString() << INFO_STR << msg << endl;
-    }
-  }
-  void Logger::info( const std::string &msg )
-  {
-    //! Serialisieren...
-    QMutexLocker locker( &logMutex );
-    qInfo().noquote().nospace() << msg.c_str();
-    if ( textStream && threshold >= LG_INFO )
-    {
-      *textStream << getDateString() << INFO_STR << msg.c_str() << endl;
-    }
-  }
-
-  /**
-   * @brief Logger::debug Ausgaben für Debugging
-   * @param msg
-   */
-  void Logger::debug( const QString &msg )
-  {
-    //! Serialisieren...
-    QMutexLocker locker( &logMutex );
-    qDebug().noquote().nospace() << msg;
-    if ( textStream && threshold >= LG_DEBUG )
-    {
-      *textStream << getDateString() << DEBUG_STR << msg << endl;
-    }
-  }
-
-  void Logger::debug( const char *msg )
-  {
-    //! Serialisieren...
-    QMutexLocker locker( &logMutex );
-    qDebug().noquote().nospace() << msg;
-    if ( textStream && threshold >= LG_DEBUG )
-    {
-      *textStream << getDateString() << DEBUG_STR << msg << endl;
-    }
-  }
-
-  void Logger::debug( const std::string &msg )
-  {
-    //! Serialisieren...
-    QMutexLocker locker( &logMutex );
-    qDebug().noquote().nospace() << msg.c_str();
-    if ( textStream && threshold >= LG_DEBUG )
-    {
-      *textStream << getDateString() << DEBUG_STR << msg.c_str() << endl;
-    }
-  }
-
-  /**
-   * @brief Logger::crit Ausgaben für Kritische Fehler
-   * @param msg
-   */
-  void Logger::crit( const QString &msg )
-  {
-    //! Serialisieren...
-    QMutexLocker locker( &logMutex );
-    qCritical().noquote().nospace() << msg;
-    if ( textStream && threshold >= LG_DEBUG )
-    {
-      *textStream << getDateString() << CRIT_STR << msg << endl;
-    }
-  }
-
-  void Logger::crit( const char *msg )
-  {
-    //! Serialisieren...
-    QMutexLocker locker( &logMutex );
-    qCritical().noquote().nospace() << msg;
-    if ( textStream && threshold >= LG_DEBUG )
-    {
-      *textStream << getDateString() << CRIT_STR << msg << endl;
-    }
-  }
-
-  void Logger::crit( const std::string &msg )
-  {
-    //! Serialisieren...
-    QMutexLocker locker( &logMutex );
-    qCritical().noquote().nospace() << msg.c_str();
-    if ( textStream && threshold >= LG_DEBUG )
-    {
-      *textStream << getDateString() << CRIT_STR << msg.c_str() << endl;
-    }
-  }
-
   void Logger::shutdown()
   {
-    if ( textStream != nullptr )
+    //
+    // Logen stoppen
+    //
+    if ( textStream )
     {
       textStream->flush();
-      // delete(textStream);
-      // textStream = nullptr;
     }
+    if ( consoleStream )
+    {
+      consoleStream->flush();
+    }
+    //
+    // Das logfile dann auch schliessen
+    //
     if ( logFile != nullptr )
     {
       logFile->flush();
       logFile->close();
-      // delete( logFile );
-      // logFile = nullptr;
     }
   }
 
+  /**
+   * @brief Logger::getDateString
+   * @return
+   */
   QString Logger::getDateString()
   {
     dateTime = QDateTime::currentDateTime();
     return ( dateTime.toString( dateTimeFormat ) );
   }
+
+  /**
+   * @brief Logger::getThresholdString
+   * @param th
+   * @return
+   */
+  const QString Logger::getThresholdString( LgThreshold th )
+  {
+    switch ( th )
+    {
+      case LG_NONE:
+        return Logger::NONE_STR;
+      case LG_CRIT:
+        return Logger::CRIT_STR.trimmed();
+      case LG_WARN:
+        return Logger::WARN_STR.trimmed();
+      case LG_INFO:
+        return Logger::INFO_STR.trimmed();
+      case LG_DEBUG:
+        return Logger::DEBUG_STR.trimmed();
+    }
+    return QString( "unknown" );
+  }
+
+  /**
+   * @brief Logger::getThresholdFromString
+   * @param th
+   * @return
+   */
+  LgThreshold Logger::getThresholdFromString( const QString &th )
+  {
+    if ( th.toUpper().compare( Logger::NONE_STR.trimmed() ) == 0 )
+      return ( LG_NONE );
+    else if ( th.toUpper().compare( Logger::CRIT_STR.trimmed() ) == 0 )
+      return ( LG_CRIT );
+    else if ( th.toUpper().compare( Logger::WARN_STR.trimmed() ) == 0 )
+      return ( LG_WARN );
+    else if ( th.toUpper().compare( Logger::INFO_STR.trimmed() ) == 0 )
+      return ( LG_INFO );
+    else if ( th.toUpper().compare( Logger::DEBUG_STR.trimmed() ) == 0 )
+      return ( LG_DEBUG );
+    return ( LG_DEBUG );
+  }
+
 }  // namespace spx

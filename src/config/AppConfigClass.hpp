@@ -26,6 +26,8 @@ namespace spx
     static const QString constLogFileKey;
     //! Einstellung für den Pfad zur Logdatei
     static const QString constLogPathKey;
+    //! Einstellung für log auf Konsole
+    static const QString constLogToConsoleKey;
     //! Kennzeichner für keine Daten
     static const QString constNoData;
     //! Gruppenname für App Einstellungen
@@ -69,8 +71,10 @@ namespace spx
     QString configFile;
     //! Wie heisst das Logfile
     QString logfileName;
-    // Wo ist die Logdatei gespeichert
+    //! Wo ist die Logdatei gespeichert
     QString logfilePath;
+    //! Auf der Konsole loggen?
+    bool consoleLog;
     //! welchen Wert hat der Timer
     int watchdogTimer;
     //! welche Loggerstufe hat die App
@@ -135,6 +139,9 @@ namespace spx
     QString getGuiThemeName() const;
     //! Name des Themas setzen
     void setGuiThemeName( const QString &value );
+    //! Console logging
+    bool getConsoleLog() const;
+    void setConsoleLog( bool value );
 
     private:
     // Logeinstellungen

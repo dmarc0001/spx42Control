@@ -13,6 +13,7 @@ namespace spx
   const QString AppConfigClass::constLogGroupName{"logger"};
   const QString AppConfigClass::constLogFileKey{"logFileName"};
   const QString AppConfigClass::constLogPathKey{"logFilePath"};
+  const QString AppConfigClass::constLogToConsoleKey{"consoleLog"};
   const QString AppConfigClass::constNoData{"-"};
   const QString AppConfigClass::constAppGroupName{"application"};
   const QString AppConfigClass::constAppTimeoutKey{"watchdogTimeout"};
@@ -38,6 +39,7 @@ namespace spx
    */
   AppConfigClass::AppConfigClass()
       : configFile( QApplication::applicationName() + ".ini" )
+      , consoleLog( false )
       , watchdogTimer( 0 )
       , logThreshold( 0 )
       , databasePath( defaultDatabasePath )
@@ -226,6 +228,11 @@ namespace spx
     }
     qDebug().noquote().nospace() << "AppConfigClass::loadLogSettings(): Logfile: <" << logfileName << ">";
     //
+    // lese ob log zur Konsole
+    //
+    consoleLog = settings.value( constLogToConsoleKey, "false" ).toBool();
+    qDebug().noquote().nospace() << "AppConfigClass::loadLogSettings(): log to console: <" << ( consoleLog ? "true" : "false" ) << ">";
+    //
     // Ende der Gruppe
     //
     settings.endGroup();
@@ -253,6 +260,8 @@ namespace spx
     settings.setValue( constLogPathKey, logfilePath );
     logfileName = QApplication::applicationName().append( ".log" );
     settings.setValue( constLogFileKey, logfileName );
+    consoleLog = false;
+    settings.setValue( constLogToConsoleKey, ( consoleLog ? "true" : "false" ) );
     //
     // Ende der Gruppe
     //
@@ -275,6 +284,8 @@ namespace spx
     settings.setValue( constLogFileKey, logfileName );
     //
     settings.setValue( constLogPathKey, logfilePath );
+    //
+    settings.setValue( constLogToConsoleKey, ( consoleLog ? "true" : "false" ) );
     //
     // Ende der Gruppe
     //
@@ -465,6 +476,15 @@ namespace spx
   void AppConfigClass::setGuiThemeName( const QString &value )
   {
     guiThemeName = value;
+  }
+  bool AppConfigClass::getConsoleLog() const
+  {
+    return consoleLog;
+  }
+
+  void AppConfigClass::setConsoleLog( bool value )
+  {
+    consoleLog = value;
   }
 
 }  // namespace spx
