@@ -30,7 +30,7 @@ namespace spx
 
   void ChartDataWorker::prepareMiniChart( QChart *chart, bool isLightTheme )
   {
-    lg->debug( "DiveMiniChart::prepareChart..." );
+    *lg << LDEBUG << "DiveMiniChart::prepareChart..." << Qt::endl;
     chart->legend()->hide();  // Keine Legende in der Minivorschau
     // Chart Titel aufhübschen
     QFont font;
@@ -42,7 +42,7 @@ namespace spx
       chart->setTheme( QChart::ChartTheme::ChartThemeLight );
     else
       chart->setTheme( QChart::ChartTheme::ChartThemeDark );
-    lg->debug( "DiveMiniChart::prepareChart...OK" );
+    *lg << LDEBUG << "DiveMiniChart::prepareChart...OK" << Qt::endl;
   }
 
   bool ChartDataWorker::makeChartDataMini( QChart *chart, const QString &deviceMac, int diveNum )
@@ -56,7 +56,7 @@ namespace spx
     QValueAxis *axisX;
     QPen myPen;
 
-    lg->debug( QString( "ChartDataWorker::makeChartDataMini for <%1>, num <%2>..." ).arg( deviceMac ).arg( diveNum ) );
+    *lg << LDEBUG << "ChartDataWorker::makeChartDataMini for <" << deviceMac << ">, num <" << diveNum << "2>..." << Qt::endl;
     //
     // jetzt die Daten abholen
     //
@@ -67,7 +67,7 @@ namespace spx
     //
     // jetzt die Daten für das Chart machen
     //
-    lg->debug( "ChartDataWorker::makeChartDataMini -> create series..." );
+    *lg << LDEBUG << "ChartDataWorker::makeChartDataMini -> create series..." << Qt::endl;
     // tiefe Datenserie
     depthSeries = new QLineSeries();
     myPen = depthSeries->pen();
@@ -108,7 +108,7 @@ namespace spx
     chart->addAxis( axisYPPO2, Qt::AlignRight );
     ppo2Series->attachAxis( axisYPPO2 );
     //
-    lg->debug( "ChartDataWorker::makeChartDataMini -> create time axis..." );
+    *lg << LDEBUG << "ChartDataWorker::makeChartDataMini -> create time axis..." << Qt::endl;
     // Zeitachse, dimension aus DB lesen
     axisX = new QValueAxis();
     axisX->setTickCount( dataSet->count() );
@@ -122,7 +122,7 @@ namespace spx
     QBrush backgroundBrush( Qt::NoBrush );
     QLinearGradient plotAreaGradient;
     //
-    lg->debug( "ChartDataWorker::makeDiveChart ->prepareChart..." );
+    *lg << LDEBUG << "ChartDataWorker::makeDiveChart ->prepareChart..." << Qt::endl;
     // Chart Titel aufhübschen
     font.setPointSize( 13 );
     for ( auto ch : {bigchart, ppo2chart} )
@@ -147,7 +147,7 @@ namespace spx
     // bigchart->setTitle( tr( "DIVE VIEW" ) );
     bigchart->title().clear();
     ppo2chart->title().clear();
-    lg->debug( "ChartDataWorker::makeDiveChart ->prepareChart...OK" );
+    *lg << LDEBUG << "ChartDataWorker::makeDiveChart ->prepareChart...OK" << Qt::endl;
     return ( true );
   }
 
@@ -167,7 +167,7 @@ namespace spx
     QValueAxis *tempAxis;
     QDateTimeAxis *bigChartTimeAxis;
     QDateTimeAxis *littleChartTimeAxis;
-    lg->debug( "ChartDataWorker::makeChartData..." );
+    *lg << LDEBUG << "ChartDataWorker::makeChartData..." << Qt::endl;
     bigchart->setParent( nullptr );
     ppo2chart->setParent( nullptr );
     //
@@ -184,7 +184,7 @@ namespace spx
       {
         ch->removeAxis( ax );
       }
-      lg->debug( "ChartDataWorker::makeDiveChart -> cleaned series and axis..." );
+      *lg << LDEBUG << "ChartDataWorker::makeDiveChart -> cleaned series and axis..." << Qt::endl;
     }
     //
     // jetzt die Daten abholen
@@ -198,7 +198,7 @@ namespace spx
     // jetzt die Daten für das Chart machen
     // ########################################################################
     //
-    lg->debug( "ChartDataWorker::makeChartData -> create series..." );
+    *lg << LDEBUG << "ChartDataWorker::makeChartData -> create series..." << Qt::endl;
     //
     // Datenserien machen
     //
@@ -260,7 +260,7 @@ namespace spx
     //
     // Farben aufhübschen, Design festlegen
     //
-    lg->debug( "ChartDataWorker::makeChartData -> make designs..." );
+    *lg << LDEBUG << "ChartDataWorker::makeChartData -> make designs..." << Qt::endl;
     depthAreaSeries->setColor( QColor( "#30404040" ) );
     QPen myPen = depthAreaSeries->pen();
     myPen.setColor( Qt::darkBlue );
@@ -289,7 +289,7 @@ namespace spx
     //
     // Serien zum Chart zufügen
     //
-    lg->debug( "ChartDataWorker::makeChartData -> add serieas to charts..." );
+    *lg << LDEBUG << "ChartDataWorker::makeChartData -> add serieas to charts..." << Qt::endl;
     bigchart->addSeries( depthSeries );
     bigchart->addSeries( depthAreaSeries );
     bigchart->addSeries( tempSeries );
@@ -298,7 +298,7 @@ namespace spx
     //
     // Achse für die Tiefe machen
     //
-    lg->debug( "ChartDataWorker::makeChartData -> depth axis..." );
+    *lg << LDEBUG << "ChartDataWorker::makeChartData -> depth axis..." << Qt::endl;
     depthAxis = new QValueAxis();
     depthAxis->setGridLineColor( QColor( "#FF202020" ) );
     depthAxis->setMax( 0.0 );
@@ -313,7 +313,7 @@ namespace spx
     //
     // Achse für die Temperatur machen
     //
-    lg->debug( "ChartDataWorker::makeChartData -> temperature axis..." );
+    *lg << LDEBUG << "ChartDataWorker::makeChartData -> temperature axis..." << Qt::endl;
     tempAxis = new QValueAxis();
     tempAxis->setGridLineColor( tempSeries->color() );
     tempAxis->setTitleText( tr( "TEMP [&ordm;C]" ) );
@@ -329,7 +329,7 @@ namespace spx
     //
     // Achse für die Zeit machen
     //
-    lg->debug( "ChartDataWorker::makeChartData -> create time axis..." );
+    *lg << LDEBUG << "ChartDataWorker::makeChartData -> create time axis..." << Qt::endl;
     // Zeitachse
     bigChartTimeAxis = new QDateTimeAxis();
     bigChartTimeAxis->setFormat( "H:mm:ss" );
@@ -338,7 +338,7 @@ namespace spx
     bigchart->addAxis( bigChartTimeAxis, Qt::AlignBottom );
     depthSeries->attachAxis( bigChartTimeAxis );
 
-    lg->debug( "ChartDataWorker::makeChartData -> ppo2 axis..." );
+    *lg << LDEBUG << "ChartDataWorker::makeChartData -> ppo2 axis..." << Qt::endl;
     // achse für den Partialdruck machen
     ppo2Axis = new QValueAxis();
     ppo2Axis->setLinePenColor( ppo2Series->color() );
@@ -353,7 +353,7 @@ namespace spx
     ppo2chart->addAxis( ppo2Axis, Qt::AlignLeft );
     ppo2Series->attachAxis( ppo2Axis );
 
-    lg->debug( "ChartDataWorker::makeChartData -> setpoint axis..." );
+    *lg << LDEBUG << "ChartDataWorker::makeChartData -> setpoint axis..." << Qt::endl;
     // achse für den setpoint
     setpointAxis = new QValueAxis();
     setpointAxis->setLinePenColor( setpointSeries->color() );
@@ -368,7 +368,7 @@ namespace spx
     ppo2chart->addAxis( setpointAxis, Qt::AlignRight );
     setpointSeries->attachAxis( setpointAxis );
 
-    lg->debug( "ChartDataWorker::makeChartData -> create 2`nd time axis..." );
+    *lg << LDEBUG << "ChartDataWorker::makeChartData -> create 2`nd time axis..." << Qt::endl;
     // Zeitachse
     littleChartTimeAxis = new QDateTimeAxis();
     littleChartTimeAxis->setTickCount( 10 );
@@ -391,7 +391,7 @@ namespace spx
       littleChartTimeAxis->setFormat( "mm:ss" );
     }
     //
-    lg->debug( "ChartDataWorker::makeChartData...OK" );
+    *lg << LDEBUG << "ChartDataWorker::makeChartData...OK" << Qt::endl;
     emit onChartReadySig();
     return ( true );
   }

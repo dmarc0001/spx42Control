@@ -23,7 +23,7 @@ namespace spx
       , ppo2ChartView( std::unique_ptr< SPXChartView >( new SPXChartView( logger, ppo2DummyChart ) ) )
       , chartWorker( std::unique_ptr< ChartDataWorker >( new ChartDataWorker( logger, database, this ) ) )
   {
-    lg->debug( "ChartsFragment::ChartsFragment..." );
+    *lg << LDEBUG << "ChartsFragment::ChartsFragment..." << Qt::endl;
     configObject();
   }
 
@@ -40,13 +40,13 @@ namespace spx
       , chartWorker( std::unique_ptr< ChartDataWorker >( new ChartDataWorker( src.lg, src.database, this ) ) )
 
   {
-    lg->debug( "ChartsFragment::ChartsFragment (COPY)..." );
+    *lg << LDEBUG << "ChartsFragment::ChartsFragment (COPY)..." << Qt::endl;
     configObject();
   }
 
   ChartsFragment::~ChartsFragment()
   {
-    lg->debug( "ChartsFragment::~ChartsFragment..." );
+    *lg << LDEBUG << "ChartsFragment::~ChartsFragment..." << Qt::endl;
     //
     // das Ding einfügen und vom destruktor entsorgen lassen
     //
@@ -54,7 +54,7 @@ namespace spx
     ppo2ChartView->setChart( ppo2DummyChart );
     bigDiveChart->deleteLater();
     ppo2DiveChart->deleteLater();
-    lg->debug( "ChartsFragment::~ChartsFragment...OK" );
+    *lg << LDEBUG << "ChartsFragment::~ChartsFragment...OK" << Qt::endl;
   }
 
   void ChartsFragment::configObject( void )
@@ -158,7 +158,7 @@ namespace spx
     QString mac = database->getLastConnected();
     if ( !mac.isEmpty() )
     {
-      lg->debug( QString( "LogFragment::setGuiConnected -> last connected was: " ).append( mac ) );
+      *lg << LDEBUG << "LogFragment::setGuiConnected -> last connected was: " << mac << Qt::endl;
       //
       // verbunden oder nicht, versuche etwas zu selektiern
       //
@@ -167,7 +167,7 @@ namespace spx
       int index = ui->deviceSelectComboBox->findData( mac );
       if ( index != ui->deviceSelectComboBox->currentIndex() && index != -1 )
       {
-        lg->debug( QString( "LogFragment::setGuiConnected -> found at idx %1, set to idx" ).arg( index ) );
+        *lg << LDEBUG << "LogFragment::setGuiConnected -> found at idx %1, set to idx" << index << Qt::endl;
         //
         // -1 for not found
         // und der index ist nicht schon auf diesen Wert gesetzt
@@ -203,12 +203,14 @@ namespace spx
     {
       return;
     }
-    lg->debug( QString( "ChartsFragment::onDeviceComboChangedSlot -> index changed to <%1>. addr: <%2>" )
-                   .arg( index, 2, 10, QChar( '0' ) )
-                   .arg( deviceAddr ) );
+    *lg << LDEBUG
+        << QString( "ChartsFragment::onDeviceComboChangedSlot -> index changed to <%1>. addr: <%2>" )
+               .arg( index, 2, 10, QChar( '0' ) )
+               .arg( deviceAddr )
+        << Qt::endl;
     ui->tabHeaderLabel->setText( fragmentTitleOfflinePattern.arg( database->getAliasForMac( deviceAddr ) ) );
     // Daten in der DB
-    lg->debug( "ChartsFragment::onDeviceComboChangedSlot -> fill log directory list from database..." );
+    *lg << LDEBUG << "ChartsFragment::onDeviceComboChangedSlot -> fill log directory list from database..." << Qt::endl;
     SPX42LogDirectoryEntryListPtr dirList = database->getLogentrysForDevice( deviceAddr );
     //
     // Alle Einträge sortiert in die Liste
@@ -241,7 +243,8 @@ namespace spx
     diveNum = ui->diveSelectComboBox->itemData( index ).toInt();
     if ( diveNum == -1 )
       return;
-    lg->debug( QString( "ChartsFragment::onDiveComboChangedSlot -> change to dive #%1..." ).arg( diveNum, 3, 10, QChar( '0' ) ) );
+    *lg << LDEBUG << QString( "ChartsFragment::onDiveComboChangedSlot -> change to dive #%1..." ).arg( diveNum, 3, 10, QChar( '0' ) )
+        << Qt::endl;
     // chartView->setChart( diveChart.get() );
     if ( dbgetDataFuture.isFinished() )
     {
@@ -257,7 +260,8 @@ namespace spx
     else
     {
       // später nochmal...
-      lg->debug( "ChartsFragment::onDiveComboChangedSlot -> last chart is under construction, try later (automatic) again..." );
+      *lg << LDEBUG << "ChartsFragment::onDiveComboChangedSlot -> last chart is under construction, try later (automatic) again..."
+          << Qt::endl;
       QTimer::singleShot( 100, this, [=]() { this->onDiveComboChangedSlot( index ); } );
     }
   }
@@ -268,24 +272,24 @@ namespace spx
     //
     // Charts sind fertig präpariert
     //
-    lg->debug( "ChartsFragment::onChartReadySlot..." );
+    *lg << LDEBUG << "ChartsFragment::onChartReadySlot..." << Qt::endl;
     bigChartView->setChart( bigDiveChart );
     ppo2ChartView->setChart( ppo2DiveChart );
     bigChartView->setRubberBand( SPXChartView::HorizontalRubberBand );
     ppo2ChartView->setRubberBand( SPXChartView::HorizontalRubberBand );
-    lg->debug( "ChartsFragment::onChartReadySlot...OK" );
+    *lg << LDEBUG << "ChartsFragment::onChartReadySlot...OK" << Qt::endl;
   }
 
   void ChartsFragment::onNotesLineEditFinishedSlot()
   {
-    lg->debug( "ChartsFragment::onNotesLineEditFinishedSlot -> edit finished..." );
+    *lg << LDEBUG << "ChartsFragment::onNotesLineEditFinishedSlot -> edit finished..." << Qt::endl;
     if ( database->writeNotesForDive( deviceAddr, diveNum, ui->notesLineEdit->text() ) )
     {
-      lg->debug( "ChartsFragment::onNotesLineEditFinishedSlot -> notes saved...OK" );
+      *lg << LDEBUG << "ChartsFragment::onNotesLineEditFinishedSlot -> notes saved...OK" << Qt::endl;
     }
     else
     {
-      lg->warn( "ChartsFragment::onNotesLineEditFinishedSlot -> notes NOT saved!" );
+      *lg << LWARN << "ChartsFragment::onNotesLineEditFinishedSlot -> notes NOT saved!" << Qt::endl;
     }
   }
 
@@ -301,8 +305,10 @@ namespace spx
 
   void ChartsFragment::onConfLicChangedSlot()
   {
-    lg->debug( QString( "ChartsFragment::onConfLicChangedSlot -> set: %1" )
-                   .arg( static_cast< int >( spxConfig->getLicense().getLicType() ) ) );
+    *lg << LDEBUG
+        << QString( "ChartsFragment::onConfLicChangedSlot -> set: %1" )
+               .arg( static_cast< int >( spxConfig->getLicense().getLicType() ) )
+        << Qt::endl;
     ui->tabHeaderLabel->setText(
         QString( tr( "LOGCHARTS SPX42 Serial [%1] Lic: %2" ).arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
   }

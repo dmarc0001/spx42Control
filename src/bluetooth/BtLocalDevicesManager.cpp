@@ -21,9 +21,9 @@ namespace spx
     //
     // Geräte Discovering Objekt instanzieren
     //
-    lg->debug( "BtDevices::BtDevices: create QBluetoothDeviceDiscoveryAgent..." );
+    *lg << LDEBUG << "BtLocalDevicesManager::BtLocalDevicesManager -> create QBluetoothDeviceDiscoveryAgent..." << Qt::endl;
     discoveryAgent = std::unique_ptr< QBluetoothDeviceDiscoveryAgent >( new QBluetoothDeviceDiscoveryAgent() );
-    lg->debug( "BtDevices::BtDevices: connect signals..." );
+    *lg << LDEBUG << "BtLocalDevicesManager::BtLocalDevicesManager -> connect signals..." << Qt::endl;
     //
     // discovering agent
     //
@@ -40,7 +40,7 @@ namespace spx
                emit onDevicePairingDoneSig( addr, pairing );
              } );
     //
-    lg->debug( "BtDevices::BtDevices: connect signals...OK" );
+    *lg << LDEBUG << "BtLocalDevicesManager::BtLocalDevicesManager -> connect signals...OK" << Qt::endl;
   }
 
   /**
@@ -48,7 +48,7 @@ namespace spx
    */
   BtLocalDevicesManager::~BtLocalDevicesManager()
   {
-    lg->debug( "BtLocalDevicesManager::~BtLocalDevicesManager..." );
+    *lg << LDEBUG << "BtLocalDevicesManager::~BtLocalDevicesManager..." << Qt::endl;
     // lösche Signale
     disconnect( discoveryAgent.get(), nullptr, nullptr, nullptr );
     disconnect( localDevice.get(), nullptr, this, nullptr );
@@ -71,7 +71,7 @@ namespace spx
   {
     if ( discoveryAgent->isActive() )
     {
-      lg->debug( "BtLocalDevicesManager::cancelDiscoverDevices - discovering is active, cancl it..." );
+      *lg << "BtLocalDevicesManager::cancelDiscoverDevices -> discovering is active, cancl it..." << Qt::endl;
       discoveryAgent->stop();
     }
   }
@@ -109,4 +109,4 @@ namespace spx
   {
     localDevice->requestPairing( address, pairing );
   }
-}
+}  // namespace spx

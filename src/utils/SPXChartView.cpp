@@ -56,16 +56,16 @@ namespace spx
    */
   SPXChartView::~SPXChartView()
   {
-    lg->debug( "SPXChartView::~SPXChartView..." );
+    *lg << LDEBUG << "SPXChartView::~SPXChartView..." << Qt::endl;
     if ( currChart )
       tooltip( QPointF( 0.0, 0.0 ), false );
-    lg->debug( "SPXChartView::~SPXChartView -> delete currCallout..." );
+    *lg << LDEBUG << "SPXChartView::~SPXChartView -> delete currCallout..." << Qt::endl;
     delete currCallout;
-    lg->debug( "SPXChartView::~SPXChartView -> delete cursor rubber band..." );
+    *lg << LDEBUG << "SPXChartView::~SPXChartView -> delete cursor rubber band..." << Qt::endl;
     delete cursorRubberBand;
-    lg->debug( "SPXChartView::~SPXChartView -> delete rubber band..." );
+    *lg << LDEBUG << "SPXChartView::~SPXChartView -> delete rubber band..." << Qt::endl;
     delete currRubberBand;
-    lg->debug( "SPXChartView::~SPXChartView...OK" );
+    *lg << LDEBUG << "SPXChartView::~SPXChartView...OK" << Qt::endl;
   }
 
   /**
@@ -473,7 +473,7 @@ namespace spx
           rRectF.setY( currChart->plotArea().y() );
           rRectF.setHeight( currChart->plotArea().height() );
         }
-        lg->debug( "SPXChartView::mouseReleaseEvent -> zoom in..." );
+        *lg << LDEBUG << "SPXChartView::mouseReleaseEvent -> zoom in..." << Qt::endl;
         currChart->zoomIn( rRectF );
         //
         // Zeitachse anpassen
@@ -517,7 +517,7 @@ namespace spx
           setTimeAxis( dtAxis, currSeries, rect );
         }
         emit onZoomChangedSig( rRectF );
-        lg->debug( "SPXChartView::mouseReleaseEvent -> zoom in..." );
+        *lg << LDEBUG << "SPXChartView::mouseReleaseEvent -> zoom in..." << Qt::endl;
       }
       else
       {
@@ -532,7 +532,7 @@ namespace spx
           setTimeAxis( dtAxis, currSeries, rect );
         }
         emit onZoomChangedSig( rRectF );
-        lg->debug( "SPXChartView::mouseReleaseEvent -> zoom out..." );
+        *lg << LDEBUG << "SPXChartView::mouseReleaseEvent -> zoom out..." << Qt::endl;
       }
       event->accept();
     }
@@ -541,7 +541,7 @@ namespace spx
       currChart->zoomReset();
       if ( dtAxis )
       {
-        lg->debug( "SPXChartView::mouseReleaseEvent -> axis reset..." );
+        *lg << LDEBUG << "SPXChartView::mouseReleaseEvent -> axis reset..." << Qt::endl;
         //
         // auch hier die Achse anpassen
         //
@@ -568,7 +568,7 @@ namespace spx
     //
     // die Maus verlässt uns...
     //
-    lg->debug( "SPXChartView::leaveEvent..." );
+    *lg << LDEBUG << "SPXChartView::leaveEvent..." << Qt::endl;
     // nicht nachträglich anzeigen!
     showTimer.stop();
     hideTimer.start( 350 );
@@ -582,7 +582,7 @@ namespace spx
   {
     if ( cursorRubberBand && cursorRubberBand->isEnabled() && cursorRubberBand->isVisible() )
     {
-      lg->debug( "SPXChartView::onShowTimerTimeoutSlot..." );
+      *lg << LDEBUG << "SPXChartView::onShowTimerTimeoutSlot..." << Qt::endl;
       if ( !oldCursorPos.isNull() )
       {
         tooltip( oldCursorPos, true );
@@ -606,7 +606,7 @@ namespace spx
    */
   void SPXChartView::onHideTimerTimeoutSlot()
   {
-    lg->debug( "SPXChartView::onHideTimerTimeoutSlot..." );
+    *lg << LDEBUG << "SPXChartView::onHideTimerTimeoutSlot..." << Qt::endl;
     //
     // nach ablauf der zeit den tooltip verbergen
     //
@@ -710,7 +710,7 @@ namespace spx
     }
     catch ( const std::exception &ex )
     {
-      lg->crit( QString( "SPXChartView::tooltip -> exception: %1" ).arg( ex.what() ) );
+      *lg << LCRIT << "SPXChartView::tooltip -> exception: " << ex.what() << Qt::endl;
     }
   }
 
@@ -763,7 +763,7 @@ namespace spx
       currChart->zoomReset();
       if ( dtAxis )
       {
-        lg->debug( "SPXChartView::onCursorMoveSlot -> axis slave reset..." );
+        *lg << LDEBUG << "SPXChartView::onCursorMoveSlot -> axis slave reset..." << Qt::endl;
         //
         // auch hier die Achse anpassen
         //

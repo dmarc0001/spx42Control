@@ -102,7 +102,7 @@ int main( int argc, char *argv[] )
   // den eventloop starten
   //
   int retcode = QApplication::exec();
-  lg->debug( "ControlMain -> app ends..." );
+  *lg << spx::LDEBUG << "ControlMain -> app ends..." << Qt::endl;
   qDebug() << "app ends with returncode <" << retcode << ">";
   return ( retcode );
 }

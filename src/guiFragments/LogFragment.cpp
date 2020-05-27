@@ -29,7 +29,7 @@ namespace spx
       , nullIcon()
       , offlineDeviceAddr()
   {
-    lg->debug( "LogFragment::LogFragment..." );
+    *lg << LDEBUG << "LogFragment::LogFragment..." << Qt::endl;
     ui->setupUi( this );
     logWriter.reset();
     exportPath = QStandardPaths::writableLocation( QStandardPaths::DownloadLocation );
@@ -126,7 +126,7 @@ namespace spx
    */
   LogFragment::~LogFragment()
   {
-    lg->debug( "LogFragment::~LogFragment..." );
+    *lg << LDEBUG << "LogFragment::~LogFragment..." << Qt::endl;
     // setze wieder den Dummy ein und lasse den
     // die Objekte im ChartView entsorgen
     chartView->setChart( dummyChart );
@@ -134,7 +134,7 @@ namespace spx
     logWriter.disconnect();
     xmlExport.disconnect();
     remoteSPX42->disconnect( this );
-    lg->debug( "LogFragment::~LogFragment...OK" );
+    *lg << LDEBUG << "LogFragment::~LogFragment...OK" << Qt::endl;
   }
 
   void LogFragment::setExportPath( const QString &_export )
@@ -181,7 +181,7 @@ namespace spx
       ui->transferProgressBar->setVisible( false );
       ui->dbWriteNumLabel->setText( dbWriteNumIDLE );
       transferTimeout.stop();
-      lg->warn( "LogFragment::onTransferTimeout -> transfer timeout!!!" );
+      *lg << LWARN << "LogFragment::onTransferTimeout -> transfer timeout!!!" << Qt::endl;
       // TODO: Warn oder Fehlermeldung ausgeben
     }
   }
@@ -191,12 +191,12 @@ namespace spx
    */
   void LogFragment::onWriterDoneSlot( int )
   {
-    lg->debug( "LogFragment::onWriterDoneSlot..." );
+    *lg << LDEBUG << "LogFragment::onWriterDoneSlot..." << Qt::endl;
     // Writer ist fertig, es könnte weiter gehen
     if ( dbWriterFuture.isFinished() )
     {
       logWriter.reset();
-      lg->debug( "LogFragment::onWriterDoneSlot -> writer finished!" );
+      *lg << LDEBUG << "LogFragment::onWriterDoneSlot -> writer finished!" << Qt::endl;
       ui->transferProgressBar->setVisible( false );
       ui->dbWriteNumLabel->setVisible( false );
       ui->dbWriteNumLabel->setText( dbWriteNumIDLE );
@@ -206,7 +206,7 @@ namespace spx
       if ( result < 0 )
       {
         // TODO: was machen
-        lg->crit( "LogFragment::onWriterDoneSlot -> dbWriter result is not okay!" );
+        *lg << LCRIT << "LogFragment::onWriterDoneSlot -> dbWriter result is not okay!" << Qt::endl;
       }
       return;
     }
@@ -224,12 +224,12 @@ namespace spx
   {
     if ( /*!logDetailRead.isEmpty() &&*/ dbWriterFuture.isFinished() )
     {
-      lg->debug( "LogFragment::onWriterDoneSlot -> start writer thread (again)..." );
+      *lg << LDEBUG << "LogFragment::onWriterDoneSlot -> start writer thread (again)..." << Qt::endl;
       logWriter.nowait( false );
       ui->dbWriteNumLabel->setVisible( true );
       dbWriterFuture =
           QtConcurrent::run( &this->logWriter, &LogDetailWalker::writeLogDataToDatabase, remoteSPX42->getRemoteConnected() );
-      lg->debug( "LogFragment::onWriterDoneSlot -> start writer thread (again)...OK" );
+      *lg << LDEBUG << "LogFragment::onWriterDoneSlot -> start writer thread (again)...OK" << Qt::endl;
     }
   }
 
@@ -240,8 +240,9 @@ namespace spx
   void LogFragment::onNewDiveStartSlot( int newDiveNum )
   {
     ui->dbWriteNumLabel->setText( dbWriteNumTemplate.arg( newDiveNum, 3, 10, QChar( '0' ) ) );
-    lg->debug(
-        QString( "LogFragment::onNewDiveStartSlot -> write dive number #%1 to database..." ).arg( newDiveNum, 3, 10, QChar( '0' ) ) );
+    *lg << LDEBUG
+        << QString( "LogFragment::onNewDiveStartSlot -> write dive number #%1 to database..." ).arg( newDiveNum, 3, 10, QChar( '0' ) )
+        << Qt::endl;
   }
 
   /**
@@ -249,7 +250,7 @@ namespace spx
    */
   void LogFragment::onReadLogDirectoryClickSlot()
   {
-    lg->debug( "LogFragment::onReadLogDirectorySlot: ..." );
+    *lg << LDEBUG << "LogFragment::onReadLogDirectorySlot: ..." << Qt::endl;
     if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
     {
       //
@@ -268,7 +269,7 @@ namespace spx
       //
       SendListEntry sendCommand = remoteSPX42->askForLogDir();
       remoteSPX42->sendCommand( sendCommand );
-      lg->debug( "LogFragment::onReadLogDirectorySlot -> send cmd get log directory..." );
+      *lg << LDEBUG << "LogFragment::onReadLogDirectorySlot -> send cmd get log directory..." << Qt::endl;
     }
   }
 
@@ -277,11 +278,11 @@ namespace spx
    */
   void LogFragment::onReadLogContentClickSlot()
   {
-    lg->debug( "LogFragment::onReadLogContentClickSlot: ..." );
+    *lg << LDEBUG << "LogFragment::onReadLogContentClickSlot: ..." << Qt::endl;
     QModelIndexList indexList = ui->logentryTableWidget->selectionModel()->selectedIndexes();
     if ( ui->logentryTableWidget->rowCount() == 0 )
     {
-      lg->warn( "LogFragment::onReadLogContentClickSlot -> no log entrys!" );
+      *lg << LWARN << "LogFragment::onReadLogContentClickSlot -> no log entrys!" << Qt::endl;
       return;
     }
     //
@@ -289,7 +290,7 @@ namespace spx
     //
     if ( indexList.isEmpty() )
     {
-      lg->warn( "LogFragment::onReadLogContentClickSlot -> nothing selected, read all?" );
+      *lg << LWARN << "LogFragment::onReadLogContentClickSlot -> nothing selected, read all?" << Qt::endl;
       // TODO: Messagebox aufpoppen und Nutzer fragen
       return;
     }
@@ -308,18 +309,18 @@ namespace spx
       if ( col == 0 )
       {
         QString entry = ui->logentryTableWidget->item( row, 0 )->text();
-        lg->debug( QString( "LogFragment::onReadLogContentClickSlot -> entry: %1..." ).arg( entry ) );
+        *lg << LDEBUG << "LogFragment::onReadLogContentClickSlot -> entry: " << entry << "..." << Qt::endl;
         QStringList el = entry.split( ':' );
         // in die Liste kommt die Nummer!
         if ( !el.isEmpty() && el.count() > 1 )
         {
           ++countDetails;
-          lg->debug( QString( "LogFragment::onReadLogContentClickSlot -> entry: %1...OK" ).arg( entry ) );
+          *lg << LDEBUG << "LogFragment::onReadLogContentClickSlot -> entry: " << entry << "...OK" << Qt::endl;
           logDetailRead.enqueue( el.at( 0 ).toInt() );
         }
       }
     }
-    lg->debug( QString( "LogFragment::onReadLogContentClickSlot -> to read %1 logs from spx42..." ).arg( countDetails ) );
+    *lg << LDEBUG << "LogFragment::onReadLogContentClickSlot -> to read " << countDetails << " logs from spx42..." << Qt::endl;
 
     //
     // und nun starte ich die Ereigniskette
@@ -341,7 +342,7 @@ namespace spx
       //
       transferTimeout.start( TIMEOUTVAL * 8 );
       logWriter.reset();
-      lg->debug( QString( "LogFragment::onReadLogContentClickSlot -> request log nr %1 from spx42..." ).arg( logDetailNum ) );
+      *lg << LDEBUG << "LogFragment::onReadLogContentClickSlot -> request log nr " << logDetailNum << " from spx42..." << Qt::endl;
       tryStartLogWriterThread();
     }
   }
@@ -362,7 +363,7 @@ namespace spx
     QTableWidgetItem *clicked2ndItem = ui->logentryTableWidget->item( row, 1 );
     // Aus dem Text die Nummer extraieren
     QString entry = clicked1stItem->text();
-    lg->debug( QString( "LogFragment::onLogListClickeSlot: data: %1..." ).arg( entry ) );
+    *lg << LDEBUG << "LogFragment::onLogListClickeSlot: data: " << entry << "..." << Qt::endl;
     // die Nummer des dives extraieren
     // und den Datumsstring für die Anzeige extraieren
     //
@@ -432,7 +433,8 @@ namespace spx
           else
           {
             // später nochmal...
-            lg->debug( "LogFragment::onLogListClickeSlot -> last chart is under construction, try later (automatic) again..." );
+            *lg << LDEBUG << "LogFragment::onLogListClickeSlot -> last chart is under construction, try later (automatic) again..."
+                << Qt::endl;
             QTimer::singleShot( 100, this, [=]() { this->onLogListClickeSlot( index ); } );
           }
         }
@@ -490,7 +492,7 @@ namespace spx
    */
   void LogFragment::onDeleteLogDetailClickSlot()
   {
-    lg->debug( "LogFragment::onLogDetailDeleteClickSlot..." );
+    *lg << LDEBUG << "LogFragment::onLogDetailDeleteClickSlot..." << Qt::endl;
     //
     // gib mir eine Liste mit diveNum
     //
@@ -500,7 +502,7 @@ namespace spx
 #ifdef DEBUG
     for ( int i : *deleteList.get() )
     {
-      lg->debug( QString( "LogFragment::onLogDetailDeleteClickSlot -> delete <%1>..." ).arg( i ) );
+      *lg << LDEBUG << "LogFragment::onLogDetailDeleteClickSlot -> delete <" << i << ">..." << Qt::endl;
     }
 #endif
     if ( dbDeleteFuture.isFinished() )
@@ -528,7 +530,7 @@ namespace spx
       //
       if ( !deviceAddr.isNull() && !deviceAddr.isEmpty() )
       {
-        lg->debug( "LogFragment::onLogDetailDeleteClickSlot -> start delete thread..." );
+        *lg << LDEBUG << "LogFragment::onLogDetailDeleteClickSlot -> start delete thread..." << Qt::endl;
         dbDeleteFuture = QtConcurrent::run( &this->logWriter, &LogDetailWalker::deleteLogDataFromDatabase, deviceAddr, deleteList );
       }
     }
@@ -542,14 +544,14 @@ namespace spx
     QString device_mac;
     QString _exportPath;
     //
-    lg->debug( "LogFragment::onLogDetailExportClickSlot..." );
+    *lg << LDEBUG << "LogFragment::onLogDetailExportClickSlot..." << Qt::endl;
     std::shared_ptr< QVector< int > > exportList = getSelectedInDb();
     if ( exportList->count() == 0 )
       return;
 #ifdef DEBUG
     for ( int i : *exportList.get() )
     {
-      lg->debug( QString( "LogFragment::onLogDetailExportClickSlot -> export <%1>..." ).arg( i ) );
+      *lg << LDEBUG << "LogFragment::onLogDetailExportClickSlot -> export <" << i << ">..." << Qt::endl;
     }
 #endif
     //
@@ -564,7 +566,7 @@ namespace spx
       QDir fileDir( _exportPath );
       if ( fileDir.exists() )
       {
-        lg->info( QString( "LogFragment::onExportLogDetailClickSlott -> %1..." ).arg( exportPath ) );
+        *lg << LINFO << "LogFragment::onExportLogDetailClickSlott -> " << exportPath << "..." << Qt::endl;
         exportPath = _exportPath;
       }
       else
@@ -587,7 +589,7 @@ namespace spx
     //
     // kann los gehen
     //
-    lg->debug( "LogFragment::onLogDetailExportClickSlot -> set parameters for export..." );
+    *lg << LDEBUG << "LogFragment::onLogDetailExportClickSlot -> set parameters for export..." << Qt::endl;
     if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
     {
       //
@@ -664,8 +666,8 @@ namespace spx
    */
   void LogFragment::onConfLicChangedSlot()
   {
-    lg->debug( QString( "LogFragment::onOnlineStatusChangedSlot -> set: %1" )
-                   .arg( static_cast< int >( spxConfig->getLicense().getLicType() ) ) );
+    *lg << LDEBUG << "LogFragment::onOnlineStatusChangedSlot -> set: " << static_cast< int >( spxConfig->getLicense().getLicType() )
+        << Qt::endl;
     ui->tabHeaderLabel->setText( QString( fragmentTitlePattern.arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
   }
 
@@ -687,7 +689,7 @@ namespace spx
     QString newListEntry;
     SPX42LogDirectoryEntry newEntry;
     //
-    lg->debug( "LogFragment::onCommandRecivedSlot..." );
+    *lg << LDEBUG << "LogFragment::onCommandRecivedSlot..." << Qt::endl;
     //
     // alle abholen...
     //
@@ -703,14 +705,14 @@ namespace spx
           // Kommando ALIVE liefert zurück:
           // ~03:PW
           // PX => Angabe HEX in Milivolt vom Akku
-          lg->debug( "LogFragment::onCommandRecivedSlot -> alive/acku..." );
+          *lg << LDEBUG << "LogFragment::onCommandRecivedSlot -> alive/acku..." << Qt::endl;
           ackuVal = ( recCommand->getValueFromHexAt( SPXCmdParam::ALIVE_POWER ) / 100.0 );
           emit onAkkuValueChangedSig( ackuVal );
           break;
         case SPX42CommandDef::SPX_APPLICATION_ID:
           // Kommando APPLICATION_ID (VERSION)
           // ~04:NR -> VERSION als String
-          lg->debug( "LogFragment::onCommandRecivedSlot -> firmwareversion..." );
+          *lg << LDEBUG << "LogFragment::onCommandRecivedSlot -> firmwareversion..." << Qt::endl;
           // Setzte die Version in die Config
           spxConfig->setSpxFirmwareVersion( recCommand->getParamAt( SPXCmdParam::FIRMWARE_VERSION ) );
           spxConfig->freezeConfigs( SPX42ConfigClass::CF_CLASS_SPX );
@@ -726,7 +728,7 @@ namespace spx
         case SPX42CommandDef::SPX_SERIAL_NUMBER:
           // Kommando SERIAL NUMBER
           // ~07:XXX -> Seriennummer als String
-          lg->debug( "LogFragment::onCommandRecivedSlot -> serialnumber..." );
+          *lg << LDEBUG << "LogFragment::onCommandRecivedSlot -> serialnumber..." << Qt::endl;
           spxConfig->setSerialNumber( recCommand->getParamAt( SPXCmdParam::SERIAL_NUMBER ) );
           spxConfig->freezeConfigs( SPX42ConfigClass::CF_CLASS_SPX );
           setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
@@ -737,7 +739,7 @@ namespace spx
           // übergeben LS,CE
           // LS : License State 0=Nitrox,1=Normoxic Trimix,2=Full Trimix
           // CE : Custom Enabled 0= disabled, 1=enabled
-          lg->debug( "LogFragment::onCommandRecivedSlot -> license state..." );
+          *lg << LDEBUG << "LogFragment::onCommandRecivedSlot -> license state..." << Qt::endl;
           spxConfig->setLicense( recCommand->getParamAt( SPXCmdParam::LICENSE_STATE ),
                                  recCommand->getParamAt( SPXCmdParam::LICENSE_INDIVIDUAL ) );
           spxConfig->freezeConfigs( SPX42ConfigClass::CF_CLASS_SPX );
@@ -754,7 +756,7 @@ namespace spx
           // mm Minute
           // Sekunde
           // MAX höchste Nummer der Einträge ( NR == MAX ==> letzter Eintrag )
-          lg->debug( "LogFragment::onCommandRecivedSlot -> log direntry..." );
+          *lg << LDEBUG << "LogFragment::onCommandRecivedSlot -> log direntry..." << Qt::endl;
           newEntry = SPX42LogDirectoryEntry( static_cast< int >( recCommand->getValueFromHexAt( SPXCmdParam::LOGDIR_CURR_NUMBER ) ),
                                              static_cast< int >( recCommand->getValueFromHexAt( SPXCmdParam::LOGDIR_MAXNUMBER ) ),
                                              recCommand->getParamAt( SPXCmdParam::LOGDIR_FILENAME ) );
@@ -793,7 +795,7 @@ namespace spx
             //
             // START der Details...
             //
-            lg->debug( QString( "LogFragment::onCommandRecivedSlot -> log detail %1 START..." ).arg( logNumber ) );
+            *lg << LDEBUG << "LogFragment::onCommandRecivedSlot -> log detail " << logNumber << " START..." << Qt::endl;
             if ( dbWriterFuture.isFinished() )
             {
               tryStartLogWriterThread();
@@ -807,7 +809,7 @@ namespace spx
             //
             // ENDE der Details
             //
-            lg->debug( QString( "LogFragment::onCommandRecivedSlot -> log detail %1 STOP..." ).arg( logNumber ) );
+            *lg << LDEBUG << "LogFragment::onCommandRecivedSlot -> log detail " << logNumber << " STOP..." << Qt::endl;
             if ( !logDetailRead.isEmpty() )
             {
               //
@@ -827,7 +829,7 @@ namespace spx
               if ( dbWriterFuture.isFinished() )
               {
                 // Thread neu starten
-                lg->debug( QString( "LogFragment::onCommandRecivedSlot -> request  %1 logs from spx42..." ).arg( logDetailNum ) );
+                *lg << LDEBUG << "LogFragment::onCommandRecivedSlot -> request " << logDetailNum << " logs from spx42..." << Qt::endl;
                 tryStartLogWriterThread();
                 ui->dbWriteNumLabel->setVisible( true );
               }
@@ -846,9 +848,8 @@ namespace spx
         case SPX42CommandDef::SPX_GET_LOG_DETAIL:
           // Datensatz empfangen, ab in die Wartschlange
           logWriter.addDetail( recCommand );
-          lg->debug( QString( "LogFragment::onCommandRecivedSlot -> log detail %1 for dive number %2..." )
-                         .arg( logWriter.getGlobal() )
-                         .arg( recCommand->getDiveNum() ) );
+          *lg << LDEBUG << "LogFragment::onCommandRecivedSlot -> log detail " << logWriter.getGlobal() << " for dive number "
+              << recCommand->getDiveNum() << "..." << Qt::endl;
           // Timer verlängern
           transferTimeout.start( TIMEOUTVAL );
           break;
@@ -896,13 +897,13 @@ namespace spx
       {
         // Daten im Cache
         // Speicherstatus sollte auch drin stehen
-        lg->debug( QString( "LogFragment::LogFragment -> fill log directory list from cache..." ) );
+        *lg << LDEBUG << "LogFragment::LogFragment -> fill log directory list from cache..." << Qt::endl;
         dirList = spxConfig->getLogDirectory();
       }
       else
       {
         // Daten in der DB
-        lg->debug( QString( "LogFragment::LogFragment -> fill log directory list from database..." ) );
+        *lg << LDEBUG << "LogFragment::LogFragment -> fill log directory list from database..." << Qt::endl;
         dirList = database->getLogentrysForDevice( remoteSPX42->getRemoteConnected() );
       }
       //
@@ -951,7 +952,7 @@ namespace spx
         QString mac = database->getLastConnected();
         if ( !mac.isEmpty() )
         {
-          lg->debug( QString( "LogFragment::setGuiConnected -> last connected was: " ).append( mac ) );
+          *lg << LDEBUG << "LogFragment::setGuiConnected -> last connected was: " << mac << Qt::endl;
           //
           // verbunden oder nicht, versuche etwas zu selektiern
           //
@@ -960,7 +961,7 @@ namespace spx
           int index = ui->deviceSelectComboBox->findData( mac );
           if ( index != ui->deviceSelectComboBox->currentIndex() && index != -1 )
           {
-            lg->debug( QString( "LogFragment::setGuiConnected -> found at idx %1, set to idx" ).arg( index ) );
+            *lg << LDEBUG << "LogFragment::setGuiConnected -> found at idx " << index << ", set to idx" << Qt::endl;
             //
             // -1 for not found
             // und der index ist nicht schon auf diesen Wert gesetzt
@@ -993,7 +994,7 @@ namespace spx
   {
     QString deviceAddr;
     //
-    lg->debug( "LogFragment::testForSavedDetails..." );
+    *lg << LDEBUG << "LogFragment::testForSavedDetails..." << Qt::endl;
     //
     // die Liste der gespeicherten Tauchgänge aus der Datenbank holen
     // unterscheide ob ich online oder offline arbeite
@@ -1051,20 +1052,22 @@ namespace spx
               // dann den Eintrag su der datenbank dazu tun
               cachedList->insert( diveNum, dbEntry );
             }
-            lg->debug( QString( "LogFragment::testForSavedDetails -> saved in dive %1" ).arg( diveNum, 3, 10, QChar( '0' ) ) );
+            *lg << LDEBUG << QString( "LogFragment::testForSavedDetails -> saved in dive %1" ).arg( diveNum, 3, 10, QChar( '0' ) )
+                << Qt::endl;
             QTableWidgetItem *itLoadet = new QTableWidgetItem( savedIcon, "" );
             ui->logentryTableWidget->setItem( i, 1, itLoadet );
           }
           else
           {
-            lg->debug( QString( "LogFragment::testForSavedDetails -> NOT saved in dive %1" ).arg( diveNum, 3, 10, QChar( '0' ) ) );
+            *lg << LDEBUG << QString( "LogFragment::testForSavedDetails -> NOT saved in dive %1" ).arg( diveNum, 3, 10, QChar( '0' ) )
+                << Qt::endl;
             QTableWidgetItem *itLoadet = new QTableWidgetItem( "" );
             ui->logentryTableWidget->setItem( i, 1, itLoadet );
           }
         }
       }
     }
-    lg->debug( "LogFragment::testForSavedDetails...OK" );
+    *lg << LDEBUG << "LogFragment::testForSavedDetails...OK" << Qt::endl;
   }
 
   /**
@@ -1177,12 +1180,14 @@ namespace spx
       return;
     }
     offlineDeviceAddr = ui->deviceSelectComboBox->itemData( index ).toString();
-    lg->debug( QString( "LogFragment::onDeviceComboChangedSlot -> index changed to <%1>. addr: <%2>" )
-                   .arg( index, 2, 10, QChar( '0' ) )
-                   .arg( offlineDeviceAddr ) );
+    *lg << LDEBUG
+        << QString( "LogFragment::onDeviceComboChangedSlot -> index changed to <%1>. addr: <%2>" )
+               .arg( index, 2, 10, QChar( '0' ) )
+               .arg( offlineDeviceAddr )
+        << Qt::endl;
     ui->tabHeaderLabel->setText( fragmentTitleOfflinePattern.arg( database->getAliasForMac( offlineDeviceAddr ) ) );
     // Daten in der DB
-    lg->debug( QString( "LogFragment::LogFragment -> fill log directory list from database..." ) );
+    *lg << LDEBUG << "LogFragment::LogFragment -> fill log directory list from database..." << Qt::endl;
     SPX42LogDirectoryEntryListPtr dirList = database->getLogentrysForDevice( offlineDeviceAddr );
     //
     // Alle Einträge sortiert in die Liste
@@ -1232,7 +1237,7 @@ namespace spx
       ui->dbWriteNumLabel->setText( dbWriteNumIDLE );
       if ( exportFuture.isFinished() )
       {
-        lg->debug( "LogFragment::onEndSaveUddfFileSlot -> export finished!" );
+        *lg << LDEBUG << "LogFragment::onEndSaveUddfFileSlot -> export finished!" << Qt::endl;
         QMessageBox::information( this, tr( "EXPORT SUCCESS" ), tr( "Export was successful to file: \n<%1>" ).arg( fileName ),
                                   QMessageBox::Close, QMessageBox::Close );
       }
