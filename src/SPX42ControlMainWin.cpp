@@ -54,7 +54,7 @@ namespace spx
     QSqlError err = spx42Database->openDatabase( true );
     if ( err.isValid() && err.type() != QSqlError::NoError )
     {
-      QMessageBox cBox;
+      QMessageBox cBox( this );
       cBox.setIcon( QMessageBox::Critical );
       cBox.setText( tr( "CRITICAL" ) );
       cBox.setInformativeText( tr( "database can't open!" ) );
@@ -78,7 +78,7 @@ namespace spx
     int id6 = QFontDatabase::addApplicationFont( ":/fonts/bahnschrift.ttf" );
     if ( id1 < 0 || id2 < 0 || id3 < 0 || id4 < 0 || id5 < 0 || id6 < 0 )
     {
-      QMessageBox cBox;
+      QMessageBox cBox( this );
       cBox.setIcon( QMessageBox::Critical );
       cBox.setText( tr( "CRITICAL" ) );
       cBox.setInformativeText( tr( "internal font(s) can't load!" ) );
@@ -171,7 +171,7 @@ namespace spx
     //
     // bestimmen, ob das Ende unausweichlich ist
     //
-    QMessageBox msgBox;
+    QMessageBox msgBox( this );
     msgBox.setText( tr( "Really EXIT?" ) );
     msgBox.setInformativeText( tr( "Will you really quit this programm and close all files, databases, connections?" ) );
     msgBox.setStandardButtons( QMessageBox::No | QMessageBox::Yes );
@@ -254,7 +254,7 @@ namespace spx
           // Das ging schief
           //
           qDebug() << "SPX42ControlMainWin::createLogger -> path NOT created!";
-          QMessageBox msgBox;
+          QMessageBox msgBox( this );
           msgBox.setText( tr( "Log dirctory create FAIL!" ) );
           msgBox.setDetailedText( tr( "Check write rights for log directory or reinstall software.\n(%1)" ).arg( logDirStr ) );
           msgBox.setIcon( QMessageBox::Critical );
@@ -271,7 +271,7 @@ namespace spx
     //
     // Fehler, melde das dem User
     //
-    QMessageBox msgBox;
+    QMessageBox msgBox( this );
     msgBox.setText( tr( "Logging start FAIL!" ) );
     msgBox.setDetailedText( tr( "Check write rights for program directory or reinstall software." ) );
     msgBox.setIcon( QMessageBox::Critical );
@@ -1095,7 +1095,7 @@ namespace spx
     if ( QDialog::Accepted == optionsDlg->exec() )
     {
       *lg << LINFO << "SPX42ControlMainWin::onOptionsActionSlot -> dialog accepted" << Qt::endl;
-      QMessageBox iBox;
+      QMessageBox iBox( this );
       iBox.setIcon( QMessageBox::Information );
       iBox.setText( tr( "CAUTION" ) );
       iBox.setInformativeText( tr( "TO APPLY CHANGES RESTART APPLICATION" ) );
