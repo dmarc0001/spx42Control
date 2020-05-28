@@ -54,7 +54,13 @@ namespace spx
     QSqlError err = spx42Database->openDatabase( true );
     if ( err.isValid() && err.type() != QSqlError::NoError )
     {
-      QMessageBox::critical( this, tr( "CRITICAL" ), tr( "database can't open!" ) );
+      QMessageBox cBox;
+      cBox.setIcon( QMessageBox::Critical );
+      cBox.setText( tr( "CRITICAL" ) );
+      cBox.setInformativeText( tr( "database can't open!" ) );
+      cBox.setStandardButtons( QMessageBox::Close );
+      cBox.setDefaultButton( QMessageBox::Close );
+      cBox.exec();
       this->close();
     }
     //
@@ -72,7 +78,13 @@ namespace spx
     int id6 = QFontDatabase::addApplicationFont( ":/fonts/bahnschrift.ttf" );
     if ( id1 < 0 || id2 < 0 || id3 < 0 || id4 < 0 || id5 < 0 || id6 < 0 )
     {
-      QMessageBox::critical( this, tr( "CRITICAL" ), tr( "internal font(s) can't load!" ) );
+      QMessageBox cBox;
+      cBox.setIcon( QMessageBox::Critical );
+      cBox.setText( tr( "CRITICAL" ) );
+      cBox.setInformativeText( tr( "internal font(s) can't load!" ) );
+      cBox.setStandardButtons( QMessageBox::Close );
+      cBox.setDefaultButton( QMessageBox::Close );
+      cBox.exec();
     }
     else
     {
@@ -156,10 +168,17 @@ namespace spx
    */
   void SPX42ControlMainWin::closeEvent( QCloseEvent *event )
   {
-    QMessageBox::StandardButton result;
-    result = QMessageBox::question( this, tr( "Really EXIT?" ),
-                                    tr( "Will you really quit this programm and close all files, databases, connections?" ),
-                                    QMessageBox::No | QMessageBox::Yes, QMessageBox::No );
+    //
+    // bestimmen, ob das Ende unausweichlich ist
+    //
+    QMessageBox msgBox;
+    msgBox.setText( tr( "Really EXIT?" ) );
+    msgBox.setInformativeText( tr( "Will you really quit this programm and close all files, databases, connections?" ) );
+    msgBox.setStandardButtons( QMessageBox::No | QMessageBox::Yes );
+    msgBox.setDefaultButton( QMessageBox::No );
+    msgBox.setIcon( QMessageBox::Question );
+    int result = msgBox.exec();
+
     if ( QMessageBox::Yes != result )
     {
       event->ignore();
@@ -1076,8 +1095,13 @@ namespace spx
     if ( QDialog::Accepted == optionsDlg->exec() )
     {
       *lg << LINFO << "SPX42ControlMainWin::onOptionsActionSlot -> dialog accepted" << Qt::endl;
-      QMessageBox::information( this, tr( "CAUTION" ), tr( "TO APPLY CHANGES RESTART APPLICATION" ), QMessageBox::Ok,
-                                QMessageBox::Ok );
+      QMessageBox iBox;
+      iBox.setIcon( QMessageBox::Information );
+      iBox.setText( tr( "CAUTION" ) );
+      iBox.setInformativeText( tr( "TO APPLY CHANGES RESTART APPLICATION" ) );
+      iBox.setStandardButtons( QMessageBox::Ok );
+      iBox.setDefaultButton( QMessageBox::Ok );
+      iBox.exec();
     }
   }
 }  // namespace spx
