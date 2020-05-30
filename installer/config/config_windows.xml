@@ -17,7 +17,7 @@
       <DisplayName>SUBMATIX SPX42 Control Repository</DisplayName>
     </Repository>
     <Repository>
-      <Url>http://webserver.fritz.box/spx42Control</Url>
+      <Url>http://webserver-vm.fritz.box/spx42Control</Url>
       <Enabled>0</Enabled>
       <DisplayName>TESTING Repository</DisplayName>
     </Repository>
