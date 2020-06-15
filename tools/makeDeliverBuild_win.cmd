@@ -124,9 +124,10 @@ cp -f %EXTRAS%\msvcp140.dll msvcp140.dll
 cp -f %EXTRAS%\opengl32sw.dll opengl32sw.dll
 cp -f %EXTRAS%\vccorlib140.dll vccorlib140.dll
 cp -f %EXTRAS%\vcruntime140.dll vcruntime140.dll
+cp -f %EXTRAS%\vcruntime140_1.dll vcruntime140_1.dll
 
-echo %ARCHIVEGEN% %APP_INSTALLER_FILE_PATH%\%APP_INSTALLER_FILE% *.exe *.qm *.ilk *.pdb ucrtbased.dll libEGL.dll libGLESv2.dll msvcp140.dll opengl32sw.dll vccorlib140.dll vcruntime140.dll
-%ARCHIVEGEN% %APP_INSTALLER_FILE_PATH%\%APP_INSTALLER_FILE% *.exe *.qm *.ilk *.pdb ucrtbased.dll libEGL.dll libGLESv2.dll msvcp140.dll opengl32sw.dll vccorlib140.dll vcruntime140.dll && SET MAKE_DONE=true
+echo %ARCHIVEGEN% %APP_INSTALLER_FILE_PATH%\%APP_INSTALLER_FILE% *.exe *.qm *.ilk *.pdb ucrtbased.dll libEGL.dll libGLESv2.dll msvcp140.dll opengl32sw.dll vccorlib140.dll vcruntime140.dll vcruntime140_1.dll
+%ARCHIVEGEN% %APP_INSTALLER_FILE_PATH%\%APP_INSTALLER_FILE% *.exe *.qm *.ilk *.pdb ucrtbased.dll libEGL.dll libGLESv2.dll msvcp140.dll opengl32sw.dll vccorlib140.dll vcruntime140.dll vcruntime140_1.dll && SET MAKE_DONE=true
 
 :: falls das falsch ist, zum Ende kommen
 if "%MAKE_DONE%" == "false" goto false_end
@@ -140,6 +141,7 @@ del /f /q msvcp140.dll
 del /f /q opengl32sw.dll
 del /f /q vccorlib140.dll
 del /f /q vcruntime140.dll
+del /f /q vcruntime140_1.dll
 del /f /q "%RUNTIME_INSTALLER_FILE_PATH%%RUNTIME_INSTALLER_FILE%"
 
 SET MAKE_DONE=false
