@@ -9,11 +9,11 @@ SET OFFLINEINSTALLER=spx42ControlOfflineInstaller
 ::
 SET WINKIT=C:\Program Files (x86)\Windows Kits\10\bin\10.0.17763.0\x64
 SET PACKAGES=packages
-SET PROJECTBASE=C:\localProg\QT-Projekte\spx42Control
+SET PROJECTBASE=C:\DATEN\Entwicklung\QT-Projekte\submatix\spx42Control
 SET QT_DIR=C:\localProg\Qt
 SET QT_BASEDIR=%QT_DIR%\%QT_PREFIX%\msvc2017_64\bin
 SET QT_TOOLS=%QT_DIR%\Tools
-SET QT_INSTALLER_DIR=%QT_TOOLS%\QtInstallerFramework\3.0\bin
+SET QT_INSTALLER_DIR=%QT_TOOLS%\QtInstallerFramework\3.2\bin
 SET PROJECTBUILDDIR=DEPLOYDIR
 SET HELPSOURCE=%PROJECTBASE%\helpsystem
 SET TRANSLATION=%PROJECTBASE%\src\translations
