@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QObject>
 #include <QUrl>
+#include <QWebEngineView>
 #include <memory>
 #include "config/AppConfigClass.hpp"
 #include "logging/Logger.hpp"
@@ -15,7 +16,7 @@ namespace Ui
   // Vorwärtsdeklaration für UI
   //
   class HelpDialog;
-}
+}  // namespace Ui
 
 namespace spx
 {
@@ -34,5 +35,5 @@ namespace spx
     protected:
     void changeEvent( QEvent *e );
   };
-}
+}  // namespace spx
 #endif  // HELPDIALOG_HPP

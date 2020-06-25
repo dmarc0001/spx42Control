@@ -69,8 +69,8 @@ namespace spx
     SendListEntry shutdownSPX42( void );
     //! erkenne die PDU, lagere Parameter hier im Objekt
     char decodeCommand( const QByteArray &pdu );
-    //! dekodiere Log detail PDU
-    void decodeLogDetailLine( const QByteArray &pdu );
+    //! dekodiere Log detail PDU, gib Anzahl der elemente zurück
+    int decodeLogDetailLine( const QByteArray &pdu );
     //! gib Parameter mit Index index zurück, 0 == Command
     QByteArray getParameter( int index );
     //! send command zum deco setzten
@@ -86,5 +86,5 @@ namespace spx
     //! sende gas an den SPX42
     SendListEntry sendGas( int gasNum, SPX42Config &cfg );
   };
-}
+}  // namespace spx
 #endif  // SPX42COMMANDS_HPP

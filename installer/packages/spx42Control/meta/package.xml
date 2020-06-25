@@ -1,8 +1,8 @@
 <?xml version="1.0" ?><Package>
     <DisplayName>SPX42 app execute</DisplayName>
     <Description>Binary executable files for the spx42Control application.</Description> 
-    <Version>0.7.4</Version>
-    <ReleaseDate>2019-02-26</ReleaseDate>
+    <Version>0.7.8</Version>
+    <ReleaseDate>2019-03-25</ReleaseDate>
     <Default>true</Default>
     <Script>installscript.qs</Script>
     <Dependencies>qtRuntime</Dependencies>

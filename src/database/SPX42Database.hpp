@@ -18,9 +18,10 @@
 
 namespace spx
 {
-  //
-  class SPX42DeviceAlias;  // forward deklaration
+  // forward deklarationen
+  class SPX42DeviceAlias;
   class DiveDataset;
+  // Lesbar machen
   using DeviceAliasHash = QHash< QString, SPX42DeviceAlias >;
   using DiveDataSetsVector = QVector< DiveDataset >;
   using DiveDataSetsPtr = std::shared_ptr< DiveDataSetsVector >;
@@ -44,21 +45,37 @@ namespace spx
   class DiveLogEntry
   {
     public:
-    int detailId;     // Id aius Tabelle detaildir
-    int lfdNr;        // logeintrag nummer des Tauchganges
-    int pressure;     // Umgebungsdruck == Tiefe
-    int depth;        // Tiefe
-    int temperature;  // Temperatur Wasser
-    double acku;      // Akkuspannung
-    double ppo2;      // Sauerstoffpartioaldruck reslultierend
-    double ppo2_1;    // PPO2 Sensor 1
-    double ppo2_2;    // PPO2 Sensor 2
-    double ppo2_3;    // PPO2 Sensor 3
-    int setpoint;     // Setpoint PPO2
-    int n2;           // Stickstoff in prozent
-    int he;           // Helium in prozent
-    int zeroTime;     // Nullzeit zu diesem Zeitpunkt
-    int nextStep;     // nächster Logeintrag in zeitlichem Abstand
+    //! Id aius Tabelle detaildir
+    int detailId;
+    //! logeintrag nummer des Tauchganges
+    int lfdNr;
+    //! Umgebungsdruck == Tiefe
+    int pressure;
+    //! Tiefe
+    int depth;
+    //! Temperatur Wasser
+    int temperature;
+    //! Akkuspannung
+    double acku;
+    //! Sauerstoffpartioaldruck reslultierend
+    double ppo2;
+    //! PPO2 Sensor 1
+    double ppo2_1;
+    //! PPO2 Sensor 2
+    double ppo2_2;
+    //! PPO2 Sensor 3
+    double ppo2_3;
+    //! Setpoint PPO2
+    int setpoint;
+    //! Stickstoff in prozent
+    int n2;
+    //! Helium in prozent
+    int he;
+    //! Nullzeit zu diesem Zeitpunkt
+    int zeroTime;
+    //! nächster Logeintrag in zeitlichem Abstand
+    int nextStep;
+    // Konstruktoren
     DiveLogEntry( void );
     DiveLogEntry( int, int, int, int, int, double, double, double, double, double, int, int, int, int, int );
     DiveLogEntry( const DiveLogEntry &en );
@@ -191,6 +208,8 @@ namespace spx
     bool checkOrCreateTables( void );
     //! Update Tabelle detaildir, füge feld "notes" hinzu
     bool updateDetailDirTableFromFour( void );
+    //! teste ob next step plausibel ist (es gab fehlerhafte Einträge)
+    int validateNextStep( int val, int oldval );
 
     // GETTER und SETTER
     bool isDbOpen() const;

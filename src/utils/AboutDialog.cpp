@@ -2,6 +2,8 @@
 
 namespace spx
 {
+  QString AboutDialog::version = QString( "%1.%2.%3" ).arg( VMAJOR ).arg( VMINOR ).arg( VPATCH );
+
   AboutDialog::AboutDialog( QWidget *parent, AppConfigClass &conf, std::shared_ptr< Logger > logger )
       : QDialog( parent ), ui( new Ui::AboutDialog() ), lg( logger ), cf( conf )
   {
@@ -27,7 +29,7 @@ namespace spx
     ui->logoLabel->setPixmap( QPixmap::fromImage( image ) );
     ui->buildNumberLabel->setText( AppConfigClass::getBuildDate() );
     ui->buildDateLabel->setText( AppConfigClass::getBuildNumStr() );
-    ui->buildTypeLabel->setText( AppConfigClass::getBuldType() );
+    ui->buildTypeLabel->setText( tr( "Version: %1 - %2" ).arg( AboutDialog::version ).arg( AppConfigClass::getBuldType() ) );
     QPalette pal = ui->logoLabel->palette();
     pal.setColor( QPalette::WindowText, Qt::darkRed );
     pal.setColor( QPalette::Text, Qt::darkRed );
@@ -43,4 +45,4 @@ namespace spx
     ui->closeButton->setPalette( pal );
     ui->closeButton->setFont( grFont );
   }
-}
+}  // namespace spx

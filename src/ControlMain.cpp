@@ -22,7 +22,7 @@ int main( int argc, char *argv[] )
   // Übersetzter...
   //
   QTranslator qtTranslator;
-  QDir currDir = QDir::currentPath();
+  QDir currDir = QCoreApplication::applicationDirPath();
   QString fileName( baseName );
   QString prefix = "_";
   QString suffix = ".qm";
@@ -36,6 +36,15 @@ int main( int argc, char *argv[] )
   qDebug() << "Translation load: " << qtTranslator.load( QLocale::system().name(), fileName, prefix, destPath, suffix );
   qDebug() << "Tanslator isEmpty: " << qtTranslator.isEmpty();
   QApplication::installTranslator( &qtTranslator );
+  //
+  // Systemmeldungen auch lokalisieren
+  //
+  QTranslator qtBaseTranslator;
+  if ( qtBaseTranslator.load( "qtbase_" + QLocale::system().name(), QLibraryInfo::location( QLibraryInfo::TranslationsPath ) ) )
+  {
+    qDebug() << "qtBase Translator ok";
+    app.installTranslator( &qtBaseTranslator );
+  }
   //
   // Hauptfenster erzeugen
   //

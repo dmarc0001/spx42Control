@@ -214,8 +214,17 @@
          </size>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
+         <property name="leftMargin">
+          <number>4</number>
+         </property>
          <property name="topMargin">
-          <number>0</number>
+          <number>8</number>
+         </property>
+         <property name="rightMargin">
+          <number>4</number>
+         </property>
+         <property name="bottomMargin">
+          <number>8</number>
          </property>
          <item>
           <widget class="QLabel" name="deviceSelectLabel">
@@ -265,6 +274,9 @@
            </property>
            <property name="currentText">
             <string/>
+           </property>
+           <property name="maxVisibleItems">
+            <number>15</number>
            </property>
            <property name="insertPolicy">
             <enum>QComboBox::InsertAtTop</enum>
@@ -325,7 +337,25 @@
          </item>
          <item>
           <widget class="QWidget" name="handlingWidget" native="true">
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>48</height>
+            </size>
+           </property>
            <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <property name="leftMargin">
+             <number>6</number>
+            </property>
+            <property name="topMargin">
+             <number>6</number>
+            </property>
+            <property name="rightMargin">
+             <number>6</number>
+            </property>
+            <property name="bottomMargin">
+             <number>6</number>
+            </property>
             <item>
              <widget class="QPushButton" name="deleteContentPushButton">
               <property name="minimumSize">
@@ -387,10 +417,20 @@
          </item>
          <item>
           <widget class="QGroupBox" name="logDetailsGroupBox">
+           <property name="minimumSize">
+            <size>
+             <width>350</width>
+             <height>350</height>
+            </size>
+           </property>
            <property name="font">
             <font>
              <pointsize>14</pointsize>
+             <kerning>false</kerning>
             </font>
+           </property>
+           <property name="contextMenuPolicy">
+            <enum>Qt::NoContextMenu</enum>
            </property>
            <property name="statusTip">
             <string>details from log if on of entrys selected...</string>
@@ -402,6 +442,9 @@
             <bool>false</bool>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_3">
+            <property name="topMargin">
+             <number>9</number>
+            </property>
             <item>
              <widget class="QLabel" name="diveNumberLabel">
               <property name="sizePolicy">
@@ -457,16 +500,6 @@
              </widget>
             </item>
             <item>
-             <widget class="QWidget" name="diveProfileGraphicsView" native="true">
-              <property name="minimumSize">
-               <size>
-                <width>250</width>
-                <height>200</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item>
              <widget class="QLabel" name="dbWriteNumLabel">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -498,7 +531,7 @@
            <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
-             <height>10</height>
+             <height>5</height>
             </size>
            </property>
           </spacer>
@@ -510,6 +543,9 @@
        <spacer name="leftHorizontalSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::MinimumExpanding</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>

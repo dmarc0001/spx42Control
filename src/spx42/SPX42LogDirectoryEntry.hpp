@@ -36,13 +36,20 @@ namespace spx
   class SPX42LogDirectoryEntry
   {
     public:
-    int number;  // aktuelle Nummer
+    //! aktuelle Nummer
+    int number;
+    //! Dateiname auf dem SPX42
     QString fileName;
+    //! Tauchzeitpunkt
     QDateTime diveDateTime;
+    //! Repräsenttion als String
     QString dateTimeString;
-    int maxNumber;    // redundant, aber sicher ist sicher
-    QString diveId;   // eindeutige Kennung eines Tauchganges. Nummer und zeit/datum sollte einmalig sein
-    bool inDatabase;  // flag ob das Ding in der DB ist
+    //! anzahl Tuchgänge, redundant, aber sicher ist sicher
+    int maxNumber;
+    //! eindeutige Kennung eines Tauchganges. Nummer und zeit/datum sollte einmalig sein
+    QString diveId;
+    //! flag ob das Ding in der DB ist
+    bool inDatabase;
     //
     SPX42LogDirectoryEntry( int num, int max, const QByteArray &cmd, bool _inDatabase = false );
     SPX42LogDirectoryEntry( int num, int max, const QDateTime &dt, bool _inDatabase = false );

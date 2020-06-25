@@ -16,6 +16,8 @@ TRANSLATION=$PROJECTBASE/src/translations
 INSTALLERBASE=$PROJECTBASE/installer
 TRANSLATION=$PROJECTBASE/src/translations
 INSTALLERBASE=$PROJECTBASE/installer
+HELPSYSTEM=$PROJECTBASE/helpsystem
+HELPDESTINATION=$PROJECTBASE/$PROJECTBUILDDIR/out/spx42Control.app/Contents/MacOS
 REPOSITORY_DIR=repository
 APP_INSTALLER_FILE=spx42Control.7z
 APP_INSTALLER_FILE_PATH=$INSTALLERBASE/packages/spx42ControlMac/data/
@@ -87,9 +89,18 @@ fi
 echo "kopiere translations ($TRANSLATION\*.qm)..."
 if [ -e $TRANSLATION/*.qm ] 
 then
-  cp -f $TRANSLATION/*.qm out/
+  cp -f $TRANSLATION/*.qm out/spx42Control.app/Contents/MacOS/
 fi
 
+#
+# kopieren des Hilfesystems in die App
+#
+echo "kopiere helpsystem ($HELPSYSTEM nach $HELPDESTINATION )..."
+if [ -d $HELPSYSTEM ] 
+then
+  cp -rf $HELPSYSTEM $HELPDESTINATION/
+  find $HELPDESTINATION -type f -name "*.xcf" -exec rm -f "{}" \;
+fi
 
 #
 # jettz deployment...
