@@ -1057,7 +1057,7 @@ namespace spx
     lg->warn( QString( "SPX42Database::validateNextStep -> next step value not plausible <%1>. corrected" ).arg( val ) );
     if ( ( oldval == 20 ) || ( oldval == 30 ) || ( oldval == 60 ) )
       return ( oldval );
-    return ( 60 );
+    return ( 30 );
   }
 
   /**
@@ -1144,7 +1144,7 @@ namespace spx
                         .arg( static_cast< int >( cmd->getValueAt( SPXCmdParam::LOGDETAIL_N2 ) ) )
                         .arg( static_cast< int >( cmd->getValueAt( SPXCmdParam::LOGDETAIL_HE ) ) )
                         .arg( static_cast< int >( cmd->getValueAt( SPXCmdParam::LOGDETAIL_ZEROTIME ) ) )
-                        .arg( static_cast< int >( next_step /*cmd->getValueAt( SPXCmdParam::LOGDETAIL_NEXT_STEP )*/ ) );
+                        .arg( static_cast< int >( next_step ) );
       if ( query.exec( sql ) )
       {
         //

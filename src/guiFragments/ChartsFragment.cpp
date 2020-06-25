@@ -24,6 +24,41 @@ namespace spx
       , chartWorker( std::unique_ptr< ChartDataWorker >( new ChartDataWorker( logger, database, this ) ) )
   {
     lg->debug( "ChartsFragment::ChartsFragment..." );
+    configObject();
+  }
+
+  ChartsFragment::ChartsFragment( const ChartsFragment &src )
+      : QWidget( static_cast< QWidget * >( src.parent() ) )
+      , IFragmentInterface( src.lg, src.database, src.spxConfig, src.remoteSPX42, src.appConfig )
+      , ui( new Ui::ChartsFragment )
+      , bigDiveChart( nullptr )
+      , ppo2DiveChart( nullptr )
+      , bigDummyChart( new QtCharts::QChart() )
+      , ppo2DummyChart( new QtCharts::QChart() )
+      , bigChartView( std::unique_ptr< SPXChartView >( new SPXChartView( src.lg, bigDummyChart ) ) )
+      , ppo2ChartView( std::unique_ptr< SPXChartView >( new SPXChartView( src.lg, ppo2DummyChart ) ) )
+      , chartWorker( std::unique_ptr< ChartDataWorker >( new ChartDataWorker( src.lg, src.database, this ) ) )
+
+  {
+    lg->debug( "ChartsFragment::ChartsFragment (COPY)..." );
+    configObject();
+  }
+
+  ChartsFragment::~ChartsFragment()
+  {
+    lg->debug( "ChartsFragment::~ChartsFragment..." );
+    //
+    // das Ding einfügen und vom destruktor entsorgen lassen
+    //
+    bigChartView->setChart( bigDummyChart );
+    ppo2ChartView->setChart( ppo2DummyChart );
+    bigDiveChart->deleteLater();
+    ppo2DiveChart->deleteLater();
+    lg->debug( "ChartsFragment::~ChartsFragment...OK" );
+  }
+
+  void ChartsFragment::configObject( void )
+  {
     deviceAddr.clear();
     ui->setupUi( this );
     onConfLicChangedSlot();
@@ -79,19 +114,6 @@ namespace spx
     connect( bigChartView.get(), &SPXChartView::onCursorChangedSig, ppo2ChartView.get(), &SPXChartView::onCursorChangedSlot );
     connect( ppo2ChartView.get(), &SPXChartView::onZoomChangedSig, bigChartView.get(), &SPXChartView::onZoomChangedSlot );
     connect( ppo2ChartView.get(), &SPXChartView::onCursorChangedSig, bigChartView.get(), &SPXChartView::onCursorChangedSlot );
-  }
-
-  ChartsFragment::~ChartsFragment()
-  {
-    lg->debug( "ChartsFragment::~ChartsFragment..." );
-    //
-    // das Ding einfügen und vom destruktor entsorgen lassen
-    //
-    bigChartView->setChart( bigDummyChart );
-    ppo2ChartView->setChart( ppo2DummyChart );
-    bigDiveChart->deleteLater();
-    ppo2DiveChart->deleteLater();
-    lg->debug( "ChartsFragment::~ChartsFragment...OK" );
   }
 
   void ChartsFragment::initDeviceSelection( void )

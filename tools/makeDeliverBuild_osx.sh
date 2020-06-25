@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# erstelle ein instll build
+# erstelle ein install build
 
 #
 # Definitionen
@@ -27,9 +27,9 @@ QT_BASEDIR=/Users/dmarcini/Qt/$QT_PREFIX/clang_64/bin
 QT_QMAKE=$QT_BASEDIR/qmake
 MAKE=/usr/bin/make
 DEPLOY=$QT_BASEDIR/macdeployqt
-ARCHIVEGEN=/Users/dmarcini/Qt/Tools/QtInstallerFramework/3.0/bin/archivegen
-BINARYCREATOR=/Users/dmarcini/Qt/Tools/QtInstallerFramework/3.0/bin/binarycreator
-REPOGEN=/Users/dmarcini/Qt/Tools/QtInstallerFramework/3.0/bin/repogen
+ARCHIVEGEN=/Users/dmarcini/Qt/Tools/QtInstallerFramework/3.2/bin/archivegen
+BINARYCREATOR=/Users/dmarcini/Qt/Tools/QtInstallerFramework/3.2/bin/binarycreator
+REPOGEN=/Users/dmarcini/Qt/Tools/QtInstallerFramework/3.2/bin/repogen
 MAKE_DONE=false
 
 #

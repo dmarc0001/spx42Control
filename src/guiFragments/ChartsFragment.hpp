@@ -64,6 +64,7 @@ namespace spx
                              std::shared_ptr< SPX42Config > spxCfg,
                              std::shared_ptr< SPX42RemotBtDevice > remSPX42,
                              AppConfigClass *appCfg );
+    ChartsFragment( const ChartsFragment & );  //! Kopierkonstruktor
     //! Destruktor, muss GUI säubern
     ~ChartsFragment() override;
 
@@ -71,6 +72,7 @@ namespace spx
     // void keyPressEvent( QKeyEvent *event ) override;
 
     private:
+    void configObject( void );
     void initDeviceSelection( void );
 
     signals:
