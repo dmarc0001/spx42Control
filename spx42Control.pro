@@ -5,9 +5,9 @@
 #### Autor: Dirk Marciniak                                                 ####
 ####                                                                       ####
 ###############################################################################
-MAJOR                                  = 0
-MINOR                                  = 7
-PATCH                                  = 8
+MAJOR                                  = 1
+MINOR                                  = 0
+PATCH                                  = 0
 BUILD                                  = 0 # win build number
 
 win32:VERSION_PE_HEADER                = $${MAJOR}.$${MINOR}
