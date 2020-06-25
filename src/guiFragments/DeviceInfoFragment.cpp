@@ -14,7 +14,7 @@ namespace spx
       , ui( new Ui::DeviceInfoFragment )
       , spxPic( ":/images/spx42-normal" )
   {
-    lg->debug( "DeviceInfoFragment::DeviceInfoFragment..." );
+    *lg << LDEBUG << "DeviceInfoFragment::DeviceInfoFragment..." << Qt::endl;
     ui->setupUi( this );
     ui->transferProgressBar->setVisible( false );
     titleTemplate = tr( "DEVICE INFO Serial [%1] Lic: %2" );
@@ -40,10 +40,10 @@ namespace spx
 
   DeviceInfoFragment::~DeviceInfoFragment()
   {
-    lg->debug( "DeviceInfoFragment::~DeviceInfoFragment..." );
+    *lg << LDEBUG << "DeviceInfoFragment::~DeviceInfoFragment..." << Qt::endl;
     spxConfig->disconnect( this );
     remoteSPX42->disconnect( this );
-    lg->debug( "DeviceInfoFragment::~DeviceInfoFragment...OK" );
+    *lg << LDEBUG << "DeviceInfoFragment::~DeviceInfoFragment...OK" << Qt::endl;
   }
 
   void DeviceInfoFragment::prepareGuiWithConfig()
@@ -123,7 +123,7 @@ namespace spx
 
   void DeviceInfoFragment::onOnlineStatusChangedSlot( bool )
   {
-    lg->debug( "DeviceInfoFragment::onOnlineStatusChangedSlot..." );
+    *lg << LDEBUG << "DeviceInfoFragment::onOnlineStatusChangedSlot..." << Qt::endl;
     prepareGuiWithConfig();
   }
 
@@ -134,8 +134,8 @@ namespace spx
 
   void DeviceInfoFragment::onConfLicChangedSlot()
   {
-    lg->debug( QString( "DeviceInfoFragment::onConfLicChangedSlot -> set: %1" )
-                   .arg( static_cast< int >( spxConfig->getLicense().getLicType() ) ) );
+    *lg << LDEBUG << "DeviceInfoFragment::onConfLicChangedSlot -> set: " << static_cast< int >( spxConfig->getLicense().getLicType() )
+        << Qt::endl;
     ui->tabHeaderLabel->setText( QString( titleTemplate.arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
   }
 
@@ -150,7 +150,7 @@ namespace spx
     QDateTime nowDateTime;
     char kdo;
     //
-    lg->debug( "ConnectFragment::onDatagramRecivedSlot..." );
+    *lg << LDEBUG << "ConnectFragment::onDatagramRecivedSlot..." << Qt::endl;
     //
     // alle abholen...
     //
@@ -164,14 +164,14 @@ namespace spx
           // Kommando ALIVE liefert zurück:
           // ~03:PW
           // PX => Angabe HEX in Milivolt vom Akku
-          lg->debug( "ConnectFragment::onDatagramRecivedSlot -> alive/acku..." );
+          *lg << LDEBUG << "ConnectFragment::onDatagramRecivedSlot -> alive/acku..." << Qt::endl;
           ackuVal = ( recCommand->getValueFromHexAt( SPXCmdParam::ALIVE_POWER ) / 100.0 );
           emit onAkkuValueChangedSig( ackuVal );
           break;
         case SPX42CommandDef::SPX_APPLICATION_ID:
           // Kommando APPLICATION_ID (VERSION)
           // ~04:NR -> VERSION als String
-          lg->debug( "ConnectFragment::onDatagramRecivedSlot -> firmwareversion..." );
+          *lg << LDEBUG << "ConnectFragment::onDatagramRecivedSlot -> firmwareversion..." << Qt::endl;
           // Setzte die Version in die Config
           spxConfig->setSpxFirmwareVersion( recCommand->getParamAt( SPXCmdParam::FIRMWARE_VERSION ) );
           spxConfig->freezeConfigs( SPX42ConfigClass::CF_CLASS_SPX );
@@ -187,7 +187,7 @@ namespace spx
         case SPX42CommandDef::SPX_SERIAL_NUMBER:
           // Kommando SERIAL NUMBER
           // ~07:XXX -> Seriennummer als String
-          lg->debug( "ConnectFragment::onDatagramRecivedSlot -> serialnumber..." );
+          *lg << LDEBUG << "ConnectFragment::onDatagramRecivedSlot -> serialnumber..." << Qt::endl;
           spxConfig->setSerialNumber( recCommand->getParamAt( SPXCmdParam::SERIAL_NUMBER ) );
           spxConfig->freezeConfigs( SPX42ConfigClass::CF_CLASS_SPX );
           ui->deviceSerialNumberLabel->setText( deviceSerialNumberTemplate.arg( spxConfig->getSerialNumber() ) );
@@ -198,7 +198,7 @@ namespace spx
           // übergeben LS,CE
           // LS : License State 0=Nitrox,1=Normoxic Trimix,2=Full Trimix
           // CE : Custom Enabled 0= disabled, 1=enabled
-          lg->debug( "ConnectFragment::onDatagramRecivedSlot -> license state..." );
+          *lg << LDEBUG << "ConnectFragment::onDatagramRecivedSlot -> license state..." << Qt::endl;
           spxConfig->setLicense( recCommand->getParamAt( SPXCmdParam::LICENSE_STATE ),
                                  recCommand->getParamAt( SPXCmdParam::LICENSE_INDIVIDUAL ) );
           spxConfig->freezeConfigs( SPX42ConfigClass::CF_CLASS_SPX );

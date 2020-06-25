@@ -13,8 +13,8 @@ __copyright__ = 'Copyright 2019'
 __license__ = 'GPL'
 __version__ = '0.2'
 
-BUILDCONFIGNAME = "CurrBuildDef.hpp"
-BUILDCOUNTERFILE = "currBuildNum"
+BUILDCONFIGNAME = "src/config/CurrBuildDef.hpp"
+BUILDCOUNTERFILE = "template/currBuildNum"
 
 
 def main():
@@ -22,6 +22,7 @@ def main():
     Die Funktion
     """
     source_file = None
+    counter_file = None
     # parse argumente
     parser = ArgumentParser(fromfile_prefix_chars='@',
                             description='increment build number and set build date',
@@ -32,7 +33,7 @@ def main():
     if args.srcdir:
         source_dir = args.srcdir
         if os.path.isfile( source_dir + "/" + BUILDCONFIGNAME):
-            print("configfile " + BUILDCONFIGNAME + " found...")
+            print("configfile " + source_dir + BUILDCONFIGNAME + " found...")
             source_file = source_dir + "/" + BUILDCONFIGNAME
         else:
             print("error: config file not found in given path!")
@@ -44,6 +45,14 @@ def main():
         build_type = args.build
     else:
         build_type = ""
+
+    if os.path.isfile( source_dir + "/" + BUILDCOUNTERFILE):
+        print("configfile " + source_dir + BUILDCOUNTERFILE + " found...")
+        counter_file = source_dir + "/" + BUILDCOUNTERFILE
+    else:
+        print("error: config file not found in given path!")
+        exit(-1)
+
     #
     # hier erst mal das aktuelle Datum festlegen
     #
@@ -53,7 +62,7 @@ def main():
     #
     # jetzt buildnummer einlesen
     #
-    build_num_file = open(BUILDCOUNTERFILE, "r")
+    build_num_file = open(counter_file, "r")
     build_num = int(build_num_file.readline().rstrip())
     build_num_file.close()
     #
@@ -68,7 +77,7 @@ def main():
     #
     # buildnummer schreiben
     #
-    build_num_file = open(BUILDCOUNTERFILE, "w")
+    build_num_file = open(counter_file, "w")
     build_num_file.write("{:08}\n".format(build_num+1))
     build_num_file.close()
     #

@@ -21,10 +21,10 @@ namespace spx
       , gradentSlotsIgnore( false )
       , oldAutoSetpoint()
       , newAutoSetpoint()
+      , configHeadlineTemplate( tr( "CONFIG SPX42 SERIAL [%1] LIC: %2" ) )
   {
-    configHeadlineTemplate = tr( "CONFIG SPX42 SERIAL [%1] LIC: %2" );
-    lg->debug( QString( "DeviceConfigFragment::DeviceConfigFragment -> device connected: %1..." )
-                   .arg( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED ) );
+    *lg << LDEBUG << "DeviceConfigFragment::DeviceConfigFragment -> device connected: "
+        << ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED ? "True" : "False" ) << "..." << Qt::endl;
     ui->setupUi( this );
     ui->transferProgressBar->setVisible( false );
     ui->transferProgressBar->setRange( 0, 0 );
@@ -45,10 +45,10 @@ namespace spx
    */
   DeviceConfigFragment::~DeviceConfigFragment()
   {
-    lg->debug( "DeviceConfigFragment::~DeviceConfigFragment..." );
+    *lg << LDEBUG << "DeviceConfigFragment::~DeviceConfigFragment..." << Qt::endl;
     spxConfig->disconnect( this );
     remoteSPX42->disconnect( this );
-    lg->debug( "DeviceConfigFragment::~DeviceConfigFragment...OK" );
+    *lg << LDEBUG << "DeviceConfigFragment::~DeviceConfigFragment...OK" << Qt::endl;
   }
 
   /**
@@ -161,7 +161,8 @@ namespace spx
   {
     SPX42License lic( spxConfig->getLicense() );
 
-    lg->debug( QString( "DeviceConfigFragment::licChangedSlot -> set: %1" ).arg( static_cast< int >( lic.getLicType() ) ) );
+    *lg << LDEBUG << QString( "DeviceConfigFragment::licChangedSlot -> set: %1" ).arg( static_cast< int >( lic.getLicType() ) )
+        << Qt::endl;
     ui->tabHeaderLabel->setText(
         QString( configHeadlineTemplate.arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
     if ( lic.getLicInd() == IndividualLicense::LIC_INDIVIDUAL )
@@ -487,31 +488,29 @@ namespace spx
     QDateTime nowDateTime;
     DecoGradient currentGradient;
     DecompressionPreset preset;
-
-    char kdo;
     //
-    lg->debug( "DeviceConfigFragment::onDatagramRecivedSlot..." );
+    *lg << LDEBUG << "DeviceConfigFragment::onDatagramRecivedSlot..." << Qt::endl;
     //
     // alle abholen...
     //
     while ( ( recCommand = remoteSPX42->getNextRecCommand() ) )
     {
       // ja, es gab ein Datagram zum abholen
-      kdo = recCommand->getCommand();
+      char kdo = recCommand->getCommand();
       switch ( kdo )
       {
         case SPX42CommandDef::SPX_ALIVE:
           // Kommando ALIVE liefert zurück:
           // ~03:PW
           // PX => Angabe HEX in Milivolt vom Akku
-          lg->debug( "DeviceConfigFragment::onDatagramRecivedSlot -> alive/acku..." );
+          *lg << LDEBUG << "DeviceConfigFragment::onDatagramRecivedSlot -> alive/acku..." << Qt::endl;
           ackuVal = ( recCommand->getValueFromHexAt( SPXCmdParam::ALIVE_POWER ) / 100.0 );
           emit onAkkuValueChangedSig( ackuVal );
           break;
         case SPX42CommandDef::SPX_APPLICATION_ID:
           // Kommando APPLICATION_ID (VERSION)
           // ~04:NR -> VERSION als String
-          lg->debug( "DeviceConfigFragment::onDatagramRecivedSlot -> firmwareversion..." );
+          *lg << LDEBUG << "DeviceConfigFragment::onDatagramRecivedSlot -> firmwareversion..." << Qt::endl;
           // Setzte die Version in die Config
           spxConfig->setSpxFirmwareVersion( recCommand->getParamAt( SPXCmdParam::FIRMWARE_VERSION ) );
           spxConfig->freezeConfigs( SPX42ConfigClass::CF_CLASS_SPX );
@@ -528,7 +527,7 @@ namespace spx
         case SPX42CommandDef::SPX_SERIAL_NUMBER:
           // Kommando SERIAL NUMBER
           // ~07:XXX -> Seriennummer als String
-          lg->debug( "DeviceConfigFragment::onDatagramRecivedSlot -> serialnumber..." );
+          *lg << LDEBUG << "DeviceConfigFragment::onDatagramRecivedSlot -> serialnumber..." << Qt::endl;
           spxConfig->setSerialNumber( recCommand->getParamAt( SPXCmdParam::SERIAL_NUMBER ) );
           spxConfig->freezeConfigs( SPX42ConfigClass::CF_CLASS_SPX );
           setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
@@ -539,14 +538,14 @@ namespace spx
           // übergeben LS,CE
           // LS : License State 0=Nitrox,1=Normoxic Trimix,2=Full Trimix
           // CE : Custom Enabled 0= disabled, 1=enabled
-          lg->debug( "DeviceConfigFragment::onDatagramRecivedSlot -> license state..." );
+          *lg << LDEBUG << "DeviceConfigFragment::onDatagramRecivedSlot -> license state..." << Qt::endl;
           spxConfig->setLicense( recCommand->getParamAt( SPXCmdParam::LICENSE_STATE ),
                                  recCommand->getParamAt( SPXCmdParam::LICENSE_INDIVIDUAL ) );
           spxConfig->freezeConfigs( SPX42ConfigClass::CF_CLASS_SPX );
           setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
           break;
         case SPX42CommandDef::SPX_GET_SETUP_DEKO:
-          lg->debug( "DeviceConfigFragment::onDatagramRecivedSlot -> deco state..." );
+          *lg << LDEBUG << "DeviceConfigFragment::onDatagramRecivedSlot -> deco state..." << Qt::endl;
           // Kommando DEC liefert zurück:
           // ~34:LL:HH:D:Y:C
           // LL=GF-Low, HH=GF-High,
@@ -555,9 +554,9 @@ namespace spx
           // C=Last Decostop (0=3 Meter/1=6 Meter)
           //
           // eintrag in GUI -> durch callback dann auch eintrag in config
-          lg->debug( QString( "DeviceConfigFragment::onDatagramRecivedSlot -> LOW: %1 HIGH: %2" )
-                         .arg( recCommand->getValueFromHexAt( SPXCmdParam::DECO_GF_LOW ) )
-                         .arg( recCommand->getValueFromHexAt( SPXCmdParam::DECO_GF_HIGH ) ) );
+          *lg << LDEBUG
+              << "DeviceConfigFragment::onDatagramRecivedSlot -> LOW: " << recCommand->getValueFromHexAt( SPXCmdParam::DECO_GF_LOW )
+              << " HIGH: " << recCommand->getValueFromHexAt( SPXCmdParam::DECO_GF_HIGH ) << Qt::endl;
           // config speichern
           disconnectSlots( SIGNALS_DECOMPRESSION );
           currentGradient.first = static_cast< qint8 >( recCommand->getValueFromHexAt( SPXCmdParam::DECO_GF_LOW ) );
@@ -585,15 +584,15 @@ namespace spx
           connectSlots( SIGNALS_DECOMPRESSION );
           break;
         case SPX42CommandDef::SPX_GET_SETUP_SETPOINT:
-          lg->debug( "DeviceConfigFragment::onDatagramRecivedSlot -> setpoint..." );
+          *lg << LDEBUG << "DeviceConfigFragment::onDatagramRecivedSlot -> setpoint..." << Qt::endl;
           // Kommando GET_SETUP_SETPOINT liefert
           // ~35:A:P
           // A = Setpoint bei alte Firmware (0,1,2,3) = (deact,6,10,15,20)
           // A = Setpoint bei neue firmware (0,1,2) = (6,10,15)
           // P = Partialdruck (0..4) 1.0 .. 1.4
-          lg->debug( QString( "DeviceConfigFragment::onDatagramRecivedSlot -> autosetpoint %1, setpoint 1.%2..." )
-                         .arg( recCommand->getValueFromHexAt( SPXCmdParam::SETPOINT_AUTO ) )
-                         .arg( recCommand->getValueFromHexAt( SPXCmdParam::SETPOINT_VALUE ) ) );
+          *lg << LDEBUG << "DeviceConfigFragment::onDatagramRecivedSlot -> autosetpoint "
+              << recCommand->getValueFromHexAt( SPXCmdParam::SETPOINT_AUTO ) << ", setpoint 1."
+              << recCommand->getValueFromHexAt( SPXCmdParam::SETPOINT_VALUE ) << "..." << Qt::endl;
           disconnectSlots( SIGNALS_SETPOINT );
           // config speichern
           spxConfig->setSetpointAuto(
@@ -650,9 +649,9 @@ namespace spx
           // ALT: D= 0->10&, 1->50%, 2->100%
           // NEU: 0->20%, 1->40%, 2->60%, 3->80%, 4->100%
           // A= 0->Landscape 1->180Grad
-          lg->debug( QString( "DeviceConfigFragment::onDatagramRecivedSlot -> display settings bright: %1 orient: %2..." )
-                         .arg( recCommand->getValueFromHexAt( SPXCmdParam::DISPLAY_BRIGHTNESS ) )
-                         .arg( recCommand->getValueFromHexAt( SPXCmdParam::DISPLAY_ORIENT ) ) );
+          *lg << LDEBUG << "DeviceConfigFragment::onDatagramRecivedSlot -> display settings bright: "
+              << recCommand->getValueFromHexAt( SPXCmdParam::DISPLAY_BRIGHTNESS )
+              << " orient: " << recCommand->getValueFromHexAt( SPXCmdParam::DISPLAY_ORIENT ) << "..." << Qt::endl;
           disconnectSlots( SIGNALS_DISPLAY );
           // config machen
           spxConfig->setDisplayBrightness(
@@ -717,10 +716,10 @@ namespace spx
           // UD= Fahrenheit/Celsius => immer 0 in der Firmware 2.6.7.7_U
           // UL= 0=metrisch 1=imperial
           // UW= 0->Salzwasser 1->Süßwasser
-          lg->debug( QString( "DeviceConfigFragment::onDatagramRecivedSlot -> unit settings temp: %1 dimen: %2 water: %3..." )
-                         .arg( recCommand->getValueFromHexAt( SPXCmdParam::UNITS_TEMPERATURE ) )
-                         .arg( recCommand->getValueFromHexAt( SPXCmdParam::UNITS_METRIC_OR_IMPERIAL ) )
-                         .arg( recCommand->getValueFromHexAt( SPXCmdParam::UNITS_SALT_OR_FRESHWATER ) ) );
+          *lg << LDEBUG << "DeviceConfigFragment::onDatagramRecivedSlot -> unit settings temp: "
+              << recCommand->getValueFromHexAt( SPXCmdParam::UNITS_TEMPERATURE )
+              << " dimen: " << recCommand->getValueFromHexAt( SPXCmdParam::UNITS_METRIC_OR_IMPERIAL )
+              << " water: " << recCommand->getValueFromHexAt( SPXCmdParam::UNITS_SALT_OR_FRESHWATER ) << "..." << Qt::endl;
           disconnectSlots( SIGNALS_UNITS );
           // CONFIG
           spxConfig->setUnitsTemperatur(
@@ -771,14 +770,13 @@ namespace spx
           connectSlots( SIGNALS_UNITS );
           break;
         case SPX42CommandDef::SPX_GET_SETUP_INDIVIDUAL:
-          lg->debug(
-              QString( "DeviceConfigFragment::onDatagramRecivedSlot -> individual: se: %1 pscr: %2 sc: %3 snd: %4 li:%5 ??: %6..." )
-                  .arg( recCommand->getValueFromHexAt( SPXCmdParam::INDIVIDUAL_SENSORSENABLED ) )
-                  .arg( recCommand->getValueFromHexAt( SPXCmdParam::INDIVIDUAL_PASSIVEMODE ) )
-                  .arg( recCommand->getValueFromHexAt( SPXCmdParam::INDIVIDUAL_SENSORCOUNT ) )
-                  .arg( recCommand->getValueFromHexAt( SPXCmdParam::INDIVIDUAL_SOUND_ONOFF ) )
-                  .arg( recCommand->getValueFromHexAt( SPXCmdParam::INDIVIDUAL_LOGINTERVAL ) )
-                  .arg( recCommand->getValueFromHexAt( SPXCmdParam::INDIVIDUAL_TEMPSTICK ) ) );
+          *lg << LDEBUG << "DeviceConfigFragment::onDatagramRecivedSlot -> individual: se: "
+              << recCommand->getValueFromHexAt( SPXCmdParam::INDIVIDUAL_SENSORSENABLED )
+              << " pscr: " << recCommand->getValueFromHexAt( SPXCmdParam::INDIVIDUAL_PASSIVEMODE )
+              << " sc: " << recCommand->getValueFromHexAt( SPXCmdParam::INDIVIDUAL_SENSORCOUNT )
+              << " snd: " << recCommand->getValueFromHexAt( SPXCmdParam::INDIVIDUAL_SOUND_ONOFF )
+              << " li: " << recCommand->getValueFromHexAt( SPXCmdParam::INDIVIDUAL_LOGINTERVAL )
+              << " ??: " << recCommand->getValueFromHexAt( SPXCmdParam::INDIVIDUAL_TEMPSTICK ) << "..." << Qt::endl;
           // Kommando GET_SETUP_INDIVIDUAL liefert
           // ~38:SE:PS:SC:SN:LI:TS
           // SE: Sensors 0->ON 1->OFF
@@ -886,10 +884,8 @@ namespace spx
     // QHash aus SPX42Config
     //
     newGradient = spxConfig->getPresetValues( static_cast< DecompressionPreset >( index ) );
-    lg->debug( QString( "DeviceConfigFragment::onDecoComboChangedSlot: combobox new index: %1, new gradients low: %2, high: %3 " )
-                   .arg( index )
-                   .arg( newGradient.first )
-                   .arg( newGradient.second ) );
+    *lg << LDEBUG << "DeviceConfigFragment::onDecoComboChangedSlot: combobox new index: " << index
+        << ", new gradients low: " << newGradient.first << ", high: " << newGradient.second << " " << Qt::endl;
     //
     // Slots für changeInput kurz deaktivieren
     // und dann Werte neu eintragen
@@ -916,9 +912,8 @@ namespace spx
     if ( gradentSlotsIgnore )
       return;
     high = static_cast< qint8 >( ui->gradientHighSpinBox->value() );
-    lg->debug( QString( "DeviceConfigFragment::onDecoGradientLowChangedSlot: gradients changed to low: %1 high: %2" )
-                   .arg( static_cast< int >( low ) )
-                   .arg( static_cast< int >( high ) ) );
+    *lg << LDEBUG << "DeviceConfigFragment::onDecoGradientLowChangedSlot: gradients changed to low: " << static_cast< int >( low )
+        << " high: " << static_cast< int >( high ) << Qt::endl;
     //
     // Passen die Werte zu einem Preset?
     //
@@ -948,9 +943,8 @@ namespace spx
     if ( gradentSlotsIgnore )
       return;
     low = static_cast< qint8 >( ui->gradientLowSpinBox->value() );
-    lg->debug( QString( "DeviceConfigFragment::onDecoGradientHighChangedSlot: gradients changed to low: %1 high: %2" )
-                   .arg( static_cast< int >( low ) )
-                   .arg( static_cast< int >( high ) ) );
+    *lg << LDEBUG << "DeviceConfigFragment::onDecoGradientHighChangedSlot: gradients changed to low: " << static_cast< int >( low )
+        << " high: " << static_cast< int >( high ) << Qt::endl;
     //
     // Passen die Werte zu einem Preset?
     //
@@ -970,12 +964,12 @@ namespace spx
   void DeviceConfigFragment::setGradientPresetWithoutCallback( DecompressionPreset preset )
   {
     //
-    // zuerst Callbacks ignorieren, sondst gibt das eine Endlosschleife
+    // zuerst Callbacks ignorieren, sondst gibt das eineQt::endlosschleife
     //
     gradentSlotsIgnore = true;
     ui->conservatismComboBox->setCurrentIndex( static_cast< int >( preset ) );
-    lg->debug( QString( "DeviceConfigFragment::setGradientPresetWithoutCallback: combobox new index: %1" )
-                   .arg( static_cast< int >( preset ) ) );
+    *lg << LDEBUG << "DeviceConfigFragment::setGradientPresetWithoutCallback: combobox new index: " << static_cast< int >( preset )
+        << Qt::endl;
     //
     // Callbacks wieder erlauben
     //
@@ -990,8 +984,8 @@ namespace spx
   {
     DecompressionDynamicGradient newState = DecompressionDynamicGradient::DYNAMIC_GRADIENT_OFF;
     //
-    lg->debug( QString( "DeviceConfigFragment::onDecoDynamicGradientStateChangedSlot: changed to %1" )
-                   .arg( state == static_cast< int >( Qt::CheckState::Checked ) ? "ENABLED" : "DISABLED" ) );
+    *lg << LDEBUG << "DeviceConfigFragment::onDecoDynamicGradientStateChangedSlot: changed to %1"
+        << ( state == static_cast< int >( Qt::CheckState::Checked ) ? "ENABLED" : "DISABLED" ) << Qt::endl;
     if ( state == static_cast< int >( Qt::CheckState::Checked ) )
       newState = DecompressionDynamicGradient::DYNAMIC_GRADIENT_ON;
     spxConfig->setIsDecoDynamicGradients( newState );
@@ -1006,8 +1000,8 @@ namespace spx
   {
     DecompressionDeepstops newState = DecompressionDeepstops::DEEPSTOPS_DISABLED;
     //
-    lg->debug( QString( "DeviceConfigFragment::onDecoDeepStopsEnableChangedSlot: changed to %1" )
-                   .arg( state == static_cast< int >( Qt::CheckState::Checked ) ? "ENABLED" : "DISABLED" ) );
+    *lg << LDEBUG << "DeviceConfigFragment::onDecoDeepStopsEnableChangedSlot: changed to "
+        << ( state == static_cast< int >( Qt::CheckState::Checked ) ? "ENABLED" : "DISABLED" ) << Qt::endl;
     if ( state == static_cast< int >( Qt::CheckState::Checked ) )
       newState = DecompressionDeepstops::DEEPSTOPS_ENABLED;
     spxConfig->setIsDeepstopsEnabled( newState );
@@ -1064,7 +1058,7 @@ namespace spx
         default:
           brVal = 100;
       }
-      lg->debug( QString( "DeviceConfigFragment::onDisplayBrightnessChangedSlot: set brightness to %1" ).arg( brVal ) );
+      *lg << LDEBUG << "DeviceConfigFragment::onDisplayBrightnessChangedSlot: set brightness to " << brVal << Qt::endl;
     }
     //
     // setze im config-Objekt die Helligkeit
@@ -1092,7 +1086,7 @@ namespace spx
       {
         orString = "landscape 180°";
       }
-      lg->debug( QString( "DeviceConfigFragment::onDisplayOrientationChangedSlot: orientation to %1" ).arg( orString ) );
+      *lg << LDEBUG << "DeviceConfigFragment::onDisplayOrientationChangedSlot: orientation to " << orString << Qt::endl;
     }
     spxConfig->setDisplayOrientation( static_cast< DisplayOrientation >( index ) );
     emit onConfigWasChangedSig();
@@ -1117,7 +1111,7 @@ namespace spx
       {
         tmpString = "fahrenheid";
       }
-      lg->debug( QString( "DeviceConfigFragment::onUnitsTemperatureChangedSlot: temperatur unit to %1" ).arg( tmpString ) );
+      *lg << LDEBUG << "DeviceConfigFragment::onUnitsTemperatureChangedSlot: temperatur unit to " << tmpString << Qt::endl;
     }
     spxConfig->setUnitsTemperatur( tUnit );
     emit onConfigWasChangedSig();
@@ -1142,7 +1136,7 @@ namespace spx
       {
         lenString = "imperial";
       }
-      lg->debug( QString( "DeviceConfigFragment::onUnitsLengthChangedSlot: lengt unit to %1" ).arg( lenString ) );
+      *lg << LDEBUG << "DeviceConfigFragment::onUnitsLengthChangedSlot: lengt unit to " << lenString << Qt::endl;
     }
     spxConfig->setUnitsLength( lUnit );
     emit onConfigWasChangedSig();
@@ -1167,7 +1161,7 @@ namespace spx
       {
         typeString = "saltwater";
       }
-      lg->debug( QString( "DeviceConfigFragment::onUnitsWatertypeChangedSlot: lengt unit to %1" ).arg( typeString ) );
+      *lg << LDEBUG << "DeviceConfigFragment::onUnitsWatertypeChangedSlot: lengt unit to " << typeString << Qt::endl;
     }
     spxConfig->setUnitsWaterType( static_cast< DeviceWaterType >( index ) );
     emit onConfigWasChangedSig();
@@ -1202,7 +1196,7 @@ namespace spx
         default:
           autoDepth = 0;
       }
-      lg->debug( QString( "DeviceConfigFragment::onSetpointAutoChangedSlot: auto setpoint to %1" ).arg( autoDepth ) );
+      *lg << LDEBUG << "DeviceConfigFragment::onSetpointAutoChangedSlot: auto setpoint to " << autoDepth << Qt::endl;
     }
     spxConfig->setSetpointAuto( autoSP );
     emit onConfigWasChangedSig();
@@ -1237,7 +1231,7 @@ namespace spx
         default:
           setpoint = 14;
       }
-      lg->debug( QString( "DeviceConfigFragment::onSetpointValueChangedSlot: setpoint (ppo2) to %1" ).arg( setpoint ) );
+      *lg << LDEBUG << "DeviceConfigFragment::onSetpointValueChangedSlot: setpoint (ppo2) to " << setpoint << Qt::endl;
     }
     spxConfig->setSetpointValue( setpointValue );
     emit onConfigWasChangedSig();
@@ -1251,7 +1245,7 @@ namespace spx
   {
     DeviceIndividualSensors newState = DeviceIndividualSensors::SENSORS_OFF;
     //
-    lg->debug( QString( "DeviceConfigFragment::onIndividualSensorsOnChangedSlot: changed to %1" ).arg( state ) );
+    *lg << LDEBUG << "DeviceConfigFragment::onIndividualSensorsOnChangedSlot: changed to " << state << Qt::endl;
     if ( state == static_cast< int >( Qt::CheckState::Checked ) )
       newState = DeviceIndividualSensors::SENSORS_ON;
     spxConfig->setIndividualSensorsOn( newState );
@@ -1266,7 +1260,7 @@ namespace spx
   {
     DeviceIndividualPSCR newState = DeviceIndividualPSCR::PSCR_OFF;
     //
-    lg->debug( QString( "DeviceConfigFragment::onInIndividualPscrModeChangedSlot: changed to %1" ).arg( state ) );
+    *lg << LDEBUG << "DeviceConfigFragment::onInIndividualPscrModeChangedSlot: changed to " << state << Qt::endl;
     if ( state == static_cast< int >( Qt::CheckState::Checked ) )
       newState = DeviceIndividualPSCR::PSCR_ON;
     spxConfig->setIndividualPscrMode( newState );
@@ -1295,7 +1289,7 @@ namespace spx
         default:
           sensorCount = 3;
       }
-      lg->debug( QString( "DeviceConfigFragment::onIndividualSensorsCountChangedSlot: count sensors to %1" ).arg( sensorCount ) );
+      *lg << LDEBUG << "DeviceConfigFragment::onIndividualSensorsCountChangedSlot: count sensors to " << sensorCount << Qt::endl;
     }
     spxConfig->setIndividualSensorsCount( setpointValue );
     emit onConfigWasChangedSig();
@@ -1309,7 +1303,7 @@ namespace spx
   {
     DeviceIndividualAcoustic newState = DeviceIndividualAcoustic::ACOUSTIC_OFF;
     //
-    lg->debug( QString( "DeviceConfigFragment::onIndividualAcousticChangedSlot: changed to %1" ).arg( state ) );
+    *lg << LDEBUG << "DeviceConfigFragment::onIndividualAcousticChangedSlot: changed to " << state << Qt::endl;
     if ( state == static_cast< int >( Qt::CheckState::Checked ) )
       newState = DeviceIndividualAcoustic::ACOUSTIC_ON;
     spxConfig->setIndividualAcoustic( newState );
@@ -1325,20 +1319,27 @@ namespace spx
     auto logInterval = static_cast< DeviceIndividualLogInterval >( index );
     if ( lg->getThreshold() == LgThreshold::LG_DEBUG )
     {
-      int logInterval;
+      //
+      // das wird nur beim debug ausgeführt
+      //
+      int debugLogInterval = 0;
       switch ( index )
       {
         case static_cast< int >( DeviceIndividualLogInterval::INTERVAL_20 ):
-          logInterval = 20;
+          debugLogInterval = 20;
           break;
         case static_cast< int >( DeviceIndividualLogInterval::INTERVAL_30 ):
-          logInterval = 30;
+          debugLogInterval = 30;
           break;
         case static_cast< int >( DeviceIndividualLogInterval::INTERVAL_60 ):
+          debugLogInterval = 60;
+          break;
         default:
-          logInterval = 60;
+          debugLogInterval = 30;
+          logInterval = DeviceIndividualLogInterval::INTERVAL_30;
       }
-      lg->debug( QString( "DeviceConfigFragment::onIndividualLogIntervalChangedSlot: interrval to %1" ).arg( logInterval ) );
+      *lg << LDEBUG << "DeviceConfigFragment::onIndividualLogIntervalChangedSlot: interrval to " << debugLogInterval << " secounds"
+          << Qt::endl;
     }
     spxConfig->setIndividualLogInterval( logInterval );
     emit onConfigWasChangedSig();
@@ -1352,7 +1353,7 @@ namespace spx
   {
     auto tempstickType = static_cast< DeviceIndividualTempstick >( state );
     spxConfig->setIndividualTempStick( tempstickType );
-    lg->debug( QString( "DeviceConfigFragment::onIndividualTempstickChangedSlot -> set type %1" ).arg( state ) );
+    *lg << LDEBUG << "DeviceConfigFragment::onIndividualTempstickChangedSlot -> set type " << state << Qt::endl;
     emit onConfigWasChangedSig();
   }
 
@@ -1367,6 +1368,6 @@ namespace spx
     // SPX42ControlMainWin abgefragt...
     SendListEntry sendCommand = remoteSPX42->askForConfig();
     remoteSPX42->sendCommand( sendCommand );
-    lg->debug( "DeviceConfigFragment::onConfigUpdateSlot -> send cmd config..." );
+    *lg << LDEBUG << "DeviceConfigFragment::onConfigUpdateSlot -> send cmd config..." << Qt::endl;
   }
 }  // namespace spx

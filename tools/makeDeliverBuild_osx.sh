@@ -5,7 +5,7 @@
 #
 # Definitionen
 #
-QT_PREFIX=5.12.1
+QT_PREFIX=5.14.2
 ONLINEINSTALLER=spx42ControlOnlineInstallerMac.dmg
 OFFLINEINSTALLER=spx42ControlOfflineInstallerMac.dmg
 PROJECTBASE=/Users/dmarcini/entwicklung/spx42Control

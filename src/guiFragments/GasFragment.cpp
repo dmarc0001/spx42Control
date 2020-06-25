@@ -17,7 +17,7 @@ namespace spx
       , ignoreGasGuiEvents( false )
       , waterCompute( DeviceWaterType::FRESHWATER )
   {
-    lg->debug( "GasFragment::GasFragment..." );
+    *lg << LDEBUG << "GasFragment::GasFragment..." << Qt::endl;
     gasSummaryTemplate = tr( "GAS #%1 HE:%2 O2:%3 N2:%4 DIL1 [%5] DIL2 [%6] BO [%7]" );
     gasCurrentBoxTitleTemplate = tr( "GAS #%1" );
     ui->setupUi( this );
@@ -34,10 +34,10 @@ namespace spx
 
   GasFragment::~GasFragment()
   {
-    lg->debug( "GasFragment::~GasFragment..." );
+    *lg << LDEBUG << "GasFragment::~GasFragment..." << Qt::endl;
     spxConfig->disconnect( this );
     remoteSPX42->disconnect( this );
-    lg->debug( "GasFragment::~GasFragment...OK" );
+    *lg << LDEBUG << "GasFragment::~GasFragment...OK" << Qt::endl;
   }
 
   void GasFragment::initGuiWithConfig()
@@ -182,8 +182,10 @@ namespace spx
 
   void GasFragment::onSpinO2ValueChangedSlot( int o2Val )
   {
-    lg->debug( QString( "GasFragment::onSpinO2ValueChangedSlot -> gas nr <%1> was changed..." )
-                   .arg( currentGasNum + 1, 2, 10, QChar( '0' ) ) );
+    *lg << LDEBUG
+        << QString( "GasFragment::onSpinO2ValueChangedSlot -> gas nr <%1> was changed..." )
+               .arg( currentGasNum + 1, 2, 10, QChar( '0' ) )
+        << Qt::endl;
     //
     // Gas setzen, Plausibilität prüfen, ggf korrigieren
     //
@@ -199,8 +201,10 @@ namespace spx
 
   void GasFragment::onSpinHeValueChangedSlot( int heVal )
   {
-    lg->debug( QString( "GasFragment::onSpinHeValueChangedSlot -> gas nr <%1> was changed..." )
-                   .arg( currentGasNum + 1, 2, 10, QChar( '0' ) ) );
+    *lg << LDEBUG
+        << QString( "GasFragment::onSpinHeValueChangedSlot -> gas nr <%1> was changed..." )
+               .arg( currentGasNum + 1, 2, 10, QChar( '0' ) )
+        << Qt::endl;
     //
     // Gas setzen, Plausibilität prüfen, ggf korrigieren
     //
@@ -258,10 +262,12 @@ namespace spx
     //
     // genau ein DIL1 im System, beliegig vile DIL2 aber es kann nur ( DIL1 xor DIL2)
     //
-    lg->debug( QString( "GasFragment::onDiluentUseChangeSlot -> gas nr <%1> , DIL <%2> was changed to <%3>..." )
-                   .arg( currentGasNum + 1, 2, 10, QChar( '0' ) )
-                   .arg( static_cast< int >( which ), 2, 10, QChar( '0' ) )
-                   .arg( state, 2, 10, QChar( '0' ) ) );
+    *lg << LDEBUG
+        << QString( "GasFragment::onDiluentUseChangeSlot -> gas nr <%1> , DIL <%2> was changed to <%3>..." )
+               .arg( currentGasNum + 1, 2, 10, QChar( '0' ) )
+               .arg( static_cast< int >( which ), 2, 10, QChar( '0' ) )
+               .arg( state, 2, 10, QChar( '0' ) )
+        << Qt::endl;
     //
     // setzten oder löschen des Gases?
     //
@@ -366,8 +372,9 @@ namespace spx
   void GasFragment::onBailoutCheckChangeSlot( int state )
   {
     SPX42Gas chGas = spxConfig->getGasAt( currentGasNum );
-    lg->debug(
-        QString( "GasFragment::onBaCheckChangeSlot -> gas nr <%1> was changed..." ).arg( currentGasNum + 1, 2, 10, QChar( '0' ) ) );
+    *lg << LDEBUG
+        << QString( "GasFragment::onBaCheckChangeSlot -> gas nr <%1> was changed..." ).arg( currentGasNum + 1, 2, 10, QChar( '0' ) )
+        << Qt::endl;
     if ( state == Qt::Checked )
     {
       chGas.setBailout( true );
@@ -386,8 +393,8 @@ namespace spx
 
   void GasFragment::onConfLicChangedSlot()
   {
-    lg->debug(
-        QString( "GasFragment::onConfLicChangedSlot -> set: %1" ).arg( static_cast< int >( spxConfig->getLicense().getLicType() ) ) );
+    *lg << LDEBUG << "GasFragment::onConfLicChangedSlot -> set: " << static_cast< int >( spxConfig->getLicense().getLicType() )
+        << Qt::endl;
     ui->tabHeaderLabel->setText(
         QString( tr( "GASLIST SPX42 Serial [%1] Lic: %2" ).arg( spxConfig->getSerialNumber() ).arg( spxConfig->getLicName() ) ) );
   }
@@ -413,31 +420,29 @@ namespace spx
     QDateTime nowDateTime;
     SPX42Gas recGas;
     int recGasNumber, n2, he, o2;
-
-    char kdo;
     //
-    lg->debug( "GasFragment::onCommandRecivedSlot..." );
+    *lg << LDEBUG << "GasFragment::onCommandRecivedSlot..." << Qt::endl;
     //
     // alle abholen...
     //
     while ( ( recCommand = remoteSPX42->getNextRecCommand() ) )
     {
       // ja, es gab ein Datagram zum abholen
-      kdo = recCommand->getCommand();
+      char kdo = recCommand->getCommand();
       switch ( kdo )
       {
         case SPX42CommandDef::SPX_ALIVE:
           // Kommando ALIVE liefert zurück:
           // ~03:PW
           // PX => Angabe HEX in Milivolt vom Akku
-          lg->debug( "GasFragment::onCommandRecivedSlot -> alive/acku..." );
+          *lg << LDEBUG << "GasFragment::onCommandRecivedSlot -> alive/acku..." << Qt::endl;
           ackuVal = ( recCommand->getValueFromHexAt( SPXCmdParam::ALIVE_POWER ) / 100.0 );
           emit onAkkuValueChangedSig( ackuVal );
           break;
         case SPX42CommandDef::SPX_APPLICATION_ID:
           // Kommando APPLICATION_ID (VERSION)
           // ~04:NR -> VERSION als String
-          lg->debug( "GasFragment::onCommandRecivedSlot -> firmwareversion..." );
+          *lg << LDEBUG << "GasFragment::onCommandRecivedSlot -> firmwareversion..." << Qt::endl;
           // Setzte die Version in die Config
           spxConfig->setSpxFirmwareVersion( recCommand->getParamAt( SPXCmdParam::FIRMWARE_VERSION ) );
           spxConfig->freezeConfigs( SPX42ConfigClass::CF_CLASS_SPX );
@@ -453,7 +458,7 @@ namespace spx
         case SPX42CommandDef::SPX_SERIAL_NUMBER:
           // Kommando SERIAL NUMBER
           // ~07:XXX -> Seriennummer als String
-          lg->debug( "GasFragment::onCommandRecivedSlot -> serialnumber..." );
+          *lg << LDEBUG << "GasFragment::onCommandRecivedSlot -> serialnumber..." << Qt::endl;
           spxConfig->setSerialNumber( recCommand->getParamAt( SPXCmdParam::SERIAL_NUMBER ) );
           spxConfig->freezeConfigs( SPX42ConfigClass::CF_CLASS_SPX );
           setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
@@ -464,7 +469,7 @@ namespace spx
           // übergeben LS,CE
           // LS : License State 0=Nitrox,1=Normoxic Trimix,2=Full Trimix
           // CE : Custom Enabled 0= disabled, 1=enabled
-          lg->debug( "GasFragment::onCommandRecivedSlot -> license state..." );
+          *lg << LDEBUG << "GasFragment::onCommandRecivedSlot -> license state..." << Qt::endl;
           spxConfig->setLicense( recCommand->getParamAt( SPXCmdParam::LICENSE_STATE ),
                                  recCommand->getParamAt( SPXCmdParam::LICENSE_INDIVIDUAL ) );
           spxConfig->freezeConfigs( SPX42ConfigClass::CF_CLASS_SPX );
@@ -483,7 +488,8 @@ namespace spx
           n2 = static_cast< int >( recCommand->getValueFromHexAt( SPXCmdParam::GASLIST_N2 ) );
           he = static_cast< int >( recCommand->getValueFromHexAt( SPXCmdParam::GASLIST_HE ) );
           o2 = 100 - ( n2 + he );
-          lg->debug( QString( "GasFragment::onCommandRecivedSlot -> gas #%1..." ).arg( recGasNumber, 2, 10, QChar( '0' ) ) );
+          *lg << LDEBUG << QString( "GasFragment::onCommandRecivedSlot -> gas #%1..." ).arg( recGasNumber, 2, 10, QChar( '0' ) )
+              << Qt::endl;
           // CONFIG speichern
           disconnectSlots();
           recGas.reset();
@@ -516,7 +522,7 @@ namespace spx
     //
     SendListEntry sendCommand = remoteSPX42->askForGasList();
     remoteSPX42->sendCommand( sendCommand );
-    lg->debug( "GasFragment::onGasConfigUpdateSlot -> send cmd all gases..." );
+    *lg << LDEBUG << "GasFragment::onGasConfigUpdateSlot -> send cmd all gases..." << Qt::endl;
   }
 
   void GasFragment::gasSelect( int gasNum, bool isSelected )
@@ -528,7 +534,7 @@ namespace spx
       //
       currentGasNum = gasNum;
       // sag bescheid
-      lg->debug( QString( "GasFragment::gasSelect -> gas #%1" ).arg( gasNum + 1, 2, 10, QChar( '0' ) ) );
+      *lg << LDEBUG << QString( "GasFragment::gasSelect -> gas #%1" ).arg( gasNum + 1, 2, 10, QChar( '0' ) ) << Qt::endl;
     }
     //
     //"GAS #%1 HE:%2 O2:%3 N2:%4 DIL1 [%5] DIL2 [%6] BO [%7]"

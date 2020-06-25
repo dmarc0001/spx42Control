@@ -32,7 +32,7 @@ namespace spx
   {
     // merke mir ob das Programm das zum ersten mal macht...
     static bool isFirstStart{true};
-    lg->debug( "ConnectFragment::ConnectFragment..." );
+    *lg << LDEBUG << "ConnectFragment::ConnectFragment..." << Qt::endl;
     //
     // Fragmenttitel Musterstring erzeugen
     //
@@ -93,13 +93,13 @@ namespace spx
    */
   ConnectFragment::~ConnectFragment()
   {
-    lg->debug( "ConnectFragment::~ConnectFragment..." );
+    *lg << LDEBUG << "ConnectFragment::~ConnectFragment..." << Qt::endl;
     ui->spx42ImageLabel->setText( "" );
     delete busySpx;
     spxConfig->disconnect( this );
     remoteSPX42->disconnect( this );
     discoverObj->disconnect( this );
-    lg->debug( "ConnectFragment::~ConnectFragment...OK" );
+    *lg << LDEBUG << "ConnectFragment::~ConnectFragment...OK" << Qt::endl;
   }
 
   /**
@@ -120,7 +120,7 @@ namespace spx
       //
       if ( !spxDevicesAliasHash.contains( addr ) )
       {
-        lg->debug( QString( "ConnectFragment::onOnlineStatusChangedSlot -> connected, add device %1 in database" ).arg( addr ) );
+        *lg << LDEBUG << "ConnectFragment::onOnlineStatusChangedSlot -> connected, add device " << addr << " in database" << Qt::endl;
         auto descr = ConnectFragment::spx42Devices.value( addr );
         //
         // und rein damit
@@ -171,7 +171,7 @@ namespace spx
       default:
         sendMsg = errMsg.arg( tr( "COMMUNICATION ERROR" ) );
     }
-    lg->debug( QString( "ConnectFragment::onSocketErrorSlot -> send error message <%1> to main window..." ).arg( sendMsg ) );
+    *lg << LDEBUG << "ConnectFragment::onSocketErrorSlot -> send error message <" << sendMsg << "> to main window..." << Qt::endl;
     emit onErrorgMessageSig( sendMsg, true );
   }
 
@@ -198,13 +198,13 @@ namespace spx
   {
     bool isConnected = remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED;
     //
-    lg->debug( "ConnectFragment::onConnectButtonSlot -> connect/disconnect button clicked." );
+    *lg << LDEBUG << "ConnectFragment::onConnectButtonSlot -> connect/disconnect button clicked." << Qt::endl;
     //
     // je nachdem ob das gerät verbunden oder getrennt ist
     //
     if ( isConnected )
     {
-      lg->debug( "ConnectFragment::onConnectButtonSlot -> disconnect current connection" );
+      *lg << LDEBUG << "ConnectFragment::onConnectButtonSlot -> disconnect current connection" << Qt::endl;
       remoteSPX42->endConnection();
     }
     else
@@ -214,12 +214,12 @@ namespace spx
       //
       if ( ui->deviceComboBox->currentIndex() < 0 )
       {
-        lg->warn( "ConnectFragment::onConnectButtonSlot -> not an device delected!" );
+        *lg << LWARN << "ConnectFragment::onConnectButtonSlot -> not an device delected!" << Qt::endl;
         emit onWarningMessageSig( tr( "NOT SELECTED A DEVICE TO CONNECT" ), true );
         return;
       }
       QString remoteMac = ui->deviceComboBox->itemData( ui->deviceComboBox->currentIndex() ).toString();
-      lg->debug( QString( "ConnectFragment::onConnectButtonSlot -> connect to device <%1>" ).arg( remoteMac ) );
+      *lg << LDEBUG << "ConnectFragment::onConnectButtonSlot -> connect to device <" << remoteMac << ">" << Qt::endl;
       //
       // die busy anzeige werkeln lassen
       //
@@ -243,7 +243,7 @@ namespace spx
    */
   void ConnectFragment::onPropertyButtonSlot()
   {
-    lg->debug( "ConnectFragment::onPropertyButtonSlot -> property button clicked." );
+    *lg << LDEBUG << "ConnectFragment::onPropertyButtonSlot -> property button clicked." << Qt::endl;
     if ( remoteSPX42->getConnectionStatus() != SPX42RemotBtDevice::SPX42_CONNECTED )
     {
       ui->editAliasesTableWidget->setVisible( !ui->editAliasesTableWidget->isVisible() );
@@ -280,7 +280,7 @@ namespace spx
           auto *item1 = new QTableWidgetItem( deviceAlias.alias );
           // einfügen
           ui->editAliasesTableWidget->insertRow( currentRow );
-          lg->debug( QString( "insert row <%1>, %2, %3" ).arg( currentRow ).arg( item0->text() ).arg( item1->text() ) );
+          *lg << LDEBUG << "insert row <" << currentRow << ">, " << item0->text() << ", " << item1->text() << Qt::endl;
           ui->editAliasesTableWidget->setItem( currentRow, 0, item0 );
           ui->editAliasesTableWidget->setItem( currentRow, 1, item1 );
           ui->editAliasesTableWidget->repaint();
@@ -296,7 +296,7 @@ namespace spx
     int currentRow = edItem->row();
     QString alias = edItem->text();
     QString mac = ui->editAliasesTableWidget->item( currentRow, 0 )->text();
-    lg->debug( QString( "ConnectFragment::onAliasEditItemChanged -> entry <%1> to new Alias: <%2>" ).arg( mac ).arg( alias ) );
+    *lg << LDEBUG << "ConnectFragment::onAliasEditItemChanged -> entry <" << mac << "> to new Alias: <" << alias << ">" << Qt::endl;
     if ( database->setAliasForMac( mac, alias ) )
     {
       //
@@ -304,10 +304,10 @@ namespace spx
       //
       spxDevicesAliasHash = database->getDeviceAliasHash();
       fillDeviceCombo();
-      lg->debug( "ConnectFragment::onAliasEditItemChanged -> OK" );
+      *lg << LDEBUG << "ConnectFragment::onAliasEditItemChanged -> OK" << Qt::endl;
       return;
     }
-    lg->warn( "ConnectFragment::onAliasEditItemChanged -> NOT OK - show previous messages" );
+    *lg << LWARN << "ConnectFragment::onAliasEditItemChanged -> NOT OK - show previous messages" << Qt::endl;
   }
 
   /**
@@ -315,7 +315,7 @@ namespace spx
    */
   void ConnectFragment::onDiscoverButtonSlot()
   {
-    lg->debug( "ConnectFragment::onDiscoverButtonSlot -> discover button clicked." );
+    *lg << LDEBUG << "ConnectFragment::onDiscoverButtonSlot -> discover button clicked." << Qt::endl;
     //
     // Liste löschen
     //
@@ -334,7 +334,7 @@ namespace spx
    */
   void ConnectFragment::onDiscoveredDeviceSlot( const SPXDeviceDescr &deviceInfo )
   {
-    lg->debug( "ConnectFragment::onDiscoveredDeviceSlot-> device found, try inserting in combo..." );
+    *lg << LDEBUG << "ConnectFragment::onDiscoveredDeviceSlot-> device found, try inserting in combo..." << Qt::endl;
     //
     // Gerät zuerst in die Liste einfügen
     // dabei gehe ich davon aus das die discoverroutine auf doppelte Geräte schon
@@ -349,7 +349,7 @@ namespace spx
    */
   void ConnectFragment::onDiscoverScanFinishedSlot()
   {
-    lg->debug( "ConnectFragment::onDiscoverScanFinishedSlot-> discovering finished..." );
+    *lg << LDEBUG << "ConnectFragment::onDiscoverScanFinishedSlot-> discovering finished..." << Qt::endl;
     ui->discoverPushButton->setEnabled( true );
     trySetIndex();
   }
@@ -360,9 +360,11 @@ namespace spx
    */
   void ConnectFragment::onCurrentIndexChangedSlot( int index )
   {
-    lg->debug( QString( "ConnectFragment::onCurrentIndexChangedSlot -> index changed to <%1>. addr: <%2>" )
-                   .arg( index, 2, 10, QChar( '0' ) )
-                   .arg( ui->deviceComboBox->itemData( index ).toString() ) );
+    *lg << LDEBUG
+        << QString( "ConnectFragment::onCurrentIndexChangedSlot -> index changed to <%1>. addr: <%2>" )
+               .arg( index, 2, 10, QChar( '0' ) )
+               .arg( ui->deviceComboBox->itemData( index ).toString() )
+        << Qt::endl;
   }
 
   /**
@@ -374,7 +376,7 @@ namespace spx
     QDateTime nowDateTime;
     char kdo;
     //
-    lg->debug( "ConnectFragment::onDatagramRecivedSlot..." );
+    *lg << LDEBUG << "ConnectFragment::onDatagramRecivedSlot..." << Qt::endl;
     //
     // alle abholen...
     //
@@ -388,7 +390,7 @@ namespace spx
           // Kommando ALIVE liefert zurück:
           // ~03:PW
           // PX => Angabe HEX in Milivolt vom Akku
-          lg->debug( "ConnectFragment::onDatagramRecivedSlot -> alive/acku..." );
+          *lg << LDEBUG << "ConnectFragment::onDatagramRecivedSlot -> alive/acku..." << Qt::endl;
           ackuVal = ( recCommand->getValueFromHexAt( SPXCmdParam::ALIVE_POWER ) / 100.0 );
           emit onAkkuValueChangedSig( ackuVal );
           if ( ui->connectProgressBar->isVisible() )
@@ -402,7 +404,7 @@ namespace spx
         case SPX42CommandDef::SPX_APPLICATION_ID:
           // Kommando APPLICATION_ID (VERSION)
           // ~04:NR -> VERSION als String
-          lg->debug( "ConnectFragment::onDatagramRecivedSlot -> firmwareversion..." );
+          *lg << LDEBUG << "ConnectFragment::onDatagramRecivedSlot -> firmwareversion..." << Qt::endl;
           // Setzte die Version in die Config
           spxConfig->setSpxFirmwareVersion( recCommand->getParamAt( SPXCmdParam::FIRMWARE_VERSION ) );
           spxConfig->freezeConfigs( SPX42ConfigClass::CF_CLASS_SPX );
@@ -418,7 +420,7 @@ namespace spx
         case SPX42CommandDef::SPX_SERIAL_NUMBER:
           // Kommando SERIAL NUMBER
           // ~07:XXX -> Seriennummer als String
-          lg->debug( "ConnectFragment::onDatagramRecivedSlot -> serialnumber..." );
+          *lg << LDEBUG << "ConnectFragment::onDatagramRecivedSlot -> serialnumber..." << Qt::endl;
           spxConfig->setSerialNumber( recCommand->getParamAt( SPXCmdParam::SERIAL_NUMBER ) );
           spxConfig->freezeConfigs( SPX42ConfigClass::CF_CLASS_SPX );
           setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
@@ -429,7 +431,7 @@ namespace spx
           // übergeben LS,CE
           // LS : License State 0=Nitrox,1=Normoxic Trimix,2=Full Trimix
           // CE : Custom Enabled 0= disabled, 1=enabled
-          lg->debug( "ConnectFragment::onDatagramRecivedSlot -> license state..." );
+          *lg << LDEBUG << "ConnectFragment::onDatagramRecivedSlot -> license state..." << Qt::endl;
           spxConfig->setLicense( recCommand->getParamAt( SPXCmdParam::LICENSE_STATE ),
                                  recCommand->getParamAt( SPXCmdParam::LICENSE_INDIVIDUAL ) );
           spxConfig->freezeConfigs( SPX42ConfigClass::CF_CLASS_SPX );
@@ -497,24 +499,23 @@ namespace spx
     //
     // und nun eine vernünftige Anzeige machen und die MAC als Schlüssel lassen
     //
-    QString title = addr;  // TODO: aus den Aliasen was bauen
-
     if ( spxDevicesAliasHash.contains( addr ) )
     {
       //
       // ein alias ist vorhanden!
       //
       auto localSpxDevice = spxDevicesAliasHash.value( addr );
-      title = QString( "%1 (%2)" ).arg( localSpxDevice.alias ).arg( localSpxDevice.name );
+      QString title = QString( "%1 (%2)" ).arg( localSpxDevice.alias ).arg( localSpxDevice.name );
+      ui->deviceComboBox->addItem( title, addr );
     }
     else
     {
       //
       // es gibt (noch) keinen Alias, baue den Eintrag aus Name und MAC
       //
-      title = QString( "%1 (%2)" ).arg( deviceInfo.second ).arg( addr );
+      QString title = QString( "%1 (%2)" ).arg( deviceInfo.second ).arg( addr );
+      ui->deviceComboBox->addItem( title, addr );
     }
-    ui->deviceComboBox->addItem( title, addr );
   }
 
   void ConnectFragment::fillDeviceCombo()
@@ -534,7 +535,7 @@ namespace spx
     // wer ist verbunden
     //
     QString mac;
-    lg->debug( "ConnectFragment::trySetIndex..." );
+    *lg << LDEBUG << "ConnectFragment::trySetIndex..." << Qt::endl;
     mac = remoteSPX42->getRemoteConnected();
     if ( mac.isEmpty() )
     {
@@ -542,12 +543,12 @@ namespace spx
       // nichts verbunden
       // gucke ob ich das zulettz verbundene Gerät finde
       //
-      lg->debug( "ConnectFragment::trySetIndex -> not connected, try last connected..." );
+      *lg << LDEBUG << "ConnectFragment::trySetIndex -> not connected, try last connected..." << Qt::endl;
       mac = database->getLastConnected();
     }
     if ( !mac.isEmpty() )
     {
-      lg->debug( QString( "ConnectFragment::trySetIndex -> last connected was: " ).append( mac ) );
+      *lg << LDEBUG << "ConnectFragment::trySetIndex -> last connected was: " << mac << Qt::endl;
       //
       // verbunden oder nicht, versuche etwas zu selektiern
       //
@@ -556,7 +557,7 @@ namespace spx
       int index = ui->deviceComboBox->findData( mac );
       if ( index != ui->deviceComboBox->currentIndex() && index != -1 )
       {
-        lg->debug( QString( "ConnectFragment::trySetIndex -> found at idx %1, set to idx" ).arg( index ) );
+        *lg << LDEBUG << "ConnectFragment::trySetIndex -> found at idx " << index << ", set to idx" << Qt::endl;
         //
         // -1 for not found
         // und der index ist nicht schon auf diesen Wert gesetzt
@@ -565,6 +566,6 @@ namespace spx
         ui->deviceComboBox->setCurrentIndex( index );
       }
     }
-    lg->debug( "ConnectFragment::trySetIndex...OK" );
+    *lg << LDEBUG << "ConnectFragment::trySetIndex...OK" << Qt::endl;
   }
 }  // namespace spx

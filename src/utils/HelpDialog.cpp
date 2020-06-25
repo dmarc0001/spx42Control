@@ -20,7 +20,7 @@ namespace spx
     QString localFileName = tr( "%1/helpsystem/en/help.html" ).arg( QCoreApplication::applicationDirPath() );
     QUrl url = QUrl::fromLocalFile( localFileName );
     view->load( url );
-    lg->debug( QString( "HelpDialog::HelpDialog -> open url: <%1>" ).arg( url.toString() ) );
+    *lg << LDEBUG << "HelpDialog::HelpDialog -> open url: <" << url.toString() << ">" << Qt::endl;
     //
     // zur Marke springen, wenn das Dokument geladen ist (callback)
     //
@@ -30,7 +30,7 @@ namespace spx
         QString jumpMark = QString( "document.getElementById(\"mark_%1\").scrollIntoView();" )
                                .arg( static_cast< int >( currentTab ), 2, 10, QChar( '0' ) );
         view->page()->runJavaScript( jumpMark );
-        lg->debug( QString( "HelpDialog::HelpDialog -> try jump to <%1>" ).arg( jumpMark ) );
+        *lg << LDEBUG << "HelpDialog::HelpDialog -> try jump to <" << jumpMark << ">" << Qt::endl;
       }
     } );
     //

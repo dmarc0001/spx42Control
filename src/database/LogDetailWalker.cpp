@@ -72,7 +72,7 @@ namespace spx
     //
     // solange es was zu schreiben gibt
     //
-    lg->info( "LogDetailWriter::writeLogDataToDatabase -> thread started" );
+    *lg << LINFO << "LogDetailWriter::writeLogDataToDatabase -> thread started" << Qt::endl;
     while ( shouldWriterRunning )
     {
       if ( detailQueue.count() > 0 )
@@ -98,9 +98,8 @@ namespace spx
             //
             if ( !database->computeStatistic( detail_id ) )
             {
-              lg->warn(
-                  QString( "LogDetailWalker::writeLogDataToDatabase -> can't not compute statistic for dive - detail id <%1>..." )
-                      .arg( detail_id ) );
+              *lg << LWARN << "LogDetailWalker::writeLogDataToDatabase -> can't not compute statistic for dive - detail id <"
+                  << detail_id << ">..." << Qt::endl;
             }
           }
           //
@@ -108,15 +107,15 @@ namespace spx
           //
           emit onNewDiveDoneSig( diveNum );
           diveNum = logentry->getDiveNum();
-          lg->debug(
-              QString( "LogDetailWalker::writeLogDataToDatabase -> new dive to store #%1" ).arg( diveNum, 3, 10, QChar( '0' ) ) );
+          *lg << LDEBUG << "LogDetailWalker::writeLogDataToDatabase -> new dive to store #"
+              << QString( "%1" ).arg( diveNum, 3, 10, QChar( '0' ) ) << Qt::endl;
           //
           // Nummer hat sich verändert
           // ist das ein update oder ein insert?
           //
           if ( database->existDiveLogInBase( deviceMac, diveNum ) )
           {
-            lg->debug( "LogDetailWalker::writeLogDataToDatabase -> update, drop old values..." );
+            *lg << LDEBUG << "LogDetailWalker::writeLogDataToDatabase -> update, drop old values..." << Qt::endl;
             //
             // existiert, daten löschen...
             // also ein "update", eigentlich natürlich löschen und neu machen
@@ -137,9 +136,11 @@ namespace spx
             {
               // die gesuchte Tauchgangsnummer
               timestamp = entry.diveDateTime.toSecsSinceEpoch();
-              lg->debug( QString( "LogDetailWalker::writeLogDataToDatabase -> start time for dive #%1: %2" )
-                             .arg( diveNum, 3, 10, QChar( '0' ) )
-                             .arg( entry.getDateTimeStr() ) );
+              *lg << LDEBUG
+                  << QString( "LogDetailWalker::writeLogDataToDatabase -> start time for dive #%1: %2" )
+                         .arg( diveNum, 3, 10, QChar( '0' ) )
+                         .arg( entry.getDateTimeStr() )
+                  << Qt::endl;
               // Schleife abbrechen, wenn ich die nummer gefunden habe
               break;
             }
@@ -171,10 +172,12 @@ namespace spx
         // zähle die Datensätze
         processed++;
         processed_per_dive++;
-        lg->debug( QString( "LogDetailWalker::writeLogDataToDatabase -> write set %1 dive number %2, over all processed: %3" )
-                       .arg( processed_per_dive, 3, 10, QChar( '0' ) )
-                       .arg( diveNum, 3, 10, QChar( '0' ) )
-                       .arg( processed, 5, 10, QChar( '0' ) ) );
+        *lg << LDEBUG
+            << QString( "LogDetailWalker::writeLogDataToDatabase -> write set %1 dive number %2, over all processed: %3" )
+                   .arg( processed_per_dive, 3, 10, QChar( '0' ) )
+                   .arg( diveNum, 3, 10, QChar( '0' ) )
+                   .arg( processed, 5, 10, QChar( '0' ) )
+            << Qt::endl;
         //
         // in die Datenbank schreiben
         // (wird via mutex serialisiert mit anderen threads)
@@ -208,15 +211,17 @@ namespace spx
       //
       if ( !database->computeStatistic( detail_id ) )
       {
-        lg->warn( QString( "LogDetailWriter::writeLogDataToDatabase -> can't not compute statistic for dive - detail id <%1>..." )
-                      .arg( detail_id ) );
+        *lg << LWARN
+            << QString( "LogDetailWriter::writeLogDataToDatabase -> can't not compute statistic for dive - detail id <%1>..." )
+                   .arg( detail_id )
+            << Qt::endl;
       }
     }
     //
     // Ok, Signal geben für "neuen Tauchgang sichern ENDE!"
     //
     emit onWriteDoneSig( diveNum );
-    lg->info( "LogDetailWriter::writeLogDataToDatabase -> thread ended" );
+    *lg << LINFO << "LogDetailWriter::writeLogDataToDatabase -> thread ended" << Qt::endl;
     return ( processed );
   }
 

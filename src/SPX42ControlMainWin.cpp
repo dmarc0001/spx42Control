@@ -39,13 +39,10 @@ namespace spx
     {
       exit( -1 );
     }
-    lg->debug( QString( "SPX42ControlMainWin::SPX42ControlMainWin:" ).append( "Program start..." ) );
-    lg->debug( QString( "SPX42ControlMainWin::SPX42ControlMainWin:" )
-                   .append( "Program build date:   " )
-                   .append( AppConfigClass::getBuildDate() ) );
-    lg->debug( QString( "SPX42ControlMainWin::SPX42ControlMainWin:" )
-                   .append( "Program build number: " )
-                   .append( AppConfigClass::getBuildNumStr() ) );
+    *lg << LDEBUG << "SPX42ControlMainWin::SPX42ControlMainWin: Program start..." << Qt::endl;
+    *lg << LDEBUG << "SPX42ControlMainWin::SPX42ControlMainWin: Program build date:   " << AppConfigClass::getBuildDate() << Qt::endl;
+    *lg << LDEBUG << "SPX42ControlMainWin::SPX42ControlMainWin: Program build number: " << AppConfigClass::getBuildNumStr()
+        << Qt::endl;
     //
     // erzeuge ein Objekt für den entfernten SPX42
     //
@@ -57,7 +54,13 @@ namespace spx
     QSqlError err = spx42Database->openDatabase( true );
     if ( err.isValid() && err.type() != QSqlError::NoError )
     {
-      QMessageBox::critical( this, tr( "CRITICAL" ), tr( "database can't open!" ) );
+      QMessageBox cBox( this );
+      cBox.setIcon( QMessageBox::Critical );
+      cBox.setText( tr( "CRITICAL" ) );
+      cBox.setInformativeText( tr( "database can't open!" ) );
+      cBox.setStandardButtons( QMessageBox::Close );
+      cBox.setDefaultButton( QMessageBox::Close );
+      cBox.exec();
       this->close();
     }
     //
@@ -75,7 +78,13 @@ namespace spx
     int id6 = QFontDatabase::addApplicationFont( ":/fonts/bahnschrift.ttf" );
     if ( id1 < 0 || id2 < 0 || id3 < 0 || id4 < 0 || id5 < 0 || id6 < 0 )
     {
-      QMessageBox::critical( this, tr( "CRITICAL" ), tr( "internal font(s) can't load!" ) );
+      QMessageBox cBox( this );
+      cBox.setIcon( QMessageBox::Critical );
+      cBox.setText( tr( "CRITICAL" ) );
+      cBox.setInformativeText( tr( "internal font(s) can't load!" ) );
+      cBox.setStandardButtons( QMessageBox::Close );
+      cBox.setDefaultButton( QMessageBox::Close );
+      cBox.exec();
     }
     else
     {
@@ -137,7 +146,7 @@ namespace spx
    */
   SPX42ControlMainWin::~SPX42ControlMainWin()
   {
-    lg->debug( "SPX42ControlMainWin::~SPX42ControlMainWin..." );
+    *lg << LDEBUG << "SPX42ControlMainWin::~SPX42ControlMainWin..." << Qt::endl;
     try
     {
       if ( watchdog.isActive() )
@@ -147,7 +156,7 @@ namespace spx
     }
     catch ( std::exception &ex )
     {
-      lg->crit( QString( "SPX42ControlMainWin::~SPX42ControlMainWin -> watchdog stopping failed (%1)" ).arg( ex.what() ) );
+      *lg << LCRIT << "SPX42ControlMainWin::~SPX42ControlMainWin -> watchdog stopping failed " << ex.what() << Qt::endl;
     }
     clearApplicationTabs();
     spx42Database->closeDatabase();
@@ -159,17 +168,24 @@ namespace spx
    */
   void SPX42ControlMainWin::closeEvent( QCloseEvent *event )
   {
-    QMessageBox::StandardButton result;
-    result = QMessageBox::question( this, tr( "Really EXIT?" ),
-                                    tr( "Will you really quit this programm and close all files, databases, connections?" ),
-                                    QMessageBox::No | QMessageBox::Yes, QMessageBox::No );
+    //
+    // bestimmen, ob das Ende unausweichlich ist
+    //
+    QMessageBox msgBox( this );
+    msgBox.setText( tr( "Really EXIT?" ) );
+    msgBox.setInformativeText( tr( "Will you really quit this programm and close all files, databases, connections?" ) );
+    msgBox.setStandardButtons( QMessageBox::No | QMessageBox::Yes );
+    msgBox.setDefaultButton( QMessageBox::No );
+    msgBox.setIcon( QMessageBox::Question );
+    int result = msgBox.exec();
+
     if ( QMessageBox::Yes != result )
     {
       event->ignore();
-      lg->debug( "SPX42ControlMainWin::closeEvent -> ignore close application..." );
+      *lg << LDEBUG << "SPX42ControlMainWin::closeEvent -> ignore close application..." << Qt::endl;
       return;
     }
-    lg->debug( "SPX42ControlMainWin::closeEvent -> close application..." );
+    *lg << LDEBUG << "SPX42ControlMainWin::closeEvent -> close application..." << Qt::endl;
     event->accept();
     disconnectActions();
     QMainWindow::closeEvent( event );
@@ -238,7 +254,7 @@ namespace spx
           // Das ging schief
           //
           qDebug() << "SPX42ControlMainWin::createLogger -> path NOT created!";
-          QMessageBox msgBox;
+          QMessageBox msgBox( this );
           msgBox.setText( tr( "Log dirctory create FAIL!" ) );
           msgBox.setDetailedText( tr( "Check write rights for log directory or reinstall software.\n(%1)" ).arg( logDirStr ) );
           msgBox.setIcon( QMessageBox::Critical );
@@ -249,13 +265,13 @@ namespace spx
       //
       // das wird wohl klappen
       //
-      lg->startLogging( static_cast< LgThreshold >( cf.getLogTreshold() ), cf.getLogfileName() );
+      lg->startLogging( static_cast< LgThreshold >( cf.getLogTreshold() ), cf.getLogfileName(), cf.getConsoleLog() );
       return ( true );
     }
     //
     // Fehler, melde das dem User
     //
-    QMessageBox msgBox;
+    QMessageBox msgBox( this );
     msgBox.setText( tr( "Logging start FAIL!" ) );
     msgBox.setDetailedText( tr( "Check write rights for program directory or reinstall software." ) );
     msgBox.setIcon( QMessageBox::Critical );
@@ -317,7 +333,7 @@ namespace spx
       // About angeklickt
       //
       connect( ui->actionAbout, &QAction::triggered, [=]( bool checked ) {
-        lg->debug( QString( "SPX42ControlMainWin::aboutActionSlot <%1>" ).arg( checked ) );
+        *lg << LDEBUG << "SPX42ControlMainWin::aboutActionSlot <" << ( checked ? "True" : "False" ) << ">" << Qt::endl;
         AboutDialog dlg( this, cf, lg );
         dlg.exec();
       } );
@@ -325,7 +341,7 @@ namespace spx
       // CLOSE
       //
       connect( ui->actionQUIT, &QAction::triggered, [=]( bool checked ) {
-        lg->debug( QString( "SPX42ControlMainWin::quitActionSlot <%1>" ).arg( checked ) );
+        *lg << LDEBUG << "SPX42ControlMainWin::quitActionSlot <" << ( checked ? "True" : "False" ) << ">" << Qt::endl;
         close();
       } );
       //
@@ -383,7 +399,7 @@ namespace spx
       // simuliert Individuell Lizenz geändert
       //
       connect( ui->actionINDIVIDUAL_LIC, &QAction::triggered, [=]() {
-        lg->debug( "SPX42ControlMainWin::simulateIndividualLicenseChanged ..." );
+        *lg << LDEBUG << "SPX42ControlMainWin::simulateIndividualLicenseChanged ..." << Qt::endl;
         if ( ui->actionINDIVIDUAL_LIC->isChecked() )
         {
           spx42Config->setLicense( IndividualLicense::LIC_INDIVIDUAL );
@@ -397,7 +413,7 @@ namespace spx
     }
     catch ( std::exception &ex )
     {
-      lg->crit( QString( "exception while connecting signals to slots (" ).append( ex.what() ).append( ")" ) );
+      *lg << LCRIT << "exception while connecting signals to slots (" << ex.what() << ")" << Qt::endl;
       return ( false );
     }
     return ( true );
@@ -426,7 +442,7 @@ namespace spx
     }
     catch ( std::exception &ex )
     {
-      lg->crit( QString( "exception while disconnecting signals from slots (" ).append( ex.what() ).append( ")" ) );
+      *lg << LCRIT << "exception while disconnecting signals from slots (" << ex.what() << ")" << Qt::endl;
       return ( false );
     }
     return ( true );
@@ -511,7 +527,7 @@ namespace spx
       if ( !QString( currObj->metaObject()->className() ).startsWith( "QWidget" ) )
       {
         ui->areaTabWidget->removeTab( i );
-        lg->debug( QString( "SPX42ControlMainWin::clearApplicationTabs -> <%1> should delete" ).arg( currObj->objectName() ) );
+        *lg << LDEBUG << "SPX42ControlMainWin::clearApplicationTabs -> <" << currObj->objectName() << "> should delete" << Qt::endl;
         delete currObj;
         currObj = new QWidget();
         currObj->setObjectName( "DUMMY" );
@@ -608,7 +624,7 @@ namespace spx
     {
       if ( --watchdogCounter == 0 )
       {
-        lg->warn( "SPX42ControlMainWin::onWatchdogTimerSlot -> watchdog alert!" );
+        *lg << LWARN << "SPX42ControlMainWin::onWatchdogTimerSlot -> watchdog alert!" << Qt::endl;
       }
     }
     //
@@ -623,7 +639,7 @@ namespace spx
         //
         zyclusCounter = MAIN_ALIVE_TIMEVALUE;
 #ifdef DEBUG
-        lg->debug( "SPX42ControlMainWin::onWatchdogTimerSlot -> send cmd alive..." );
+        *lg << LDEBUG << "SPX42ControlMainWin::onWatchdogTimerSlot -> send cmd alive..." << Qt::endl;
 #endif
         if ( remoteSPX42->getIsNormalCommandMode() )
         {
@@ -651,7 +667,7 @@ namespace spx
       return;
     }
     ignore = true;
-    lg->debug( QString( "SPX42ControlMainWin::tabCurrentChanged -> new index <%1>" ).arg( idx, 2, 10, QChar( '0' ) ) );
+    *lg << LDEBUG << QString( "SPX42ControlMainWin::tabCurrentChanged -> new index <%1>" ).arg( idx, 2, 10, QChar( '0' ) ) << Qt::endl;
     clearApplicationTabs();
     // altes widget aus dem Tab entfernen
     currObj = ui->areaTabWidget->widget( idx );
@@ -665,7 +681,7 @@ namespace spx
     {
       // default:
       case static_cast< int >( ApplicationTab::CONNECT_TAB ):
-        lg->debug( "SPX42ControlMainWin::setApplicationTab -> CONNECT TAB..." );
+        *lg << LDEBUG << "SPX42ControlMainWin::setApplicationTab -> CONNECT TAB..." << Qt::endl;
         currObj = new ConnectFragment( this, lg, spx42Database, spx42Config, remoteSPX42, &cf );
         currObj->setObjectName( "spx42Connect" );
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::CONNECT_TAB ) ) );
@@ -677,7 +693,7 @@ namespace spx
         break;
 
       case static_cast< int >( ApplicationTab::DEVICE_INFO_TAB ):
-        lg->debug( "SPX42ControlMainWin::setApplicationTab -> Device INFO TAB..." );
+        *lg << LDEBUG << "SPX42ControlMainWin::setApplicationTab -> Device INFO TAB..." << Qt::endl;
         currObj = new DeviceInfoFragment( this, lg, spx42Database, spx42Config, remoteSPX42, &cf );
         currObj->setObjectName( "spx42DeviceInfo" );
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::DEVICE_INFO_TAB ) ) );
@@ -687,7 +703,7 @@ namespace spx
         break;
 
       case static_cast< int >( ApplicationTab::CONFIG_TAB ):
-        lg->debug( "SPX42ControlMainWin::setApplicationTab -> CONFIG TAB..." );
+        *lg << LDEBUG << "SPX42ControlMainWin::setApplicationTab -> CONFIG TAB..." << Qt::endl;
         currObj = new DeviceConfigFragment( this, lg, spx42Database, spx42Config, remoteSPX42, &cf );
         currObj->setObjectName( "spx42Config" );
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::CONFIG_TAB ) ) );
@@ -701,7 +717,7 @@ namespace spx
         break;
 
       case static_cast< int >( ApplicationTab::GAS_TAB ):
-        lg->debug( "SPX42ControlMainWin::setApplicationTab -> GAS TAB..." );
+        *lg << LDEBUG << "SPX42ControlMainWin::setApplicationTab -> GAS TAB..." << Qt::endl;
         currObj = new GasFragment( this, lg, spx42Database, spx42Config, remoteSPX42, &cf );
         currObj->setObjectName( "spx42Gas" );
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::GAS_TAB ) ) );
@@ -715,7 +731,7 @@ namespace spx
         break;
 
       case static_cast< int >( ApplicationTab::LOG_TAB ):
-        lg->debug( "SPX42ControlMainWin::setApplicationTab -> LOG TAB..." );
+        *lg << LDEBUG << "SPX42ControlMainWin::setApplicationTab -> LOG TAB..." << Qt::endl;
         currObj = new LogFragment( this, lg, spx42Database, spx42Config, remoteSPX42, &cf );
         currObj->setObjectName( "spx42log" );
         static_cast< LogFragment * >( currObj )->setExportPath( cf.getExportPath() );
@@ -728,7 +744,7 @@ namespace spx
         break;
 
       case static_cast< int >( ApplicationTab::CHART_TAB ):
-        lg->debug( "SPX42ControlMainWin::setApplicationTab -> CHART TAB..." );
+        *lg << LDEBUG << "SPX42ControlMainWin::setApplicationTab -> CHART TAB..." << Qt::endl;
         currObj = new ChartsFragment( this, lg, spx42Database, spx42Config, remoteSPX42, &cf );
         currObj->setObjectName( "spx42charts" );
         ui->areaTabWidget->insertTab( idx, currObj, tabTitle.at( static_cast< int >( ApplicationTab::CHART_TAB ) ) );
@@ -746,7 +762,7 @@ namespace spx
    */
   void SPX42ControlMainWin::onLicenseChangedSlot()
   {
-    lg->debug( QString( "SPX42ControlMainWin::onLicenseChangedSlot -> set: %1" ).arg( spx42Config->getLicName() ) );
+    *lg << LDEBUG << "SPX42ControlMainWin::onLicenseChangedSlot -> set: " << spx42Config->getLicName() << Qt::endl;
 //
 // das folgende wird nur kompiliert, wenn DEBUG konfiguriert ist
 //
@@ -782,7 +798,7 @@ namespace spx
    */
   void SPX42ControlMainWin::onOnlineStatusChangedSlot( bool )
   {
-    lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot" );
+    *lg << LDEBUG << "SPX42ControlMainWin::onOnlineStatusChangedSlot" << Qt::endl;
     setOnlineStatusMessage();
     //
     // was soll immer passieren
@@ -813,9 +829,9 @@ namespace spx
         // und alive
         //
         SendListEntry sendCommand = remoteSPX42->askWhileStartup();
-        lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> ask params while startup..." );
+        *lg << LDEBUG << "SPX42ControlMainWin::onOnlineStatusChangedSlot -> ask params while startup..." << Qt::endl;
         remoteSPX42->sendCommand( sendCommand );
-        lg->debug( "SPX42ControlMainWin::onOnlineStatusChangedSlot -> ask params while startup...OK" );
+        *lg << LDEBUG << "SPX42ControlMainWin::onOnlineStatusChangedSlot -> ask params while startup...OK" << Qt::endl;
         break;
     }
   }
@@ -857,12 +873,12 @@ namespace spx
     if ( !asPopup )
     {
       // TODO: Messagebox !
-      lg->warn( QString( "SPX42ControlMainWin::onWarningMessageSlot -> as POPUP: <%1>" ).arg( msg ) );
+      *lg << LWARN << "SPX42ControlMainWin::onWarningMessageSlot -> as POPUP: <" << msg << ">" << Qt::endl;
     }
     else
     {
       // TODO: statusline
-      lg->warn( QString( "SPX42ControlMainWin::onWarningMessageSlot -> as msgline: <%1>" ).arg( msg ) );
+      *lg << LWARN << "SPX42ControlMainWin::onWarningMessageSlot -> as msgline: <" << msg << ">" << Qt::endl;
     }
   }
 
@@ -876,12 +892,12 @@ namespace spx
     if ( !asPopup )
     {
       // TODO: Messagebox !
-      lg->warn( QString( "SPX42ControlMainWin::onErrorMessageSlot -> as POPUP: <%1>" ).arg( msg ) );
+      *lg << LWARN << "SPX42ControlMainWin::onErrorMessageSlot -> as POPUP: <" << msg << ">" << Qt::endl;
     }
     else
     {
       // TODO: statusline
-      lg->warn( QString( "SPX42ControlMainWin::onErrorMessageSlot -> as msgline: <%1>" ).arg( msg ) );
+      *lg << LWARN << "SPX42ControlMainWin::onErrorMessageSlot -> as msgline: <" << msg << ">" << Qt::endl;
     }
   }
 
@@ -901,17 +917,18 @@ namespace spx
     quint8 changed = spx42Config->getChangedConfig();
     if ( changed != 0 )
     {
-      lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> write back config, changed value: <0x%1> (bitwhise)" )
-                     .arg( static_cast< int >( changed & 0xff ), 2, 16, QChar( '0' ) ) );
+      *lg << LDEBUG
+          << QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> write back config, changed value: <0x%1> (bitwhise)" )
+                 .arg( static_cast< int >( changed & 0xff ), 2, 16, QChar( '0' ) )
+          << Qt::endl;
       if ( changed & SPX42ConfigClass::CF_CLASS_DECO )
       {
         //
         // sende neue DECO Einstellungen
         //
         sendCommand = remoteSPX42->sendDecoParams( *spx42Config );
-        lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> deco write <%1> old order: %2" )
-                       .arg( QString( sendCommand.second ) )
-                       .arg( ( spx42Config->getIsOldParamSorting() ? "true" : "false" ) ) );
+        *lg << LDEBUG << "SPX42ControlMainWin::onConfigWriteBackSlot -> deco write <" << sendCommand.second
+            << "> old order: " << ( spx42Config->getIsOldParamSorting() ? "true" : "false" ) << Qt::endl;
         remoteSPX42->sendCommand( sendCommand );
       }
       if ( changed & SPX42ConfigClass::CF_CLASS_DISPLAY )
@@ -920,8 +937,7 @@ namespace spx
         // sende neue Display einstellungen
         //
         sendCommand = remoteSPX42->sendDisplayParams( *spx42Config );
-        lg->debug(
-            QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> display write <%1>" ).arg( QString( sendCommand.second ) ) );
+        *lg << LDEBUG << "SPX42ControlMainWin::onConfigWriteBackSlot -> display write <" << sendCommand.second << ">" << Qt::endl;
         remoteSPX42->sendCommand( sendCommand );
       }
       if ( changed & SPX42ConfigClass::CF_CLASS_SETPOINT )
@@ -930,9 +946,8 @@ namespace spx
         // setpoint Einstellungen senden
         //
         sendCommand = remoteSPX42->sendSetpointParams( *spx42Config );
-        lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> setpoint write <%1> old order: %2" )
-                       .arg( QString( sendCommand.second ) )
-                       .arg( ( spx42Config->getIsOldParamSorting() ? "true" : "false" ) ) );
+        *lg << LDEBUG << "SPX42ControlMainWin::onConfigWriteBackSlot -> setpoint write <" << sendCommand.second
+            << "> old order: " << ( spx42Config->getIsOldParamSorting() ? "true" : "false" ) << Qt::endl;
         remoteSPX42->sendCommand( sendCommand );
       }
       if ( changed & SPX42ConfigClass::CF_CLASS_UNITS )
@@ -941,7 +956,7 @@ namespace spx
         // einheiten senden
         //
         sendCommand = remoteSPX42->sendUnitsParams( *spx42Config );
-        lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> units write <%1>" ).arg( QString( sendCommand.second ) ) );
+        *lg << LDEBUG << "SPX42ControlMainWin::onConfigWriteBackSlot -> units write <" << sendCommand.second << ">" << Qt::endl;
         remoteSPX42->sendCommand( sendCommand );
       }
       if ( changed & SPX42ConfigClass::CF_CLASS_INDIVIDUAL )
@@ -950,84 +965,69 @@ namespace spx
         // individual einstellungen senden
         //
         sendCommand = remoteSPX42->sendCustomParams( *spx42Config );
-        lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> custom write <%1>" ).arg( QString( sendCommand.second ) ) );
+        *lg << LDEBUG << "SPX42ControlMainWin::onConfigWriteBackSlot -> custom write <" << sendCommand.second << ">" << Qt::endl;
         remoteSPX42->sendCommand( sendCommand );
       }
       if ( changed & SPX42ConfigClass::CF_CLASS_GASES )
       {
         //
         // gase senden (nur die, welche verändert sind)
+        // TODO: in schleife programmieren
         //
         quint8 changedGases = spx42Config->getChangedGases();
         if ( changedGases & SPX42ConfigClass::CF_GAS01 )
         {
           sendCommand = remoteSPX42->sendGas( 0, *spx42Config );
-          lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 0%1 write <%2>" )
-                         .arg( 1 )
-                         .arg( QString( sendCommand.second ) ) );
+          *lg << LDEBUG << "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 01 write <" << sendCommand.second << ">" << Qt::endl;
           remoteSPX42->sendCommand( sendCommand );
         }
         if ( changedGases & SPX42ConfigClass::CF_GAS02 )
         {
           sendCommand = remoteSPX42->sendGas( 1, *spx42Config );
-          lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 0%1 write <%2>" )
-                         .arg( 2 )
-                         .arg( QString( sendCommand.second ) ) );
+          *lg << LDEBUG << "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 02 write <" << sendCommand.second << ">" << Qt::endl;
           remoteSPX42->sendCommand( sendCommand );
         }
         if ( changedGases & SPX42ConfigClass::CF_GAS03 )
         {
           sendCommand = remoteSPX42->sendGas( 2, *spx42Config );
-          lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 0%1 write <%2>" )
-                         .arg( 3 )
-                         .arg( QString( sendCommand.second ) ) );
+          *lg << LDEBUG << "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 03 write <" << sendCommand.second << ">" << Qt::endl;
           remoteSPX42->sendCommand( sendCommand );
         }
         if ( changedGases & SPX42ConfigClass::CF_GAS04 )
         {
           sendCommand = remoteSPX42->sendGas( 3, *spx42Config );
-          lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 0%1 write <%2>" )
-                         .arg( 4 )
-                         .arg( QString( sendCommand.second ) ) );
+          *lg << LDEBUG << "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 04 write <" << sendCommand.second << ">" << Qt::endl;
           remoteSPX42->sendCommand( sendCommand );
         }
         if ( changedGases & SPX42ConfigClass::CF_GAS05 )
         {
           sendCommand = remoteSPX42->sendGas( 4, *spx42Config );
-          lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 0%1 write <%2>" )
-                         .arg( 4 )
-                         .arg( QString( sendCommand.second ) ) );
+          *lg << LDEBUG << "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 05 write <" << sendCommand.second << ">" << Qt::endl;
           remoteSPX42->sendCommand( sendCommand );
         }
         if ( changedGases & SPX42ConfigClass::CF_GAS06 )
         {
           sendCommand = remoteSPX42->sendGas( 5, *spx42Config );
-          lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 0%1 write <%2>" )
-                         .arg( 5 )
-                         .arg( QString( sendCommand.second ) ) );
+          *lg << LDEBUG << "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 06 write <" << sendCommand.second << ">" << Qt::endl;
           remoteSPX42->sendCommand( sendCommand );
         }
         if ( changedGases & SPX42ConfigClass::CF_GAS07 )
         {
           sendCommand = remoteSPX42->sendGas( 6, *spx42Config );
-          lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 0%1 write <%2>" )
-                         .arg( 6 )
-                         .arg( QString( sendCommand.second ) ) );
+          *lg << LDEBUG << "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 07 write <" << sendCommand.second << ">" << Qt::endl;
           remoteSPX42->sendCommand( sendCommand );
         }
         if ( changedGases & SPX42ConfigClass::CF_GAS08 )
         {
           sendCommand = remoteSPX42->sendGas( 7, *spx42Config );
-          lg->debug( QString( "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 0%1 write <%2>" )
-                         .arg( 7 )
-                         .arg( QString( sendCommand.second ) ) );
+          *lg << LDEBUG << "SPX42ControlMainWin::onConfigWriteBackSlot -> gas 08 write <" << sendCommand.second << ">" << Qt::endl;
           remoteSPX42->sendCommand( sendCommand );
         }
       }
     }
     else
     {
-      lg->debug( "SPX42ControlMainWin::onConfigWriteBackSlot -> no changes, go away..." );
+      *lg << LDEBUG << "SPX42ControlMainWin::onConfigWriteBackSlot -> no changes, go away..." << Qt::endl;
     }
     //
     // danach CONFIG als syncron setzen
@@ -1057,7 +1057,7 @@ namespace spx
     // so dass nicht sofort geschrieben wird.
     //
     configWriteTimer.start( ProjectConst::CONFIG_WRITE_DELAY );
-    lg->debug( "SPX42ControlMainWin::onConfigWasChangedSlot -> start wait timer again..." );
+    *lg << LDEBUG << "SPX42ControlMainWin::onConfigWasChangedSlot -> start wait timer again..." << Qt::endl;
     //
     // LABEL für Schreibpuffer...
     //
@@ -1076,7 +1076,7 @@ namespace spx
    */
   void SPX42ControlMainWin::onGetHelpForUser()
   {
-    lg->debug( "SPX42ControlMainWin::onGetHelpForUser..." );
+    *lg << LDEBUG << "SPX42ControlMainWin::onGetHelpForUser..." << Qt::endl;
     HelpDialog helpDial( currentTab, this, lg );
     helpDial.exec();
   }
@@ -1086,7 +1086,7 @@ namespace spx
    */
   void SPX42ControlMainWin::onOptionsActionSlot()
   {
-    lg->debug( "SPX42ControlMainWin::onOptionsActionSlot..." );
+    *lg << LDEBUG << "SPX42ControlMainWin::onOptionsActionSlot..." << Qt::endl;
     if ( !optionsDlg )
     {
       optionsDlg = std::unique_ptr< OptionsDialog >( new OptionsDialog( this, cf, lg ) );
@@ -1094,9 +1094,14 @@ namespace spx
     optionsDlg->init();
     if ( QDialog::Accepted == optionsDlg->exec() )
     {
-      lg->info( "SPX42ControlMainWin::onOptionsActionSlot -> dialog accepted" );
-      QMessageBox::information( this, tr( "CAUTION" ), tr( "TO APPLY CHANGES RESTART APPLICATION" ), QMessageBox::Ok,
-                                QMessageBox::Ok );
+      *lg << LINFO << "SPX42ControlMainWin::onOptionsActionSlot -> dialog accepted" << Qt::endl;
+      QMessageBox iBox( this );
+      iBox.setIcon( QMessageBox::Information );
+      iBox.setText( tr( "CAUTION" ) );
+      iBox.setInformativeText( tr( "TO APPLY CHANGES RESTART APPLICATION" ) );
+      iBox.setStandardButtons( QMessageBox::Ok );
+      iBox.setDefaultButton( QMessageBox::Ok );
+      iBox.exec();
     }
   }
 }  // namespace spx
