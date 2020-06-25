@@ -46,7 +46,7 @@ namespace spx
     static constexpr double KELVINDIFF{273.15};
     //! Empfangspufferlänge
     static constexpr int BUFFER_LEN{2400};
-    //! waretn bis Konfiguration zum SPX geschrieben wird
+    //! warten bis Konfiguration zum SPX geschrieben wird
     static constexpr int CONFIG_WRITE_DELAY{3500};
     //! Minimaler Sauerstoffanteil
     static constexpr int SPX_MINIMUM_O2{2};
@@ -56,6 +56,12 @@ namespace spx
     static const QBluetoothUuid SPX42ServiceUuid;
     //! Suchausdruck für SPX42 Service
     static const QString searchedServiceRegex;
+    //! Loginterval 1
+    static constexpr int LOG_INTERVAL_01{10};
+    //! Loginterval 2
+    static constexpr int LOG_INTERVAL_02{30};
+    //! Loginterval 3
+    static constexpr int LOG_INTERVAL_03{60};
 
     //###########################################################################
     // Defaults für DEKOMPRESSIONS Einstellungen                             ####
