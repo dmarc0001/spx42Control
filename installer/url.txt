@@ -1,4 +1,4 @@
 http://update.submatix.com/spx42Control/spx42ControlOnlineInstaller.exe
-http://qtraspi.fritz.box/spx42Control/spx42ControlOnlineInstaller.exe
+http://webserver-vm.fritz.box/spx42Control/spx42ControlOnlineInstaller.exe
 
 
