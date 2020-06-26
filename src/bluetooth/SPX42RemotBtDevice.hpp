@@ -37,6 +37,16 @@ namespace spx
     };
 
     private:
+    //! Array für Leerzeichen, zum ersetzten derselben
+    const QByteArray tst_space{" "};
+    //! zum ersetzern mit NIX
+    const QByteArray repl_none;
+    //! zum finden von TABS
+    const QByteArray tst_tab{"\t"};
+    //! zum ersetzten mit "|"
+    const QByteArray repl_tab{"|"};
+    //! zum finden von \r
+    const QByteArray tst_cr{"\r"};
     //! Zeiger auf Loggerobjekt
     std::shared_ptr< Logger > lg;
     //! Timer zum versenden von Kommandos
