@@ -7,7 +7,7 @@
 ###############################################################################
 MAJOR                                  = 1
 MINOR                                  = 1
-PATCH                                  = 1
+PATCH                                  = 2
 BUILD                                  = 2 # win build number
 
 win32:VERSION_PE_HEADER                = $${MAJOR}.$${MINOR}
