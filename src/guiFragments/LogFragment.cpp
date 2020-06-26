@@ -50,7 +50,8 @@ namespace spx
     fragmentTitleOfflinePattern = tr( "LOGFILES SPX42 [%1] in database" );
     diveNumberStr = tr( "DIVE NUMBER: %1" );
     diveDateStr = tr( "DIVE DATE: %1" );
-    diveDepthStr = tr( "DIVE DEPTH: %1m" );
+    diveDepthStr = tr( "DIVE DEPTH: %1m, LEN: %2 min" );
+    diveDepthShortStr = tr( "DIVE DEPTH: %1m" );
     dbWriteNumTemplate = tr( "WRITE DIVE #%1 TO DB..." );
     dbWriteNumIDLE = tr( "WAIT FOR START..." );
     dbDeleteNumTemplate = tr( "DELETE DIVE %1 DONE." );
@@ -59,7 +60,7 @@ namespace spx
     exportDiveErrorTemplate = tr( "EXPORT FAILED!" );
     ui->diveNumberLabel->setText( diveNumberStr.arg( "-" ) );
     ui->diveDateLabel->setText( diveDateStr.arg( "-" ) );
-    ui->diveDepthLabel->setText( diveDepthStr.arg( "-" ) );
+    ui->diveDepthLabel->setText( diveDepthShortStr.arg( "-" ) );
     ui->dbWriteNumLabel->setText( dbWriteNumIDLE );
     ui->deleteContentPushButton->setEnabled( false );
     ui->exportContentPushButton->setEnabled( false );
@@ -356,93 +357,120 @@ namespace spx
     QString deviceAddr;
     QString depthStr = " ? ";
     int diveNum = 0;
-    int row = index.row();
-    // items finden
-    // TODO: absichern wenn kene Daten vorhanden sind (kann vorkommen)
-    QTableWidgetItem *clicked1stItem = ui->logentryTableWidget->item( row, 0 );
-    QTableWidgetItem *clicked2ndItem = ui->logentryTableWidget->item( row, 1 );
-    // Aus dem Text die Nummer extraieren
-    QString entry = clicked1stItem->text();
-    *lg << LDEBUG << "LogFragment::onLogListClickeSlot: data: " << entry << "..." << Qt::endl;
-    // die Nummer des dives extraieren
-    // und den Datumsstring für die Anzeige extraieren
-    //
-    // [08.07.2012 12:13:46]
-    // oder
-    // [2012/07/08 12:13:46]
-    //
-    QStringList pieces = entry.split( ':' );
-    diveNum = pieces.at( 0 ).toInt();
-    int start = entry.indexOf( '[' ) + 1;
-    int end = entry.indexOf( ']' );
-    ui->diveNumberLabel->setText( diveNumberStr.arg( diveNum, 3, 10, QChar( '0' ) ) );
-    ui->diveDateLabel->setText( diveDateStr.arg( entry.mid( start, end - start ) ) );
-    //
-    // ist ein icon da == gibt es eine Sicherung?
-    //
-    if ( clicked2ndItem->icon().isNull() )
+    if ( index.isValid() )
     {
-      ui->diveDepthLabel->setText( diveDepthStr.arg( depthStr ) );
-      chartView->setChart( dummyChart );
-    }
-    else
-    {
-      //
-      // die Datenbank fragen, ob und wie tief
-      // unterscheide ob ich online oder offline arbeite
-      //
-      if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
+      int row = index.row();
+      // items finden
+      QTableWidgetItem *clicked1stItem = ui->logentryTableWidget->item( row, 0 );
+      QTableWidgetItem *clicked2ndItem = ui->logentryTableWidget->item( row, 1 );
+      if ( clicked1stItem && clicked2ndItem )
       {
+        // Aus dem Text die Nummer extraieren
+        QString entry = clicked1stItem->text();
+        *lg << LDEBUG << "LogFragment::onLogListClickeSlot: data: " << entry << "..." << Qt::endl;
+        // die Nummer des dives extraieren
+        // und den Datumsstring für die Anzeige extraieren
         //
-        // mit wem bin ich verbunden ==> dessen Daten lösche ich
+        // [08.07.2012 12:13:46]
+        // oder
+        // [2012/07/08 12:13:46]
         //
-        deviceAddr = remoteSPX42->getRemoteConnected();
-      }
-      else
-      {
+        QStringList pieces = entry.split( ':' );
+        diveNum = pieces.at( 0 ).toInt();
+        int start = entry.indexOf( '[' ) + 1;
+        int end = entry.indexOf( ']' );
+        ui->diveNumberLabel->setText( diveNumberStr.arg( diveNum, 3, 10, QChar( '0' ) ) );
+        ui->diveDateLabel->setText( diveDateStr.arg( entry.mid( start, end - start ) ).arg( "xx" ) );
         //
-        // habe ich ein Gerät ausgewählt, wenn ja welches
+        // ist ein icon da == gibt es eine Sicherung?
         //
-        deviceAddr = offlineDeviceAddr;
-      }
-      //
-      // zuerst dummychart setzten
-      //
-      chartView->setChart( dummyChart );
-      if ( !deviceAddr.isEmpty() )
-      {
-        double depth = ( database->getMaxDepthFor( deviceAddr, diveNum ) / 10.0 );
-        if ( depth > 0 )
+        if ( clicked2ndItem->icon().isNull() )
         {
-          //
-          // tiefe eintragen
-          //
-          ui->diveDepthLabel->setText( diveDepthStr.arg( depth, 2, 'f', 1 ) );
-          //
-          // das Chart anzeigen, wenn Daten vorhanden sind
-          //
-          miniChart->deleteLater();
-          if ( dbgetDataFuture.isFinished() )
-          {
-            miniChart = new QtCharts::QChart();
-            chartWorker->prepareMiniChart( miniChart, appConfig->getGuiThemeName().compare( AppConfigClass::lightStr ) == 0 );
-            chartView->setChart( miniChart );
-            dbgetDataFuture =
-                QtConcurrent::run( chartWorker.get(), &ChartDataWorker::makeChartDataMini, miniChart, deviceAddr, diveNum );
-          }
-          else
-          {
-            // später nochmal...
-            *lg << LDEBUG << "LogFragment::onLogListClickeSlot -> last chart is under construction, try later (automatic) again..."
-                << Qt::endl;
-            QTimer::singleShot( 100, this, [=]() { this->onLogListClickeSlot( index ); } );
-          }
+          ui->diveDepthLabel->setText( diveDepthShortStr.arg( depthStr ) );
+          chartView->setChart( dummyChart );
         }
         else
         {
-          ui->diveDepthLabel->setText( diveDepthStr.arg( depthStr ) );
+          //
+          // die Datenbank fragen, ob und wie tief
+          // unterscheide ob ich online oder offline arbeite
+          //
+          if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
+          {
+            //
+            // mit wem bin ich verbunden ==> dessen Daten lösche ich
+            //
+            deviceAddr = remoteSPX42->getRemoteConnected();
+          }
+          else
+          {
+            //
+            // habe ich ein Gerät ausgewählt, wenn ja welches
+            //
+            deviceAddr = offlineDeviceAddr;
+          }
+          //
+          // zuerst dummychart setzten
+          //
+          chartView->setChart( dummyChart );
+          if ( !deviceAddr.isEmpty() )
+          {
+            double depth = ( database->getMaxDepthFor( deviceAddr, diveNum ) / 10.0 );
+            int diveLen = database->getDiveLenFor( deviceAddr, diveNum );
+            QString diveLenStr = QString( "%1:%2" )
+                                     .arg( static_cast< int >( diveLen / 60 ), 2, 10, QChar( '0' ) )
+                                     .arg( diveLen % 60, 2, 10, QChar( '0' ) );
+            if ( depth > 0 )
+            {
+              //
+              // tiefe eintragen
+              //
+              ui->diveDepthLabel->setText( diveDepthStr.arg( depth, 2, 'f', 1 ).arg( diveLenStr ) );
+              //
+              // das Chart anzeigen, wenn Daten vorhanden sind
+              //
+              miniChart->deleteLater();
+              if ( dbgetDataFuture.isFinished() )
+              {
+                miniChart = new QtCharts::QChart();
+                chartWorker->prepareMiniChart( miniChart, appConfig->getGuiThemeName().compare( AppConfigClass::lightStr ) == 0 );
+                chartView->setChart( miniChart );
+                dbgetDataFuture =
+                    QtConcurrent::run( chartWorker.get(), &ChartDataWorker::makeChartDataMini, miniChart, deviceAddr, diveNum );
+              }
+              else
+              {
+                // später nochmal...
+                *lg << LDEBUG << "LogFragment::onLogListClickeSlot -> last chart is under construction, try later (automatic) again..."
+                    << Qt::endl;
+                QTimer::singleShot( 100, this, [=]() { this->onLogListClickeSlot( index ); } );
+              }
+            }
+            else
+            {
+              ui->diveDepthLabel->setText( diveDepthShortStr.arg( depthStr ).arg( diveLenStr ) );
+            }
+          }
         }
       }
+      else  // if ( clicked1stItem && clicked2ndItem )
+      {
+        //
+        // nicht valider Click -> dummy chart setzen
+        //
+        *lg << LWARN << "LogFragment::onLogListClickeSlot -> no item entry on position found. Ignore Click." << Qt::endl;
+        ui->diveDepthLabel->setText( diveDepthShortStr.arg( depthStr ) );
+        chartView->setChart( dummyChart );
+      }
+    }  // if is valid
+    else
+    {
+      //
+      // nicht valider Click -> dummy chart setzen
+      //
+      *lg << LWARN << "LogFragment::onLogListClickeSlot -> no valid entry in list found. Ignore Click." << Qt::endl;
+      ui->diveDepthLabel->setText( diveDepthShortStr.arg( depthStr ) );
+      chartView->setChart( dummyChart );
     }
   }
 
