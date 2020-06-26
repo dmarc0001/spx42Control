@@ -122,6 +122,8 @@ namespace spx
     static const qint16 databaseVersion;
     //! das template für einen INSERT einer Logzeile
     static const QString loglineInsertTemplate;
+    //! Das Template für Stsatistik per Tauchgang
+    static const QString statisticTemplate;
     //! Threadsaves schreiben auf die DB
     QMutex dbMutex;
 
@@ -172,6 +174,8 @@ namespace spx
     bool insertLogentry( int detail_id, spSingleCommand );
     //! maximale Tiefe für Tauchgang
     int getMaxDepthFor( const QString &mac, int diveNum );
+    //! Länge des TG zurück geben
+    int getDiveLenFor( const QString &mac, int diveNum );
     //! gib daten für CHART für einen Tauchgang
     DiveDataSetsPtr getDiveDataSets( const QString &mac, int diveNum );
     //! gib eine Liste der gespeicherten Tauchgänge für ein Gerät zurück
