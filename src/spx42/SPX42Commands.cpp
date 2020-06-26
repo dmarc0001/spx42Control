@@ -214,7 +214,7 @@ namespace spx
   {
     params.clear();
     // OK, das ist ein Detail Datagramm vom SPX
-    params = pdu.split( '\t' );
+    params = pdu.split( tst_separator );
     return ( params.count() );
   }
 
