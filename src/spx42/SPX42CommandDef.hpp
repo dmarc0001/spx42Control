@@ -189,7 +189,7 @@ namespace spx
     constexpr int LOGDETAIL_PPO2_2{14};
     //! Logdetail PPO2 Sensor 3
     constexpr int LOGDETAIL_PPO2_3{15};
-    //! Logdetail O2 Setpoint
+    //! Logdetail O2 Setpoint )(*10)
     constexpr int LOGDETAIL_SETPOINT{6};
     //! Logdetail Stickstoff Prozent
     constexpr int LOGDETAIL_N2{16};
