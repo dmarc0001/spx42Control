@@ -380,7 +380,7 @@ namespace spx
         int start = entry.indexOf( '[' ) + 1;
         int end = entry.indexOf( ']' );
         ui->diveNumberLabel->setText( diveNumberStr.arg( diveNum, 3, 10, QChar( '0' ) ) );
-        ui->diveDateLabel->setText( diveDateStr.arg( entry.mid( start, end - start ) ).arg( "xx" ) );
+        ui->diveDateLabel->setText( diveDateStr.arg( entry.mid( start, end - start ) ) );
         //
         // ist ein icon da == gibt es eine Sicherung?
         //
