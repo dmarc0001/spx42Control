@@ -53,7 +53,8 @@ namespace spx
     void prepareMiniChart( QtCharts::QChart *chart, bool isLightTheme );
     bool makeChartDataMini( QtCharts::QChart *chart, const QString &deviceMac, int diveNum );
     bool prepareDiveCharts( QtCharts::QChart *bigchart, QtCharts::QChart *ppo2chart, bool isLightTheme );
-    bool makeDiveChart( QtCharts::QChart *bigchart, QtCharts::QChart *ppo2chart, const QString &deviceMac, int diveNum );
+    DiveDataSetsPtr getFutureDiveDataSet( const QString &deviceMac, int diveNum );
+    bool makeDiveChart( QtCharts::QChart *bigchart, QtCharts::QChart *ppo2chart, DiveDataSetsPtr dataSet );
     void reset( void );
     void nowait( bool _shouldNoWait = true );  //! nicht mehr warten wenn die queue leer ist
 
@@ -61,7 +62,6 @@ namespace spx
     QPair< int, int > getTempBorders( const DiveDataSetsPtr dataSet );
 
     signals:
-    void onChartReadySig( void );
 
     public slots:
   };

@@ -26,6 +26,7 @@ namespace spx
   class SPX42Commands
   {
     private:
+    const char tst_separator{'|'};
     // CmdMarker marker;
     void makeSipleCommand( char commandChar, QByteArray &cmd );
 

@@ -5,6 +5,12 @@ namespace spx
 {
   const QString SPX42Database::sqlDriver{"QSQLITE"};
   const qint16 SPX42Database::databaseVersion{5};
+  const QString SPX42Database::statisticTemplate{
+      "update  detaildir "
+      "set "
+      " max_depth=(select max(depth) from logdata where detail_id=%1), "
+      " detail_count=(select count(*) from logdata where detail_id=%1) "
+      "where detail_id=%1"};
 
   SPX42DeviceAlias::SPX42DeviceAlias() : mac(), name(), alias(), lastConnected( false )
   {
@@ -1377,11 +1383,11 @@ namespace spx
    */
   int SPX42Database::getMaxDepthFor( const QString &mac, int diveNum )
   {
-    int maxDepth = -1;
     QString sql;
     *lg << LDEBUG << "SPX42Database::getMaxDepthFor..." << Qt::endl;
     if ( db.isValid() && db.isOpen() )
     {
+      int maxDepth = -1;
       int detail_id = getDetailId( mac, diveNum );
       if ( detail_id == -1 )
       {
@@ -1406,6 +1412,46 @@ namespace spx
       return ( maxDepth );
     }
     *lg << LWARN << "SPX42Database::getMaxDepthFor -> db is not valid or not opened." << Qt::endl;
+    return ( -1 );
+  }
+
+  /**
+   * @brief SPX42Database::getDiveLenFor
+   * @param mac
+   * @param diveNum
+   * @return Länge in Sekunden
+   */
+  int SPX42Database::getDiveLenFor( const QString &mac, int diveNum )
+  {
+    QString sql;
+    *lg << LDEBUG << "SPX42Database::getDiveLenFor..." << Qt::endl;
+    if ( db.isValid() && db.isOpen() )
+    {
+      int diveLen = -1;
+      int detail_id = getDetailId( mac, diveNum );
+      if ( detail_id == -1 )
+      {
+        return ( diveLen );
+      }
+      //
+      // versuche mal rauszubekommen wie tief das war
+      //
+      sql = QString( "select sum(next_step) from logdata where detail_id= %1" ).arg( detail_id );
+      QSqlQuery query( sql, db );
+      if ( !query.next() )
+      {
+        QSqlError err = db.lastError();
+        *lg << LWARN << "SPX42Database::getDiveLenFor -> <" << err.text() << ">..." << Qt::endl;
+        return ( -1 );
+      }
+      //
+      // Abfrage korrekt bearbeitet
+      //
+      diveLen = query.value( 0 ).toInt();
+      *lg << LDEBUG << "SPX42Database::getDiveLenFor -> dive len: <" << diveLen << "sec>" << Qt::endl;
+      return ( diveLen );
+    }
+    *lg << LWARN << "SPX42Database::getDiveLenFor -> db is not valid or not opened." << Qt::endl;
     return ( -1 );
   }
 
@@ -1467,6 +1513,13 @@ namespace spx
         currSet.he = query.value( 10 ).toInt();
         currSet.z_time = query.value( 11 ).toInt();
         chartSet->append( currSet );
+      }
+      if ( chartSet->size() > 0 )
+      {
+        //
+        // Kleiner Trick zum finden eines Punkt 0
+        //
+        chartSet->insert( 0, chartSet->first() );
       }
       *lg << LDEBUG << "SPX42Database::getDiveDataSets...OK" << Qt::endl;
       return ( chartSet );
@@ -1534,12 +1587,14 @@ namespace spx
     if ( db.isValid() && db.isOpen() )
     {
       QString sql;
-      sql = "update  detaildir\n";
-      sql += "set \n";
-      sql += "  max_depth=(select max(depth) from logdata where detail_id=%1),\n";
-      sql += "  detail_count=(select count(*) from logdata where detail_id=%1)\n";
-      sql += "where  detail_id=%1";
-      QSqlQuery query( QString( sql.arg( detail_id ) ), db );
+      //
+      // SQL aus dem Template erstellen
+      //
+      sql = SPX42Database::statisticTemplate.arg( detail_id );
+#ifdef DEBUG
+      *lg << LDEBUG << "SPX42Database::computeStatistic -> STATISTIC SQL: <" << sql << ">" << Qt::endl;
+#endif
+      QSqlQuery query( sql, db );
       if ( !query.exec( sql ) )
       {
         //

@@ -1772,93 +1772,102 @@
     </message>
     <message>
         <location filename="../guiFragments/LogFragment.cpp" line="53"/>
+        <source>DIVE DEPTH: %1m, LEN: %2 min</source>
+        <translation>Tiefe: %1m, Länge: %2 min</translation>
+    </message>
+    <message>
+        <location filename="../guiFragments/LogFragment.cpp" line="54"/>
         <source>DIVE DEPTH: %1m</source>
         <translation>Tiefe: %1m</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="54"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="55"/>
         <source>WRITE DIVE #%1 TO DB...</source>
         <translation>Sichere TG #%1 in DB...</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="55"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="56"/>
         <source>WAIT FOR START...</source>
         <translation>Warte auf Datenbank...</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="56"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="57"/>
         <source>DELETE DIVE %1 DONE.</source>
         <translation>Lösche Tg %1 Fertig.</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="57"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="58"/>
         <source>EXPORT DIVE #%1...</source>
         <translation>Exportiere TG #%1...</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="58"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="59"/>
         <source>EXPORT DIVE #%1 DONE.</source>
         <translation>Export TG #%1 OK.</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="59"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="60"/>
         <source>EXPORT FAILED!</source>
         <translation>Export Fehlgeschlagen!</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="560"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="588"/>
         <source>SELECT EXPORT DIR</source>
         <translation>EXPORT VERZEICHNIS</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="577"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="605"/>
         <source>EXPORT DIRECTORY ERROR</source>
         <translation>EXPORT VERZEICHNIS FEHLER</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="577"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="605"/>
         <source>The selected Directory don&apos;t exist!</source>
         <translation>Das gewählte Verzeichnis existiert nicht!</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="620"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="648"/>
         <source>EXPORT WARNING</source>
         <translation>EXPORT WARNUNG</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="620"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="648"/>
         <source>An other export is current running...</source>
         <translation>Ein anderer Export arbeitet momentan...</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1241"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1269"/>
         <source>EXPORT SUCCESS</source>
         <translation>Export Erfolgreich</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1241"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1269"/>
         <source>Export was successful to file: 
 &lt;%1&gt;</source>
         <translation>Der Export war erfolgreich, Datei: 
 &lt;%1&gt;</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1248"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1276"/>
         <source>EXPORT ERROR</source>
         <translation>EXPORT FEHLER</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1248"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1276"/>
         <source>Can&apos;t export dives to UDDF file</source>
         <translation>Kann Tauchgänge nicht in UDDF Datei exportieren</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="928"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="956"/>
         <source>unknown</source>
         <translation>unbekannt</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="939"/>
+        <source>DIVE DEPTH: %1m, LEN: %2</source>
+        <translation type="vanished">Tiefe: %1m, Länge: %2</translation>
+    </message>
+    <message>
+        <location filename="../guiFragments/LogFragment.cpp" line="967"/>
         <source>database empty</source>
         <translation>Datenbank leer</translation>
     </message>

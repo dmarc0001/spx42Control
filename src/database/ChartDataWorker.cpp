@@ -11,7 +11,7 @@ namespace spx
   using namespace QtCharts;
 
   ChartDataWorker::ChartDataWorker( std::shared_ptr< Logger > logger, std::shared_ptr< SPX42Database > _database, QObject *parent )
-      : QObject( parent ), lg( logger ), database( _database ), shouldWriterRunning( true )
+      : QObject( parent ), lg( logger ), database( _database ), shouldWriterRunning( true ), maxTimeoutVal( waitTimeout )
   {
   }
 
@@ -151,10 +151,15 @@ namespace spx
     return ( true );
   }
 
-  bool ChartDataWorker::makeDiveChart( QtCharts::QChart *bigchart, QChart *ppo2chart, const QString &deviceMac, int diveNum )
+  DiveDataSetsPtr ChartDataWorker::getFutureDiveDataSet( const QString &deviceMac, int diveNum )
+  {
+    DiveDataSetsPtr dataSet = database->getDiveDataSets( deviceMac, diveNum );
+    return ( dataSet );
+  }
+
+  bool ChartDataWorker::makeDiveChart( QtCharts::QChart *bigchart, QChart *ppo2chart, DiveDataSetsPtr dataSet )
   {
     qint64 milisecounds = 0;
-    DiveDataSetsPtr dataSet;
     QAreaSeries *depthAreaSeries;
     QLineSeries *depthSeries;
     QLineSeries *nullDepthSeries;
@@ -186,11 +191,7 @@ namespace spx
       }
       *lg << LDEBUG << "ChartDataWorker::makeDiveChart -> cleaned series and axis..." << Qt::endl;
     }
-    //
-    // jetzt die Daten abholen
-    //
-    dataSet = database->getDiveDataSets( deviceMac, diveNum );
-    // hat es sich gelohnt
+    // sind Daten vorhanden?
     if ( dataSet->isEmpty() )
       return ( false );
     //
@@ -392,7 +393,6 @@ namespace spx
     }
     //
     *lg << LDEBUG << "ChartDataWorker::makeChartData...OK" << Qt::endl;
-    emit onChartReadySig();
     return ( true );
   }
 
