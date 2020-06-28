@@ -46,7 +46,7 @@ namespace spx
     //! Prozess zum abarbeiten
     std::unique_ptr< ChartDataWorker > chartWorker;
     //! Nebenläufiges future Objekt
-    QFuture< bool > dbgetDataFuture;
+    QFuture< DiveDataSetsPtr > dbgetDataFuture;
     //! Liste mit Devices aus der Datenbank
     DeviceAliasHash spxDevicesAliasHash;
     //! mac adresse des ausgewählten gerätes
@@ -96,7 +96,8 @@ namespace spx
     virtual void onCloseDatabaseSlot( void ) override;
     void onDeviceComboChangedSlot( int index );
     void onDiveComboChangedSlot( int index );
-    void onChartReadySlot( void );
+    //! wenn auf das future gewartet wird
+    void onDiveDataWaitFor( int index );
     void onNotesLineEditFinishedSlot( void );
   };
 }  // namespace spx

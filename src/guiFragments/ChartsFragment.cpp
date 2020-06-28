@@ -105,7 +105,6 @@ namespace spx
              &ChartsFragment::onDeviceComboChangedSlot );
     connect( ui->diveSelectComboBox, static_cast< void ( QComboBox::* )( int ) >( &QComboBox::currentIndexChanged ), this,
              &ChartsFragment::onDiveComboChangedSlot );
-    connect( chartWorker.get(), &ChartDataWorker::onChartReadySig, this, &ChartsFragment::onChartReadySlot );
     connect( ui->notesLineEdit, &QLineEdit::editingFinished, this, &ChartsFragment::onNotesLineEditFinishedSlot );
     //
     // die charts "verbinden"
@@ -228,13 +227,11 @@ namespace spx
 
   void ChartsFragment::onDiveComboChangedSlot( int index )
   {
-    //
-    // zuerst das Chart entfernen
-    //
-    bigChartView->setChart( bigDummyChart );
-    ppo2ChartView->setChart( ppo2DummyChart );
-    bigDiveChart->deleteLater();
-    ppo2DiveChart->deleteLater();
+    static int indexOld = -1;
+
+    if ( index == indexOld )
+      return;
+    indexOld = index;
     //
     // nichts markiert => dann bin ich schon fertig
     //
@@ -245,39 +242,49 @@ namespace spx
       return;
     *lg << LDEBUG << QString( "ChartsFragment::onDiveComboChangedSlot -> change to dive #%1..." ).arg( diveNum, 3, 10, QChar( '0' ) )
         << Qt::endl;
-    // chartView->setChart( diveChart.get() );
+    // falls da noch was am köcheln ist
+    dbgetDataFuture.cancel();
+    ui->notesLineEdit->setText( database->getNotesForDive( deviceAddr, diveNum ) );
+    //
+    // starte die Datenabfrage als future...
+    //
+    dbgetDataFuture = QtConcurrent::run( chartWorker.get(), &ChartDataWorker::getFutureDiveDataSet, deviceAddr, diveNum );
+    // das timerevent prüft ob die Daten verfügbar sind
+    QTimer::singleShot( 100, this, [=]() { this->onDiveDataWaitFor( index ); } );
+  }
+
+  void ChartsFragment::onDiveDataWaitFor( int index )
+  {
     if ( dbgetDataFuture.isFinished() )
     {
+      //
+      // das future zur Datenabfrage ist fertig
+      // dann sollte ein Dataset vorhanden sein
+      // zuerst die alten charts entfernen und neue erzeugen
+      //
+      bigChartView->setChart( bigDummyChart );
+      ppo2ChartView->setChart( ppo2DummyChart );
+      bigDiveChart->deleteLater();
+      ppo2DiveChart->deleteLater();
       bigDiveChart = new QtCharts::QChart( nullptr );
       ppo2DiveChart = new QtCharts::QChart( nullptr );
-
       chartWorker->prepareDiveCharts( bigDiveChart, ppo2DiveChart,
                                       appConfig->getGuiThemeName().compare( AppConfigClass::lightStr ) == 0 );
-      ui->notesLineEdit->setText( database->getNotesForDive( deviceAddr, diveNum ) );
-      dbgetDataFuture =
-          QtConcurrent::run( chartWorker.get(), &ChartDataWorker::makeDiveChart, bigDiveChart, ppo2DiveChart, deviceAddr, diveNum );
+      *lg << LDEBUG << "ChartsFragment::onDiveDataWaitFor -> future was finished, get data..." << Qt::endl;
+      DiveDataSetsPtr dataSet = dbgetDataFuture.result();
+      *lg << LDEBUG << "ChartsFragment::onDiveDataWaitFor -> future was finished, make charts..." << Qt::endl;
+      chartWorker->makeDiveChart( bigDiveChart, ppo2DiveChart, dataSet );
+      bigChartView->setChart( bigDiveChart );
+      ppo2ChartView->setChart( ppo2DiveChart );
+      bigChartView->setRubberBand( SPXChartView::HorizontalRubberBand );
+      ppo2ChartView->setRubberBand( SPXChartView::HorizontalRubberBand );
+      *lg << LDEBUG << "ChartsFragment::onDiveDataWaitFor -> OK." << Qt::endl;
     }
     else
     {
-      // später nochmal...
-      *lg << LDEBUG << "ChartsFragment::onDiveComboChangedSlot -> last chart is under construction, try later (automatic) again..."
-          << Qt::endl;
-      QTimer::singleShot( 100, this, [=]() { this->onDiveComboChangedSlot( index ); } );
+      QTimer::singleShot( 100, this, [=]() { this->onDiveDataWaitFor( index ); } );
+      *lg << LDEBUG << "ChartsFragment::onDiveDataWaitFor -> future is running, wait..." << Qt::endl;
     }
-  }
-
-  void ChartsFragment::onChartReadySlot()
-  {
-    // QTimer::singleShot( 20, this, [=]() { ChartsFragment::onDiveComboChangedSlot( int index ); } );
-    //
-    // Charts sind fertig präpariert
-    //
-    *lg << LDEBUG << "ChartsFragment::onChartReadySlot..." << Qt::endl;
-    bigChartView->setChart( bigDiveChart );
-    ppo2ChartView->setChart( ppo2DiveChart );
-    bigChartView->setRubberBand( SPXChartView::HorizontalRubberBand );
-    ppo2ChartView->setRubberBand( SPXChartView::HorizontalRubberBand );
-    *lg << LDEBUG << "ChartsFragment::onChartReadySlot...OK" << Qt::endl;
   }
 
   void ChartsFragment::onNotesLineEditFinishedSlot()
