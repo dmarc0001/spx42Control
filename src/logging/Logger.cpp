@@ -77,7 +77,7 @@ namespace spx
     if ( !consoleStream || consoleStream->status() != QTextStream::Ok )
     {
       //
-      // das geht nicht auf der Knsole!
+      // das geht nicht auf der Konsole!
       // Loggen in Datei wäre noch machbar
       //
       qCritical() << "can't open log stream to console!";

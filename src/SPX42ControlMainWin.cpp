@@ -273,7 +273,7 @@ namespace spx
     //
     QMessageBox msgBox( this );
     msgBox.setText( tr( "Logging start FAIL!" ) );
-    msgBox.setDetailedText( tr( "Check write rights for program directory or reinstall software." ) );
+    msgBox.setDetailedText( tr( "Check write rights for program/user directory or reinstall software." ) );
     msgBox.setIcon( QMessageBox::Critical );
     msgBox.exec();
     return ( false );
