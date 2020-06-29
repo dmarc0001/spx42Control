@@ -86,7 +86,7 @@ fi
 # übersetzungen machen und kopieren
 # TODO: Übersetzung updaten...
 #
-echo "kopiere translations ($TRANSLATION\*.qm)..."
+echo "kopiere translations ($TRANSLATION/*.qm)..."
 if [ -e $TRANSLATION/*.qm ] 
 then
   cp -f $TRANSLATION/*.qm out/spx42Control.app/Contents/MacOS/
