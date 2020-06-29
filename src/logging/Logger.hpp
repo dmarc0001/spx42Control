@@ -84,7 +84,6 @@ namespace spx
     {
       //! Serialisieren...
       QMutexLocker locker( &logMutex );
-      // qDebug() << "THRESHOLD: " << threshold << " CURRENT: " << currentThreshold;
       if ( threshold >= currentThreshold )
       {
         if ( wasNewline )

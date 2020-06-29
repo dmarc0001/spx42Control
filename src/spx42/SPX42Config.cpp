@@ -1,7 +1,5 @@
 ﻿#include "SPX42Config.hpp"
 
-// TODO: hashes wieder nur bei bedarf machen
-
 namespace spx
 {
   /**
@@ -844,6 +842,7 @@ namespace spx
   {
     if ( individualPSCROn != pscrMode )
     {
+      individualPSCROn = pscrMode;
       if ( sendSignals )
       {
         emit individualPscrModeChangedSig( individualPSCROn );
@@ -869,6 +868,7 @@ namespace spx
   {
     if ( individualSensorCount != sCount )
     {
+      individualSensorCount = sCount;
       if ( sendSignals )
       {
         emit individualSensorsCountChangedSig( individualSensorCount );
@@ -1025,9 +1025,9 @@ namespace spx
   QString SPX42Config::makeSpxHash()
   {
     QByteArray serialized;
-    serialized.append( QString( "firmware version (enum): %1\n" ).arg( static_cast< int >( spxFirmwareVersion ) ) );
+    serialized.append( QString( "%1" ).arg( static_cast< int >( spxFirmwareVersion ) ) );
     serialized.append( spxLicense.serialize() );
-    serialized.append( QString( "serial number: %1" ).arg( spxSerialNumber ) );
+    serialized.append( QString( "%1" ).arg( spxSerialNumber ) );
     qhash.reset();
     qhash.addData( serialized );
     return ( QString( qhash.result().toBase64() ) );
@@ -1040,14 +1040,14 @@ namespace spx
   QString SPX42Config::makeDecoHash()
   {
     QByteArray serialized;
-    serialized.append( QString( "deco preset (enum): %1" ).arg( static_cast< int >( decoCurrentPreset ) ) );
+    serialized.append( QString( "%1" ).arg( static_cast< int >( decoCurrentPreset ) ) );
     serialized.append(
-        QString( "low gradient: %1" ).arg( decoPresets.value( static_cast< int >( decoCurrentPreset ) ).first, 2, 10, QChar( '0' ) ) );
-    serialized.append( QString( "high gradient: %1" )
-                           .arg( decoPresets.value( static_cast< int >( decoCurrentPreset ) ).second, 2, 10, QChar( '0' ) ) );
-    serialized.append( QString( "dynamic gradients: %1" ).arg( static_cast< bool >( decoDynamicGradient ) ) );
-    serialized.append( QString( "deep stops enabled: %1" ).arg( static_cast< bool >( decoDeepstopsEnabled ) ) );
-    serialized.append( QString( "last deco stop (enum): %1" ).arg( static_cast< int >( decoLastStop ) ) );
+        QString( "%1" ).arg( decoPresets.value( static_cast< int >( decoCurrentPreset ) ).first, 2, 10, QChar( '0' ) ) );
+    serialized.append(
+        QString( "%1" ).arg( decoPresets.value( static_cast< int >( decoCurrentPreset ) ).second, 2, 10, QChar( '0' ) ) );
+    serialized.append( QString( "%1" ).arg( static_cast< int >( decoDynamicGradient ) == 0 ? "false" : "true" ) );
+    serialized.append( QString( "%1" ).arg( static_cast< int >( decoDeepstopsEnabled ) == 0 ? "false" : "true" ) );
+    serialized.append( QString( "%1" ).arg( static_cast< int >( decoLastStop ) ) );
     qhash.reset();
     qhash.addData( serialized );
     return ( QString( qhash.result().toBase64() ) );
@@ -1060,10 +1060,8 @@ namespace spx
   QString SPX42Config::makeDisplayHash()
   {
     QByteArray serialized;
-    serialized.append(
-        QString( "display brightness (enum): %1" ).arg( static_cast< int >( displayBrightness ), 2, 10, QChar( '0' ) ) );
-    serialized.append(
-        QString( "display orientation (enum): %1" ).arg( static_cast< int >( displayOrientation ), 2, 10, QChar( '0' ) ) );
+    serialized.append( QString( "%1" ).arg( static_cast< int >( displayBrightness ), 2, 10, QChar( '0' ) ) );
+    serialized.append( QString( "%1" ).arg( static_cast< int >( displayOrientation ), 2, 10, QChar( '0' ) ) );
     qhash.reset();
     qhash.addData( serialized );
     return ( QString( qhash.result().toBase64() ) );
@@ -1076,10 +1074,9 @@ namespace spx
   QString SPX42Config::makeUnitsHash()
   {
     QByteArray serialized;
-    serialized.append(
-        QString( "unit for temperature (enum): %1" ).arg( static_cast< int >( unitTemperature ), 2, 10, QChar( '0' ) ) );
-    serialized.append( QString( "unit for lenght (enum): %1" ).arg( static_cast< int >( unitLength ), 2, 10, QChar( '0' ) ) );
-    serialized.append( QString( "water type (enum): %1" ).arg( static_cast< int >( unitWaterType ), 2, 10, QChar( '0' ) ) );
+    serialized.append( QString( "%1" ).arg( static_cast< int >( unitTemperature ), 2, 10, QChar( '0' ) ) );
+    serialized.append( QString( "%1" ).arg( static_cast< int >( unitLength ), 2, 10, QChar( '0' ) ) );
+    serialized.append( QString( "%1" ).arg( static_cast< int >( unitWaterType ), 2, 10, QChar( '0' ) ) );
     qhash.reset();
     qhash.addData( serialized );
     return ( QString( qhash.result().toBase64() ) );
@@ -1092,8 +1089,8 @@ namespace spx
   QString SPX42Config::makeSetpointHash()
   {
     QByteArray serialized;
-    serialized.append( QString( "auto setpoint value (enum): %1" ).arg( static_cast< int >( setpointAuto ), 2, 10, QChar( '0' ) ) );
-    serialized.append( QString( "setpoint value (enum): %1" ).arg( static_cast< int >( setpointValue ), 2, 10, QChar( '0' ) ) );
+    serialized.append( QString( "%1" ).arg( static_cast< int >( setpointAuto ), 2, 10, QChar( '0' ) ) );
+    serialized.append( QString( "%1" ).arg( static_cast< int >( setpointValue ), 2, 10, QChar( '0' ) ) );
     qhash.reset();
     qhash.addData( serialized );
     return ( QString( qhash.result().toBase64() ) );
@@ -1106,15 +1103,12 @@ namespace spx
   QString SPX42Config::makeIndividualHash()
   {
     QByteArray serialized;
-    serialized.append( QString( "individual sensors on: %1" ).arg( static_cast< bool >( individualSensorsOn ) ) );
-    serialized.append( QString( "indiovidual pscr on: %1" ).arg( static_cast< bool >( individualPSCROn ) ) );
-    serialized.append(
-        QString( "individual sensors count: %1" ).arg( static_cast< int >( individualSensorCount ), 2, 10, QChar( '0' ) ) + 1 );
-    serialized.append( QString( "individual acoustic warnings on: %1" ).arg( static_cast< bool >( individualAcustic ) ) );
-    serialized.append( QString( "individual log interval: %1" )
-                           .arg( ( static_cast< int >( individualLogInterval ) + 1 ) * 10, 2, 10, QChar( '0' ) ) );
-    serialized.append(
-        QString( "individual temp stick type (enum): %1" ).arg( static_cast< int >( individualTempStick ), 2, 10, QChar( '0' ) ) );
+    serialized.append( QString( "%1" ).arg( static_cast< int >( individualSensorsOn ) == 0 ? "false" : "true" ) );
+    serialized.append( QString( "%1" ).arg( static_cast< int >( individualPSCROn ) == 0 ? "false" : "true" ) );
+    serialized.append( QString( "%1" ).arg( static_cast< int >( individualSensorCount ), 2, 10, QChar( '0' ) ) + 1 );
+    serialized.append( QString( "%1" ).arg( static_cast< int >( individualAcustic ) == 0 ? "false" : "true" ) );
+    serialized.append( QString( "%1" ).arg( ( static_cast< int >( individualLogInterval ) + 1 ) * 10, 2, 10, QChar( '0' ) ) );
+    serialized.append( QString( "%1" ).arg( static_cast< int >( individualTempStick ), 2, 10, QChar( '0' ) ) );
     qhash.reset();
     qhash.addData( serialized );
     return ( QString( qhash.result().toBase64() ) );

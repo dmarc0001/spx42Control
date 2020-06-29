@@ -1408,23 +1408,23 @@
         <translation>Vorschau</translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="319"/>
+        <location filename="../database/ChartDataWorker.cpp" line="320"/>
         <source>TEMP [&amp;ordm;C]</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="336"/>
-        <location filename="../database/ChartDataWorker.cpp" line="377"/>
+        <location filename="../database/ChartDataWorker.cpp" line="337"/>
+        <location filename="../database/ChartDataWorker.cpp" line="378"/>
         <source>DIVE TIME</source>
         <translation>Tauchzeit</translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="346"/>
+        <location filename="../database/ChartDataWorker.cpp" line="347"/>
         <source>PPO2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="361"/>
+        <location filename="../database/ChartDataWorker.cpp" line="362"/>
         <source>SETPOINT</source>
         <translation></translation>
     </message>
@@ -1433,7 +1433,7 @@
         <translation type="vanished">Tauchgang Ansicht</translation>
     </message>
     <message>
-        <location filename="../database/ChartDataWorker.cpp" line="305"/>
+        <location filename="../database/ChartDataWorker.cpp" line="306"/>
         <source>DEPTH [m]</source>
         <translation>Tiefe [m]</translation>
     </message>
@@ -1456,17 +1456,17 @@
         <translation>vergrößern: ziehen mit linker Maustaste, verkleinern: rechte Maustaste, Vergrößerung RESET: mittlere Maustaste...</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ChartsFragment.cpp" line="123"/>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="122"/>
         <source>unknown</source>
         <translation>unbekannt</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ChartsFragment.cpp" line="133"/>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="132"/>
         <source>database empty</source>
         <translation>Datenbank leer</translation>
     </message>
     <message>
-        <location filename="../guiFragments/ChartsFragment.cpp" line="313"/>
+        <location filename="../guiFragments/ChartsFragment.cpp" line="320"/>
         <source>LOGCHARTS SPX42 Serial [%1] Lic: %2</source>
         <translation>Log Grafiken SPX32 Seriennummer [%1] Lizenz: %2</translation>
     </message>
@@ -1985,9 +1985,13 @@
         <translation>Logging konnte nicht gestartet werden!</translation>
     </message>
     <message>
-        <location filename="../SPX42ControlMainWin.cpp" line="276"/>
         <source>Check write rights for program directory or reinstall software.</source>
-        <translation>Prüfe Schreibrechte im Programmverzeichnis oder instsalliere die Software neu.</translation>
+        <translation type="vanished">Prüfe Schreibrechte im Programmverzeichnis oder instsalliere die Software neu.</translation>
+    </message>
+    <message>
+        <location filename="../SPX42ControlMainWin.cpp" line="276"/>
+        <source>Check write rights for program/user directory or reinstall software.</source>
+        <translation>Prüfe Schreibrechte im Programmverzeichnis/Benutzerverzeichnis oder instsalliere die Software neu.</translation>
     </message>
     <message>
         <location filename="../SPX42ControlMainWin.cpp" line="288"/>
