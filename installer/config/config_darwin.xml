@@ -17,7 +17,7 @@
       <DisplayName>SUBMATIX SPX42 Control Repository</DisplayName>
     </Repository>
     <Repository>
-      <Url>http://webserver-vm.fritz.box/spx42ControlMac</Url>
+      <Url>http://webserver-vm.fritz.box/spxControlMac</Url>
       <Enabled>0</Enabled>
       <DisplayName>TESTING Repository</DisplayName>
     </Repository>
