@@ -1,7 +1,5 @@
 ﻿#include "SPX42Config.hpp"
 
-// TODO: hashes wieder nur bei bedarf machen
-
 namespace spx
 {
   /**
