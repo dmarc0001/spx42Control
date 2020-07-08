@@ -6,6 +6,7 @@
 #include <QObject>
 #include <QQueue>
 #include <QString>
+#include <QWaitCondition>
 #include <memory>
 #include "database/SPX42Database.hpp"
 #include "spx42/SPX42Config.hpp"
@@ -13,57 +14,54 @@
 
 namespace spx
 {
-  class LogDetailWalker : public QObject
+  using LogDetailSetQueue = QQueue< spSingleCommand >;  //! Queue an details für einen Tauchgang
+  using LogDetailsQueue = QQueue< LogDetailSetQueue >;  //! Queue für LogDertailSets
+
+  enum LOGWRITEERR : int
+  {
+    LOGWR_ERR_CANT_DELETE_DIVE,
+    LOGWR_ERR_CANT_INSERT_DIVE,
+    LOGWR_ERR_CANT_READ_NEW_DIVEID,
+    LOGWR_ERR_CANT_INSERT_LOGDETAIL,
+    LOGWR_ERR_xx
+  };
+
+  class LogDetailWalker : public QThread
   {
     Q_OBJECT
-    //! Maximale Wartezeit beim schreiben
-    static const qint64 waitTimeout{( 1000 / 50 ) * 20};
-    static const qint64 waitUnits{50};
-    //! Queue mit pointern auf die empfangenen Logdetails
-    QQueue< spSingleCommand > detailQueue;
-    //! der Logger
-    std::shared_ptr< Logger > lg;
-    //! Datenbankverbindung
-    std::shared_ptr< SPX42Database > database;
-    //! die Konfioguration
-    std::shared_ptr< SPX42Config > spx42Config;
-    //! Mutex zum locken der Queue
-    QMutex queueMutex;
-    //! thread soll laufen und auf daten warten
-    bool shouldWriterRunning;
-    int processed;
-    int forThisDiveProcessed;
-    int overAll;
-    // zeit bis zum timeout
-    qint64 maxTimeoutVal;
-    //! Queue für Logdaten ankommend
-    std::shared_ptr< QQueue< SPX42SingleCommand > > logDetailQueue;
-    QString logDetailTableName;
+    private:
+    std::shared_ptr< Logger > lg;                //! der Logger
+    std::shared_ptr< SPX42Database > database;   //! Datenbankverbindung
+    std::shared_ptr< SPX42Config > spx42Config;  //! die Konfiguration des SQX
+    QString deviceMac;                           //! das genutzte Gerät
+    bool threadShouldRun;                        //! thread soll laufen und auf daten warten
+    LogDetailsQueue logDetailQueue;              //! Queue mit Sets von Datenlogs
+    QMutex queueMutex;                           //! Mutex zum locken der Queue
+    QMutex conditionMutex;                       //! Mutex zum locken der Queue
+    QWaitCondition queueCondiotion;              //! wenn die Queue leeer ist, warte auf Inhalt
+    int processed;                               //! anzahl bearbeiteter Datensätze
+    bool isSleeping{false};                      //! ist der Thread am schlummern
 
     public:
     explicit LogDetailWalker( QObject *parent,
                               std::shared_ptr< Logger > logger,
                               std::shared_ptr< SPX42Database > _database,
-                              std::shared_ptr< SPX42Config > spxCfg );
-    void reset( void );
-    //! nicht mehr warten wenn die queue leer ist
-    void nowait( bool _shouldNoWait = true );
-    void addDetail( spSingleCommand );
-    int getProcessed( void );
-    int getGlobal( void );
-    int getQueueLen( void );
-    int writeLogDataToDatabase( const QString &deviceMac );
-    bool deleteLogDataFromDatabase( const QString &deviceMac, std::shared_ptr< QVector< int > > list );
-    bool exportLogDataFromDatabase( const QString &deviceMac, const QString &fileName, std::shared_ptr< QVector< int > > list );
+                              std::shared_ptr< SPX42Config > spxCfg,
+                              const QString &devMac );
+    void run() override;                          //! die Thread Hauptschleife
+    bool setThreadEnd( bool _should );            //! zeige an ob er Thread enden soll
+    void setDeviceName( const QString &devMac );  //! wenn sich das ändert, möglichkeit zum setzen
+    int addLogQueue( LogDetailSetQueue logSet );  //! füge einen Tauchgang hinzu
+    bool isThreadSleeping();                      //! ist der Thread am schlummern
 
     private:
-    spSingleCommand dequeueDetail( void );
+    bool writeOneDataset( LogDetailSetQueue divelogSet, int diveNum, int dive_id );
 
     signals:
-    void onNewDiveDoneSig( int savedDiveNum );
-    void onWriteDoneSig( int _overallResult );
-    void onNewDiveStartSig( int newDiveNum );
-    void onDeleteDoneSig( int diveNum );
+    void onWriteDiveStartSig( int diveNum );   //! Starte sicheren eines Tauchganges
+    void onWriteDiveDoneSig( int countSets );  //! Tauchgang sichern fertig
+    void onWriteFinishedSig( int count );      //! Alle Tauchgänge in der Queue fertig
+    void onWriteCritSig( LOGWRITEERR err );    //! Kritischer Fehler
 
     public slots:
   };

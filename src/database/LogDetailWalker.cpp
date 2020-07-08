@@ -5,249 +5,251 @@ namespace spx
   LogDetailWalker::LogDetailWalker( QObject *parent,
                                     std::shared_ptr< Logger > logger,
                                     std::shared_ptr< SPX42Database > _database,
-                                    std::shared_ptr< SPX42Config > spxCfg )
-      : QObject( parent )
+                                    std::shared_ptr< SPX42Config > spxCfg,
+                                    const QString &devMac )
+      : QThread( parent )
       , lg( logger )
       , database( _database )
       , spx42Config( spxCfg )
-      , shouldWriterRunning( true )
+      , deviceMac( devMac )
+      , threadShouldRun( true )
       , processed( 0 )
-      , forThisDiveProcessed( 0 )
-      , overAll( 0 )
-      , maxTimeoutVal( waitTimeout )
   {
   }
 
-  void LogDetailWalker::addDetail( spSingleCommand _detail )
+  void LogDetailWalker::run()
   {
-    QMutexLocker writeLock( &queueMutex );
-    ++overAll;
-    detailQueue.enqueue( _detail );
-  }
-
-  void LogDetailWalker::reset()
-  {
-    shouldWriterRunning = false;
-  }
-
-  void LogDetailWalker::nowait( bool _shouldNoWait )
-  {
-    if ( _shouldNoWait )
-      maxTimeoutVal = 0;
-    else
-      maxTimeoutVal = waitTimeout;
-  }
-
-  int LogDetailWalker::getProcessed()
-  {
-    return ( processed );
-  }
-
-  int LogDetailWalker::getGlobal()
-  {
-    return ( overAll );
-  }
-
-  int LogDetailWalker::getQueueLen()
-  {
-    return ( detailQueue.count() );
-  }
-
-  spSingleCommand LogDetailWalker::dequeueDetail()
-  {
-    QMutexLocker writeLock( &queueMutex );
-    return ( detailQueue.dequeue() );
-  }
-
-  int LogDetailWalker::writeLogDataToDatabase( const QString &deviceMac )
-  {
-    int diveNum = -1;
-    int detail_id = -1;
-    int processed_per_dive = 0;
-    shouldWriterRunning = true;
-    forThisDiveProcessed = 0;
-    processed = 0;
-    qint64 timeoutVal = 0;
-    maxTimeoutVal = waitTimeout;
-    //
-    // solange es was zu schreiben gibt
-    //
+    threadShouldRun = true;
     *lg << LINFO << "LogDetailWriter::writeLogDataToDatabase -> thread started" << Qt::endl;
-    while ( shouldWriterRunning )
-    {
-      if ( detailQueue.count() > 0 )
-      {
-        timeoutVal = 0;
-        //
-        // den Datensatz aus der Queue holen
-        // (ist ja ein shared ptr, also sehr schnell)
-        //
-        auto logentry = dequeueDetail();
-        //
-        // ist die diveNum immer noch dieselbe?
-        //
-        if ( diveNum != logentry->getDiveNum() )
-        {
-          if ( diveNum != -1 && detail_id != -1 )
-          {
-            //
-            // also gab es einene Tauchgang, den ich gerade gesichert habe?
-            // dann erzeuge maximaltiefe und anzahl der einträge
-            // in der Tabellenspalte in detaildir
-            // (compute statistics...)
-            //
-            if ( !database->computeStatistic( detail_id ) )
-            {
-              *lg << LWARN << "LogDetailWalker::writeLogDataToDatabase -> can't not compute statistic for dive - detail id <"
-                  << detail_id << ">..." << Qt::endl;
-            }
-          }
-          //
-          // Ok, Signal geben für "neuen Tauchgang sichern FERTIG!"
-          //
-          emit onNewDiveDoneSig( diveNum );
-          diveNum = logentry->getDiveNum();
-          *lg << LDEBUG << "LogDetailWalker::writeLogDataToDatabase -> new dive to store #"
-              << QString( "%1" ).arg( diveNum, 3, 10, QChar( '0' ) ) << Qt::endl;
-          //
-          // Nummer hat sich verändert
-          // ist das ein update oder ein insert?
-          //
-          if ( database->existDiveLogInBase( deviceMac, diveNum ) )
-          {
-            *lg << LDEBUG << "LogDetailWalker::writeLogDataToDatabase -> update, drop old values..." << Qt::endl;
-            //
-            // existiert, daten löschen...
-            // also ein "update", eigentlich natürlich löschen und neu machen
-            //
-            if ( !database->delDiveLogFromBase( deviceMac, diveNum ) )
-            {
-              return ( -1 );
-            }
-          }
-          //
-          // neu anlegen, Tauchgangszeit suchen
-          //
-          qint64 timestamp = 0;
-          SPX42LogDirectoryEntryListPtr entrys = spx42Config->getLogDirectory();
-          for ( auto &entry : *( entrys.get() ) )
-          {
-            if ( entry.number == diveNum )
-            {
-              // die gesuchte Tauchgangsnummer
-              timestamp = entry.diveDateTime.toSecsSinceEpoch();
-              *lg << LDEBUG
-                  << QString( "LogDetailWalker::writeLogDataToDatabase -> start time for dive #%1: %2" )
-                         .arg( diveNum, 3, 10, QChar( '0' ) )
-                         .arg( entry.getDateTimeStr() )
-                  << Qt::endl;
-              // Schleife abbrechen, wenn ich die nummer gefunden habe
-              break;
-            }
-          }
-          //
-          // Daten komplett, Tauchgang in der DB anlegen
-          // falls ich keinen Zeitstempel gefunden habe ist das dann 0
-          //
-          if ( !database->insertDiveLogInBase( deviceMac, diveNum, timestamp ) )
-          {
-            //
-            // Da ging dann was schief
-            return ( -1 );
-          }
-          //
-          // die neue detail_id muss ich noch erfragen
-          //
-          detail_id = database->getDetailId( deviceMac, diveNum );
-          if ( detail_id == -1 )
-          {
-            return ( -1 );
-          }
-          //
-          // Ok, Signal geben für "neuen Tauchgang sichern START!"
-          //
-          emit onNewDiveStartSig( diveNum );
-          processed_per_dive = 0;
-        }
-        // zähle die Datensätze
-        processed++;
-        processed_per_dive++;
-        *lg << LDEBUG
-            << QString( "LogDetailWalker::writeLogDataToDatabase -> write set %1 dive number %2, over all processed: %3" )
-                   .arg( processed_per_dive, 3, 10, QChar( '0' ) )
-                   .arg( diveNum, 3, 10, QChar( '0' ) )
-                   .arg( processed, 5, 10, QChar( '0' ) )
-            << Qt::endl;
-        //
-        // in die Datenbank schreiben
-        // (wird via mutex serialisiert mit anderen threads)
-        //
-        database->insertLogentry( detail_id, logentry );
-      }
-      else
-      {
-        //
-        // wenn es gerade nichts zu arbeiten gibt, in Wartestellung gehen
-        // und abwarten ob da noch was kommt
-        //
-        if ( shouldWriterRunning )
-        {
-          timeoutVal++;
-          if ( timeoutVal > maxTimeoutVal )
-            shouldWriterRunning = false;
-          else
-            QThread::msleep( waitUnits );
-        }
-      }
-    }
-    if ( diveNum != -1 && detail_id != -1 )
+    //
+    // Vorprüfungen
+    //
+    if ( deviceMac.isNull() || deviceMac.isEmpty() )
     {
       //
-      // das passiert hier beim letzten Tauchgang, dazwischen wird eingangs
-      // beim wechsel zum nächsten Tauchgang die statistik generiert
-      // also gab es einen Tauchgang, den ich gerade gesichert habe?
-      // dann erzeuge maximaltiefe und anzahl der einträge
-      // in der Tabellenspalte in detaildir
+      // Thread beenden, keine Mac-Addr
       //
-      if ( !database->computeStatistic( detail_id ) )
-      {
-        *lg << LWARN
-            << QString( "LogDetailWriter::writeLogDataToDatabase -> can't not compute statistic for dive - detail id <%1>..." )
-                   .arg( detail_id )
-            << Qt::endl;
-      }
+      *lg << LCRIT << "LogDetailWalker::run -> no device addr given, thread will stop!" << Qt::endl;
+      return;
     }
     //
-    // Ok, Signal geben für "neuen Tauchgang sichern ENDE!"
+    // Für immer, bis es reicht...
     //
-    emit onWriteDoneSig( diveNum );
-    *lg << LINFO << "LogDetailWriter::writeLogDataToDatabase -> thread ended" << Qt::endl;
-    return ( processed );
+    while ( threadShouldRun )
+    {
+      // ######################################################################
+      // Hauptschleife, solange die Queue noch Einträge hat
+      // ######################################################################
+      while ( threadShouldRun && !logDetailQueue.empty() )
+      {
+        //
+        // ein neuer Tauchgangslog
+        //
+        queueMutex.lock();
+        auto divelogSet = logDetailQueue.dequeue();
+        queueMutex.unlock();
+        //
+        // den ersten Eintrag untersuchen
+        //
+        auto firstEntry = divelogSet.first();
+        int diveNum = firstEntry->getDiveNum();
+        int detail_id = 0;
+        //
+        // gibt es den schon (update oder insert)
+        //
+        if ( database->existDiveLogInBase( deviceMac, diveNum ) )
+        {
+          *lg << LDEBUG << "LogDetailWalker::run -> update, drop old values..." << Qt::endl;
+          //
+          // existiert, daten löschen...
+          // also ein "update", eigentlich natürlich löschen und neu machen
+          //
+          if ( !database->delDiveLogFromBase( deviceMac, diveNum ) )
+          {
+            emit onWriteCritSig( LOGWRITEERR::LOGWR_ERR_CANT_DELETE_DIVE );
+            //
+            // nächsten Tauchgang versuchen
+            //
+            *lg << LCRIT << "LogDetailWalker::run -> can't delete data for dive <" << diveNum << ">from database..." << Qt::endl;
+            continue;
+          }
+        }
+        //
+        // neu anlegen, Tauchgangszeit suchen
+        //
+        qint64 timestamp = 0;
+        SPX42LogDirectoryEntryListPtr entrys = spx42Config->getLogDirectory();
+        for ( auto &entry : *( entrys.get() ) )
+        {
+          if ( entry.number == diveNum )
+          {
+            // die gesuchte Tauchgangsnummer
+            timestamp = entry.diveDateTime.toSecsSinceEpoch();
+            *lg << LDEBUG
+                << QString( "LogDetailWalker::run -> start time for dive #%1: %2" )
+                       .arg( diveNum, 3, 10, QChar( '0' ) )
+                       .arg( entry.getDateTimeStr() )
+                << Qt::endl;
+            // Schleife abbrechen, wenn ich die nummer gefunden habe
+            break;
+          }
+        }
+        //
+        // Daten komplett, Tauchgang in der DB anlegen
+        // falls ich keinen Zeitstempel gefunden habe ist das dann 0
+        //
+        if ( !database->insertDiveLogInBase( deviceMac, diveNum, timestamp ) )
+        {
+          //
+          // Da ging dann was schief
+          //
+          emit onWriteCritSig( LOGWRITEERR::LOGWR_ERR_CANT_INSERT_DIVE );
+          *lg << LCRIT << "LogDetailWalker::run -> can't insert new dataset for dive <" << diveNum << ">from database..." << Qt::endl;
+          continue;
+        }
+        //
+        // die neue detail_id muss ich noch erfragen
+        //
+        detail_id = database->getDetailId( deviceMac, diveNum );
+        if ( detail_id == -1 )
+        {
+          emit onWriteCritSig( LOGWRITEERR::LOGWR_ERR_CANT_READ_NEW_DIVEID );
+          *lg << LCRIT << "LogDetailWalker::run -> can't insert new dataset for dive <" << diveNum << ">from database..." << Qt::endl;
+          continue;
+        }
+        //
+        // jetzt den Tauchgang schreiben
+        //
+        writeOneDataset( divelogSet, diveNum, detail_id );
+      }  // while ( threadShouldRun && !logDetailQueue.empty() )
+      //
+      // sollte eigentlich nur einmal gerufen werden, da der Thread dann schlafen geht
+      //
+      emit onWriteFinishedSig( processed );
+      //
+      // jetzt ist entweder die Queue leer oder der Thread soll enden
+      //
+      if ( threadShouldRun )
+      {
+        //
+        // der Thread soll noch laufen aber es ist nichts zu tun
+        // darum lege den Thread vis zum wake oder wakeAll schlafen
+        //
+        conditionMutex.lock();
+        *lg << LDEBUG << "LogDetailWalker::run -> thread is sleeping..." << Qt::endl;
+        isSleeping = true;
+        queueCondiotion.wait( &conditionMutex );
+        isSleeping = false;
+        *lg << LDEBUG << "LogDetailWalker::run -> thread is waked up..." << Qt::endl;
+        conditionMutex.unlock();
+      }
+    }  // while ( threadShouldRun )
+    *lg << LDEBUG << "LogDetailWalker::run -> thread will end..." << Qt::endl;
   }
 
-  bool LogDetailWalker::deleteLogDataFromDatabase( const QString &deviceMac, std::shared_ptr< QVector< int > > list )
+  bool LogDetailWalker::writeOneDataset( LogDetailSetQueue divelogSet, int diveNum, int dive_id )
   {
-    bool shouldDeleteRunning = true;
+    int _processed = 0;
     //
-    // zuerst: ist die Tabelle da/wurde angelegt?
+    // Schleife solange in diesem Log Details sind
     //
-    for ( int diveNum : *list )
+    onWriteDiveStartSig( diveNum );
+    while ( threadShouldRun && !divelogSet.empty() )
     {
-      if ( shouldDeleteRunning )
+      //
+      // ein Detail aus dem Log holen
+      //
+      auto logentry = divelogSet.dequeue();
+      ++processed;
+      ++_processed;
+      *lg << LDEBUG
+          << QString( "LogDetailWalker::writeOneDataset -> write set %1 dive number %2, over all processed: %3" )
+                 .arg( _processed, 3, 10, QChar( '0' ) )
+                 .arg( diveNum, 3, 10, QChar( '0' ) )
+                 .arg( processed, 5, 10, QChar( '0' ) )
+          << Qt::endl;
+      //
+      // in die Datenbank schreiben
+      // (wird via mutex serialisiert mit anderen threads)
+      //
+      if ( !database->insertLogentry( dive_id, logentry ) )
       {
+        emit onWriteCritSig( LOGWRITEERR::LOGWR_ERR_CANT_INSERT_LOGDETAIL );
+        *lg << LCRIT << "LogDetailWalker::writeOneDataset -> can't insert new detail dataset for dive <" << diveNum
+            << ">from database..." << Qt::endl;
         if ( !database->delDiveLogFromBase( deviceMac, diveNum ) )
         {
-          shouldDeleteRunning = false;
+          emit onWriteCritSig( LOGWRITEERR::LOGWR_ERR_CANT_DELETE_DIVE );
+          //
+          // nächsten Tauchgang versuchen
+          //
+          *lg << LCRIT << "LogDetailWalker::writeOneDataset -> can't delete data for dive <" << diveNum << ">from database..."
+              << Qt::endl;
         }
-        else
-        {
-          // gib Bescheid, der ist Geschichte...
-          emit onDeleteDoneSig( diveNum );
-        }
+        return false;
       }
+      //
+      // OKAY, Datensatz gesichert
+      //
+    }  // while ( threadShouldRun && !divelogSet.empty() )
+    //
+    // hier sollten alle Datensätze gesichert sein
+    // nun Statistik berechnen
+    //
+    if ( !database->computeStatistic( dive_id ) )
+    {
+      emit onWriteCritSig( LOGWRITEERR::LOGWR_ERR_CANT_INSERT_LOGDETAIL );
+      *lg << LWARN << "LogDetailWalker::writeOneDataset -> can't not compute statistic for dive <" << diveNum << ">..." << Qt::endl;
+      if ( !database->delDiveLogFromBase( deviceMac, diveNum ) )
+      {
+        emit onWriteCritSig( LOGWRITEERR::LOGWR_ERR_CANT_DELETE_DIVE );
+        //
+        // nächsten Tauchgang versuchen
+        //
+        *lg << LCRIT << "LogDetailWalker::writeOneDataset -> can't delete data for dive <" << diveNum << ">from database..."
+            << Qt::endl;
+      }
+      return false;
     }
-    QThread::msleep( 1200 );
-    emit onDeleteDoneSig( -1 );
-    return ( shouldDeleteRunning );
+    emit onWriteDiveDoneSig( _processed );
+    return true;
   }
+
+  bool LogDetailWalker::setThreadEnd( bool _shouldEnd )
+  {
+    if ( threadShouldRun == _shouldEnd )
+    {
+      threadShouldRun = false;
+      //
+      // Thread aufwecken, wenn er schläft
+      //
+      queueCondiotion.wakeAll();
+      return true;
+    }
+    return false;
+  }
+
+  void LogDetailWalker::setDeviceName( const QString &devMac )
+  {
+    deviceMac = devMac;
+  }
+
+  int LogDetailWalker::addLogQueue( LogDetailSetQueue logSet )
+  {
+    queueMutex.lock();
+    logDetailQueue.append( logSet );
+    queueMutex.unlock();
+
+    //
+    // Thread aufwecken, wenn er schläft
+    //
+    queueCondiotion.wakeAll();
+    return logSet.size();
+  }
+
+  bool LogDetailWalker::isThreadSleeping()
+  {
+    return isSleeping;
+  }
+
 }  // namespace spx
