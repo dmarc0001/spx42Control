@@ -22,6 +22,7 @@
 #include "config/AppConfigClass.hpp"
 #include "config/ProjectConst.hpp"
 #include "database/ChartDataWorker.hpp"
+#include "database/LogDetailDeleter.hpp"
 #include "database/LogDetailWalker.hpp"
 #include "database/SPX42Database.hpp"
 #include "logging/Logger.hpp"
@@ -45,47 +46,26 @@ namespace spx
     private:
     Q_OBJECT
     Q_INTERFACES( spx::IFragmentInterface )
-    //! Zeiger auf GUI-Objekte
-    std::unique_ptr< Ui::LogFragment > ui;
-    //! Zeiger auf das eigene Minichart
-    QtCharts::QChart *miniChart;
-    //! Zeiger auf das weisse, leere chart
-    QtCharts::QChart *dummyChart;
-    //! Zeiger auf das ChartView
-    std::unique_ptr< QtCharts::QChartView > chartView;
-    //! Prozess zum abarbeiten
-    std::unique_ptr< ChartDataWorker > chartWorker;
-    //! Nebenläufiges future Objekt
-    QFuture< bool > dbgetDataFuture;
-    //! timer für timeout bei transfers
-    QTimer transferTimeout;
-    //! schreibt logdetails queue in die DB
-    LogDetailWalker logWriter;
-    //! Objekt zum Erzeugen des XML Exportes
-    SPX42UDDFExport xmlExport;
-    //! Liste mit Devices aus der Datenbank
-    DeviceAliasHash spxDevicesAliasHash;
-    //! nebenläufig daten in DB schreiben
-    QFuture< int > dbWriterFuture;
-    //! Liste mit zu lesenden Logdetails
-    QQueue< int > logDetailRead;
-    //! nebenläufig daten aus DB löschen
-    QFuture< bool > dbDeleteFuture;
-    //! nebenläufig tauchgänge exportieren
-    QFuture< bool > exportFuture;
-    //! icon fur anzeige log ist in db
-    const QIcon savedIcon;
-    //! icon null
-    const QIcon nullIcon;
-    //! wenn das gerät offline ist und in der geräte combobox ein gerät ausgewählt ist
-    QString offlineDeviceAddr;
-    //! das Muster (lokalisierungsfähig) für Fragmentüberschrift
-    QString fragmentTitlePattern;
-    //! das ganze offline
-    QString fragmentTitleOfflinePattern;
-    //! Pfad für exporte
-    QString exportPath;
-    //
+    std::unique_ptr< Ui::LogFragment > ui;              //! Zeiger auf GUI-Objekte
+    QtCharts::QChart *miniChart;                        //! Zeiger auf das eigene Minichart
+    QtCharts::QChart *dummyChart;                       //! Zeiger auf das weisse, leere chart
+    std::unique_ptr< QtCharts::QChartView > chartView;  //! Zeiger auf das ChartView
+    std::unique_ptr< ChartDataWorker > chartWorker;     //! Prozess zum abarbeiten
+    QFuture< bool > dbgetDataFuture;                    //! Nebenläufiges future Objekt
+    QTimer transferTimeout;                             //! timer für timeout bei transfers
+    std::unique_ptr< LogDetailWalker > logWriter;       //! schreibt logdetails queue in die DB
+    LogDetailDeleter *detailDeleterThread{nullptr};     //! Thread zum löschen von Logdetails
+    SPX42UDDFExport xmlExport;                          //! Objekt zum Erzeugen des XML Exportes
+    DeviceAliasHash spxDevicesAliasHash;                //! Liste mit Devices aus der Datenbank
+    QQueue< int > logDetailRead;                        //! Liste mit zu lesenden Logdetails
+    LogDetailSetQueue logDetailQueue;                   //! Queue mit den Einträgen
+    QFuture< bool > exportFuture;                       //! nebenläufig tauchgänge exportieren
+    const QIcon savedIcon;                              //! icon fur anzeige log ist in db
+    const QIcon nullIcon;                               //! icon null
+    QString offlineDeviceAddr;            //! wenn das gerät offline ist und in der geräte combobox ein gerät ausgewählt ist
+    QString fragmentTitlePattern;         //! das Muster (lokalisierungsfähig) für Fragmentüberschrift
+    QString fragmentTitleOfflinePattern;  //! das ganze offline
+    QString exportPath;                   //! Pfad für exporte
     QString diveNumberStr;
     QString diveDateStr;
     QString diveDepthStr;
@@ -110,79 +90,50 @@ namespace spx
     LogFragment( const LogFragment & );
 
     public:
-    //! Destruktor
-    ~LogFragment() override;
-    //! setzte EXPORT Ptad
-    void setExportPath( const QString &_export );
+    ~LogFragment() override;                       //! Destruktor
+    void setExportPath( const QString &_export );  //! setzte EXPORT Ptad
 
     protected:
     void changeEvent( QEvent *e ) override;
 
     private:
-    //! setze alle Einstellungen für die GUI
-    void setGuiConnected( bool isConnected );
-    //! schreibe alle Daten aus der Queue in die Datenbank
-    void processLogDetails( void );
-    //! schaue nach ob die Details dazu bereits gesichert wurden
-    void testForSavedDetails( void );
-    //! den Thread starten (restarten)
-    void tryStartLogWriterThread( void );
-    //! gib alle selektierten Einträge, die in der DB sind
-    std::shared_ptr< QVector< int > > getSelectedInDb( void );
+    void setGuiConnected( bool isConnected );                   //! setze alle Einstellungen für die GUI
+    void processLogDetails( void );                             //! schreibe alle Daten aus der Queue in die Datenbank
+    void testForSavedDetails( void );                           //! schaue nach ob die Details dazu bereits gesichert wurden
+    void tryStartLogWriterThread( void );                       //! den Thread starten (restarten)
+    std::shared_ptr< QVector< int > > getSelectedInDb( void );  //! gib alle selektierten Einträge, die in der DB sind
 
     signals:
-    //! eine Warnmeldung soll das Main darstellen
-    void onWarningMessageSig( const QString &msg, bool asPopup = false ) override;
-    //! eine Warnmeldung soll das Main darstellen
-    void onErrorgMessageSig( const QString &msg, bool asPopup = false ) override;
-    //! signalisiert, dass der Akku eine Spanniung hat
-    void onAkkuValueChangedSig( double aValue ) override;
+    void onWarningMessageSig( const QString &msg, bool asPopup = false ) override;  //! eine Warnmeldung soll das Main darstellen
+    void onErrorgMessageSig( const QString &msg, bool asPopup = false ) override;   //! eine Warnmeldung soll das Main darstellen
+    void onAkkuValueChangedSig( double aValue ) override;                           //! signalisiert, dass der Akku eine Spanniung hat
 
     public slots:
-    //! signalisiert wenn sich der Kommando Sendepuffer Status ändert
-    void onSendBufferStateChangedSlot( bool isBusy );
+    void onSendBufferStateChangedSlot( bool isBusy );  //! signalisiert wenn sich der Kommando Sendepuffer Status ändert
 
     private slots:
-    //! Wenn sich der Onlinestatus des SPX42 ändert
-    virtual void onOnlineStatusChangedSlot( bool isOnline ) override;
-    //! wenn fehler in der BT VERbindung auftauchen
-    virtual void onSocketErrorSlot( QBluetoothSocket::SocketError error ) override;
-    //! Wenn sich die Lizenz ändert
-    virtual void onConfLicChangedSlot( void ) override;
-    //! wenn die Datenbank geschlosen wird
-    virtual void onCloseDatabaseSlot( void ) override;
-    //! wenn ein Datentelegramm empfangen wurde
-    virtual void onCommandRecivedSlot( void ) override;
-    //! wenn der Transfer ausbleibt
-    void onTransferTimeoutSlot( void );
-    //! Button zum lesen des Verzeichisses vom SPX42
-    void onReadLogDirectoryClickSlot( void );
-    //! Button zum lesen der Logdaten vom SPX42
-    void onReadLogContentClickSlot( void );
-    //! in die Liste des Logverzeichisses geklickt
-    void onLogListClickeSlot( const QModelIndex &index );
-    //! Schreiben in die Datenbank füe einen Tauchgang beendet
-    void onWriterDoneSlot( int _countProcessed );
-    //! Schreiben der Daten eines neuen Tauchgangs begonnen
-    void onNewDiveStartSlot( int newDiveNum );
-    //! Button für Logdaten aus Datenbank löschen
-    void onDeleteLogDetailClickSlot( void );
-    //! Button für das Exportieren der Logdaten aus der Datenbank
-    void onExportLogDetailClickSlot( void );
-    //! Löschen aus der Datenbank für einen Tauchgang erfolgreich
-    void onDeleteDoneSlot( int diveNum );
-    //! Neuer Tauchgang daten sichern erfolgreich
-    void onNewDiveDoneSlot( int diveNum );
-    //! Eintrag in der Verzeichisliste
-    void itemSelectionChangedSlot( void );
-    //! Eintrag in der Offline-Geräteliste geändert
-    void onDeviceComboChangedSlot( int index );
-    //! UDDF dive Export gestartet
-    void onStartSaveDiveSlot( int diveNum );
-    //! UDDF dive export für einen TG beendet
-    void onEndSaveDiveSlot( int diveNum );
-    //! UDDF export beendet
-    void onEndSaveUddfFileSlot( bool wasOk, const QString &fileName );
+    virtual void onOnlineStatusChangedSlot( bool isOnline ) override;                //! Wenn sich der Onlinestatus des SPX42 ändert
+    virtual void onSocketErrorSlot( QBluetoothSocket::SocketError error ) override;  //! wenn fehler in der BT VERbindung auftauchen
+    virtual void onConfLicChangedSlot( void ) override;                              //! Wenn sich die Lizenz ändert
+    virtual void onCloseDatabaseSlot( void ) override;                               //! wenn die Datenbank geschlosen wird
+    virtual void onCommandRecivedSlot( void ) override;                              //! wenn ein Datentelegramm empfangen wurde
+    void onTransferTimeoutSlot( void );                                              //! wenn der Transfer ausbleibt
+    void onReadLogDirectoryClickSlot( void );                                        //! Button zum lesen des Verzeichisses vom SPX42
+    void onReadLogContentClickSlot( void );                                          //! Button zum lesen der Logdaten vom SPX42
+    void onLogListClickeSlot( const QModelIndex &index );                            //! in die Liste des Logverzeichisses geklickt
+    void itemSelectionChangedSlot( void );                                           //! Eintrag in der Verzeichisliste
+    void onDeviceComboChangedSlot( int index );                                      //! Eintrag in der Offline-Geräteliste geändert
+    void onDeleteLogDetailClickSlot( void );                                         //! Button für Logdaten aus Datenbank löschen
+    void onExportLogDetailClickSlot( void );      //! Button für das Exportieren der Logdaten aus der Datenbank
+    void onWriteDiveStartSlot( int newDiveNum );  //! Schreiben der Daten eines neuen Tauchgangs begonnen
+    void onWriteDiveDoneSlot( int diveNum );      //! Schreiben in die Datenbank füe einen Tauchgang beendet
+    void onWriteFinishedSlot( int count );        //! Alle Tauchgange in der Queue daten sichern erfolgreich
+    void onWriterCritSlot( LOGWRITEERR err );     //! Kritischer Fehler beim Schreiben
+    void onDeleteDoneSlot( int diveNum );         //! Löschen aus der Datenbank für einen Tauchgang erfolgreich
+
+    void onStartSaveDiveSlot( int diveNum );                            //! UDDF dive Export gestartet
+    void onEndSaveDiveSlot( int diveNum );                              //! UDDF dive export für einen TG beendet
+    void onEndSaveUddfFileSlot( bool wasOk, const QString &fileName );  //! UDDF export beendet
 
     public slots:
     void onAddLogdirEntrySlot( const QString &entry, bool inDatabase = false );

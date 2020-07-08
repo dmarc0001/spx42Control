@@ -23,7 +23,8 @@ namespace spx
       , dummyChart( new QtCharts::QChart() )
       , chartView( std::unique_ptr< QtCharts::QChartView >( new QtCharts::QChartView( dummyChart ) ) )
       , chartWorker( std::unique_ptr< ChartDataWorker >( new ChartDataWorker( logger, database, this ) ) )
-      , logWriter( this, logger, spx42Database, spxCfg )
+      , logWriter( std::unique_ptr< LogDetailWalker >(
+            new LogDetailWalker( this, logger, spx42Database, spxCfg, remSPX42->getRemoteConnected() ) ) )
       , xmlExport( logger, spx42Database, this )
       , savedIcon( ":/icons/saved_black" )
       , nullIcon()
@@ -31,7 +32,6 @@ namespace spx
   {
     *lg << LDEBUG << "LogFragment::LogFragment..." << Qt::endl;
     ui->setupUi( this );
-    logWriter.reset();
     exportPath = QStandardPaths::writableLocation( QStandardPaths::DownloadLocation );
     ui->transferProgressBar->setVisible( false );
     ui->transferProgressBar->setRange( 0, 0 );
@@ -85,6 +85,7 @@ namespace spx
     // ist der online gleich noch die Lizenz setzten
     if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
       onConfLicChangedSlot();
+    logWriter->start();
     //
     // signale verbinden
     //
@@ -101,10 +102,10 @@ namespace spx
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onSocketErrorSig, this, &LogFragment::onSocketErrorSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onCommandRecivedSig, this, &LogFragment::onCommandRecivedSlot );
     connect( &transferTimeout, &QTimer::timeout, this, &LogFragment::onTransferTimeoutSlot );
-    connect( &logWriter, &LogDetailWalker::onWriteDoneSig, this, &LogFragment::onWriterDoneSlot );
-    connect( &logWriter, &LogDetailWalker::onNewDiveStartSig, this, &LogFragment::onNewDiveStartSlot );
-    connect( &logWriter, &LogDetailWalker::onDeleteDoneSig, this, &LogFragment::onDeleteDoneSlot );
-    connect( &logWriter, &LogDetailWalker::onNewDiveDoneSig, this, &LogFragment::onNewDiveDoneSlot );
+    connect( logWriter.get(), &LogDetailWalker::onWriteDiveStartSig, this, &LogFragment::onWriteDiveStartSlot );
+    connect( logWriter.get(), &LogDetailWalker::onWriteDiveDoneSig, this, &LogFragment::onWriteDiveDoneSlot );
+    connect( logWriter.get(), &LogDetailWalker::onWriteFinishedSig, this, &LogFragment::onWriteFinishedSlot );
+    connect( logWriter.get(), &LogDetailWalker::onWriteCritSig, this, &LogFragment::onWriterCritSlot );
     connect( &xmlExport, &SPX42UDDFExport::onStartSaveDiveSig, this, &LogFragment::onStartSaveDiveSlot );
     connect( &xmlExport, &SPX42UDDFExport::onEndSaveDiveSig, this, &LogFragment::onEndSaveDiveSlot );
     connect( &xmlExport, &SPX42UDDFExport::onEndSavedUddfFiileSig, this, &LogFragment::onEndSaveUddfFileSlot );
@@ -117,7 +118,8 @@ namespace spx
       , dummyChart( new QtCharts::QChart() )
       , chartView( std::unique_ptr< QtCharts::QChartView >( new QtCharts::QChartView( dummyChart ) ) )
       , chartWorker( std::unique_ptr< ChartDataWorker >( new ChartDataWorker( lg, database, this ) ) )
-      , logWriter( this, lg, database, lf.spxConfig )
+      , logWriter( std::unique_ptr< LogDetailWalker >(
+            new LogDetailWalker( this, lf.lg, lf.database, lf.spxConfig, lf.remoteSPX42->getRemoteConnected() ) ) )
       , xmlExport( lg, database, this )
   {
   }
@@ -132,9 +134,21 @@ namespace spx
     // die Objekte im ChartView entsorgen
     chartView->setChart( dummyChart );
     spxConfig->disconnect( this );
-    logWriter.disconnect();
+    logWriter->disconnect();
+    logWriter->setThreadEnd( true );
     xmlExport.disconnect();
     remoteSPX42->disconnect( this );
+    if ( detailDeleterThread )
+    {
+      detailDeleterThread->disconnect();
+      if ( !detailDeleterThread->isFinished() )
+      {
+        detailDeleterThread->quit();
+        // detailDeleterThread->deleteLater();
+      }
+    }
+    logWriter->quit();
+    logWriter->wait();
     *lg << LDEBUG << "LogFragment::~LogFragment...OK" << Qt::endl;
   }
 
@@ -177,7 +191,7 @@ namespace spx
     //
     // wenn der Writer noch läuft, dann noch nicht den Balken ausblenden
     //
-    if ( dbWriterFuture.isFinished() )
+    if ( logWriter->isThreadSleeping() )
     {
       ui->transferProgressBar->setVisible( false );
       ui->dbWriteNumLabel->setText( dbWriteNumIDLE );
@@ -190,59 +204,27 @@ namespace spx
   /**
    * @brief LogFragment::onWriterDoneSlot
    */
-  void LogFragment::onWriterDoneSlot( int )
+  void LogFragment::onWriteFinishedSlot( int /*count*/ )
   {
-    *lg << LDEBUG << "LogFragment::onWriterDoneSlot..." << Qt::endl;
-    // Writer ist fertig, es könnte weiter gehen
-    if ( dbWriterFuture.isFinished() )
-    {
-      logWriter.reset();
-      *lg << LDEBUG << "LogFragment::onWriterDoneSlot -> writer finished!" << Qt::endl;
-      ui->transferProgressBar->setVisible( false );
-      ui->dbWriteNumLabel->setVisible( false );
-      ui->dbWriteNumLabel->setText( dbWriteNumIDLE );
-      testForSavedDetails();
-      // TODO: Auswerten der Ergebnisse
-      int result = dbWriterFuture.result();
-      if ( result < 0 )
-      {
-        // TODO: was machen
-        *lg << LCRIT << "LogFragment::onWriterDoneSlot -> dbWriter result is not okay!" << Qt::endl;
-      }
-      return;
-    }
+    *lg << LDEBUG << "LogFragment::onWriteFinishedSlot..." << Qt::endl;
     //
-    // wenn in der Queue was drin ist UND der Writer bereits fertig ist.
-    // Ist er nicht fertig, wird er dieses beim Beenden selber noch einmal aufrufen
+    // Writer ist fertig mit der gesamten Queue, er geht dann in den sleep mode
     //
-    tryStartLogWriterThread();
-  }
-
-  /**
-   * @brief LogFragment::tryStartLogWriterThread
-   */
-  void LogFragment::tryStartLogWriterThread()
-  {
-    if ( /*!logDetailRead.isEmpty() &&*/ dbWriterFuture.isFinished() )
-    {
-      *lg << LDEBUG << "LogFragment::onWriterDoneSlot -> start writer thread (again)..." << Qt::endl;
-      logWriter.nowait( false );
-      ui->dbWriteNumLabel->setVisible( true );
-      dbWriterFuture =
-          QtConcurrent::run( &this->logWriter, &LogDetailWalker::writeLogDataToDatabase, remoteSPX42->getRemoteConnected() );
-      *lg << LDEBUG << "LogFragment::onWriterDoneSlot -> start writer thread (again)...OK" << Qt::endl;
-    }
   }
 
   /**
    * @brief LogFragment::onNewDiveStartSlot
    * @param newDiveNum
    */
-  void LogFragment::onNewDiveStartSlot( int newDiveNum )
+  void LogFragment::onWriteDiveStartSlot( int newDiveNum )
   {
+    //
+    // ein neueer Tauchgang wird gesichert
+    //
     ui->dbWriteNumLabel->setText( dbWriteNumTemplate.arg( newDiveNum, 3, 10, QChar( '0' ) ) );
     *lg << LDEBUG
-        << QString( "LogFragment::onNewDiveStartSlot -> write dive number #%1 to database..." ).arg( newDiveNum, 3, 10, QChar( '0' ) )
+        << QString( "LogFragment::onWriteDiveStartSlot -> write dive number #%1 to database..." )
+               .arg( newDiveNum, 3, 10, QChar( '0' ) )
         << Qt::endl;
   }
 
@@ -342,9 +324,7 @@ namespace spx
       // das kann etwas dauern...
       //
       transferTimeout.start( TIMEOUTVAL * 8 );
-      logWriter.reset();
       *lg << LDEBUG << "LogFragment::onReadLogContentClickSlot -> request log nr " << logDetailNum << " from spx42..." << Qt::endl;
-      tryStartLogWriterThread();
     }
   }
 
@@ -533,34 +513,36 @@ namespace spx
       *lg << LDEBUG << "LogFragment::onLogDetailDeleteClickSlot -> delete <" << i << ">..." << Qt::endl;
     }
 #endif
-    if ( dbDeleteFuture.isFinished() )
+    QString deviceAddr;
+    //
+    // unterscheide ob ich online oder offline arbeite
+    //
+    if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
     {
-      QString deviceAddr;
       //
-      // unterscheide ob ich online oder offline arbeite
+      // mit wem bin ich verbunden ==> dessen Daten lösche ich
       //
-      if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
-      {
-        //
-        // mit wem bin ich verbunden ==> dessen Daten lösche ich
-        //
-        deviceAddr = remoteSPX42->getRemoteConnected();
-      }
-      else
-      {
-        //
-        // habe ich ein Gerät ausgewählt, wenn ja welches
-        //
-        deviceAddr = offlineDeviceAddr;
-      }
+      deviceAddr = remoteSPX42->getRemoteConnected();
+    }
+    else
+    {
       //
-      // ist ein Zielgerät benannt, kann ich versuchen zu löschen
+      // habe ich ein Gerät ausgewählt, wenn ja welches
       //
-      if ( !deviceAddr.isNull() && !deviceAddr.isEmpty() )
-      {
-        *lg << LDEBUG << "LogFragment::onLogDetailDeleteClickSlot -> start delete thread..." << Qt::endl;
-        dbDeleteFuture = QtConcurrent::run( &this->logWriter, &LogDetailWalker::deleteLogDataFromDatabase, deviceAddr, deleteList );
-      }
+      deviceAddr = offlineDeviceAddr;
+    }
+    //
+    // ist ein Zielgerät benannt, kann ich versuchen zu löschen
+    //
+    if ( !deviceAddr.isNull() && !deviceAddr.isEmpty() )
+    {
+      *lg << LDEBUG << "LogFragment::onLogDetailDeleteClickSlot -> start delete thread..." << Qt::endl;
+      //
+      // erzeuge den Deleterthread und starte diesen
+      //
+      detailDeleterThread = new LogDetailDeleter( this, lg, database, spxConfig, deviceAddr, deleteList );
+      connect( detailDeleterThread, &LogDetailDeleter::onDeleteDoneSig, this, &LogFragment::onDeleteDoneSlot );
+      detailDeleterThread->start();
     }
   }
 
@@ -677,8 +659,23 @@ namespace spx
   {
     setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
 
-    if ( remoteSPX42->getConnectionStatus() != SPX42RemotBtDevice::SPX42_CONNECTED )
-      logWriter.reset();
+    if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
+    {
+      logWriter->setDeviceName( remoteSPX42->getRemoteConnected() );
+      if ( !logWriter->isRunning() )
+      {
+        logWriter->start();
+      }
+    }
+    else
+    {
+      logWriter->setDeviceName( "" );
+      if ( !logWriter->isRunning() )
+      {
+        // thread beenden
+        logWriter->setThreadEnd( true );
+      }
+    }
   }
 
   /**
@@ -824,11 +821,8 @@ namespace spx
             // START der Details...
             //
             *lg << LDEBUG << "LogFragment::onCommandRecivedSlot -> log detail " << logNumber << " START..." << Qt::endl;
-            if ( dbWriterFuture.isFinished() )
-            {
-              tryStartLogWriterThread();
-              ui->dbWriteNumLabel->setVisible( true );
-            }
+            logDetailQueue.clear();
+            ui->dbWriteNumLabel->setVisible( true );
             // Timer verlängern
             transferTimeout.start( TIMEOUTVAL );
           }
@@ -838,6 +832,7 @@ namespace spx
             // ENDE der Details
             //
             *lg << LDEBUG << "LogFragment::onCommandRecivedSlot -> log detail " << logNumber << " STOP..." << Qt::endl;
+            logWriter->addLogQueue( logDetailQueue );
             if ( !logDetailRead.isEmpty() )
             {
               //
@@ -854,30 +849,15 @@ namespace spx
               // das kann etwas dauern...
               //
               transferTimeout.start( TIMEOUTVAL * 8 );
-              if ( dbWriterFuture.isFinished() )
-              {
-                // Thread neu starten
-                *lg << LDEBUG << "LogFragment::onCommandRecivedSlot -> request " << logDetailNum << " logs from spx42..." << Qt::endl;
-                tryStartLogWriterThread();
-                ui->dbWriteNumLabel->setVisible( true );
-              }
-            }
-            else
-            {
-              //
-              // da ist nix weiter zubearbeiten
-              // Timer ist zu stoppen!
-              //
-              logWriter.nowait( true );
-              transferTimeout.stop();
+              ui->dbWriteNumLabel->setVisible( true );
             }
           }
           break;
         case SPX42CommandDef::SPX_GET_LOG_DETAIL:
           // Datensatz empfangen, ab in die Wartschlange
-          logWriter.addDetail( recCommand );
-          *lg << LDEBUG << "LogFragment::onCommandRecivedSlot -> log detail " << logWriter.getGlobal() << " for dive number "
-              << recCommand->getDiveNum() << "..." << Qt::endl;
+          logDetailQueue.enqueue( recCommand );
+          *lg << LDEBUG << "LogFragment::onCommandRecivedSlot -> log detail  for dive number " << recCommand->getDiveNum() << "..."
+              << Qt::endl;
           // Timer verlängern
           transferTimeout.start( TIMEOUTVAL );
           break;
@@ -1111,6 +1091,12 @@ namespace spx
       //
       ui->dbWriteNumLabel->setVisible( false );
       testForSavedDetails();
+      if ( detailDeleterThread )
+      {
+        detailDeleterThread->disconnect();
+        detailDeleterThread->deleteLater();  // möglich dass das nicht nötig ist, macht der Thread selber
+        detailDeleterThread = nullptr;
+      }
       return;
     }
     //
@@ -1144,9 +1130,10 @@ namespace spx
    * @brief LogFragment::onNewDiveDoneSlot
    * @param diveNum
    */
-  void LogFragment::onNewDiveDoneSlot( int diveNum )
+  void LogFragment::onWriteDiveDoneSlot( int diveNum )
   {
     //
+    // ein Tauchgang ist komplett gesichert
     // den aktuellen Eintrag korrigieren
     //
     QList< QTableWidgetItem * > items =
@@ -1156,6 +1143,19 @@ namespace spx
       ui->logentryTableWidget->item( items.at( 0 )->row(), 1 )->setIcon( savedIcon );
       ui->logentryTableWidget->viewport()->update();
     }
+  }
+
+  /**
+   * @brief LogFragment::onWriterCritSlot
+   * @param err
+   */
+  void LogFragment::onWriterCritSlot( LOGWRITEERR err )
+  {
+    //
+    // es trat ein kritischer Fehler beim Sichern auf
+    // TODO: Messagebox
+    //
+    *lg << LCRIT << "LogFragment::onWriterCritSlot -> critical error nr <" << static_cast< int >( err ) << ">..." << Qt::endl;
   }
 
   /**
