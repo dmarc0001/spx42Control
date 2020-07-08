@@ -70,6 +70,7 @@ DEFINES                                += VMAJOR=$$MAJOR
 DEFINES                                += VMINOR=$$MINOR
 DEFINES                                += VPATCH=$$PATCH
 DEFINES                                += QT_DEPRECATED_WARNINGS
+DEFINES                                += QT_NODEBUG
 
 macos {
   DEFINES                              += MACOS
@@ -104,6 +105,7 @@ SOURCES                 += \
     src/config/ProjectConst.cpp \
     src/ControlMain.cpp \
     src/database/ChartDataWorker.cpp \
+    src/database/LogDetailDeleter.cpp \
     src/database/LogDetailWalker.cpp \
     src/database/SPX42Database.cpp \
     src/database/spx42databaseconstants.cpp \
@@ -141,6 +143,7 @@ HEADERS                 += \
     src/config/ProjectConst.hpp \
     src/ControlMain.hpp \
     src/database/ChartDataWorker.hpp \
+    src/database/LogDetailDeleter.hpp \
     src/database/LogDetailWalker.hpp \
     src/database/SPX42Database.hpp \
     src/database/spx42databaseconstants.hpp \
