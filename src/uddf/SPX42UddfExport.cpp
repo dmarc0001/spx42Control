@@ -1,4 +1,4 @@
-#include "spx42uddfexport.hpp"
+#include "SPX42UddfExport.hpp"
 #include <QDateTime>
 #include <QFile>
 
@@ -116,7 +116,7 @@ namespace spx
     if ( !file.open( QIODevice::WriteOnly | QIODevice::Text ) )
     {
       *lg << LCRIT << "SPX42UDDFExport::createExportXml -> can't open export file! ABORT" << Qt::endl;
-      emit onEndSavedUddfFiileSig( false, exportFile );
+      emit onExportEndSig( false, exportFile );
       return ( false );
     }
     //
@@ -146,7 +146,7 @@ namespace spx
     {
       file.close();
       file.remove();
-      emit onEndSavedUddfFiileSig( false, exportFile );
+      emit onExportEndSig( false, exportFile );
       return ( false );
     }
 
@@ -157,7 +157,7 @@ namespace spx
     {
       file.close();
       file.remove();
-      emit onEndSavedUddfFiileSig( false, exportFile );
+      emit onExportEndSig( false, exportFile );
       return ( false );
     }
 
@@ -168,7 +168,7 @@ namespace spx
     {
       file.close();
       file.remove();
-      emit onEndSavedUddfFiileSig( false, exportFile );
+      emit onExportEndSig( false, exportFile );
       return ( false );
     }
 
@@ -179,7 +179,7 @@ namespace spx
     {
       file.close();
       file.remove();
-      emit onEndSavedUddfFiileSig( false, exportFile );
+      emit onExportEndSig( false, exportFile );
       return ( false );
     }
 
@@ -187,7 +187,7 @@ namespace spx
     stream.writeEndDocument();
     file.close();
     *lg << LINFO << "SPX42UDDFExport::createExportXml -> successful exportet to file <" << exportFile << ">" << Qt::endl;
-    emit onEndSavedUddfFiileSig( true, exportFile );
+    emit onExportEndSig( true, exportFile );
     return ( true );
   }
 
@@ -459,7 +459,7 @@ namespace spx
   {
     bool resultOk = true;
     *lg << LDEBUG << "SPX42UDDFExport::writeOneDive -> dive #" << diveNum << "..." << Qt::endl;
-    emit onStartSaveDiveSig( diveNum );
+    emit onExportStartSig( diveNum );
     //
     // Zeitpunkt des Tauchganges feststellen
     //
@@ -495,7 +495,7 @@ namespace spx
     // die Serie schreiben
     if ( !writeDiveSamples( dataSerie, st ) )
     {
-      emit onEndSaveDiveSig( diveNum );
+      emit onExportEndSingleDiveSig( diveNum );
       return ( false );
     }
 
@@ -516,7 +516,7 @@ namespace spx
     st.writeEndElement();
     //
     *lg << LDEBUG << "SPX42UDDFExport::writeOneDive... OK" << Qt::endl;
-    emit onEndSaveDiveSig( diveNum );
+    emit onExportEndSingleDiveSig( diveNum );
     return ( resultOk );
   }
 

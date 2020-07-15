@@ -46,68 +46,43 @@ namespace spx
   {
     Q_OBJECT
     private:
-    //! der Logger
-    std::shared_ptr< Logger > lg;
-    //! Datenbankzugriff
-    std::shared_ptr< SPX42Database > database;
-    //! BASIS-Name der zu exportierenden Datei
-    QString XMLFileNameTemplate;
-    //! MAC des Gerätes/Tauchcomputers
-    QString device_mac;
-    //! Liste mit Nummern der Tauchgänge
-    QVector< int > diveNums;
-    //! Liste der genutzten Gase
-    QVector< UddfGasDefinition > gasDefs;
+    std::shared_ptr< Logger > lg;               //! der Logger
+    std::shared_ptr< SPX42Database > database;  //! Datenbankzugriff
+    QString XMLFileNameTemplate;                //! BASIS-Name der zu exportierenden Datei
+    QString device_mac;                         //! MAC des Gerätes/Tauchcomputers
+    QVector< int > diveNums;                    //! Liste mit Nummern der Tauchgänge
+    QVector< UddfGasDefinition > gasDefs;       //! Liste der genutzten Gase
 
     public:
     //! Konstruktor
     explicit SPX42UDDFExport( std::shared_ptr< Logger > logger,
                               std::shared_ptr< SPX42Database > _database,
                               QObject *parent = nullptr );
-    // Destruktor
-    ~SPX42UDDFExport();
-    //! Basisname der zu exportierenden XML Datei
-    void setXmlFileBaseName( const QString &_fileName );
-    //! Angaben zu den zu exportierenden Tauchgängen
-    void setExportDives( const QString &mac, const QVector< int > &numbers );
-    //! Erzeuge den Export
-    bool createExportXml( void );
+    ~SPX42UDDFExport();                                                        //! Destruktor
+    void setXmlFileBaseName( const QString &_fileName );                       //! Basisname der zu exportierenden XML Datei
+    void setExportDives( const QString &mac, const QVector< int > &numbers );  //! Angaben zu den zu exportierenden Tauchgängen
+    bool createExportXml( void );                                              //! Erzeuge den Export
 
     private:
-    //! Schreibe in den Stream den "Generator" block
-    bool writeGenerator( QXmlStreamWriter &st );
-    //! Schreibe Taucher Referenzen für Rebreathre Sensoren
-    bool writeDiverDefinitions( QXmlStreamWriter &st );
-    //! Eigentüber Referenzen schreiben
-    bool writeOwnerDefinitions( QXmlStreamWriter &st );
-    //! die Ausrüstung des Eigentümers schreiben
-    bool writeOwnerEquipment( QXmlStreamWriter &st );
-    //! Rebreather als Ausrüstung beschreiben
-    bool writeRebreatherDefinitions( QXmlStreamWriter &st );
-    //! Sauerstoffsensoren innerhalb Rebreather
-    bool writeO2Sensor( int number, QXmlStreamWriter &st );
-    //! Schreibe die Sample-Daten
-    bool writeDiveSamples( DiveDataSetsPtr data, QXmlStreamWriter &st );
-    //! suche die richtge Gasreferenz heraus
-    QString getGasRef( int n2, int he ) const;
-    //! suche den kleinsten Temperaturwert
-    int getLowestTemp( DiveDataSetsPtr data );
-    //! suche grösste Tiefe
-    double getGreatestDepth( DiveDataSetsPtr data );
-
-    //! Schreibe Gasdefinitionen
-    bool writeGasDefinitions( QXmlStreamWriter &st );
-    //! Schreibe Profiledata Sektion (alle datennzu jedem Tauchgang)
-    bool writeProfileData( QXmlStreamWriter &st );
-    //! Schreibe alle Tauchgänge
-    bool writeAllDives( QXmlStreamWriter &st );
-    //! Schreibe einen Tauchgang in die Dqtei
-    bool writeOneDive( int diveNum, QXmlStreamWriter &st );
+    bool writeGenerator( QXmlStreamWriter &st );                          //! Schreibe in den Stream den "Generator" block
+    bool writeDiverDefinitions( QXmlStreamWriter &st );                   //! Schreibe Taucher Referenzen für Rebreathre Sensoren
+    bool writeOwnerDefinitions( QXmlStreamWriter &st );                   //! Eigentüber Referenzen schreiben
+    bool writeOwnerEquipment( QXmlStreamWriter &st );                     //! die Ausrüstung des Eigentümers schreiben
+    bool writeRebreatherDefinitions( QXmlStreamWriter &st );              //! Rebreather als Ausrüstung beschreiben
+    bool writeO2Sensor( int number, QXmlStreamWriter &st );               //! Sauerstoffsensoren innerhalb Rebreather
+    bool writeDiveSamples( DiveDataSetsPtr data, QXmlStreamWriter &st );  //! Schreibe die Sample-Daten
+    QString getGasRef( int n2, int he ) const;                            //! suche die richtge Gasreferenz heraus
+    int getLowestTemp( DiveDataSetsPtr data );                            //! suche den kleinsten Temperaturwert
+    double getGreatestDepth( DiveDataSetsPtr data );                      //! suche grösste Tiefe
+    bool writeGasDefinitions( QXmlStreamWriter &st );                     //! Schreibe Gasdefinitionen
+    bool writeProfileData( QXmlStreamWriter &st );           //! Schreibe Profiledata Sektion (alle datennzu jedem Tauchgang)
+    bool writeAllDives( QXmlStreamWriter &st );              //! Schreibe alle Tauchgänge
+    bool writeOneDive( int diveNum, QXmlStreamWriter &st );  //! Schreibe einen Tauchgang in die Datei
 
     signals:
-    void onStartSaveDiveSig( int diveNum );
-    void onEndSaveDiveSig( int diveNum );
-    void onEndSavedUddfFiileSig( bool wasOk, const QString &fileName );
+    void onExportStartSig( int diveNum );
+    void onExportEndSingleDiveSig( int diveNum );
+    void onExportEndSig( bool wasOk, const QString &fileName );
 
     public slots:
   };
