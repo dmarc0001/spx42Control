@@ -277,181 +277,212 @@ namespace spx
    */
   void SPX42RemotBtDevice::onReadSocketSlot()
   {
+    static bool action = false;
+    if ( action )
+    {
+      //
+      // bearbeite gerde...
+      // daten werden ja trotzdem in der schleie gelesen
+      //
+      return;
+    }
+    //
+    // bin am arbeiten
+    //
+    action = true;
     //
     // lese Daten vom Socket...
     //
     qint64 canRead = socket->bytesAvailable();
-    if ( canRead > 0 )
+    //
+    // Solange Daten gelesen werden können
+    //
+    while ( canRead > 0 )
     {
       //
       // alles lesen und an den Puffer anhängen
       //
       recBuffer.append( socket->read( ProjectConst::BUFFER_LEN ) );
       //
-      // suche nach dem Ende eines Datagrammee / eines Logeintrages
+      // Puffer auf überlauf prüfen und ggt reagieren
       //
+      if ( recBuffer.size() > ProjectConst::BUFFER_LEN )
+      {
+        *lg << LCRIT << "buffer (bluethooth recive buffer) overflow... data will lost..." << Qt::endl;
+        recBuffer.clear();
+        break;
+      }
+      //
+      // suche nach dem Ende eines Datagramms / eines Logeintrages
       // Index of EndOfText
       int idxOfETX = recBuffer.indexOf( SPX42CommandDef::ETX );
-      // int idxOfSTX = -1;
-      // int idxDetailEnd = -1;
-      //#######################################################################
-      // guck mal in welchem Modus wir sind, und ob da noch ein
-      // normales kommando rumlungert
-      //#######################################################################
-      if ( !isNormalCommandMode )
+      // Index of EndOfLogdetail
+      int idxDetailEnd = recBuffer.indexOf( SPX42RemotBtDevice::lineEnd );
+      //
+      // solange datenstrukturen erkannt wurden
+      //
+      while ( idxOfETX > -1 || idxDetailEnd > -1 )
       {
-        //
-        // Im Log-lese-mode
-        // gibt es ein Ende eines Log Strings
-        //
-        int idxDetailEnd = recBuffer.indexOf( SPX42RemotBtDevice::lineEnd );
-        //
-        // ist jetzt ein Ende eines Logstrings gefunden?
-        if ( idxDetailEnd > -1 )
+        if ( idxOfETX > -1 && idxDetailEnd == -1 )
         {
           //
-          // Da ist ein Tauchgang Detail, und ist es ist VOR dem Kommando?
+          // es kommt ein Kommando als nächstes
           //
-          if ( idxOfETX > -1 && ( idxOfETX < idxDetailEnd ) )
+          computeNormalDataSet( idxOfETX );
+        }
+        else if ( idxOfETX == -1 && idxDetailEnd > -1 )
+        {
+          //
+          // es kommt ein Logdetail
+          //
+          computeLogDetailDataset( idxDetailEnd );
+        }
+        else if ( idxOfETX > -1 && idxDetailEnd > -1 )
+        {
+          //
+          // es kommt beides, entscheide welcher zuerst
+          //
+          if ( idxOfETX < idxDetailEnd )
           {
-            // ein Kommando ist noch davor...
-            *lg << LWARN
-                << "SPX42RemotBtDevice::onReadSocketSlot -> not normal mode: there is a command response brefore logdetail dataset...."
-                << Qt::endl;
+            // Komando ist zuerst
+            computeNormalDataSet( idxOfETX );
           }
           else
           {
-            //
-            // hier kommt ein log detail eintrag geflogen
-            // alles vor diesem ist ein Detail-Datensatz
-            //
-            QByteArray _datagram_0 = recBuffer.left( idxDetailEnd - 1 );
-            QByteArray _datagram =
-                _datagram_0.replace( tst_space, repl_none ).replace( tst_cr, repl_none ).replace( tst_tab, repl_tab );
-#ifdef DEBUG
-            *lg << LDEBUG << "SPX42RemotBtDevice::onReadSocketSlot -> LOG DETAIL LINE: " << Qt::endl
-                << "<" << _datagram << ">" << Qt::endl;
-#endif
-            recBuffer.remove( 0, idxDetailEnd + 2 );
-            if ( _datagram.size() > 0 )
-            {
-              int datagramFieldCount = decodeLogDetailLine( _datagram );
-              if ( datagramFieldCount == ProjectConst::LOG_FIELD_COUNT )
-              {
-                // es müssen 36 Elemente sein
-                rCmdQueue.enqueue( spSingleCommand( new SPX42SingleCommand(
-                    SPX42CommandDef::SPX_GET_LOG_DETAIL, params, currentDiveNumberForLogDetail, ++currentDetailSequenceNumber ) ) );
-                // ein timerereignis async zum versenden
-                QTimer::singleShot( 5, [this] { emit onCommandRecivedSig(); } );
-              }
-              else
-              {
-                currentDetailSequenceNumber++;
-                //
-                // da ist ein fetter Fehler, entweder in der Übertragung oder in der Datei auf dem SPX
-                // FIXME: Dummy Eintrag einfügen, damit Zeitachse stimmt
-                //
-                *lg << LWARN << "SPX42RemotBtDevice::onReadSocketSlot -> WARNING log datagram has not exact"
-                    << ProjectConst::LOG_FIELD_COUNT << " elements. "
-                    << " There was " << datagramFieldCount
-                    << " elements. This ist incorrect. "
-                       "ignored."
-                    << Qt::endl;
-              }
-            }
+            // Logdetail ist zuerst
+            computeLogDetailDataset( idxDetailEnd );
           }
         }
-      }
-
-      //#######################################################################
-      // ende logdetail
-      //#######################################################################
-
+        //
+        // neu suchen
+        //
+        idxOfETX = recBuffer.indexOf( SPX42CommandDef::ETX );
+        idxDetailEnd = recBuffer.indexOf( SPX42RemotBtDevice::lineEnd );
+      }  // while ( idxOfETX > -1 || idxDetailEnd > -1 )
       //
-      // normale datagramme bearbeiten
-      // solange es ein Ende gibt muss ich Datagramme extraieren
+      // und sehen, ob neue Daten vorliegen
       //
-      while ( idxOfETX > -1 )
+      canRead = socket->bytesAvailable();
+    }  // while ( canRead > 0 )
+    //
+    // ENDE
+    //
+    action = false;
+  }
+
+  void SPX42RemotBtDevice::computeLogDetailDataset( int idxDetailEnd )
+  {
+    //
+    // ist jetzt ein Ende eines Logstrings gefunden?
+    if ( idxDetailEnd > -1 )
+    {
+      //
+      // hier kommt ein log detail eintrag geflogen
+      // alles vor diesem ist ein Detail-Datensatz
+      //
+      QByteArray _datagram_0 = recBuffer.left( idxDetailEnd - 1 );
+      QByteArray _datagram = _datagram_0.replace( tst_space, repl_none ).replace( tst_cr, repl_none ).replace( tst_tab, repl_tab );
+      // das datagramm aus dem Puffer herausnehmen
+      recBuffer.remove( 0, idxDetailEnd + 2 );
+      if ( _datagram.size() > 0 )
       {
-        //
-        // da ist ein Endezeichen, also sollte ein Datagramm zu finden sein
-        //
-        int idxOfSTX = recBuffer.indexOf( SPX42CommandDef::STX );
-        if ( idxOfSTX < idxOfETX )
-        {
-          // so wie es soll, das Ende ist nach dem Anfang
-          // ich kopiere mir nun das Datagramm
-          // dei Länge ergibt sich aus dem Ende minus das 0x03 und minus Anfang
-          QByteArray _datagramm = recBuffer.mid( idxOfSTX + 1, ( idxOfETX - idxOfSTX ) - 1 );
 #ifdef DEBUG
-          *lg << LDEBUG << "SPX42RemotBtDevice::onReadSocketSlot -> datagram: <" << _datagramm << ">" << Qt::endl;
+        *lg << LDEBUG << "SPX42RemotBtDevice::computeLogDetailDataset -> LOG DETAIL LINE: " << Qt::endl
+            << "<" << _datagram << ">" << Qt::endl;
 #endif
-          // und noch das Datagramm aus dem Puffer tilgen
-          recBuffer.remove( 0, idxOfETX + 1 );
-          // welcehs Kommando?
-          char cmd = decodeCommand( _datagramm );
-          // in die Empfangsqueue setzen
-          rCmdQueue.enqueue( spSingleCommand( new SPX42SingleCommand( cmd, params ) ) );
-          //
-          // ändert sich der Status des Kommandomode? Normal/Logdetail
-          //
-          if ( cmd == SPX42CommandDef::SPX_GET_LOG_NUMBER_SE )
-          {
-            //
-            // Kommando beginn oder Ende LOG Details
-            // params[1] on/off 0/1
-            // params[2] nummer
-            //
-            if ( params.at( SPXCmdParam::LOGDETAIL_START_END ).toInt() == 1 )
-            {
-              *lg << LINFO << "SPX42RemotBtDevice::onReadSocketSlot ->  COMMAND GET_LOG_NUMBER_SE ON" << Qt::endl;
-              isNormalCommandMode = false;
-              currentDiveNumberForLogDetail = params.at( SPXCmdParam::LOGDETAIL_NUMBER ).toInt( nullptr, 16 );
-              currentDetailSequenceNumber = -1;
-              //
-              // weitere zu sendende Sachen blocken
-              //
-              ignoreSendTimer = true;
-            }
-            else
-            {
-              *lg << LINFO << "SPX42RemotBtDevice::onReadSocketSlot -> COMMAND GET_LOG_NUMBER_SE OFF" << Qt::endl;
-              isNormalCommandMode = true;
-              currentDiveNumberForLogDetail = -1;
-              ignoreSendTimer = false;
-              currentDetailSequenceNumber = -1;
-            }
-          }
+        int datagramFieldCount = decodeLogDetailLine( _datagram );
+        if ( datagramFieldCount == ProjectConst::LOG_FIELD_COUNT )
+        {
+          // es müssen 36 Elemente sein
+          rCmdQueue.enqueue( spSingleCommand( new SPX42SingleCommand(
+              SPX42CommandDef::SPX_GET_LOG_DETAIL, params, currentDiveNumberForLogDetail, ++currentDetailSequenceNumber ) ) );
           // ein timerereignis async zum versenden
           QTimer::singleShot( 5, [this] { emit onCommandRecivedSig(); } );
         }
         else
         {
-          // nanu, da ist ein neuer Anfang NACH dem Ende, aber kein Anfang davor
-          // d.h. ich habe hier ein unvollständiges Datagramm
-          // verwerfe es! also alles bis zum ersten Ende löschen
-          recBuffer.remove( 0, idxOfETX + 1 );
-          // nächste Runde
+          currentDetailSequenceNumber++;
+          //
+          // da ist ein fetter Fehler, entweder in der Übertragung oder in der Datei auf dem SPX
+          // FIXME: Dummy Eintrag einfügen, damit Zeitachse stimmt
+          //
+          *lg << LWARN << "SPX42RemotBtDevice::computeLogDetailDataset -> WARNING log datagram has not exact"
+              << ProjectConst::LOG_FIELD_COUNT << " elements. "
+              << " There was " << datagramFieldCount
+              << " elements. This ist incorrect. "
+                 "ignored."
+              << Qt::endl;
         }
-        // das Datagrammende Ende neu finden, falls vorhanden
-        idxOfETX = recBuffer.indexOf( SPX42CommandDef::ETX );
-      }
-      //
-      // Puffer auf überlauf prüfen und ggt reagieren
-      //
-      if ( recBuffer.size() > ProjectConst::BUFFER_LEN )
-      {
-        *lg << LCRIT << "buffer (recive buffer) overflow... data will lost..." << Qt::endl;
-        recBuffer.clear();
       }
     }
-    else
+  }
+
+  void SPX42RemotBtDevice::computeNormalDataSet( int idxOfETX )
+  {
+    if ( idxOfETX > -1 )
     {
-      QThread::msleep( 60 );
+      //
+      // da ist ein Endezeichen, also sollte ein Datagramm zu finden sein
+      //
+      int idxOfSTX = recBuffer.indexOf( SPX42CommandDef::STX );
+      if ( idxOfSTX < idxOfETX )
+      {
+        //
+        // so wie es soll, das Ende ist nach dem Anfang
+        // ich kopiere mir nun das Datagramm
+        // dei Länge ergibt sich aus dem Ende minus das 0x03 und minus Anfang
+        //
+        QByteArray _datagramm = recBuffer.mid( idxOfSTX + 1, ( idxOfETX - idxOfSTX ) - 1 );
+#ifdef DEBUG
+        *lg << LDEBUG << "SPX42RemotBtDevice::computeNormalDataSet -> datagram: <" << _datagramm << ">" << Qt::endl;
+#endif
+        // und noch das Datagramm aus dem Puffer tilgen
+        recBuffer.remove( 0, idxOfETX + 1 );
+        // welcehs Kommando?
+        char cmd = decodeCommand( _datagramm );
+        // in die Empfangsqueue setzen
+        rCmdQueue.enqueue( spSingleCommand( new SPX42SingleCommand( cmd, params ) ) );
+        //
+        // ändert sich der Status des Kommandomode? Normal/Logdetail
+        //
+        if ( cmd == SPX42CommandDef::SPX_GET_LOG_NUMBER_SE )
+        {
+          //
+          // Kommando beginn oder Ende LOG Details
+          // params[1] on/off 0/1
+          // params[2] nummer
+          //
+          if ( params.at( SPXCmdParam::LOGDETAIL_START_END ).toInt() == 1 )
+          {
+            *lg << LINFO << "SPX42RemotBtDevice::computeNormalDataSet ->  COMMAND GET_LOG_NUMBER_SE ON" << Qt::endl;
+            isNormalCommandMode = false;
+            currentDiveNumberForLogDetail = params.at( SPXCmdParam::LOGDETAIL_NUMBER ).toInt( nullptr, 16 );
+            currentDetailSequenceNumber = -1;
+            //
+            // weitere zu sendende Sachen blocken
+            //
+            ignoreSendTimer = true;
+          }
+          else
+          {
+            *lg << LINFO << "SPX42RemotBtDevice::computeNormalDataSet -> COMMAND GET_LOG_NUMBER_SE OFF" << Qt::endl;
+            isNormalCommandMode = true;
+            currentDiveNumberForLogDetail = -1;
+            ignoreSendTimer = false;
+            currentDetailSequenceNumber = -1;
+          }
+        }
+        // ein timerereignis async zum versenden
+        QTimer::singleShot( 5, [this] { emit onCommandRecivedSig(); } );
+      }
+      else
+      {
+        // nanu, da ist ein neuer Anfang NACH dem Ende, aber kein Anfang davor
+        // d.h. ich habe hier ein unvollständiges Datagramm
+        // verwerfe es! also alles bis zum ersten Ende löschen
+        recBuffer.remove( 0, idxOfETX + 1 );
+      }
     }
-    //
-    // ENDE
-    //
   }
 
   /**
