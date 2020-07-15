@@ -7,7 +7,7 @@
 ###############################################################################
 MAJOR                                  = 1
 MINOR                                  = 1
-PATCH                                  = 4
+PATCH                                  = 5
 BUILD                                  = 2 # win build number
 
 win32:VERSION_PE_HEADER                = $${MAJOR}.$${MINOR}
@@ -70,7 +70,7 @@ DEFINES                                += VMAJOR=$$MAJOR
 DEFINES                                += VMINOR=$$MINOR
 DEFINES                                += VPATCH=$$PATCH
 DEFINES                                += QT_DEPRECATED_WARNINGS
-DEFINES                                += QT_NODEBUG
+DEFINES                                += QT_NO_DEBUG
 
 macos {
   DEFINES                              += MACOS
@@ -124,7 +124,7 @@ SOURCES                 += \
     src/spx42/SPX42LogDirectoryEntry.cpp \
     src/spx42/SPX42SingleCommand.cpp \
     src/SPX42ControlMainWin.cpp \
-    src/uddf/spx42uddfexport.cpp \
+    src/uddf/SPX42UddfExport.cpp \
     src/utils/AboutDialog.cpp \
     src/utils/HelpDialog.cpp \
     src/utils/OptionsDialog.cpp \
@@ -163,7 +163,7 @@ HEADERS                 += \
     src/spx42/SPX42LogDirectoryEntry.hpp \
     src/spx42/SPX42SingleCommand.hpp \
     src/SPX42ControlMainWin.hpp \
-    src/uddf/spx42uddfexport.hpp \
+    src/uddf/SPX42UddfExport.hpp \
     src/utils/AboutDialog.hpp \
     src/utils/HelpDialog.hpp \
     src/utils/OptionsDialog.hpp \
