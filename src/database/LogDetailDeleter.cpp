@@ -12,6 +12,9 @@ namespace spx
   {
   }
 
+  /**
+   * @brief LogDetailDeleter::run
+   */
   void LogDetailDeleter::run()
   {
     *lg << LDEBUG << "LogDetailDeleter::run -> thread started..." << Qt::endl;
@@ -29,6 +32,10 @@ namespace spx
         // gib Bescheid, der ist Geschichte...
         emit onDeleteDoneSig( diveNum );
       }
+      //
+      // etwas warten
+      //
+      QThread::msleep( 200 );
     }
     QThread::msleep( 1200 );
     emit onDeleteDoneSig( -1 );

@@ -17,6 +17,9 @@ namespace spx
   {
   }
 
+  /**
+   * @brief LogDetailWalker::run
+   */
   void LogDetailWalker::run()
   {
     threadShouldRun = true;
@@ -147,6 +150,13 @@ namespace spx
     *lg << LDEBUG << "LogDetailWalker::run -> thread will end..." << Qt::endl;
   }
 
+  /**
+   * @brief LogDetailWalker::writeOneDataset
+   * @param divelogSet
+   * @param diveNum
+   * @param dive_id
+   * @return  true wenn alles geklappt hat
+   */
   bool LogDetailWalker::writeOneDataset( LogDetailSetQueue divelogSet, int diveNum, int dive_id )
   {
     int _processed = 0;
@@ -215,6 +225,11 @@ namespace spx
     return true;
   }
 
+  /**
+   * @brief LogDetailWalker::setThreadEnd
+   * @param _shouldEnd
+   * @return der alte zustand vor der Funktion
+   */
   bool LogDetailWalker::setThreadEnd( bool _shouldEnd )
   {
     if ( threadShouldRun == _shouldEnd )
@@ -229,11 +244,20 @@ namespace spx
     return false;
   }
 
+  /**
+   * @brief LogDetailWalker::setDeviceName
+   * @param devMac
+   */
   void LogDetailWalker::setDeviceName( const QString &devMac )
   {
     deviceMac = devMac;
   }
 
+  /**
+   * @brief LogDetailWalker::addLogQueue
+   * @param logSet
+   * @return Groesse der queue
+   */
   int LogDetailWalker::addLogQueue( LogDetailSetQueue logSet )
   {
     queueMutex.lock();
@@ -247,6 +271,10 @@ namespace spx
     return logSet.size();
   }
 
+  /**
+   * @brief LogDetailWalker::isThreadSleeping
+   * @return
+   */
   bool LogDetailWalker::isThreadSleeping()
   {
     return isSleeping;
