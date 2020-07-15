@@ -29,7 +29,7 @@
 #include "spx42/SPX42Config.hpp"
 #include "spx42/SPX42Defs.hpp"
 #include "spx42/SPX42LogDirectoryEntry.hpp"
-#include "uddf/spx42uddfexport.hpp"
+#include "uddf/SPX42UddfExport.hpp"
 #include "ui_LogFragment.h"
 
 namespace Ui
@@ -131,9 +131,9 @@ namespace spx
     void onWriterCritSlot( LOGWRITEERR err );     //! Kritischer Fehler beim Schreiben
     void onDeleteDoneSlot( int diveNum );         //! Löschen aus der Datenbank für einen Tauchgang erfolgreich
 
-    void onStartSaveDiveSlot( int diveNum );                            //! UDDF dive Export gestartet
-    void onEndSaveDiveSlot( int diveNum );                              //! UDDF dive export für einen TG beendet
-    void onEndSaveUddfFileSlot( bool wasOk, const QString &fileName );  //! UDDF export beendet
+    void onExportSingleDiveStartSlot( int diveNum );              //! UDDF dive Export gestartet
+    void onExportSingleDiveEndSlot( int diveNum );                //! UDDF dive export für einen TG beendet
+    void onExportEndSlot( bool wasOk, const QString &fileName );  //! UDDF export beendet
 
     public slots:
     void onAddLogdirEntrySlot( const QString &entry, bool inDatabase = false );

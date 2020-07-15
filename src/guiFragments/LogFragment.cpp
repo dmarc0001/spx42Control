@@ -26,7 +26,8 @@ namespace spx
       , logWriter( std::unique_ptr< LogDetailWalker >(
             new LogDetailWalker( this, logger, spx42Database, spxCfg, remSPX42->getRemoteConnected() ) ) )
       , xmlExport( logger, spx42Database, this )
-      , savedIcon( ":/icons/saved_black" )
+      , savedIcon( ( appCfg->getGuiThemeName().compare( AppConfigClass::lightStr ) == 0 ) ? ":/icons/saved_black"
+                                                                                          : ":/icons/saved_white" )
       , nullIcon()
       , offlineDeviceAddr()
   {
@@ -106,9 +107,9 @@ namespace spx
     connect( logWriter.get(), &LogDetailWalker::onWriteDiveDoneSig, this, &LogFragment::onWriteDiveDoneSlot );
     connect( logWriter.get(), &LogDetailWalker::onWriteFinishedSig, this, &LogFragment::onWriteFinishedSlot );
     connect( logWriter.get(), &LogDetailWalker::onWriteCritSig, this, &LogFragment::onWriterCritSlot );
-    connect( &xmlExport, &SPX42UDDFExport::onStartSaveDiveSig, this, &LogFragment::onStartSaveDiveSlot );
-    connect( &xmlExport, &SPX42UDDFExport::onEndSaveDiveSig, this, &LogFragment::onEndSaveDiveSlot );
-    connect( &xmlExport, &SPX42UDDFExport::onEndSavedUddfFiileSig, this, &LogFragment::onEndSaveUddfFileSlot );
+    connect( &xmlExport, &SPX42UDDFExport::onExportStartSig, this, &LogFragment::onExportSingleDiveStartSlot );
+    connect( &xmlExport, &SPX42UDDFExport::onExportEndSingleDiveSig, this, &LogFragment::onExportSingleDiveEndSlot );
+    connect( &xmlExport, &SPX42UDDFExport::onExportEndSig, this, &LogFragment::onExportEndSlot );
   }
 
   // UNFRTIG IMPLEMENTIERT, PRIVATE
@@ -191,12 +192,14 @@ namespace spx
     //
     // wenn der Writer noch läuft, dann noch nicht den Balken ausblenden
     //
+    *lg << LWARN << "LogFragment::onTransferTimeout -> transfer timeout!!!" << Qt::endl;
     if ( logWriter->isThreadSleeping() )
     {
       ui->transferProgressBar->setVisible( false );
       ui->dbWriteNumLabel->setText( dbWriteNumIDLE );
+      ui->dbWriteNumLabel->setVisible( false );
       transferTimeout.stop();
-      *lg << LWARN << "LogFragment::onTransferTimeout -> transfer timeout!!!" << Qt::endl;
+      testForSavedDetails();
       // TODO: Warn oder Fehlermeldung ausgeben
     }
   }
@@ -207,9 +210,30 @@ namespace spx
   void LogFragment::onWriteFinishedSlot( int /*count*/ )
   {
     *lg << LDEBUG << "LogFragment::onWriteFinishedSlot..." << Qt::endl;
+    ui->transferProgressBar->setVisible( false );
+    ui->dbWriteNumLabel->setText( dbWriteNumIDLE );
+    ui->dbWriteNumLabel->setVisible( false );
+    transferTimeout.stop();
+    testForSavedDetails();
     //
     // Writer ist fertig mit der gesamten Queue, er geht dann in den sleep mode
     //
+  }
+
+  /**
+   * @brief LogFragment::onWriterCritSlot
+   * @param err
+   */
+  void LogFragment::onWriterCritSlot( LOGWRITEERR err )
+  {
+    //
+    // es trat ein kritischer Fehler beim Sichern auf
+    // TODO: Messagebox
+    //
+    *lg << LCRIT << "LogFragment::onWriterCritSlot -> critical error nr <" << static_cast< int >( err ) << ">..." << Qt::endl;
+    ui->transferProgressBar->setVisible( false );
+    ui->dbWriteNumLabel->setText( dbWriteNumIDLE );
+    ui->dbWriteNumLabel->setVisible( false );
   }
 
   /**
@@ -856,8 +880,8 @@ namespace spx
         case SPX42CommandDef::SPX_GET_LOG_DETAIL:
           // Datensatz empfangen, ab in die Wartschlange
           logDetailQueue.enqueue( recCommand );
-          *lg << LDEBUG << "LogFragment::onCommandRecivedSlot -> log detail  for dive number " << recCommand->getDiveNum() << "..."
-              << Qt::endl;
+          *lg << LDEBUG << "LogFragment::onCommandRecivedSlot -> log detail " << recCommand->getSequence() << " for dive number "
+              << recCommand->getDiveNum() << "..." << Qt::endl;
           // Timer verlängern
           transferTimeout.start( TIMEOUTVAL );
           break;
@@ -1146,19 +1170,6 @@ namespace spx
   }
 
   /**
-   * @brief LogFragment::onWriterCritSlot
-   * @param err
-   */
-  void LogFragment::onWriterCritSlot( LOGWRITEERR err )
-  {
-    //
-    // es trat ein kritischer Fehler beim Sichern auf
-    // TODO: Messagebox
-    //
-    *lg << LCRIT << "LogFragment::onWriterCritSlot -> critical error nr <" << static_cast< int >( err ) << ">..." << Qt::endl;
-  }
-
-  /**
    * @brief LogFragment::itemSelectionChangedSlot
    */
   void LogFragment::itemSelectionChangedSlot()
@@ -1231,10 +1242,10 @@ namespace spx
   }
 
   /**
-   * @brief LogFragment::onStartSaveDiveSlot
+   * @brief LogFragment::onExportSignleDiveStartSlot
    * @param diveNum
    */
-  void LogFragment::onStartSaveDiveSlot( int diveNum )
+  void LogFragment::onExportSingleDiveStartSlot( int diveNum )
   {
     if ( !ui->transferProgressBar->isVisible() )
       ui->transferProgressBar->setVisible( true );
@@ -1244,19 +1255,19 @@ namespace spx
   }
 
   /**
-   * @brief LogFragment::onEndSaveDiveSlot
+   * @brief LogFragment::onExportSingleDiveEndSlot
    * @param diveNum
    */
-  void LogFragment::onEndSaveDiveSlot( int diveNum )
+  void LogFragment::onExportSingleDiveEndSlot( int diveNum )
   {
     ui->dbWriteNumLabel->setText( exportDiveEndTemplate.arg( diveNum, 3, 10, QChar( '0' ) ) );
   }
 
   /**
-   * @brief LogFragment::onEndSaveUddfFileSlot
+   * @brief LogFragment::onExportEndSlot
    * @param wasOk
    */
-  void LogFragment::onEndSaveUddfFileSlot( bool wasOk, const QString &fileName )
+  void LogFragment::onExportEndSlot( bool wasOk, const QString &fileName )
   {
     ui->transferProgressBar->setVisible( false );
     if ( wasOk )
@@ -1265,7 +1276,7 @@ namespace spx
       ui->dbWriteNumLabel->setText( dbWriteNumIDLE );
       if ( exportFuture.isFinished() )
       {
-        *lg << LDEBUG << "LogFragment::onEndSaveUddfFileSlot -> export finished!" << Qt::endl;
+        *lg << LDEBUG << "LogFragment::onExportEndSlot -> export finished!" << Qt::endl;
         QMessageBox::information( this, tr( "EXPORT SUCCESS" ), tr( "Export was successful to file: \n<%1>" ).arg( fileName ),
                                   QMessageBox::Close, QMessageBox::Close );
       }
