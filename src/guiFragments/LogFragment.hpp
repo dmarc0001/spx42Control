@@ -72,6 +72,7 @@ namespace spx
     QString diveDepthShortStr;
     QString dbWriteNumTemplate;
     QString dbWriteNumIDLE;
+    QString readetLogTemplate;
     QString dbDeleteNumTemplate;
     QString exportDiveStartTemplate;
     QString exportDiveEndTemplate;

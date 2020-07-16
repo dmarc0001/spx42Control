@@ -47,6 +47,7 @@ namespace spx
     ui->logentryTableWidget->setSelectionBehavior( QAbstractItemView::SelectRows );
     //
     ui->dbWriteNumLabel->setVisible( false );
+    ui->diveLogReadLabel->setVisible( false );
     fragmentTitlePattern = tr( "LOGFILES SPX42 Serial [%1] LIC: %2" );
     fragmentTitleOfflinePattern = tr( "LOGFILES SPX42 [%1] in database" );
     diveNumberStr = tr( "DIVE NUMBER: %1" );
@@ -55,6 +56,7 @@ namespace spx
     diveDepthShortStr = tr( "DIVE DEPTH: %1m" );
     dbWriteNumTemplate = tr( "WRITE DIVE #%1 TO DB..." );
     dbWriteNumIDLE = tr( "WAIT FOR START..." );
+    readetLogTemplate = tr( "READ FROM DEVICE #%1" );
     dbDeleteNumTemplate = tr( "DELETE DIVE %1 DONE." );
     exportDiveStartTemplate = tr( "EXPORT DIVE #%1..." );
     exportDiveEndTemplate = tr( "EXPORT DIVE #%1 DONE." );
@@ -63,6 +65,7 @@ namespace spx
     ui->diveDateLabel->setText( diveDateStr.arg( "-" ) );
     ui->diveDepthLabel->setText( diveDepthShortStr.arg( "-" ) );
     ui->dbWriteNumLabel->setText( dbWriteNumIDLE );
+    ui->diveLogReadLabel->clear();
     ui->deleteContentPushButton->setEnabled( false );
     ui->exportContentPushButton->setEnabled( false );
     //
@@ -198,6 +201,7 @@ namespace spx
       ui->transferProgressBar->setVisible( false );
       ui->dbWriteNumLabel->setText( dbWriteNumIDLE );
       ui->dbWriteNumLabel->setVisible( false );
+      ui->diveLogReadLabel->setVisible( false );
       transferTimeout.stop();
       testForSavedDetails();
       // TODO: Warn oder Fehlermeldung ausgeben
@@ -210,10 +214,14 @@ namespace spx
   void LogFragment::onWriteFinishedSlot( int /*count*/ )
   {
     *lg << LDEBUG << "LogFragment::onWriteFinishedSlot..." << Qt::endl;
-    ui->transferProgressBar->setVisible( false );
-    ui->dbWriteNumLabel->setText( dbWriteNumIDLE );
-    ui->dbWriteNumLabel->setVisible( false );
-    transferTimeout.stop();
+    if ( logDetailRead.isEmpty() )
+    {
+      ui->transferProgressBar->setVisible( false );
+      ui->dbWriteNumLabel->setText( dbWriteNumIDLE );
+      ui->dbWriteNumLabel->setVisible( false );
+      ui->diveLogReadLabel->setVisible( false );
+      transferTimeout.stop();
+    }
     testForSavedDetails();
     //
     // Writer ist fertig mit der gesamten Queue, er geht dann in den sleep mode
@@ -234,6 +242,7 @@ namespace spx
     ui->transferProgressBar->setVisible( false );
     ui->dbWriteNumLabel->setText( dbWriteNumIDLE );
     ui->dbWriteNumLabel->setVisible( false );
+    ui->diveLogReadLabel->setVisible( false );
   }
 
   /**
@@ -250,6 +259,25 @@ namespace spx
         << QString( "LogFragment::onWriteDiveStartSlot -> write dive number #%1 to database..." )
                .arg( newDiveNum, 3, 10, QChar( '0' ) )
         << Qt::endl;
+  }
+
+  /**
+   * @brief LogFragment::onNewDiveDoneSlot
+   * @param diveNum
+   */
+  void LogFragment::onWriteDiveDoneSlot( int diveNum )
+  {
+    //
+    // ein Tauchgang ist komplett gesichert
+    // den aktuellen Eintrag korrigieren
+    //
+    QList< QTableWidgetItem * > items =
+        ui->logentryTableWidget->findItems( QString( "%1:" ).arg( diveNum, 3, 10, QChar( '0' ) ), Qt::MatchStartsWith );
+    if ( items.count() > 0 )
+    {
+      ui->logentryTableWidget->item( items.at( 0 )->row(), 1 )->setIcon( savedIcon );
+      ui->logentryTableWidget->viewport()->update();
+    }
   }
 
   /**
@@ -566,6 +594,7 @@ namespace spx
       //
       detailDeleterThread = new LogDetailDeleter( this, lg, database, spxConfig, deviceAddr, deleteList );
       connect( detailDeleterThread, &LogDetailDeleter::onDeleteDoneSig, this, &LogFragment::onDeleteDoneSlot );
+      ui->transferProgressBar->setVisible( true );
       detailDeleterThread->start();
     }
   }
@@ -846,7 +875,9 @@ namespace spx
             //
             *lg << LDEBUG << "LogFragment::onCommandRecivedSlot -> log detail " << logNumber << " START..." << Qt::endl;
             logDetailQueue.clear();
+            ui->transferProgressBar->setVisible( true );
             ui->dbWriteNumLabel->setVisible( true );
+            ui->diveLogReadLabel->setVisible( true );
             // Timer verlängern
             transferTimeout.start( TIMEOUTVAL );
           }
@@ -856,6 +887,8 @@ namespace spx
             // ENDE der Details
             //
             *lg << LDEBUG << "LogFragment::onCommandRecivedSlot -> log detail " << logNumber << " STOP..." << Qt::endl;
+            ui->diveLogReadLabel->setVisible( false );
+            ui->diveLogReadLabel->clear();
             logWriter->addLogQueue( logDetailQueue );
             if ( !logDetailRead.isEmpty() )
             {
@@ -880,6 +913,7 @@ namespace spx
         case SPX42CommandDef::SPX_GET_LOG_DETAIL:
           // Datensatz empfangen, ab in die Wartschlange
           logDetailQueue.enqueue( recCommand );
+          ui->diveLogReadLabel->setText( readetLogTemplate.arg( recCommand->getSequence() ) );
           *lg << LDEBUG << "LogFragment::onCommandRecivedSlot -> log detail " << recCommand->getSequence() << " for dive number "
               << recCommand->getDiveNum() << "..." << Qt::endl;
           // Timer verlängern
@@ -1114,6 +1148,7 @@ namespace spx
       // zum Ende noch mal überarbeiten
       //
       ui->dbWriteNumLabel->setVisible( false );
+      ui->transferProgressBar->setVisible( false );
       testForSavedDetails();
       if ( detailDeleterThread )
       {
@@ -1147,25 +1182,6 @@ namespace spx
       {
         ui->logentryTableWidget->removeRow( items.at( 0 )->row() );
       }
-    }
-  }
-
-  /**
-   * @brief LogFragment::onNewDiveDoneSlot
-   * @param diveNum
-   */
-  void LogFragment::onWriteDiveDoneSlot( int diveNum )
-  {
-    //
-    // ein Tauchgang ist komplett gesichert
-    // den aktuellen Eintrag korrigieren
-    //
-    QList< QTableWidgetItem * > items =
-        ui->logentryTableWidget->findItems( QString( "%1:" ).arg( diveNum, 3, 10, QChar( '0' ) ), Qt::MatchStartsWith );
-    if ( items.count() > 0 )
-    {
-      ui->logentryTableWidget->item( items.at( 0 )->row(), 1 )->setIcon( savedIcon );
-      ui->logentryTableWidget->viewport()->update();
     }
   }
 
