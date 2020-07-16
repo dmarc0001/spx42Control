@@ -963,58 +963,63 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="462"/>
+        <location filename="../ui/LogFragment.ui" line="468"/>
         <source>NUMBER: %03d</source>
         <translation>Nummer: %03d</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="480"/>
+        <location filename="../ui/LogFragment.ui" line="486"/>
         <source>DATE: %03d</source>
         <translation>Datum: %03d</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="498"/>
+        <location filename="../ui/LogFragment.ui" line="504"/>
         <source>DEPTH: %03d</source>
         <translation>Tiefe: %03d</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="516"/>
+        <location filename="../ui/LogFragment.ui" line="522"/>
         <source>WRITE-TO-DATABASE</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="576"/>
+        <location filename="../ui/LogFragment.ui" line="543"/>
+        <source>READ-FROM-DEVICE</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../ui/LogFragment.ui" line="603"/>
         <source>transfer status...</source>
         <translation>Transfer Indikator...</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="592"/>
+        <location filename="../ui/LogFragment.ui" line="619"/>
         <source>READ FROM DEVICE</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="595"/>
+        <location filename="../ui/LogFragment.ui" line="622"/>
         <source>read selected details from device...</source>
         <translation>lese selektierte Daten vom Gerät...</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="600"/>
-        <location filename="../ui/LogFragment.ui" line="603"/>
+        <location filename="../ui/LogFragment.ui" line="627"/>
+        <location filename="../ui/LogFragment.ui" line="630"/>
         <source>DETAIL DROP FROM DATABASE</source>
         <translation>lösche selektierte Daten aus der Datenbank</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="606"/>
+        <location filename="../ui/LogFragment.ui" line="633"/>
         <source>drop selected detail from database...</source>
         <translation>lösche selektierte Daten aus der Datenbank...</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="611"/>
+        <location filename="../ui/LogFragment.ui" line="638"/>
         <source>EXPORT DETAIL...</source>
         <translation>Export Details...</translation>
     </message>
     <message>
-        <location filename="../ui/LogFragment.ui" line="614"/>
+        <location filename="../ui/LogFragment.ui" line="641"/>
         <source>export selected details...</source>
         <translation>exportiere selektierte Daten...</translation>
     </message>
@@ -1751,114 +1756,123 @@
 <context>
     <name>spx::LogFragment</name>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="49"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="51"/>
         <source>LOGFILES SPX42 Serial [%1] LIC: %2</source>
         <translation>Logdaten SPX42 Seriennummer [%1] Lizenz %2</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="50"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="52"/>
         <source>LOGFILES SPX42 [%1] in database</source>
         <translation>Logdaten SPX42 [%1] in Datenbank</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="51"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="53"/>
         <source>DIVE NUMBER: %1</source>
         <translation>Tauchgang Nr: %1</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="52"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="54"/>
         <source>DIVE DATE: %1</source>
         <translation>Datum: %1</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="53"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="55"/>
         <source>DIVE DEPTH: %1m, LEN: %2 min</source>
         <translation>Tiefe: %1m, Länge: %2 min</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="54"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="56"/>
         <source>DIVE DEPTH: %1m</source>
         <translation>Tiefe: %1m</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="55"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="57"/>
         <source>WRITE DIVE #%1 TO DB...</source>
         <translation>Sichere TG #%1 in DB...</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="56"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="58"/>
         <source>WAIT FOR START...</source>
         <translation>Warte auf Datenbank...</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="57"/>
+        <source>READ FROM DEVICE #1</source>
+        <translation type="vanished">Lese #%1 vom Gerät</translation>
+    </message>
+    <message>
+        <location filename="../guiFragments/LogFragment.cpp" line="59"/>
+        <source>READ FROM DEVICE #%1</source>
+        <translation>Lese #%1 vom Gerät</translation>
+    </message>
+    <message>
+        <location filename="../guiFragments/LogFragment.cpp" line="60"/>
         <source>DELETE DIVE %1 DONE.</source>
         <translation>Lösche Tg %1 Fertig.</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="58"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="61"/>
         <source>EXPORT DIVE #%1...</source>
         <translation>Exportiere TG #%1...</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="59"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="62"/>
         <source>EXPORT DIVE #%1 DONE.</source>
         <translation>Export TG #%1 OK.</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="60"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="63"/>
         <source>EXPORT FAILED!</source>
         <translation>Export Fehlgeschlagen!</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="588"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="600"/>
         <source>SELECT EXPORT DIR</source>
         <translation>EXPORT VERZEICHNIS</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="605"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="617"/>
         <source>EXPORT DIRECTORY ERROR</source>
         <translation>EXPORT VERZEICHNIS FEHLER</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="605"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="617"/>
         <source>The selected Directory don&apos;t exist!</source>
         <translation>Das gewählte Verzeichnis existiert nicht!</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="648"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="660"/>
         <source>EXPORT WARNING</source>
         <translation>EXPORT WARNUNG</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="648"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="660"/>
         <source>An other export is current running...</source>
         <translation>Ein anderer Export arbeitet momentan...</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1269"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1290"/>
         <source>EXPORT SUCCESS</source>
         <translation>Export Erfolgreich</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1269"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1290"/>
         <source>Export was successful to file: 
 &lt;%1&gt;</source>
         <translation>Der Export war erfolgreich, Datei: 
 &lt;%1&gt;</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1276"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1297"/>
         <source>EXPORT ERROR</source>
         <translation>EXPORT FEHLER</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="1276"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="1297"/>
         <source>Can&apos;t export dives to UDDF file</source>
         <translation>Kann Tauchgänge nicht in UDDF Datei exportieren</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="956"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="970"/>
         <source>unknown</source>
         <translation>unbekannt</translation>
     </message>
@@ -1867,7 +1881,7 @@
         <translation type="vanished">Tiefe: %1m, Länge: %2</translation>
     </message>
     <message>
-        <location filename="../guiFragments/LogFragment.cpp" line="967"/>
+        <location filename="../guiFragments/LogFragment.cpp" line="981"/>
         <source>database empty</source>
         <translation>Datenbank leer</translation>
     </message>
@@ -1893,32 +1907,32 @@
 <context>
     <name>spx::SPX42Config</name>
     <message>
-        <location filename="../spx42/SPX42Config.cpp" line="292"/>
+        <location filename="../spx42/SPX42Config.cpp" line="290"/>
         <source> (I)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../spx42/SPX42Config.cpp" line="297"/>
+        <location filename="../spx42/SPX42Config.cpp" line="295"/>
         <source>NITROX</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../spx42/SPX42Config.cpp" line="299"/>
+        <location filename="../spx42/SPX42Config.cpp" line="297"/>
         <source>NORMOXIC TMX</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../spx42/SPX42Config.cpp" line="301"/>
+        <location filename="../spx42/SPX42Config.cpp" line="299"/>
         <source>FULL TMX</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../spx42/SPX42Config.cpp" line="303"/>
+        <location filename="../spx42/SPX42Config.cpp" line="301"/>
         <source>MILITARY</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../spx42/SPX42Config.cpp" line="305"/>
+        <location filename="../spx42/SPX42Config.cpp" line="303"/>
         <source>UNKNOWN</source>
         <translation>UNBEKANNT</translation>
     </message>
