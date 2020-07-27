@@ -88,7 +88,7 @@ namespace spx
     setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
     // ist der online gleich noch die Lizenz setzten
     if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
-      onConfLicChangedSlot();
+      this->onConfLicChangedSlot();
     logWriter->start();
     //
     // signale verbinden
@@ -126,6 +126,14 @@ namespace spx
             new LogDetailWalker( this, lf.lg, lf.database, lf.spxConfig, lf.remoteSPX42->getRemoteConnected() ) ) )
       , xmlExport( lg, database, this )
   {
+  }
+
+  LogFragment &LogFragment::operator=( const LogFragment & )
+  {
+    miniChart = new QtCharts::QChart();
+    dummyChart = new QtCharts::QChart();
+    *lg << LCRIT << "Operator \"=\" -> not implemented!" << Qt::endl;
+    return *this;
   }
 
   /**
@@ -386,9 +394,6 @@ namespace spx
    */
   void LogFragment::onLogListClickeSlot( const QModelIndex &index )
   {
-    QString deviceAddr;
-    QString depthStr = " ? ";
-    int diveNum = 0;
     if ( index.isValid() )
     {
       int row = index.row();
@@ -397,6 +402,9 @@ namespace spx
       QTableWidgetItem *clicked2ndItem = ui->logentryTableWidget->item( row, 1 );
       if ( clicked1stItem && clicked2ndItem )
       {
+        int diveNum = 0;
+        QString deviceAddr;
+        QString depthStr = " ? ";
         // Aus dem Text die Nummer extraieren
         QString entry = clicked1stItem->text();
         *lg << LDEBUG << "LogFragment::onLogListClickeSlot: data: " << entry << "..." << Qt::endl;
@@ -464,6 +472,7 @@ namespace spx
               miniChart->deleteLater();
               if ( dbgetDataFuture.isFinished() )
               {
+                // FIXME: GUI darf nicht im Thread gemacht werden
                 miniChart = new QtCharts::QChart();
                 chartWorker->prepareMiniChart( miniChart, appConfig->getGuiThemeName().compare( AppConfigClass::lightStr ) == 0 );
                 chartView->setChart( miniChart );

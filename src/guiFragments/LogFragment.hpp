@@ -91,8 +91,9 @@ namespace spx
     LogFragment( const LogFragment & );
 
     public:
-    ~LogFragment() override;                       //! Destruktor
-    void setExportPath( const QString &_export );  //! setzte EXPORT Ptad
+    ~LogFragment() override;                        //! Destruktor
+    LogFragment &operator=( const LogFragment & );  //! Zuweisungsoperator
+    void setExportPath( const QString &_export );   //! setzte EXPORT Ptad
 
     protected:
     void changeEvent( QEvent *e ) override;
