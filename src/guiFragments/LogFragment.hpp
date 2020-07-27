@@ -51,7 +51,7 @@ namespace spx
     QtCharts::QChart *dummyChart;                       //! Zeiger auf das weisse, leere chart
     std::unique_ptr< QtCharts::QChartView > chartView;  //! Zeiger auf das ChartView
     std::unique_ptr< ChartDataWorker > chartWorker;     //! Prozess zum abarbeiten
-    QFuture< bool > dbgetDataFuture;                    //! Nebenläufiges future Objekt
+    QFuture< DiveDataSetsPtr > dbgetDataFuture;         //! Nebenläufiges future Objekt
     QTimer transferTimeout;                             //! timer für timeout bei transfers
     std::unique_ptr< LogDetailWalker > logWriter;       //! schreibt logdetails queue in die DB
     LogDetailDeleter *detailDeleterThread{nullptr};     //! Thread zum löschen von Logdetails
@@ -104,6 +104,7 @@ namespace spx
     void testForSavedDetails( void );                           //! schaue nach ob die Details dazu bereits gesichert wurden
     void tryStartLogWriterThread( void );                       //! den Thread starten (restarten)
     std::shared_ptr< QVector< int > > getSelectedInDb( void );  //! gib alle selektierten Einträge, die in der DB sind
+    void onDiveDataWaitFor( int diveNum );                      //! wenn ich auf Daten für das Mini Chart warte
 
     signals:
     void onWarningMessageSig( const QString &msg, bool asPopup = false ) override;  //! eine Warnmeldung soll das Main darstellen

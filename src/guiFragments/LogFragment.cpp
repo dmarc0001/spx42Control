@@ -394,6 +394,7 @@ namespace spx
    */
   void LogFragment::onLogListClickeSlot( const QModelIndex &index )
   {
+    QString depthStr = " ? ";
     if ( index.isValid() )
     {
       int row = index.row();
@@ -404,7 +405,6 @@ namespace spx
       {
         int diveNum = 0;
         QString deviceAddr;
-        QString depthStr = " ? ";
         // Aus dem Text die Nummer extraieren
         QString entry = clicked1stItem->text();
         *lg << LDEBUG << "LogFragment::onLogListClickeSlot: data: " << entry << "..." << Qt::endl;
@@ -469,15 +469,16 @@ namespace spx
               //
               // das Chart anzeigen, wenn Daten vorhanden sind
               //
-              miniChart->deleteLater();
               if ( dbgetDataFuture.isFinished() )
               {
-                // FIXME: GUI darf nicht im Thread gemacht werden
-                miniChart = new QtCharts::QChart();
-                chartWorker->prepareMiniChart( miniChart, appConfig->getGuiThemeName().compare( AppConfigClass::lightStr ) == 0 );
-                chartView->setChart( miniChart );
-                dbgetDataFuture =
-                    QtConcurrent::run( chartWorker.get(), &ChartDataWorker::makeChartDataMini, miniChart, deviceAddr, diveNum );
+                //
+                // starte die Datenabfrage als future...
+                //
+                dbgetDataFuture = QtConcurrent::run( chartWorker.get(), &ChartDataWorker::getFutureDiveDataSet, deviceAddr, diveNum );
+                //
+                // das timerevent prüft ob die Daten verfügbar sind
+                //
+                QTimer::singleShot( 100, this, [=]() { this->onDiveDataWaitFor( diveNum ); } );
               }
               else
               {
@@ -512,6 +513,31 @@ namespace spx
       *lg << LWARN << "LogFragment::onLogListClickeSlot -> no valid entry in list found. Ignore Click." << Qt::endl;
       ui->diveDepthLabel->setText( diveDepthShortStr.arg( depthStr ) );
       chartView->setChart( dummyChart );
+    }
+  }
+
+  void LogFragment::onDiveDataWaitFor( int diveNum )
+  {
+    if ( dbgetDataFuture.isFinished() )
+    {
+      //
+      // das future zur Datenabfrage ist fertig
+      // dann sollte ein Dataset vorhanden sein
+      // zuerst die alten charts entfernen und neue erzeugen
+      // TODO: diveNum kjönnte validieren ob daten noch passen
+      //
+      *lg << LDEBUG << "LogFragment::onDiveDataWaitFor -> create new Mini Chart..." << Qt::endl;
+      miniChart->deleteLater();
+      miniChart = new QtCharts::QChart();
+      chartWorker->prepareMiniChart( miniChart, appConfig->getGuiThemeName().compare( AppConfigClass::lightStr ) == 0 );
+      chartView->setChart( miniChart );
+      chartWorker->makeChartDataMini( miniChart, dbgetDataFuture.result() );
+      *lg << LDEBUG << "ChartsFragment::onDiveDataWaitFor -> OK." << Qt::endl;
+    }
+    else
+    {
+      QTimer::singleShot( 100, this, [=]() { this->onDiveDataWaitFor( diveNum ); } );
+      *lg << LDEBUG << "LogFragment::onDiveDataWaitFor -> future is always running, wait..." << Qt::endl;
     }
   }
 
