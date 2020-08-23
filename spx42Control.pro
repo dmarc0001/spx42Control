@@ -122,7 +122,7 @@ SOURCES                 += \
     src/spx42/SPX42LogDirectoryEntry.cpp \
     src/spx42/SPX42SingleCommand.cpp \
     src/SPX42ControlMainWin.cpp \
-    src/uddf/spx42uddfexport.cpp \
+    src/uddf/SPX42UddfExport.cpp \
     src/utils/AboutDialog.cpp \
     src/utils/HelpDialog.cpp \
     src/utils/OptionsDialog.cpp \
@@ -160,7 +160,7 @@ HEADERS                 += \
     src/spx42/SPX42LogDirectoryEntry.hpp \
     src/spx42/SPX42SingleCommand.hpp \
     src/SPX42ControlMainWin.hpp \
-    src/uddf/spx42uddfexport.hpp \
+    src/uddf/SPX42UddfExport.hpp \
     src/utils/AboutDialog.hpp \
     src/utils/HelpDialog.hpp \
     src/utils/OptionsDialog.hpp \
