@@ -524,7 +524,7 @@ namespace spx
       // das future zur Datenabfrage ist fertig
       // dann sollte ein Dataset vorhanden sein
       // zuerst die alten charts entfernen und neue erzeugen
-      // TODO: diveNum kjönnte validieren ob daten noch passen
+      // TODO: diveNum könnte validieren ob daten noch passen
       //
       *lg << LDEBUG << "LogFragment::onDiveDataWaitFor -> create new Mini Chart..." << Qt::endl;
       miniChart->deleteLater();
