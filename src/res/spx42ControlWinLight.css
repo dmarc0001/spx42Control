@@ -134,7 +134,8 @@ QGroupBox#logDetailsGroupBox {
 QGroupBox#logDetailsGroupBox > QLabel {
   color: #031855;
 }
-QGroupBox#logDetailsGroupBox > QLabel#dbWriteNumLabel {
+QGroupBox#logDetailsGroupBox > QLabel#dbWriteNumLabel,
+QGroupBox#logDetailsGroupBox > QLabel#diveLogReadLabel {
   font-style: bold;
   color: #b61585;
   background-color: #f3f3f3f1;

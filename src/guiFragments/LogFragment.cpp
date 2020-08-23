@@ -23,15 +23,16 @@ namespace spx
       , dummyChart( new QtCharts::QChart() )
       , chartView( std::unique_ptr< QtCharts::QChartView >( new QtCharts::QChartView( dummyChart ) ) )
       , chartWorker( std::unique_ptr< ChartDataWorker >( new ChartDataWorker( logger, database, this ) ) )
-      , logWriter( this, logger, spx42Database, spxCfg )
+      , logWriter( std::unique_ptr< LogDetailWalker >(
+            new LogDetailWalker( this, logger, spx42Database, spxCfg, remSPX42->getRemoteConnected() ) ) )
       , xmlExport( logger, spx42Database, this )
-      , savedIcon( ":/icons/saved_black" )
+      , savedIcon( ( appCfg->getGuiThemeName().compare( AppConfigClass::lightStr ) == 0 ) ? ":/icons/saved_black"
+                                                                                          : ":/icons/saved_white" )
       , nullIcon()
       , offlineDeviceAddr()
   {
     *lg << LDEBUG << "LogFragment::LogFragment..." << Qt::endl;
     ui->setupUi( this );
-    logWriter.reset();
     exportPath = QStandardPaths::writableLocation( QStandardPaths::DownloadLocation );
     ui->transferProgressBar->setVisible( false );
     ui->transferProgressBar->setRange( 0, 0 );
@@ -46,6 +47,7 @@ namespace spx
     ui->logentryTableWidget->setSelectionBehavior( QAbstractItemView::SelectRows );
     //
     ui->dbWriteNumLabel->setVisible( false );
+    ui->diveLogReadLabel->setVisible( false );
     fragmentTitlePattern = tr( "LOGFILES SPX42 Serial [%1] LIC: %2" );
     fragmentTitleOfflinePattern = tr( "LOGFILES SPX42 [%1] in database" );
     diveNumberStr = tr( "DIVE NUMBER: %1" );
@@ -54,6 +56,7 @@ namespace spx
     diveDepthShortStr = tr( "DIVE DEPTH: %1m" );
     dbWriteNumTemplate = tr( "WRITE DIVE #%1 TO DB..." );
     dbWriteNumIDLE = tr( "WAIT FOR START..." );
+    readetLogTemplate = tr( "READ FROM DEVICE #%1" );
     dbDeleteNumTemplate = tr( "DELETE DIVE %1 DONE." );
     exportDiveStartTemplate = tr( "EXPORT DIVE #%1..." );
     exportDiveEndTemplate = tr( "EXPORT DIVE #%1 DONE." );
@@ -62,6 +65,7 @@ namespace spx
     ui->diveDateLabel->setText( diveDateStr.arg( "-" ) );
     ui->diveDepthLabel->setText( diveDepthShortStr.arg( "-" ) );
     ui->dbWriteNumLabel->setText( dbWriteNumIDLE );
+    ui->diveLogReadLabel->clear();
     ui->deleteContentPushButton->setEnabled( false );
     ui->exportContentPushButton->setEnabled( false );
     //
@@ -84,7 +88,8 @@ namespace spx
     setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
     // ist der online gleich noch die Lizenz setzten
     if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
-      onConfLicChangedSlot();
+      this->onConfLicChangedSlot();
+    logWriter->start();
     //
     // signale verbinden
     //
@@ -101,13 +106,13 @@ namespace spx
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onSocketErrorSig, this, &LogFragment::onSocketErrorSlot );
     connect( remoteSPX42.get(), &SPX42RemotBtDevice::onCommandRecivedSig, this, &LogFragment::onCommandRecivedSlot );
     connect( &transferTimeout, &QTimer::timeout, this, &LogFragment::onTransferTimeoutSlot );
-    connect( &logWriter, &LogDetailWalker::onWriteDoneSig, this, &LogFragment::onWriterDoneSlot );
-    connect( &logWriter, &LogDetailWalker::onNewDiveStartSig, this, &LogFragment::onNewDiveStartSlot );
-    connect( &logWriter, &LogDetailWalker::onDeleteDoneSig, this, &LogFragment::onDeleteDoneSlot );
-    connect( &logWriter, &LogDetailWalker::onNewDiveDoneSig, this, &LogFragment::onNewDiveDoneSlot );
-    connect( &xmlExport, &SPX42UDDFExport::onStartSaveDiveSig, this, &LogFragment::onStartSaveDiveSlot );
-    connect( &xmlExport, &SPX42UDDFExport::onEndSaveDiveSig, this, &LogFragment::onEndSaveDiveSlot );
-    connect( &xmlExport, &SPX42UDDFExport::onEndSavedUddfFiileSig, this, &LogFragment::onEndSaveUddfFileSlot );
+    connect( logWriter.get(), &LogDetailWalker::onWriteDiveStartSig, this, &LogFragment::onWriteDiveStartSlot );
+    connect( logWriter.get(), &LogDetailWalker::onWriteDiveDoneSig, this, &LogFragment::onWriteDiveDoneSlot );
+    connect( logWriter.get(), &LogDetailWalker::onWriteFinishedSig, this, &LogFragment::onWriteFinishedSlot );
+    connect( logWriter.get(), &LogDetailWalker::onWriteCritSig, this, &LogFragment::onWriterCritSlot );
+    connect( &xmlExport, &SPX42UDDFExport::onExportStartSig, this, &LogFragment::onExportSingleDiveStartSlot );
+    connect( &xmlExport, &SPX42UDDFExport::onExportEndSingleDiveSig, this, &LogFragment::onExportSingleDiveEndSlot );
+    connect( &xmlExport, &SPX42UDDFExport::onExportEndSig, this, &LogFragment::onExportEndSlot );
   }
 
   // UNFRTIG IMPLEMENTIERT, PRIVATE
@@ -117,9 +122,18 @@ namespace spx
       , dummyChart( new QtCharts::QChart() )
       , chartView( std::unique_ptr< QtCharts::QChartView >( new QtCharts::QChartView( dummyChart ) ) )
       , chartWorker( std::unique_ptr< ChartDataWorker >( new ChartDataWorker( lg, database, this ) ) )
-      , logWriter( this, lg, database, lf.spxConfig )
+      , logWriter( std::unique_ptr< LogDetailWalker >(
+            new LogDetailWalker( this, lf.lg, lf.database, lf.spxConfig, lf.remoteSPX42->getRemoteConnected() ) ) )
       , xmlExport( lg, database, this )
   {
+  }
+
+  LogFragment &LogFragment::operator=( const LogFragment & )
+  {
+    miniChart = new QtCharts::QChart();
+    dummyChart = new QtCharts::QChart();
+    *lg << LCRIT << "Operator \"=\" -> not implemented!" << Qt::endl;
+    return *this;
   }
 
   /**
@@ -132,9 +146,21 @@ namespace spx
     // die Objekte im ChartView entsorgen
     chartView->setChart( dummyChart );
     spxConfig->disconnect( this );
-    logWriter.disconnect();
+    logWriter->disconnect();
+    logWriter->setThreadEnd( true );
     xmlExport.disconnect();
     remoteSPX42->disconnect( this );
+    if ( detailDeleterThread )
+    {
+      detailDeleterThread->disconnect();
+      if ( !detailDeleterThread->isFinished() )
+      {
+        detailDeleterThread->quit();
+        // detailDeleterThread->deleteLater();
+      }
+    }
+    logWriter->quit();
+    logWriter->wait();
     *lg << LDEBUG << "LogFragment::~LogFragment...OK" << Qt::endl;
   }
 
@@ -177,12 +203,15 @@ namespace spx
     //
     // wenn der Writer noch läuft, dann noch nicht den Balken ausblenden
     //
-    if ( dbWriterFuture.isFinished() )
+    *lg << LWARN << "LogFragment::onTransferTimeout -> transfer timeout!!!" << Qt::endl;
+    if ( logWriter->isThreadSleeping() )
     {
       ui->transferProgressBar->setVisible( false );
       ui->dbWriteNumLabel->setText( dbWriteNumIDLE );
+      ui->dbWriteNumLabel->setVisible( false );
+      ui->diveLogReadLabel->setVisible( false );
       transferTimeout.stop();
-      *lg << LWARN << "LogFragment::onTransferTimeout -> transfer timeout!!!" << Qt::endl;
+      testForSavedDetails();
       // TODO: Warn oder Fehlermeldung ausgeben
     }
   }
@@ -190,60 +219,73 @@ namespace spx
   /**
    * @brief LogFragment::onWriterDoneSlot
    */
-  void LogFragment::onWriterDoneSlot( int )
+  void LogFragment::onWriteFinishedSlot( int /*count*/ )
   {
-    *lg << LDEBUG << "LogFragment::onWriterDoneSlot..." << Qt::endl;
-    // Writer ist fertig, es könnte weiter gehen
-    if ( dbWriterFuture.isFinished() )
+    *lg << LDEBUG << "LogFragment::onWriteFinishedSlot..." << Qt::endl;
+    if ( logDetailRead.isEmpty() )
     {
-      logWriter.reset();
-      *lg << LDEBUG << "LogFragment::onWriterDoneSlot -> writer finished!" << Qt::endl;
       ui->transferProgressBar->setVisible( false );
-      ui->dbWriteNumLabel->setVisible( false );
       ui->dbWriteNumLabel->setText( dbWriteNumIDLE );
-      testForSavedDetails();
-      // TODO: Auswerten der Ergebnisse
-      int result = dbWriterFuture.result();
-      if ( result < 0 )
-      {
-        // TODO: was machen
-        *lg << LCRIT << "LogFragment::onWriterDoneSlot -> dbWriter result is not okay!" << Qt::endl;
-      }
-      return;
+      ui->dbWriteNumLabel->setVisible( false );
+      ui->diveLogReadLabel->setVisible( false );
+      transferTimeout.stop();
     }
+    testForSavedDetails();
     //
-    // wenn in der Queue was drin ist UND der Writer bereits fertig ist.
-    // Ist er nicht fertig, wird er dieses beim Beenden selber noch einmal aufrufen
+    // Writer ist fertig mit der gesamten Queue, er geht dann in den sleep mode
     //
-    tryStartLogWriterThread();
   }
 
   /**
-   * @brief LogFragment::tryStartLogWriterThread
+   * @brief LogFragment::onWriterCritSlot
+   * @param err
    */
-  void LogFragment::tryStartLogWriterThread()
+  void LogFragment::onWriterCritSlot( LOGWRITEERR err )
   {
-    if ( /*!logDetailRead.isEmpty() &&*/ dbWriterFuture.isFinished() )
-    {
-      *lg << LDEBUG << "LogFragment::onWriterDoneSlot -> start writer thread (again)..." << Qt::endl;
-      logWriter.nowait( false );
-      ui->dbWriteNumLabel->setVisible( true );
-      dbWriterFuture =
-          QtConcurrent::run( &this->logWriter, &LogDetailWalker::writeLogDataToDatabase, remoteSPX42->getRemoteConnected() );
-      *lg << LDEBUG << "LogFragment::onWriterDoneSlot -> start writer thread (again)...OK" << Qt::endl;
-    }
+    //
+    // es trat ein kritischer Fehler beim Sichern auf
+    // TODO: Messagebox
+    //
+    *lg << LCRIT << "LogFragment::onWriterCritSlot -> critical error nr <" << static_cast< int >( err ) << ">..." << Qt::endl;
+    ui->transferProgressBar->setVisible( false );
+    ui->dbWriteNumLabel->setText( dbWriteNumIDLE );
+    ui->dbWriteNumLabel->setVisible( false );
+    ui->diveLogReadLabel->setVisible( false );
   }
 
   /**
    * @brief LogFragment::onNewDiveStartSlot
    * @param newDiveNum
    */
-  void LogFragment::onNewDiveStartSlot( int newDiveNum )
+  void LogFragment::onWriteDiveStartSlot( int newDiveNum )
   {
+    //
+    // ein neueer Tauchgang wird gesichert
+    //
     ui->dbWriteNumLabel->setText( dbWriteNumTemplate.arg( newDiveNum, 3, 10, QChar( '0' ) ) );
     *lg << LDEBUG
-        << QString( "LogFragment::onNewDiveStartSlot -> write dive number #%1 to database..." ).arg( newDiveNum, 3, 10, QChar( '0' ) )
+        << QString( "LogFragment::onWriteDiveStartSlot -> write dive number #%1 to database..." )
+               .arg( newDiveNum, 3, 10, QChar( '0' ) )
         << Qt::endl;
+  }
+
+  /**
+   * @brief LogFragment::onNewDiveDoneSlot
+   * @param diveNum
+   */
+  void LogFragment::onWriteDiveDoneSlot( int diveNum )
+  {
+    //
+    // ein Tauchgang ist komplett gesichert
+    // den aktuellen Eintrag korrigieren
+    //
+    QList< QTableWidgetItem * > items =
+        ui->logentryTableWidget->findItems( QString( "%1:" ).arg( diveNum, 3, 10, QChar( '0' ) ), Qt::MatchStartsWith );
+    if ( items.count() > 0 )
+    {
+      ui->logentryTableWidget->item( items.at( 0 )->row(), 1 )->setIcon( savedIcon );
+      ui->logentryTableWidget->viewport()->update();
+    }
   }
 
   /**
@@ -342,9 +384,7 @@ namespace spx
       // das kann etwas dauern...
       //
       transferTimeout.start( TIMEOUTVAL * 8 );
-      logWriter.reset();
       *lg << LDEBUG << "LogFragment::onReadLogContentClickSlot -> request log nr " << logDetailNum << " from spx42..." << Qt::endl;
-      tryStartLogWriterThread();
     }
   }
 
@@ -354,9 +394,7 @@ namespace spx
    */
   void LogFragment::onLogListClickeSlot( const QModelIndex &index )
   {
-    QString deviceAddr;
     QString depthStr = " ? ";
-    int diveNum = 0;
     if ( index.isValid() )
     {
       int row = index.row();
@@ -365,6 +403,8 @@ namespace spx
       QTableWidgetItem *clicked2ndItem = ui->logentryTableWidget->item( row, 1 );
       if ( clicked1stItem && clicked2ndItem )
       {
+        int diveNum = 0;
+        QString deviceAddr;
         // Aus dem Text die Nummer extraieren
         QString entry = clicked1stItem->text();
         *lg << LDEBUG << "LogFragment::onLogListClickeSlot: data: " << entry << "..." << Qt::endl;
@@ -429,14 +469,16 @@ namespace spx
               //
               // das Chart anzeigen, wenn Daten vorhanden sind
               //
-              miniChart->deleteLater();
               if ( dbgetDataFuture.isFinished() )
               {
-                miniChart = new QtCharts::QChart();
-                chartWorker->prepareMiniChart( miniChart, appConfig->getGuiThemeName().compare( AppConfigClass::lightStr ) == 0 );
-                chartView->setChart( miniChart );
-                dbgetDataFuture =
-                    QtConcurrent::run( chartWorker.get(), &ChartDataWorker::makeChartDataMini, miniChart, deviceAddr, diveNum );
+                //
+                // starte die Datenabfrage als future...
+                //
+                dbgetDataFuture = QtConcurrent::run( chartWorker.get(), &ChartDataWorker::getFutureDiveDataSet, deviceAddr, diveNum );
+                //
+                // das timerevent prüft ob die Daten verfügbar sind
+                //
+                QTimer::singleShot( 100, this, [=]() { this->onDiveDataWaitFor( diveNum ); } );
               }
               else
               {
@@ -471,6 +513,31 @@ namespace spx
       *lg << LWARN << "LogFragment::onLogListClickeSlot -> no valid entry in list found. Ignore Click." << Qt::endl;
       ui->diveDepthLabel->setText( diveDepthShortStr.arg( depthStr ) );
       chartView->setChart( dummyChart );
+    }
+  }
+
+  void LogFragment::onDiveDataWaitFor( int diveNum )
+  {
+    if ( dbgetDataFuture.isFinished() )
+    {
+      //
+      // das future zur Datenabfrage ist fertig
+      // dann sollte ein Dataset vorhanden sein
+      // zuerst die alten charts entfernen und neue erzeugen
+      // TODO: diveNum könnte validieren ob daten noch passen
+      //
+      *lg << LDEBUG << "LogFragment::onDiveDataWaitFor -> create new Mini Chart..." << Qt::endl;
+      miniChart->deleteLater();
+      miniChart = new QtCharts::QChart();
+      chartWorker->prepareMiniChart( miniChart, appConfig->getGuiThemeName().compare( AppConfigClass::lightStr ) == 0 );
+      chartView->setChart( miniChart );
+      chartWorker->makeChartDataMini( miniChart, dbgetDataFuture.result() );
+      *lg << LDEBUG << "ChartsFragment::onDiveDataWaitFor -> OK." << Qt::endl;
+    }
+    else
+    {
+      QTimer::singleShot( 100, this, [=]() { this->onDiveDataWaitFor( diveNum ); } );
+      *lg << LDEBUG << "LogFragment::onDiveDataWaitFor -> future is always running, wait..." << Qt::endl;
     }
   }
 
@@ -533,34 +600,37 @@ namespace spx
       *lg << LDEBUG << "LogFragment::onLogDetailDeleteClickSlot -> delete <" << i << ">..." << Qt::endl;
     }
 #endif
-    if ( dbDeleteFuture.isFinished() )
+    QString deviceAddr;
+    //
+    // unterscheide ob ich online oder offline arbeite
+    //
+    if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
     {
-      QString deviceAddr;
       //
-      // unterscheide ob ich online oder offline arbeite
+      // mit wem bin ich verbunden ==> dessen Daten lösche ich
       //
-      if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
-      {
-        //
-        // mit wem bin ich verbunden ==> dessen Daten lösche ich
-        //
-        deviceAddr = remoteSPX42->getRemoteConnected();
-      }
-      else
-      {
-        //
-        // habe ich ein Gerät ausgewählt, wenn ja welches
-        //
-        deviceAddr = offlineDeviceAddr;
-      }
+      deviceAddr = remoteSPX42->getRemoteConnected();
+    }
+    else
+    {
       //
-      // ist ein Zielgerät benannt, kann ich versuchen zu löschen
+      // habe ich ein Gerät ausgewählt, wenn ja welches
       //
-      if ( !deviceAddr.isNull() && !deviceAddr.isEmpty() )
-      {
-        *lg << LDEBUG << "LogFragment::onLogDetailDeleteClickSlot -> start delete thread..." << Qt::endl;
-        dbDeleteFuture = QtConcurrent::run( &this->logWriter, &LogDetailWalker::deleteLogDataFromDatabase, deviceAddr, deleteList );
-      }
+      deviceAddr = offlineDeviceAddr;
+    }
+    //
+    // ist ein Zielgerät benannt, kann ich versuchen zu löschen
+    //
+    if ( !deviceAddr.isNull() && !deviceAddr.isEmpty() )
+    {
+      *lg << LDEBUG << "LogFragment::onLogDetailDeleteClickSlot -> start delete thread..." << Qt::endl;
+      //
+      // erzeuge den Deleterthread und starte diesen
+      //
+      detailDeleterThread = new LogDetailDeleter( this, lg, database, spxConfig, deviceAddr, deleteList );
+      connect( detailDeleterThread, &LogDetailDeleter::onDeleteDoneSig, this, &LogFragment::onDeleteDoneSlot );
+      ui->transferProgressBar->setVisible( true );
+      detailDeleterThread->start();
     }
   }
 
@@ -677,8 +747,23 @@ namespace spx
   {
     setGuiConnected( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED );
 
-    if ( remoteSPX42->getConnectionStatus() != SPX42RemotBtDevice::SPX42_CONNECTED )
-      logWriter.reset();
+    if ( remoteSPX42->getConnectionStatus() == SPX42RemotBtDevice::SPX42_CONNECTED )
+    {
+      logWriter->setDeviceName( remoteSPX42->getRemoteConnected() );
+      if ( !logWriter->isRunning() )
+      {
+        logWriter->start();
+      }
+    }
+    else
+    {
+      logWriter->setDeviceName( "" );
+      if ( !logWriter->isRunning() )
+      {
+        // thread beenden
+        logWriter->setThreadEnd( true );
+      }
+    }
   }
 
   /**
@@ -824,11 +909,10 @@ namespace spx
             // START der Details...
             //
             *lg << LDEBUG << "LogFragment::onCommandRecivedSlot -> log detail " << logNumber << " START..." << Qt::endl;
-            if ( dbWriterFuture.isFinished() )
-            {
-              tryStartLogWriterThread();
-              ui->dbWriteNumLabel->setVisible( true );
-            }
+            logDetailQueue.clear();
+            ui->transferProgressBar->setVisible( true );
+            ui->dbWriteNumLabel->setVisible( true );
+            ui->diveLogReadLabel->setVisible( true );
             // Timer verlängern
             transferTimeout.start( TIMEOUTVAL );
           }
@@ -838,6 +922,9 @@ namespace spx
             // ENDE der Details
             //
             *lg << LDEBUG << "LogFragment::onCommandRecivedSlot -> log detail " << logNumber << " STOP..." << Qt::endl;
+            ui->diveLogReadLabel->setVisible( false );
+            ui->diveLogReadLabel->clear();
+            logWriter->addLogQueue( logDetailQueue );
             if ( !logDetailRead.isEmpty() )
             {
               //
@@ -854,29 +941,15 @@ namespace spx
               // das kann etwas dauern...
               //
               transferTimeout.start( TIMEOUTVAL * 8 );
-              if ( dbWriterFuture.isFinished() )
-              {
-                // Thread neu starten
-                *lg << LDEBUG << "LogFragment::onCommandRecivedSlot -> request " << logDetailNum << " logs from spx42..." << Qt::endl;
-                tryStartLogWriterThread();
-                ui->dbWriteNumLabel->setVisible( true );
-              }
-            }
-            else
-            {
-              //
-              // da ist nix weiter zubearbeiten
-              // Timer ist zu stoppen!
-              //
-              logWriter.nowait( true );
-              transferTimeout.stop();
+              ui->dbWriteNumLabel->setVisible( true );
             }
           }
           break;
         case SPX42CommandDef::SPX_GET_LOG_DETAIL:
           // Datensatz empfangen, ab in die Wartschlange
-          logWriter.addDetail( recCommand );
-          *lg << LDEBUG << "LogFragment::onCommandRecivedSlot -> log detail " << logWriter.getGlobal() << " for dive number "
+          logDetailQueue.enqueue( recCommand );
+          ui->diveLogReadLabel->setText( readetLogTemplate.arg( recCommand->getSequence() ) );
+          *lg << LDEBUG << "LogFragment::onCommandRecivedSlot -> log detail " << recCommand->getSequence() << " for dive number "
               << recCommand->getDiveNum() << "..." << Qt::endl;
           // Timer verlängern
           transferTimeout.start( TIMEOUTVAL );
@@ -1110,7 +1183,14 @@ namespace spx
       // zum Ende noch mal überarbeiten
       //
       ui->dbWriteNumLabel->setVisible( false );
+      ui->transferProgressBar->setVisible( false );
       testForSavedDetails();
+      if ( detailDeleterThread )
+      {
+        detailDeleterThread->disconnect();
+        detailDeleterThread->deleteLater();  // möglich dass das nicht nötig ist, macht der Thread selber
+        detailDeleterThread = nullptr;
+      }
       return;
     }
     //
@@ -1137,24 +1217,6 @@ namespace spx
       {
         ui->logentryTableWidget->removeRow( items.at( 0 )->row() );
       }
-    }
-  }
-
-  /**
-   * @brief LogFragment::onNewDiveDoneSlot
-   * @param diveNum
-   */
-  void LogFragment::onNewDiveDoneSlot( int diveNum )
-  {
-    //
-    // den aktuellen Eintrag korrigieren
-    //
-    QList< QTableWidgetItem * > items =
-        ui->logentryTableWidget->findItems( QString( "%1:" ).arg( diveNum, 3, 10, QChar( '0' ) ), Qt::MatchStartsWith );
-    if ( items.count() > 0 )
-    {
-      ui->logentryTableWidget->item( items.at( 0 )->row(), 1 )->setIcon( savedIcon );
-      ui->logentryTableWidget->viewport()->update();
     }
   }
 
@@ -1231,10 +1293,10 @@ namespace spx
   }
 
   /**
-   * @brief LogFragment::onStartSaveDiveSlot
+   * @brief LogFragment::onExportSignleDiveStartSlot
    * @param diveNum
    */
-  void LogFragment::onStartSaveDiveSlot( int diveNum )
+  void LogFragment::onExportSingleDiveStartSlot( int diveNum )
   {
     if ( !ui->transferProgressBar->isVisible() )
       ui->transferProgressBar->setVisible( true );
@@ -1244,19 +1306,19 @@ namespace spx
   }
 
   /**
-   * @brief LogFragment::onEndSaveDiveSlot
+   * @brief LogFragment::onExportSingleDiveEndSlot
    * @param diveNum
    */
-  void LogFragment::onEndSaveDiveSlot( int diveNum )
+  void LogFragment::onExportSingleDiveEndSlot( int diveNum )
   {
     ui->dbWriteNumLabel->setText( exportDiveEndTemplate.arg( diveNum, 3, 10, QChar( '0' ) ) );
   }
 
   /**
-   * @brief LogFragment::onEndSaveUddfFileSlot
+   * @brief LogFragment::onExportEndSlot
    * @param wasOk
    */
-  void LogFragment::onEndSaveUddfFileSlot( bool wasOk, const QString &fileName )
+  void LogFragment::onExportEndSlot( bool wasOk, const QString &fileName )
   {
     ui->transferProgressBar->setVisible( false );
     if ( wasOk )
@@ -1265,7 +1327,7 @@ namespace spx
       ui->dbWriteNumLabel->setText( dbWriteNumIDLE );
       if ( exportFuture.isFinished() )
       {
-        *lg << LDEBUG << "LogFragment::onEndSaveUddfFileSlot -> export finished!" << Qt::endl;
+        *lg << LDEBUG << "LogFragment::onExportEndSlot -> export finished!" << Qt::endl;
         QMessageBox::information( this, tr( "EXPORT SUCCESS" ), tr( "Export was successful to file: \n<%1>" ).arg( fileName ),
                                   QMessageBox::Close, QMessageBox::Close );
       }

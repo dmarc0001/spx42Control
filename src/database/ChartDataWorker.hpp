@@ -51,7 +51,7 @@ namespace spx
                               std::shared_ptr< SPX42Database > _database,
                               QObject *parent = nullptr );
     void prepareMiniChart( QtCharts::QChart *chart, bool isLightTheme );
-    bool makeChartDataMini( QtCharts::QChart *chart, const QString &deviceMac, int diveNum );
+    bool makeChartDataMini( QtCharts::QChart *chart, DiveDataSetsPtr dataSet );
     bool prepareDiveCharts( QtCharts::QChart *bigchart, QtCharts::QChart *ppo2chart, bool isLightTheme );
     DiveDataSetsPtr getFutureDiveDataSet( const QString &deviceMac, int diveNum );
     bool makeDiveChart( QtCharts::QChart *bigchart, QtCharts::QChart *ppo2chart, DiveDataSetsPtr dataSet );

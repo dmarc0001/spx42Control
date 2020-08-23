@@ -12,20 +12,37 @@ namespace spx
       " detail_count=(select count(*) from logdata where detail_id=%1) "
       "where detail_id=%1"};
 
+  /**
+   * @brief SPX42DeviceAlias::SPX42DeviceAlias
+   */
   SPX42DeviceAlias::SPX42DeviceAlias() : mac(), name(), alias(), lastConnected( false )
   {
   }
 
+  /**
+   * @brief SPX42DeviceAlias::SPX42DeviceAlias
+   * @param _mac
+   * @param _name
+   * @param _alias
+   * @param _lastConnect
+   */
   SPX42DeviceAlias::SPX42DeviceAlias( const QString &_mac, const QString &_name, const QString &_alias, bool _lastConnect )
       : mac( _mac ), name( _name ), alias( _alias ), lastConnected( _lastConnect )
   {
   }
 
+  /**
+   * @brief SPX42DeviceAlias::SPX42DeviceAlias
+   * @param di
+   */
   SPX42DeviceAlias::SPX42DeviceAlias( const SPX42DeviceAlias &di )
       : mac( di.mac ), name( di.name ), alias( di.alias ), lastConnected( di.lastConnected )
   {
   }
 
+  /**
+   * @brief DiveDataset::clear
+   */
   void DiveDataset::clear( void )
   {
     lfdnr = 0;
@@ -43,7 +60,28 @@ namespace spx
     abs_depth = 0.0;
   }
 
+  /**
+   * @brief DiveLogEntry::DiveLogEntry
+   */
   DiveLogEntry::DiveLogEntry(){};
+  /**
+   * @brief DiveLogEntry::DiveLogEntry
+   * @param _di
+   * @param _lf
+   * @param _pr
+   * @param _de
+   * @param _te
+   * @param _ac
+   * @param _p2
+   * @param _p21
+   * @param _p22
+   * @param _p23
+   * @param _sp
+   * @param _n
+   * @param _h
+   * @param _z
+   * @param _nx
+   */
   DiveLogEntry::DiveLogEntry( int _di,
                               int _lf,
                               int _pr,
@@ -77,6 +115,10 @@ namespace spx
   {
   }
 
+  /**
+   * @brief DiveLogEntry::DiveLogEntry
+   * @param en
+   */
   DiveLogEntry::DiveLogEntry( const DiveLogEntry &en )
       : detailId( en.detailId )
       , lfdNr( en.lfdNr )
@@ -97,7 +139,7 @@ namespace spx
   }
 
   /**
-   * @brief SPX42Database::SPX42Database
+   * @brief SPX42Database::SPX42Database Datzenbank für multithreading gelockt
    * @param logger
    * @param databaseName
    * @param parent
@@ -115,6 +157,8 @@ namespace spx
   SPX42Database::~SPX42Database()
   {
     *lg << LDEBUG << "SPX42Database::~SPX42Database..." << Qt::endl;
+    // Datenbank lock
+    QMutexLocker locker( &dbMutex );
     if ( db.isValid() && db.isOpen() )
       closeDatabase();
   }
@@ -214,6 +258,8 @@ namespace spx
   void SPX42Database::closeDatabase()
   {
     *lg << LDEBUG << "SPX42Database::closeDatabase..." << Qt::endl;
+    // Datenbank lock
+    QMutexLocker locker( &dbMutex );
     QSqlDatabase::database( currentConnectionName, false ).close();
     //
     // Neue db ==> das alte db objekt damit der Vernichtung anheimgeben
@@ -240,12 +286,10 @@ namespace spx
     *lg << LDEBUG << "SPX42Database::getDeviceAliasHash..." << Qt::endl;
     DeviceAliasHash aliase;
     //
-    // Sperre DB solange
-    //
-    QMutexLocker locker( &dbMutex );
-    //
     if ( db.isValid() && db.isOpen() )
     {
+      // Datenbank lock
+      QMutexLocker locker( &dbMutex );
       QSqlQuery query( db );
       QString sql = "select mac,name,alias,last from devices";
       query.setForwardOnly( true );
@@ -274,12 +318,12 @@ namespace spx
 
   bool SPX42Database::addAlias( const QString &mac, const QString &name, const QString &alias, bool lastConnected )
   {
-    // serialize schreibzugriff
-    QMutexLocker locker( &dbMutex );
     //
     *lg << LDEBUG << "SPX42Database::addAlias..." << Qt::endl;
     if ( db.isValid() && db.isOpen() )
     {
+      // Datenbank lock
+      QMutexLocker locker( &dbMutex );
       QSqlQuery query( db );
       QSqlError err;
       QString sql;
@@ -359,12 +403,13 @@ namespace spx
    */
   bool SPX42Database::setAliasForMac( const QString &mac, const QString &alias )
   {
-    // serialize schreibzugriff
-    QMutexLocker locker( &dbMutex );
     //
     *lg << LDEBUG << "SPX42Database::setAliasForMac..." << Qt::endl;
     if ( db.isValid() && db.isOpen() )
     {
+      // Datenbank lock
+      QMutexLocker locker( &dbMutex );
+      //
       QSqlQuery query( QString( "update devices set alias='%1' where mac='%2'" ).arg( alias ).arg( mac ), db );
       if ( query.exec() )
       {
@@ -395,12 +440,13 @@ namespace spx
    */
   bool SPX42Database::setAliasForName( const QString &name, const QString &alias )
   {
-    // serialize schreibzugriff
-    QMutexLocker locker( &dbMutex );
     //
     *lg << LDEBUG << "SPX42Database::setAliasForName..." << Qt::endl;
     if ( db.isValid() && db.isOpen() )
     {
+      // Datenbank lock
+      QMutexLocker locker( &dbMutex );
+      //
       QSqlQuery query( QString( "update devices set alias='%1' where name='%2'" ).arg( alias ).arg( name ), db );
       if ( query.exec() )
       {
@@ -435,6 +481,9 @@ namespace spx
     *lg << LDEBUG << "SPX42Database::getAliasForMac..." << Qt::endl;
     if ( db.isValid() && db.isOpen() )
     {
+      // Datenbank lock
+      QMutexLocker locker( &dbMutex );
+      //
       QSqlQuery query( db );
       QString sql = QString( "select alias from devices where mac='%1'" ).arg( mac );
       if ( !query.exec( sql ) )
@@ -465,6 +514,9 @@ namespace spx
     *lg << LDEBUG << "SPX42Database::getAliasForName..." << Qt::endl;
     if ( db.isValid() && db.isOpen() )
     {
+      // Datenbank lock
+      QMutexLocker locker( &dbMutex );
+      //
       QSqlQuery query( db );
       QString sql = QString( "select alias from devices where name='%1'" ).arg( name );
       if ( !query.exec( sql ) )
@@ -490,14 +542,14 @@ namespace spx
    */
   bool SPX42Database::setLastConnected( const QString &mac )
   {
-    // serialize schreibzugriff
-    QMutexLocker locker( &dbMutex );
     //
     QString sql;
     QSqlQuery query( db );
     *lg << LDEBUG << "SPX42Database::setLastConnected..." << Qt::endl;
     if ( db.isValid() && db.isOpen() )
     {
+      // Datenbank lock
+      QMutexLocker locker( &dbMutex );
       //
       // alle flags löschen
       //
@@ -538,6 +590,8 @@ namespace spx
     *lg << LDEBUG << "SPX42Database::getDevicveId for <" << mac << ">..." << Qt::endl;
     if ( db.isValid() && db.isOpen() )
     {
+      // Datenbank lock
+      QMutexLocker locker( &dbMutex );
       //
       // existiert der Eintrag?
       //
@@ -568,6 +622,9 @@ namespace spx
 
     if ( db.isValid() && db.isOpen() )
     {
+      // Datenbank lock
+      QMutexLocker locker( &dbMutex );
+      //
       QString sql;
       QSqlQuery query( db );
       //
@@ -608,6 +665,8 @@ namespace spx
     *lg << LDEBUG << "SPX42Database::getLastConnected..." << Qt::endl;
     if ( db.isValid() && db.isOpen() )
     {
+      // Datenbank lock
+      QMutexLocker locker( &dbMutex );
       //
       // alle flags löschen
       //
@@ -643,6 +702,8 @@ namespace spx
   {
     if ( db.isValid() && db.isOpen() )
     {
+      // Datenbank lock
+      QMutexLocker locker( &dbMutex );
       QSqlQuery query( QString( "SELECT name FROM 'sqlite_master' WHERE type = 'table' AND name = '%1'" ).arg( tableName ), db );
       QString foundTable;
       if ( query.next() )
@@ -702,6 +763,8 @@ namespace spx
     *lg << LDEBUG << "SPX42Database::createVersionTable..." << Qt::endl;
     if ( db.isValid() && db.isOpen() )
     {
+      // Datenbank lock
+      QMutexLocker locker( &dbMutex );
       QSqlQuery query( db );
       sql = "drop table if exists 'version'";
       if ( !query.exec( sql ) )
@@ -821,6 +884,8 @@ namespace spx
     *lg << LDEBUG << "SPX42Database::updateDetailDirTableFromFour..." << Qt::endl;
     if ( db.isValid() && db.isOpen() )
     {
+      // Datenbank lock
+      QMutexLocker locker( &dbMutex );
       QSqlQuery query( db );
       sql = "alter table detaildir add column notes text(120) default null";
       if ( !query.exec( sql ) )
@@ -870,6 +935,8 @@ namespace spx
     *lg << LDEBUG << "SPX42Database::createAliasTable..." << Qt::endl;
     if ( db.isValid() && db.isOpen() )
     {
+      // Datenbank lock
+      QMutexLocker locker( &dbMutex );
       QSqlQuery query( db );
       sql = "drop table if exists devices";
       if ( !query.exec( sql ) )
@@ -907,6 +974,8 @@ namespace spx
     *lg << LDEBUG << "SPX42Database::createLogDirTable..." << Qt::endl;
     if ( db.isValid() && db.isOpen() )
     {
+      // Datenbank lock
+      QMutexLocker locker( &dbMutex );
       if ( !db.transaction() )
       {
         QSqlError err = db.lastError();
@@ -976,6 +1045,8 @@ namespace spx
     *lg << LDEBUG << "SPX42Database::createLogDataTable <logdata>..." << Qt::endl;
     if ( db.isValid() && db.isOpen() )
     {
+      // Datenbank lock
+      QMutexLocker locker( &dbMutex );
       // Transaktion eröffnen
       if ( !db.transaction() )
       {
@@ -1088,8 +1159,6 @@ namespace spx
   bool SPX42Database::insertLogentry( const DiveLogEntry &entr )
   {
     static int next_step = 0;
-    // serialize schreibzugriff
-    QMutexLocker locker( &dbMutex );
     //
     // Plausibilität testen
     //
@@ -1098,6 +1167,8 @@ namespace spx
     //
     if ( db.isValid() && db.isOpen() )
     {
+      // Datenbank lock
+      QMutexLocker locker( &dbMutex );
       QString sql = SPX42DatabaseConstants::loglineInsertTemplate.arg( entr.detailId )
                         .arg( entr.lfdNr )
                         .arg( entr.pressure )
@@ -1140,8 +1211,6 @@ namespace spx
   bool SPX42Database::insertLogentry( int detail_id, spSingleCommand cmd )
   {
     static int next_step = 0;
-    // serialize schreibzugriff
-    QMutexLocker locker( &dbMutex );
     //
     // Plausibilität testen
     //
@@ -1149,6 +1218,8 @@ namespace spx
     //
     if ( db.isValid() && db.isOpen() )
     {
+      // Datenbank lock
+      QMutexLocker locker( &dbMutex );
       QSqlQuery query( db );
       QString sql = SPX42DatabaseConstants::loglineInsertTemplate.arg( detail_id )
                         .arg( cmd->getSequence() )
@@ -1191,10 +1262,6 @@ namespace spx
    */
   int SPX42Database::insertDiveLogInBase( const QString &mac, int diveNum, qint64 timestamp )
   {
-    // serialize schreibzugriff
-    QMutexLocker locker( &dbMutex );
-    //
-
     *lg << LDEBUG << "SPX42Database::insertDiveLogInBase..." << Qt::endl;
     if ( db.isValid() && db.isOpen() )
     {
@@ -1206,6 +1273,8 @@ namespace spx
         //
         return ( device_id );
       }
+      // Datenbank lock
+      QMutexLocker locker( &dbMutex );
       QString sql;
       QSqlQuery query( db );
       //
@@ -1276,6 +1345,8 @@ namespace spx
     //
     if ( db.isValid() && db.isOpen() )
     {
+      // Datenbank lock
+      QMutexLocker locker( &dbMutex );
       *lg << LDEBUG << "SPX42Database::existDiveLogInBase -> database open and valid..." << Qt::endl;
       //
       // Suche im Inhaltsverzeichnis
@@ -1316,9 +1387,6 @@ namespace spx
    */
   bool SPX42Database::delDiveLogFromBase( const QString &mac, int diveNum )
   {
-    // serialize schreibzugriff
-    QMutexLocker locker( &dbMutex );
-    //
     *lg << LDEBUG << QString( "SPX42Database::delDiveLogFromBase -> <%1> num: <%2>..." ).arg( mac ).arg( diveNum ) << Qt::endl;
 
     if ( db.isValid() && db.isOpen() )
@@ -1329,6 +1397,8 @@ namespace spx
       //
       if ( detailId < 0 )
         return ( false );
+      // Datenbank lock
+      QMutexLocker locker( &dbMutex );
       QString sql;
       if ( !db.transaction() )
       {
@@ -1396,6 +1466,8 @@ namespace spx
       //
       // versuche mal rauszubekommen wie tief das war
       //
+      // Datenbank lock
+      QMutexLocker locker( &dbMutex );
       sql = QString( "select max_depth from detaildir where detail_id=%1 and divenum=%2" ).arg( detail_id ).arg( diveNum );
       QSqlQuery query( sql, db );
       if ( !query.next() )
@@ -1433,6 +1505,8 @@ namespace spx
       {
         return ( diveLen );
       }
+      // Datenbank lock
+      QMutexLocker locker( &dbMutex );
       //
       // versuche mal rauszubekommen wie tief das war
       //
@@ -1483,15 +1557,19 @@ namespace spx
       //
       // jetzt frage die Datenbank
       //
-      if ( !query.exec( sql ) )
       {
-        //
-        // es gab einen Fehler bei der Anfrage
-        //
-        QSqlError err = db.lastError();
-        *lg << LWARN << "SPX42Database::getDiveDataSets -> <" << err.text() << ">..." << Qt::endl;
-        chartSet->clear();
-        return ( chartSet );
+        // Datenbank lock, wg performance im Block
+        QMutexLocker locker( &dbMutex );
+        if ( !query.exec( sql ) )
+        {
+          //
+          // es gab einen Fehler bei der Anfrage
+          //
+          QSqlError err = db.lastError();
+          *lg << LWARN << "SPX42Database::getDiveDataSets -> <" << err.text() << ">..." << Qt::endl;
+          chartSet->clear();
+          return ( chartSet );
+        }
       }
       //
       // alle Datensätze abholen
@@ -1553,15 +1631,19 @@ namespace spx
       QSqlQuery query( db );
       query.setForwardOnly( true );
       sql = QString( "select divenum,ux_timestamp from detaildir where device_id=%1" ).arg( device_id );
-      if ( !query.exec( sql ) )
       {
-        //
-        // es gab einen Fehler bei der Anfrage
-        //
-        QSqlError err = db.lastError();
-        *lg << LWARN << "SPX42Database::getLogentrysForDevice -> error: <" << err.text() << ">..." << Qt::endl;
-        deviceLog->clear();
-        return ( deviceLog );
+        // datenbank lock
+        QMutexLocker locker( &dbMutex );
+        if ( !query.exec( sql ) )
+        {
+          //
+          // es gab einen Fehler bei der Anfrage
+          //
+          QSqlError err = db.lastError();
+          *lg << LWARN << "SPX42Database::getLogentrysForDevice -> error: <" << err.text() << ">..." << Qt::endl;
+          deviceLog->clear();
+          return ( deviceLog );
+        }
       }
       //
       // Daten einsammeln
@@ -1581,11 +1663,11 @@ namespace spx
 
   bool SPX42Database::computeStatistic( int detail_id )
   {
-    // serialize schreibzugriff
-    QMutexLocker locker( &dbMutex );
     //
     if ( db.isValid() && db.isOpen() )
     {
+      // serialize schreibzugriff
+      QMutexLocker locker( &dbMutex );
       QString sql;
       //
       // SQL aus dem Template erstellen
@@ -1641,14 +1723,18 @@ namespace spx
       sql += "  ) \n";
       sql += "group by \n";
       sql += "  n2, he";
-      if ( !query.exec( sql ) )
       {
-        //
-        // es gab einen Fehler bei der Anfrage
-        //
-        QSqlError err = db.lastError();
-        *lg << LWARN << "SPX42Database::getGasList -> error: <" << err.text() << ">..." << Qt::endl;
-        return ( gasList );
+        // datenbank lock
+        QMutexLocker locker( &dbMutex );
+        if ( !query.exec( sql ) )
+        {
+          //
+          // es gab einen Fehler bei der Anfrage
+          //
+          QSqlError err = db.lastError();
+          *lg << LWARN << "SPX42Database::getGasList -> error: <" << err.text() << ">..." << Qt::endl;
+          return ( gasList );
+        }
       }
       //
       // Daten einsammeln
@@ -1675,6 +1761,8 @@ namespace spx
       int device_id = getDevicveId( mac );
       if ( device_id == -1 )
         return ( ux_timestamp );
+      // datenbank lock
+      QMutexLocker locker( &dbMutex );
       QSqlQuery query( db );
       sql = "select ux_timestamp \n";
       sql += "from detaildir \n";
@@ -1711,6 +1799,8 @@ namespace spx
       int device_id = getDevicveId( mac );
       if ( device_id == -1 )
         return ( false );
+      // datenbank lock
+      QMutexLocker locker( &dbMutex );
       QSqlQuery query( db );
       sql = "update detaildir \n";
       sql += QString( "  set notes = '%1'\n" ).arg( notes.left( 120 ) );
@@ -1741,6 +1831,8 @@ namespace spx
       int device_id = getDevicveId( mac );
       if ( device_id == -1 )
         return ( notes );
+      // datenbank lock
+      QMutexLocker locker( &dbMutex );
       QSqlQuery query( db );
       sql = "select notes\n";
       sql += "from detaildir \n";

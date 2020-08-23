@@ -45,10 +45,9 @@ namespace spx
     *lg << LDEBUG << "DiveMiniChart::prepareChart...OK" << Qt::endl;
   }
 
-  bool ChartDataWorker::makeChartDataMini( QChart *chart, const QString &deviceMac, int diveNum )
+  bool ChartDataWorker::makeChartDataMini( QChart *chart, DiveDataSetsPtr dataSet )
   {
     QString tableName;
-    DiveDataSetsPtr dataSet;
     QLineSeries *depthSeries;
     QLineSeries *ppo2Series;
     QValueAxis *axisYDepth;
@@ -56,11 +55,7 @@ namespace spx
     QValueAxis *axisX;
     QPen myPen;
 
-    *lg << LDEBUG << "ChartDataWorker::makeChartDataMini for <" << deviceMac << ">, num <" << diveNum << "2>..." << Qt::endl;
-    //
-    // jetzt die Daten abholen
-    //
-    dataSet = database->getDiveDataSets( deviceMac, diveNum );
+    *lg << LDEBUG << "ChartDataWorker::makeChartDataMini..." << Qt::endl;
     // hat es sich gelohnt
     if ( dataSet->isEmpty() )
       return ( false );

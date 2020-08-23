@@ -442,8 +442,14 @@
             <bool>false</bool>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_3">
-            <property name="topMargin">
-             <number>9</number>
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
             </property>
             <item>
              <widget class="QLabel" name="diveNumberLabel">
@@ -514,6 +520,27 @@
               </property>
               <property name="text">
                <string>WRITE-TO-DATABASE</string>
+              </property>
+              <property name="margin">
+               <number>6</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="diveLogReadLabel">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>18</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>READ-FROM-DEVICE</string>
               </property>
               <property name="margin">
                <number>6</number>
